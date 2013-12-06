@@ -17,7 +17,7 @@
   }
   #endif
 
-  IGraphics* MakeGraphics(IPlug* pPlug, int w, int h, int FPS = 0)
+  IGraphics* MakeGraphics(IPlug* pPlug, int w, int h, int FPS)
   {
     IGraphicsWin* pGraphics = new IGraphicsWin(pPlug, w, h, FPS);
 
@@ -25,14 +25,14 @@
     return pGraphics;
   }
 #elif defined OS_OSX
-  IGraphics* MakeGraphics(IPlug* pPlug, int w, int h, int FPS = 0)
+  IGraphics* MakeGraphics(IPlug* pPlug, int w, int h, int FPS)
   {
     IGraphicsMac* pGraphics = new IGraphicsMac(pPlug, w, h, FPS);
     pGraphics->SetBundleID(BUNDLE_ID);
     return pGraphics;
   }
 #elif defined OS_IOS
-  IGraphics* MakeGraphics(IPlug* pPlug, int w, int h, int FPS = 0)
+  IGraphics* MakeGraphics(IPlug* pPlug, int w, int h, int FPS)
   {
     return 0;
   }

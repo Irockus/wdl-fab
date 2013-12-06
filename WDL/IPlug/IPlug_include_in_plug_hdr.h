@@ -54,5 +54,7 @@
 #elif defined OS_LINUX
   //TODO
 #endif
+class IGraphics;
+IGraphics* MakeGraphics(IPlug* pPlug, int w, int h, int FPS = 0);
 
 #endif // _IPLUG_INCLUDE_HDR_

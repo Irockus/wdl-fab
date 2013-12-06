@@ -127,7 +127,7 @@ bool IGraphicsMac::DrawScreen(IRECT* pR)
 
 bool IGraphicsMac::MeasureIText(IText* pTxt, char* str, IRECT* pR)
 {
-#ifdef SWELL_FORCE_COCOA_TEXT || ARCH_64BIT
+#if defined(SWELL_FORCE_COCOA_TEXT) || defined(ARCH_64BIT)
   CocoaAutoReleasePool pool;
 #endif
   return DrawIText(pTxt, str, pR, true);
@@ -534,7 +534,7 @@ IPopupMenu* IGraphicsMac::CreateIPopupMenu(IPopupMenu* pMenu, IRECT* pTextRect)
   if (mGraphicsCocoa)
   {
     NSRect areaRect = ToNSRect(this, pTextRect);
-    return [(IGRAPHICS_COCOA*) mGraphicsCocoa createIPopupMenu: pMenu: areaRect];
+    return [(IGRAPHICS_COCOA*) mGraphicsCocoa createIPopupMenu: pMenu atLocation: areaRect];
   }
   #ifndef IPLUG_NO_CARBON_SUPPORT
   else if (mGraphicsCarbon)
@@ -550,7 +550,7 @@ void IGraphicsMac::CreateTextEntry(IControl* pControl, IText* pText, IRECT* pTex
   if (mGraphicsCocoa)
   {
     NSRect areaRect = ToNSRect(this, pTextRect);
-    [(IGRAPHICS_COCOA*) mGraphicsCocoa createTextEntry: pControl: pParam: pText: pString: areaRect];
+    [(IGRAPHICS_COCOA*) mGraphicsCocoa createTextEntry: pControl withIParam:pParam withIText:pText withCStr:pString withFrame:areaRect];
   }
   #ifndef IPLUG_NO_CARBON_SUPPORT
   else if (mGraphicsCarbon)

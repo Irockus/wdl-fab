@@ -368,8 +368,8 @@ public:
   }
   ~ITextControl() {}
 
-  void SetTextFromPlug(char* str);
-  void ClearTextFromPlug() { SetTextFromPlug( (char *) ""); }
+  void SetTextFromPlug(const char* str);
+  void ClearTextFromPlug() { SetTextFromPlug(""); }
 
   bool Draw(IGraphics* pGraphics);
 

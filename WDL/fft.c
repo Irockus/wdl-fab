@@ -40,8 +40,10 @@
 #ifdef _MSC_VER
 #define inline __inline
 #endif
+#ifndef PI
 
 #define PI 3.1415926535897932384626433832795
+#endif
 
 static WDL_FFT_COMPLEX d16[3];
 static WDL_FFT_COMPLEX d32[7];

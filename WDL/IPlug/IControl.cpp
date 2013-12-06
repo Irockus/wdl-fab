@@ -564,7 +564,7 @@ bool IBitmapOverlayControl::Draw(IGraphics* pGraphics)
   }
 }
 
-void ITextControl::SetTextFromPlug(char* str)
+void ITextControl::SetTextFromPlug(const char* str)
 {
   if (strcmp(mStr.Get(), str))
   {

@@ -16,7 +16,7 @@
 
 @implementation IGRAPHICS_NSMENU
 
-- (id)initWithIPopupMenuAndReciever:(IPopupMenu*)pMenu: (NSView*)pView
+- (id)initWithIPopupMenu:(IPopupMenu*) pMenu andReceiver: (NSView*)pView
 {
   [self initWithTitle: @""];
 
@@ -39,7 +39,7 @@
 
       switch (pMenu->GetPrefix())
       {
-        case 0: prefixString = [NSString stringWithFormat:@"", i+1]; break;
+        case 0: prefixString = @""; break;
         case 1: prefixString = [NSString stringWithFormat:@"%1d: ", i+1]; break;
         case 2: prefixString = [NSString stringWithFormat:@"%02d: ", i+1]; break;
         case 3: prefixString = [NSString stringWithFormat:@"%03d: ", i+1]; break;
@@ -51,7 +51,7 @@
     if (menuItem->GetSubmenu())
     {
       nsMenuItem = [self addItemWithTitle:nsMenuItemTitle action:nil keyEquivalent:@""];
-      NSMenu* subMenu = [[IGRAPHICS_NSMENU alloc] initWithIPopupMenuAndReciever:menuItem->GetSubmenu() :pView];
+      NSMenu* subMenu = [[IGRAPHICS_NSMENU alloc] initWithIPopupMenu:menuItem->GetSubmenu() andReceiver:pView];
       [self setSubmenu: subMenu forItem:nsMenuItem];
       [subMenu release];
     }
@@ -475,10 +475,10 @@ inline IMouseMod GetRightMouseMod(NSEvent* pEvent)
   [self setNeedsDisplay: YES];
 }
 
-- (IPopupMenu*) createIPopupMenu: (IPopupMenu*) pMenu: (NSRect) rect;
+- (IPopupMenu*) createIPopupMenu: (IPopupMenu*) pMenu atLocation: (NSRect) rect;
 {
   IGRAPHICS_MENU_RCVR* dummyView = [[[IGRAPHICS_MENU_RCVR alloc] initWithFrame:rect] autorelease];
-  NSMenu* nsMenu = [[[IGRAPHICS_NSMENU alloc] initWithIPopupMenuAndReciever:pMenu :dummyView] autorelease];
+  NSMenu* nsMenu = [[[IGRAPHICS_NSMENU alloc] initWithIPopupMenu:pMenu andReceiver:dummyView] autorelease];
 
   NSWindow* pWindow = [self window];
 
@@ -511,7 +511,7 @@ inline IMouseMod GetRightMouseMod(NSEvent* pEvent)
   else return 0;
 }
 
-- (void) createTextEntry: (IControl*) pControl: (IParam*) pParam: (IText*) pText: (const char*) pString: (NSRect) areaRect;
+- (void) createTextEntry: (IControl*) pControl withIParam:(IParam *)pParam withIText:(IText *)pText withCStr:(const char *)pString withFrame:(NSRect)areaRect;
 {
   if (!pControl || mTextFieldView) return;
 

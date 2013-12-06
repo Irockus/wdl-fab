@@ -45,7 +45,7 @@ NSString* ToNSString(const char* cStr);
 {
   IPopupMenu* mIPopupMenu;
 }
-- (id) initWithIPopupMenuAndReciever:(IPopupMenu*)pMenu: (NSView*)pView;
+- (id) initWithIPopupMenu:(IPopupMenu*)pMenu andReceiver: (NSView*)pView;
 - (IPopupMenu*) AssociatedIPopupMenu;
 @end
 
@@ -90,7 +90,7 @@ NSString* ToNSString(const char* cStr);
 - (void) removeFromSuperview;
 //- (void) controlTextDidChange: (NSNotification *) aNotification;
 - (void) controlTextDidEndEditing: (NSNotification*) aNotification;
-- (IPopupMenu*) createIPopupMenu: (IPopupMenu*) pMenu: (NSRect) rect;
-- (void) createTextEntry: (IControl*) pControl: (IParam*) pParam: (IText*) pText: (const char*) pString: (NSRect) areaRect;
+- (IPopupMenu*) createIPopupMenu: (IPopupMenu*) pMenu atLocation: (NSRect) rect;
+- (void) createTextEntry: (IControl*) pControl withIParam: (IParam*) pParam withIText: (IText*) pText withCStr: (const char*) pString withFrame: (NSRect) areaRect;
 - (void) endUserInput;
 @end

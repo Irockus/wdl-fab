@@ -370,7 +370,7 @@ void IGraphics::PromptUserInput(IControl* pControl, IParam* pParam, IRECT* pText
   int n = pParam->GetNDisplayTexts();
   char currentText[MAX_PARAM_LEN];
 
-  if ( type == IParam::kTypeEnum || type == IParam::kTypeBool && n)
+  if ( (type == IParam::kTypeEnum || type == IParam::kTypeBool) && n)
   {
     pParam->GetDisplayForHost(currentText);
     IPopupMenu menu;
@@ -1055,7 +1055,7 @@ void IGraphics::OnGUIIdle()
   }
 }
 
-bool IGraphics::DrawIText(IText* pTxt, char* str, IRECT* pR, bool measure)
+bool IGraphics::DrawIText(IText* pTxt, const char* str, IRECT* pR, bool measure)
 {
   if (!str || str[0] == '\0')
   {
