@@ -315,6 +315,9 @@ struct HTREEITEM__
 
 // NSAccessibility
 
+#if 0
+// TODO: Investigate if those below should be implemented one day:
+
 // attribute methods
 - (NSArray *)accessibilityAttributeNames;
 - (id)accessibilityAttributeValue:(NSString *)attribute;
@@ -331,6 +334,8 @@ struct HTREEITEM__
 - (NSArray *)accessibilityActionNames;
 - (NSString *)accessibilityActionDescription:(NSString *)action;
 - (void)accessibilityPerformAction:(NSString *)action;
+
+#endif
 
 // Return YES if the UIElement doesn't show up to the outside world - i.e. its parent should return the UIElement's children as its own - cutting the UIElement out. E.g. NSControls are ignored when they are single-celled.
 - (BOOL)accessibilityIsIgnored;

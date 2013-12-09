@@ -55,6 +55,7 @@
   //TODO
 #endif
 class IGraphics;
+/// MakeGraphics prototype declaration permits to decouple graphics implementation from other plugin implementations.
 IGraphics* MakeGraphics(IPlug* pPlug, int w, int h, int FPS = 0);
 
 #endif // _IPLUG_INCLUDE_HDR_

@@ -72,7 +72,7 @@ public:
 
 #ifndef WDL_VORBIS_INTERFACE_ONLY
 
-#include "../WDL/queue.h"
+#include "queue.h"
 
 class VorbisDecoder : public VorbisDecoderInterface
 {
