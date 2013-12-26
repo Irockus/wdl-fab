@@ -372,7 +372,7 @@ void IGraphics::PromptUserInput(IControl* pControl, IParam* pParam, IRECT* pText
 
   if ( (type == IParam::kTypeEnum || type == IParam::kTypeBool) && n)
   {
-    pParam->GetDisplayForHost(currentText);
+    pParam->GetDisplayForHost(currentText, sizeof(currentText));
     IPopupMenu menu;
 
     // Fill the menu
@@ -394,7 +394,7 @@ void IGraphics::PromptUserInput(IControl* pControl, IParam* pParam, IRECT* pText
   // TODO: what if there are Int/Double Params with a display text e.g. -96db = "mute"
   else // type == IParam::kTypeInt || type == IParam::kTypeDouble
   {
-    pParam->GetDisplayForHostNoDisplayText(currentText);
+    pParam->GetDisplayForHostNoDisplayText(currentText, sizeof(currentText));
     CreateTextEntry(pControl, pControl->GetText(), pTextRect, currentText, pParam );
   }
 

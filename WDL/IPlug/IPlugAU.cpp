@@ -999,7 +999,7 @@ ComponentResult IPlugAU::GetProperty(AudioUnitPropertyID propID, AudioUnitScope 
         AudioUnitParameterStringFromValue* pSFV = (AudioUnitParameterStringFromValue*) pData;
         IParam* pParam = GetParam(pSFV->inParamID);
         
-        pParam->GetDisplayForHost(*(pSFV->inValue), false, mParamValueString);
+        pParam->GetDisplayForHost(*(pSFV->inValue), false, mParamValueString, sizeof(mParamValueString));
         pSFV->outString = MakeCFString((const char*) mParamValueString);
       }
       return noErr;
@@ -1906,7 +1906,7 @@ IPlugAU::IPlugAU(IPlugInstanceInfo instanceInfo,
       pOutBus->mPlugChannelStartIdx = startCh;
       pOutBus->mNPlugChannels = MIN(NOutChannels() - startCh, 2);
 
-      sprintf(label, "output %i", i+1);
+      snprintf(label, sizeof(label), "output %i", i+1);
       SetOutputBusLabel(i, label);
     }
   }

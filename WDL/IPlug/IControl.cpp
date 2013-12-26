@@ -41,7 +41,7 @@ void IControl::SetDirty(bool pushParamToPlug)
     if (mValDisplayControl) 
     {
       char str[32];
-      pParam->GetDisplayForHost(str);
+      pParam->GetDisplayForHost(str, sizeof(str));
       ((ITextControl*)mValDisplayControl)->SetTextFromPlug(str);
     }
     
@@ -201,7 +201,10 @@ void IControl::SetAllAuxParamsFromGUI()
 
 bool IPanelControl::Draw(IGraphics* pGraphics)
 {
+  if (mRounding<=0)
   pGraphics->FillIRect(&mColor, &mRECT, &mBlend);
+    else
+        pGraphics->FillRoundRect(&mColor, &mRECT, &mBlend, mRounding, true);
   return true;
 }
 
@@ -606,7 +609,7 @@ bool ICaptionControl::Draw(IGraphics* pGraphics)
 {
   IParam* pParam = mPlug->GetParam(mParamIdx);
   char cStr[32];
-  pParam->GetDisplayForHost(cStr);
+  pParam->GetDisplayForHost(cStr, sizeof(cStr));
   mStr.Set(cStr);
 
   if (mShowParamLabel)

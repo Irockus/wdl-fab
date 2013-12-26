@@ -867,7 +867,7 @@ DWORD GetModuleFileName(HINSTANCE hInst, char *fn, DWORD nSize)
   if (!instptr) // get exe file name
   {
     char tmp[64];
-    sprintf(tmp,"/proc/%d/exe",getpid());
+    snprintf(tmp,sizeof(tmp), "/proc/%d/exe",getpid());
     int sz=readlink(tmp,fn,nSize);
     if (sz<0)sz=0;
     else if (sz>=nSize)sz=nSize-1;

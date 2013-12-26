@@ -782,21 +782,22 @@ HMENU IGraphicsWin::CreateMenu(IPopupMenu* pMenu, long* offsetIdx)
 
       if (pMenu->GetPrefix())
       {
-        titleWithPrefixNumbers = (char*)malloc(strlen(str) + 50);
+          size_t maxSize = strlen(str) + 50;
+        titleWithPrefixNumbers = (char*)malloc(maxSize);
 
         switch (pMenu->GetPrefix())
         {
           case 1:
           {
-            sprintf(titleWithPrefixNumbers, "%1d: %s", i+1, str); break;
+            snprintf(titleWithPrefixNumbers, maxSize, "%1d: %s", i+1, str); break;
           }
           case 2:
           {
-            sprintf(titleWithPrefixNumbers, "%02d: %s", i+1, str); break;
+            snprintf(titleWithPrefixNumbers, maxSize, "%02d: %s", i+1, str); break;
           }
           case 3:
           {
-            sprintf(titleWithPrefixNumbers, "%03d: %s", i+1, str); break;
+            snprintf(titleWithPrefixNumbers, maxSize, "%03d: %s", i+1, str); break;
           }
         }
       }

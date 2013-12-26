@@ -14,7 +14,8 @@
 
 JNL_Connection::JNL_Connection(JNL_IAsyncDNS *dns, int sendbufsize, int recvbufsize)
 {
-  m_errorstr="";
+  m_errorstr[0]='\0';
+
   if (dns == JNL_CONNECTION_AUTODNS)
   {
     m_dns=new JNL_AsyncDNS();
@@ -42,6 +43,24 @@ JNL_Connection::JNL_Connection(JNL_IAsyncDNS *dns, int sendbufsize, int recvbufs
   memset(m_saddr,0,sizeof(struct sockaddr_in));
 }
 
+void JNL_Connection::Error(const char* fmt, ...)
+{
+  char err[256]="";
+  va_list args;
+  va_start(args, fmt);
+  vsnprintf (err, sizeof(err),fmt, args);
+  va_end (args);
+    
+#ifdef _DEBUG
+#ifdef WIN32
+	OutputDebugString(err);
+#else
+  fputs(err,stderr);
+  fflush(stderr);
+#endif
+#endif
+}
+
 void JNL_Connection::connect(int s, struct sockaddr_in *loc)
 {
   close(1);
@@ -57,19 +76,19 @@ void JNL_Connection::connect(int s, struct sockaddr_in *loc)
   }
   else 
   {
-    m_errorstr="invalid socket passed to connect";
+    Error("Invalid socket <%d> passed to connect errno = ", m_socket, errno);
     m_state=STATE_ERROR;
   }
 }
 
-void JNL_Connection::connect(char *hostname, int port)
+void JNL_Connection::connect(const char *hostname, int port)
 {
   close(1);
   m_remote_port=(short)port;
   m_socket=::socket(AF_INET,SOCK_STREAM,0);
   if (m_socket==-1)
   {
-    m_errorstr="creating socket";
+	Error("Error Creating socket <%d> passed to connect errno = %d", m_socket, ERRNO);
     m_state=STATE_ERROR;
   }
   else
@@ -87,7 +106,7 @@ void JNL_Connection::connect(char *hostname, int port)
     memset(m_saddr,0,sizeof(struct sockaddr_in));
     if (!m_host[0])
     {
-      m_errorstr="empty hostname";
+	  Error("Empty hostname !");
       m_state=STATE_ERROR;
     }
     else
@@ -139,7 +158,7 @@ void JNL_Connection::run(int max_send_bytes, int max_recv_bytes, int *bytes_sent
         }
         else
         {
-          m_errorstr="resolving hostname"; 
+          Error("Couldn't resolve hostname a = %x", a); 
           m_state=STATE_ERROR; 
           return;
         }
@@ -150,7 +169,7 @@ void JNL_Connection::run(int max_send_bytes, int max_recv_bytes, int *bytes_sent
       }
       else if (ERRNO!=EINPROGRESS)
       {
-        m_errorstr="connecting to host";
+        Error("Error while connecting to host errno = %d", ERRNO);
         m_state=STATE_ERROR;
       }
       else { m_state=STATE_CONNECTING; }
@@ -168,7 +187,7 @@ void JNL_Connection::run(int max_send_bytes, int max_recv_bytes, int *bytes_sent
         memset(&tv,0,sizeof(tv));
         if (select(m_socket+1,&f[0],&f[1],&f[2],&tv)==-1)
         {
-          m_errorstr="connecting to host (calling select())";
+          Error("Error connecting to host (calling select() returned -1)");
           m_state=STATE_ERROR;
         }
         else if (FD_ISSET(m_socket,&f[1])) 
@@ -177,7 +196,7 @@ void JNL_Connection::run(int max_send_bytes, int max_recv_bytes, int *bytes_sent
         }
         else if (FD_ISSET(m_socket,&f[2]))
         {
-          m_errorstr="connecting to host";
+          Error("Error connecting to host FD_ISSET(m_socket,&f[2]) errno = %d", ERRNO);
           m_state=STATE_ERROR;
         }
       }

@@ -67,7 +67,7 @@ class JNL_IConnection
 {
   public:
     virtual ~JNL_IConnection() { }
-    virtual void connect(char *hostname, int port)=0;
+    virtual void connect(const char *hostname, int port)=0;
     virtual void connect(int sock, struct sockaddr_in *loc=NULL)=0; // used by the listen object, usually not needed by users.
 
     virtual void run(int max_send_bytes=-1, int max_recv_bytes=-1, int *bytes_sent=NULL, int *bytes_rcvd=NULL)=0;
@@ -124,7 +124,7 @@ class JNL_Connection JNL_Connection_PARENTDEF
     JNL_Connection(JNL_IAsyncDNS *dns=JNL_CONNECTION_AUTODNS, int sendbufsize=8192, int recvbufsize=8192);
     ~JNL_Connection();
 
-    void connect(char *hostname, int port);
+    void connect(const char *hostname, int port);
     void connect(int sock, struct sockaddr_in *loc=NULL); // used by the listen object, usually not needed by users.
 
     void run(int max_send_bytes=-1, int max_recv_bytes=-1, int *bytes_sent=NULL, int *bytes_rcvd=NULL);
@@ -155,8 +155,11 @@ class JNL_Connection JNL_Connection_PARENTDEF
     short get_remote_port(void); // this returns the remote port of connection
   
     void set_interface(int useInterface); // call before connect if needed
-
-  protected:
+ 
+ protected:
+	static void Error(const char* fmt, ...); 
+ 
+ protected:
     int  m_socket;
     short m_remote_port;
     char *m_recv_buffer;
@@ -177,7 +180,7 @@ class JNL_Connection JNL_Connection_PARENTDEF
     int m_dns_owned;
 
     state m_state;
-    const char *m_errorstr;
+    char m_errorstr[512];
 
     int getbfromrecv(int pos, int remove); // used by recv_line*
 

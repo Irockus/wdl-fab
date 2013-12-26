@@ -27,7 +27,7 @@
 #define IPMAX(x,y) ((x)<(y)?(y):(x))
 #define BOUNDED(x,lo,hi) ((x) < (lo) ? (lo) : (x) > (hi) ? (hi) : (x))
 #define CSTR_NOT_EMPTY(cStr) ((cStr) && (cStr)[0] != '\0')
-
+#define SAFE_STRNCPY(a,b,s) {strncpy(a,b,s);a[s-1]='\0';}
 #define MAKE_QUOTE(str) #str
 #define MAKE_STR(str) MAKE_QUOTE(str)
 

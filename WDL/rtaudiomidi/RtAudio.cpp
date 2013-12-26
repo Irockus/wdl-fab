@@ -46,6 +46,15 @@
 #include <cstring>
 #include <climits>
 
+
+#if (_MSC_VER >=1500)
+#pragma comment(lib, "Winmm.lib") 
+#ifdef __WINDOWS_DS__
+#pragma comment(lib, "dsound.lib") 
+#endif
+#endif
+
+
 // Static variable definitions.
 const unsigned int RtApi::MAX_SAMPLE_RATES = 14;
 const unsigned int RtApi::SAMPLE_RATES[] = {
@@ -5121,7 +5130,7 @@ unsigned int RtApiAlsa :: getDeviceCount( void )
   card = -1;
   snd_card_next( &card );
   while ( card >= 0 ) {
-    sprintf( name, "hw:%d", card );
+    snprintf( name,  sizeof(name), "hw:%d", card );
     result = snd_ctl_open( &handle, name, 0 );
     if ( result < 0 ) {
       errorStream_ << "RtApiAlsa::getDeviceCount: control open, card = " << card << ", " << snd_strerror( result ) << ".";
@@ -5164,7 +5173,7 @@ RtAudio::DeviceInfo RtApiAlsa :: getDeviceInfo( unsigned int device )
   card = -1;
   snd_card_next( &card );
   while ( card >= 0 ) {
-    sprintf( name, "hw:%d", card );
+    snprintf( name,  sizeof(name), "hw:%d", card );
     result = snd_ctl_open( &chandle, name, SND_CTL_NONBLOCK );
     if ( result < 0 ) {
       errorStream_ << "RtApiAlsa::getDeviceInfo: control open, card = " << card << ", " << snd_strerror( result ) << ".";
@@ -5183,7 +5192,7 @@ RtAudio::DeviceInfo RtApiAlsa :: getDeviceInfo( unsigned int device )
       }
       if ( subdevice < 0 ) break;
       if ( nDevices == device ) {
-        sprintf( name, "hw:%d,%d", card, subdevice );
+        snprintf( name,  sizeof(name),"hw:%d,%d", card, subdevice );
         goto foundDevice;
       }
       nDevices++;
@@ -5403,7 +5412,7 @@ RtAudio::DeviceInfo RtApiAlsa :: getDeviceInfo( unsigned int device )
   char *cardname;
   result = snd_card_get_name( card, &cardname );
   if ( result >= 0 )
-    sprintf( name, "hw:%s,%d", cardname, subdevice );
+    snprintf( name,  sizeof(name),"hw:%s,%d", cardname, subdevice );
   info.name = name;
 
   // That's all ... close the device and return
@@ -5447,7 +5456,7 @@ bool RtApiAlsa :: probeDeviceOpen( unsigned int device, StreamMode mode, unsigne
     card = -1;
     snd_card_next( &card );
     while ( card >= 0 ) {
-      sprintf( name, "hw:%d", card );
+      snprintf( name, sizeof(name), "hw:%d", card );
       result = snd_ctl_open( &chandle, name, SND_CTL_NONBLOCK );
       if ( result < 0 ) {
         errorStream_ << "RtApiAlsa::probeDeviceOpen: control open, card = " << card << ", " << snd_strerror( result ) << ".";
@@ -5460,7 +5469,7 @@ bool RtApiAlsa :: probeDeviceOpen( unsigned int device, StreamMode mode, unsigne
         if ( result < 0 ) break;
         if ( subdevice < 0 ) break;
         if ( nDevices == device ) {
-          sprintf( name, "hw:%d,%d", card, subdevice );
+          snprintf( name, sizeof(name), "hw:%d,%d", card, subdevice );
           snd_ctl_close( chandle );
           goto foundDevice;
         }

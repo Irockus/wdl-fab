@@ -12,7 +12,7 @@
 // transforming a bitmap, or cycling through a set of bitmaps.
 // Other controls are readouts only.
 
-#define DEFAULT_TEXT_ENTRY_LEN 7
+#define DEFAULT_TEXT_ENTRY_LEN 80
 
 class IControl
 {
@@ -135,13 +135,14 @@ enum EDirection { kVertical, kHorizontal };
 class IPanelControl : public IControl
 {
 public:
-  IPanelControl(IPlugBase *pPlug, IRECT pR, const IColor* pColor)
-    : IControl(pPlug, pR), mColor(*pColor) {}
+  IPanelControl(IPlugBase *pPlug, IRECT pR, const IColor* pColor, int rounding=0)
+    : IControl(pPlug, pR), mColor(*pColor), mRounding(rounding) {}
 
   bool Draw(IGraphics* pGraphics);
 
 private:
   IColor mColor;
+  int  mRounding;
 };
 
 // Draws a bitmap, or one frame of a stacked bitmap depending on the current value.

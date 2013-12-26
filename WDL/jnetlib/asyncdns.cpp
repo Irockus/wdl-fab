@@ -12,6 +12,11 @@
 #include "asyncdns.h"
 #ifdef _WIN32
 #include <process.h>
+#if (_MSC_VER >=1500)
+#define stricmp _stricmp
+#define strnicmp _strnicmp
+#endif
+
 #endif
 
 JNL_AsyncDNS::JNL_AsyncDNS(int max_cache_entries)

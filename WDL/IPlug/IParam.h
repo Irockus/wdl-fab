@@ -58,9 +58,9 @@ public:
   void SetNormalized(double normalizedValue);
   double GetNormalized();
   double GetNormalized(double nonNormalizedValue);
-  void GetDisplayForHost(char* rDisplay) { GetDisplayForHost(mValue, false, rDisplay); }
-  void GetDisplayForHostNoDisplayText(char* rDisplay) { GetDisplayForHost(mValue, false, rDisplay, false); }
-  void GetDisplayForHost(double value, bool normalized, char* rDisplay, bool withDisplayText = true);
+  void GetDisplayForHost(char* rDisplay, size_t maxSize) { GetDisplayForHost(mValue, false, rDisplay, maxSize); }
+  void GetDisplayForHostNoDisplayText(char* rDisplay, size_t maxSize) { GetDisplayForHost(mValue, false, rDisplay, maxSize, false); }
+  void GetDisplayForHost(double value, bool normalized, char* rDisplay, size_t rDisplaySize, bool withDisplayText = true);
   const char* GetNameForHost();
   const char* GetLabelForHost();
   const char* GetParamGroupForHost();

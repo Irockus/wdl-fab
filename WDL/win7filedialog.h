@@ -91,8 +91,8 @@ class IPropertyStore;
 class IPropertyDescriptionList;
 class IFileOperationProgressSink;
 //msvc6
-#else
-#if defined(_MSC_VER) && _MSC_VER >= 1600
+#else // start from 1500 instead of 1600 as Visual Studio 9 (2008) has it
+#if defined(_MSC_VER) && _MSC_VER >= 1500
 #include <shobjidl.h>
 #endif
 #endif 

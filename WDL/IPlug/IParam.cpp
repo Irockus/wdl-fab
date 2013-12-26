@@ -99,7 +99,7 @@ double IParam::GetNormalized(double nonNormalizedValue)
   return ToNormalizedParam(nonNormalizedValue, mMin, mMax, mShape);
 }
 
-void IParam::GetDisplayForHost(double value, bool normalized, char* rDisplay, bool withDisplayText)
+void IParam::GetDisplayForHost(double value, bool normalized, char* rDisplay, size_t rDisplayMaxSize, bool withDisplayText)
 {
   if (normalized) value = FromNormalizedParam(value, mMin, mMax, mShape);
 
@@ -109,7 +109,7 @@ void IParam::GetDisplayForHost(double value, bool normalized, char* rDisplay, bo
 
     if (CSTR_NOT_EMPTY(displayText))
     {
-      strcpy(rDisplay, displayText);
+      SAFE_STRNCPY(rDisplay, displayText, rDisplayMaxSize);
       return;
     }
   }
@@ -120,7 +120,7 @@ void IParam::GetDisplayForHost(double value, bool normalized, char* rDisplay, bo
 
   if (mDisplayPrecision == 0)
   {
-    sprintf(rDisplay, "%d", int(displayValue));
+    snprintf(rDisplay, rDisplayMaxSize, "%d", int(displayValue));
   }
 //   else if(mSignDisplay)
 //   {
@@ -130,7 +130,7 @@ void IParam::GetDisplayForHost(double value, bool normalized, char* rDisplay, bo
 //   }
   else
   {
-    sprintf(rDisplay, "%.*f", mDisplayPrecision, displayValue);
+    snprintf(rDisplay, rDisplayMaxSize, "%.*f", mDisplayPrecision, displayValue);
   }
 }
 

@@ -47,11 +47,14 @@ template<class PTRTYPE> class WDL_PtrList
     {
     }
 
-    PTRTYPE **GetList() { return (PTRTYPE**)m_hb.Get(); }
-    PTRTYPE *Get(INT_PTR index) { if (GetList() && index >= 0 && index < (INT_PTR)GetSize()) return GetList()[index]; return NULL; }
-    int GetSize(void) { return m_hb.GetSize()/sizeof(PTRTYPE *); }  
+    PTRTYPE **GetList() const { return (PTRTYPE**)m_hb.Get(); }
+    PTRTYPE *Get(INT_PTR index) const { if (GetList() && index >= 0 && index < (INT_PTR)GetSize()) return GetList()[index]; return NULL; }
+    int GetSize(void) const { 
+        int ret = m_hb.GetSize()/sizeof(PTRTYPE *);
+        return ret; 
+    }  
 
-    int Find(PTRTYPE *p)
+    int Find(PTRTYPE *p) const 
     {
       if (p)
       {

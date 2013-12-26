@@ -2654,7 +2654,7 @@ void SWELL_CB_Empty(HWND hwnd, int idx)
 BOOL SetDlgItemInt(HWND hwnd, int idx, int val, int issigned)
 {
   char buf[128];
-  sprintf(buf,issigned?"%d":"%u",val);
+  snprintf(buf,sizeof(buf), issigned?"%d":"%u",val);
   return SetDlgItemText(hwnd,idx,buf);
 }
 

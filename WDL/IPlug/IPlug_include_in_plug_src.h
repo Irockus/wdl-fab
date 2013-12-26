@@ -1,6 +1,5 @@
 #ifndef _IPLUG_INCLUDE_SRC_
 #define _IPLUG_INCLUDE_SRC_
-
 // Include this file in the main source for your plugin,
 // after #including the main header for your plugin.
 

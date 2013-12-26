@@ -208,13 +208,14 @@ class VorbisDecoder : public VorbisDecoderInterface
 			packets=0;
     }
 
-  private:
-
+public:
+    int m_samples_used;
+private:
     WDL_HeapBuf m_samples; // we let the size get as big as it needs to, so we don't worry about tons of mallocs/etc
+
 
     int m_err;
     int packets;
-    int m_samples_used;
 
     ogg_sync_state   oy; /* sync and verify incoming physical bitstream */
     ogg_stream_state os; /* take physical pages, weld into a logical

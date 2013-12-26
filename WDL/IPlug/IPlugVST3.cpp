@@ -67,7 +67,7 @@ IPlugVST3::IPlugVST3(IPlugInstanceInfo instanceInfo,
 
     for (int i = 0; i < NOutChannels(); i+=2) // stereo buses only
     {
-      sprintf(label, "Output %i", busNum+1);
+      snprintf(label, sizeof(label), "Output %i", busNum+1);
       SetOutputBusLabel(busNum++, label);
     }
   }
@@ -743,7 +743,7 @@ tresult PLUGIN_API IPlugVST3::getParamStringByValue(ParamID tag, ParamValue valu
   if (param)
   {
     char disp[MAX_PARAM_NAME_LEN];
-    param->GetDisplayForHost(valueNormalized, true, disp);
+    param->GetDisplayForHost(valueNormalized, true, disp, sizeof(disp));
     Steinberg::UString(string, 128).fromAscii(disp);
     return kResultTrue;
   }

@@ -40,6 +40,10 @@
 #include "RtMidi.h"
 #include <sstream>
 
+#if (_MSC_VER >=1500)
+#pragma comment(lib, "Winmm.lib") 
+#endif
+ 
 //*********************************************************************//
 //  Common RtMidi Definitions
 //*********************************************************************//

@@ -23,8 +23,16 @@
 
 */
 
+#if (_MSC_VER >=1500)
+#pragma once
+#define stricmp _stricmp
+#define strnicmp _strnicmp
+#endif
+
 #ifdef _WIN32
 #include <windows.h>
+
+
 #else
 #include <stdlib.h>
 #include <string.h>
