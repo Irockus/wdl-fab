@@ -303,6 +303,36 @@ void IGraphicsMac::ShowMouseCursor()
   }
 }
 
+static int getRespIdFromType(int type, CFOptionFlags response)
+{
+    switch (type)
+    {
+        case MB_OKCANCEL:
+            return (response == kCFUserNotificationDefaultResponse ? IDOK  : IDCANCEL) ;
+        case MB_YESNO:
+            return (response == kCFUserNotificationDefaultResponse ? IDYES : IDNO) ;
+        case MB_YESNOCANCEL:
+            return (response == kCFUserNotificationDefaultResponse ?   IDYES : 
+                   (response == kCFUserNotificationAlternateResponse ? IDNO : IDCANCEL)) ;
+            
+        case MB_ABORTRETRYIGNORE:
+            return (response == kCFUserNotificationDefaultResponse ?    IDABORT : 
+                   (response == kCFUserNotificationAlternateResponse ?  IDRETRY : IDIGNORE)) ;
+            
+        case MB_RETRYCANCEL:
+            return (response == kCFUserNotificationDefaultResponse ?    IDRETRY : IDCANCEL);
+            break;
+            
+        case MB_CANCELTRYCONTINUE: /* WINVER >= 0x0500 */
+            return (response == kCFUserNotificationDefaultResponse ?    IDCANCEL : 
+                   (response == kCFUserNotificationAlternateResponse ?  IDRETRY : IDIGNORE)) ;
+            
+        case MB_OK:
+        default:
+            return IDOK;
+    }
+}
+
 int IGraphicsMac::ShowMessageBox(const char* pText, const char* pCaption, int type)
 {
   int result = 0;
@@ -327,7 +357,26 @@ int IGraphicsMac::ShowMessageBox(const char* pText, const char* pCaption, int ty
       defaultButtonTitle = CFSTR("Yes");
       alternateButtonTitle = CFSTR("No");
       otherButtonTitle = CFSTR("Cancel");
-      break;
+          
+    case MB_ABORTRETRYIGNORE:
+          defaultButtonTitle = CFSTR("Abort");
+          alternateButtonTitle = CFSTR("Retry");
+          otherButtonTitle = CFSTR("Ignore");
+          break;
+          
+    case MB_RETRYCANCEL:
+          defaultButtonTitle = CFSTR("Retry");
+          alternateButtonTitle = CFSTR("Cancel");
+          break;
+
+    case MB_CANCELTRYCONTINUE: /* WINVER >= 0x0500 */
+          defaultButtonTitle = CFSTR("Cancel");
+          alternateButtonTitle = CFSTR("Try");
+          otherButtonTitle = CFSTR("Continue");
+          break;
+          
+      default:
+          break;
   }
 
   CFOptionFlags response = 0;
@@ -339,18 +388,7 @@ int IGraphicsMac::ShowMessageBox(const char* pText, const char* pCaption, int ty
   CFRelease(alertMessage);
   CFRelease(alertHeader);
 
-  switch (response) // TODO: check the return type, what about IDYES
-  {
-    case kCFUserNotificationDefaultResponse:
-      result = IDOK;
-      break;
-    case kCFUserNotificationAlternateResponse:
-      result = IDNO;
-      break;
-    case kCFUserNotificationOtherResponse:
-      result = IDCANCEL;
-      break;
-  }
+  result = getRespIdFromType(type, response);
 
   return result;
 }
