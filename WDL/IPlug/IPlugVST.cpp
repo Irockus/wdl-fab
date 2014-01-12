@@ -311,7 +311,7 @@ void IPlugVST::HostSpecificInit()
         LimitToStereoIO();
         break;
       default:
-            break;
+        break;
     }
 
     // This won't always solve a picky host problem -- for example Forte

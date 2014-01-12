@@ -39,7 +39,7 @@
 
       switch (pMenu->GetPrefix())
       {
-        case 0: prefixString = @""; break;
+        case 0: prefixString = [NSString stringWithUTF8String:""]; break;
         case 1: prefixString = [NSString stringWithFormat:@"%1d: ", i+1]; break;
         case 2: prefixString = [NSString stringWithFormat:@"%02d: ", i+1]; break;
         case 3: prefixString = [NSString stringWithFormat:@"%03d: ", i+1]; break;
@@ -576,7 +576,7 @@ inline int GetMouseOver(IGraphicsMac* pGraphics)
   [mTextFieldView setFocusRingType:NSFocusRingTypeNone];
 #endif
   
-#if __MAC_OS_X_VERSION_MAX_ALLOWED > 1060
+#if __MAC_OS_X_VERSION_MAX_ALLOWED > 1050
   [mTextFieldView setDelegate: (id<NSTextFieldDelegate>) self];
 #else
   [mTextFieldView setDelegate: self];
