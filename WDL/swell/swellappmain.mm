@@ -61,8 +61,8 @@ static bool IsMultiLineEditControl(NSView *cv, id fs)
   NSWindow *focwnd=[anEvent window];  
   NSView *dest_view=NULL;    // only valid when key message
   
-	if (etype==NSKeyDown||etype==NSKeyUp)
-	{
+    if (etype==NSKeyDown||etype==NSKeyUp)
+    {
     int msgtype = etype==NSKeyDown ? WM_KEYDOWN : WM_KEYUP;
     int flag,code=SWELL_MacKeyToWindowsKey(anEvent,&flag);
     
@@ -75,7 +75,7 @@ static bool IsMultiLineEditControl(NSView *cv, id fs)
         // perhaps it'd be good to have a flag on these to see if they want it .. i.e. SWELL_SetCarbonHostView_WantKeyFlgs()..
         while (f)
         {
-          #if __MAC_OS_X_VERSION_MAX_ALLOWED > 1060
+          #if __MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
           if ((dest_view=[(id<NSWindowDelegate>)f delegate]) && [dest_view respondsToSelector:@selector(swellIsCarbonHostingView)] && [(SWELL_hwndCarbonHost*)dest_view swellIsCarbonHostingView])
           #else
           if ((dest_view=[f delegate]) && [dest_view respondsToSelector:@selector(swellIsCarbonHostingView)] && [(SWELL_hwndCarbonHost*)dest_view swellIsCarbonHostingView])

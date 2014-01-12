@@ -43,11 +43,11 @@ int GetDecimalVersion(int version)
   return 10000 * ver + 100 * rmaj + rmin;
 }
 
-void GetVersionStr(int version, char* str)
+void GetVersionStr(int version, char* str, size_t maxSize)
 {
   int ver, rmaj, rmin;
   GetVersionParts(version, &ver, &rmaj, &rmin);
-  sprintf(str, "v%d.%d.%d", ver, rmaj, rmin);
+  snprintf(str, maxSize, "v%d.%d.%d", ver, rmaj, rmin);
 }
 
 #ifndef MAX_PATH
@@ -179,10 +179,10 @@ int IPlugBase::GetHostVersion(bool decimal)
   return mHostVersion;
 }
 
-void IPlugBase::GetHostVersionStr(char* str)
+void IPlugBase::GetHostVersionStr(char* str,size_t len )
 {
   GetHost();
-  GetVersionStr(mHostVersion, str);
+  GetVersionStr(mHostVersion, str, len);
 }
 
 bool IPlugBase::LegalIO(int nIn, int nOut)
@@ -221,7 +221,7 @@ void IPlugBase::SetHost(const char* host, int version)
   mHostVersion = version;
 
   char vStr[32];
-  GetVersionStr(version, vStr);
+  GetVersionStr(version, vStr, sizeof(vStr) );
   Trace(TRACELOC, "host_%sknown:%s:%s", (mHost == kHostUnknown ? "un" : ""), host, vStr);
 }
 #ifndef OS_IOS
@@ -256,9 +256,9 @@ int IPlugBase::GetEffectVersion(bool decimal)
   }
 }
 
-void IPlugBase::GetEffectVersionStr(char* str)
+void IPlugBase::GetEffectVersionStr(char* str, size_t len)
 {
-  GetVersionStr(mVersion, str);
+  GetVersionStr(mVersion, str, len-1);
 #if defined _DEBUG
   strcat(str, "D");
 #elif defined TRACER_BUILD
@@ -726,7 +726,7 @@ void IPlugBase::MakePresetFromBlob(char* name, const char* blob, int sizeOfChunk
 
 #define DEFAULT_USER_PRESET_NAME "user preset"
 
-void MakeDefaultUserPresetName(WDL_PtrList<IPreset>* pPresets, char* str)
+void MakeDefaultUserPresetName(WDL_PtrList<IPreset>* pPresets, char* str, size_t maxSize)
 {
   int nDefaultNames = 0;
   int n = pPresets->GetSize();
@@ -738,7 +738,7 @@ void MakeDefaultUserPresetName(WDL_PtrList<IPreset>* pPresets, char* str)
       ++nDefaultNames;
     }
   }
-  sprintf(str, "%s %d", DEFAULT_USER_PRESET_NAME, nDefaultNames + 1);
+  snprintf(str, maxSize, "%s %d", DEFAULT_USER_PRESET_NAME, nDefaultNames + 1);
 }
 
 void IPlugBase::EnsureDefaultPreset()
@@ -776,7 +776,7 @@ bool IPlugBase::RestorePreset(int idx)
     if (!(pPreset->mInitialized))
     {
       pPreset->mInitialized = true;
-      MakeDefaultUserPresetName(&mPresets, pPreset->mName);
+        MakeDefaultUserPresetName(&mPresets, pPreset->mName, MAX_PRESET_NAME_LEN);
       restoredOK = SerializeState(&(pPreset->mChunk));
     }
     else
@@ -986,17 +986,17 @@ void IPlugBase::DumpPresetSrcCode(const char* filename, const char* paramEnumNam
       switch (pParam->Type())
       {
         case IParam::kTypeBool:
-          sprintf(paramVal, "%s", (pParam->Bool() ? "true" : "false"));
+          snprintf(paramVal, sizeof(paramVal), "%s", (pParam->Bool() ? "true" : "false"));
           break;
         case IParam::kTypeInt:
-          sprintf(paramVal, "%d", pParam->Int());
+          snprintf(paramVal,  sizeof(paramVal), "%d", pParam->Int());
           break;
         case IParam::kTypeEnum:
-          sprintf(paramVal, "%d", pParam->Int());
+          snprintf(paramVal,  sizeof(paramVal), "%d", pParam->Int());
           break;
         case IParam::kTypeDouble:
         default:
-          sprintf(paramVal, "%.6f", pParam->Value());
+          snprintf(paramVal,  sizeof(paramVal), "%.6f", pParam->Value());
           break;
       }
       fprintf(fp, ",\n    %s, %s", paramEnumNames[i], paramVal);

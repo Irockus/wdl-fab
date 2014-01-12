@@ -105,7 +105,7 @@ public:
 
   const char* GetEffectName() { return mEffectName; }
   int GetEffectVersion(bool decimal);   // Decimal = VVVVRRMM, otherwise 0xVVVVRRMM.
-  void GetEffectVersionStr(char* str);
+  void GetEffectVersionStr(char* str, size_t maxLen);
   const char* GetMfrName() { return mMfrName; }
   const char* GetProductName() { return mProductName; }
 
@@ -149,7 +149,7 @@ public:
   virtual EAPI GetAPI() { return mAPI; }
   const char* GetAPIString();
   int GetHostVersion(bool decimal); // Decimal = VVVVRRMM, otherwise 0xVVVVRRMM.
-  void GetHostVersionStr(char* str);
+  void GetHostVersionStr(char* str, size_t len);
   const char* GetArchString();
   
   // Tell the host that the graphics resized.

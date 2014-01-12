@@ -113,21 +113,21 @@ static int arr_bsearch_mod(void *key, NSArray *arr, int (*compar)(const void *, 
 {
   size_t nmemb = [arr count];
   int base=0;
-	int lim, cmp;
-	int p;
+    int lim, cmp;
+    int p;
   
-	for (lim = nmemb; lim != 0; lim >>= 1) {
-		p = base + (lim >> 1);
-		cmp = compar(key, [arr objectAtIndex:p]);
-		if (cmp == 0) return (p);
-		if (cmp > 0) {	/* key > p: move right */
+    for (lim = nmemb; lim != 0; lim >>= 1) {
+        p = base + (lim >> 1);
+        cmp = compar(key, [arr objectAtIndex:p]);
+        if (cmp == 0) return (p);
+        if (cmp > 0) {    /* key > p: move right */
       // check to see if key is less than p+1, if it is, we're done
-			base = p + 1;
+            base = p + 1;
       if (base >= nmemb || compar(key,[arr objectAtIndex:base])<=0) return base;
-			lim--;
-		} /* else move left */
-	}
-	return 0;
+            lim--;
+        } /* else move left */
+    }
+    return 0;
 }
 
 
@@ -135,21 +135,21 @@ template<class T> static int ptrlist_bsearch_mod(void *key, WDL_PtrList<T> *arr,
 {
   size_t nmemb = arr->GetSize();
   int base=0;
-	int lim, cmp;
-	int p;
+    int lim, cmp;
+    int p;
   
-	for (lim = nmemb; lim != 0; lim >>= 1) {
-		p = base + (lim >> 1);
-		cmp = compar(key, arr->Get(p),ctx);
-		if (cmp == 0) return (p);
-		if (cmp > 0) {	/* key > p: move right */
+    for (lim = nmemb; lim != 0; lim >>= 1) {
+        p = base + (lim >> 1);
+        cmp = compar(key, arr->Get(p),ctx);
+        if (cmp == 0) return (p);
+        if (cmp > 0) {    /* key > p: move right */
       // check to see if key is less than p+1, if it is, we're done
-			base = p + 1;
+            base = p + 1;
       if (base >= nmemb || compar(key,arr->Get(base),ctx)<=0) return base;
-			lim--;
-		} /* else move left */
-	}
-	return 0;
+            lim--;
+        } /* else move left */
+    }
+    return 0;
 }
 
 
@@ -2654,7 +2654,7 @@ void SWELL_CB_Empty(HWND hwnd, int idx)
 BOOL SetDlgItemInt(HWND hwnd, int idx, int val, int issigned)
 {
   char buf[128];
-  sprintf(buf,issigned?"%d":"%u",val);
+  snprintf(buf,sizeof(buf), issigned?"%d":"%u",val);
   return SetDlgItemText(hwnd,idx,buf);
 }
 
@@ -3842,13 +3842,13 @@ void ListView_SetColumn(HWND h, int pos, const LVCOLUMN *lvc)
 
 bool ListView_DeleteColumn(HWND h, int pos)
 {
-	if (!h) return false;
-	if (![(id)h isKindOfClass:[SWELL_ListView class]]) return false;
-	SWELL_ListView *v=(SWELL_ListView *)h;
-	if (!v->m_cols || pos < 0 || pos >= v->m_cols->GetSize()) return false;
-	[v removeTableColumn:v->m_cols->Get(pos)];
-	v->m_cols->Delete(pos);
-	return true;
+    if (!h) return false;
+    if (![(id)h isKindOfClass:[SWELL_ListView class]]) return false;
+    SWELL_ListView *v=(SWELL_ListView *)h;
+    if (!v->m_cols || pos < 0 || pos >= v->m_cols->GetSize()) return false;
+    [v removeTableColumn:v->m_cols->Get(pos)];
+    v->m_cols->Delete(pos);
+    return true;
 }
 
 void ListView_GetItemText(HWND hwnd, int item, int subitem, char *text, int textmax)
@@ -4601,19 +4601,19 @@ static void __listview_mergesort_internal(void *base, size_t nmemb, size_t size,
 
   do
   {
-	  if (__listview_sortfunc(b1, b2, compar,parm) > 0)
-	  {
-	    memcpy(p, b2, size);
-	    b2 += size;
-	    n2--;
-	  }
-	  else
-	  {
-	    memcpy(p, b1, size);
-	    b1 += size;
-	    n1--;
-	  }
-  	p += size;
+      if (__listview_sortfunc(b1, b2, compar,parm) > 0)
+      {
+        memcpy(p, b2, size);
+        b2 += size;
+        n2--;
+      }
+      else
+      {
+        memcpy(p, b1, size);
+        b1 += size;
+        n1--;
+      }
+      p += size;
   }
   while (n1 > 0 && n2 > 0);
 
@@ -5141,7 +5141,7 @@ HANDLE GetClipboardData(UINT type)
   }
   
   if (h) m_clip_recs.Add(h);
-	return h;
+    return h;
 }
 
 void EmptyClipboard()
@@ -5718,7 +5718,7 @@ BOOL ShellExecute(HWND hwndDlg, const char *action,  const char *content1, const
   
   CGContextRef ctx = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
   
-  CGContextFillRect(ctx,r);	         
+  CGContextFillRect(ctx,r);             
   
 }
 @end

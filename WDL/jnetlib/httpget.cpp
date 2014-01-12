@@ -11,6 +11,9 @@
 #include "util.h"
 #include "httpget.h"
 
+#if (_MSC_VER >=1500)
+#define strnicmp _strnicmp
+#endif
 
 JNL_HTTPGet::JNL_HTTPGet(JNL_IAsyncDNS *dns, int recvbufsize, char *proxy)
 {

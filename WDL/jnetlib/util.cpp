@@ -7,8 +7,12 @@
 */
 
 #include "netinc.h"
-
 #include "util.h"
+
+#if (_MSC_VER >=1500)
+#pragma comment(lib, "Ws2_32.lib") 
+#pragma comment(lib, "Wininet.lib") 
+#endif
 
 int JNL::open_socketlib()
 {

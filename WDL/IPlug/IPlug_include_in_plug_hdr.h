@@ -1,3 +1,7 @@
+#ifdef _MSC_VER
+#pragma once
+#endif
+
 #ifndef _IPLUG_INCLUDE_HDR_
 #define _IPLUG_INCLUDE_HDR_
 
@@ -5,7 +9,7 @@
 // after #defining either VST_API or AU_API.
 #include <stdio.h>
 #include "IPlugOSDetect.h"
-#include "resource.h" // This is your plugin's resource.h
+//#include "resource.h" // This is your plugin's resource.h
 
 #ifdef VST_API
   #include "IPlugVST.h"
@@ -55,7 +59,6 @@
   //TODO
 #endif
 class IGraphics;
-/// MakeGraphics prototype declaration permits to decouple graphics implementation from other plugin implementations.
 IGraphics* MakeGraphics(IPlug* pPlug, int w, int h, int FPS = 0);
 
 #endif // _IPLUG_INCLUDE_HDR_

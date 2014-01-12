@@ -9,16 +9,18 @@
 #ifndef _NETINC_H_
 #define _NETINC_H_
 
-#ifdef _WIN32
+#ifdef WIN32
 
 #include <windows.h>
 #include <stdio.h>
 #include <time.h>
-#define strcasecmp(x,y) stricmp(x,y)
+#define strcasecmp(x,y) _stricmp(x,y)
 #define ERRNO (WSAGetLastError())
 #define SET_SOCK_BLOCK(s,block) { unsigned long __i=block?0:1; ioctlsocket(s,FIONBIO,&__i); }
+#ifndef EWOULDBLOCK
 #define EWOULDBLOCK WSAEWOULDBLOCK
 #define EINPROGRESS WSAEWOULDBLOCK
+#endif
 typedef int socklen_t;
 
 #else

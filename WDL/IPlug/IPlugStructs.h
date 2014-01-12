@@ -430,7 +430,7 @@ struct IPreset
   IPreset(int idx)
     : mInitialized(false)
   {
-    sprintf(mName, "%s", UNUSED_PRESET_NAME);
+    snprintf(mName, sizeof(mName), "%s", UNUSED_PRESET_NAME);
   }
 };
 

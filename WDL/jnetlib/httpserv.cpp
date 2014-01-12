@@ -15,6 +15,11 @@
 
 #include "httpserv.h"
 
+#if (_MSC_VER >=1500)
+#define stricmp _stricmp
+#define strnicmp _strnicmp
+#endif
+
 /*
   States for m_state:
     -1 error (connection closed, etc)

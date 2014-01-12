@@ -82,7 +82,8 @@ class WaveWriter
         if (!m_fp) return 0;
 
         char tbuf[44];
-        fwrite(tbuf,1,44,m_fp); // room for header
+		memset(tbuf, 0, sizeof(tbuf));
+		fwrite(tbuf, 1, sizeof(tbuf), m_fp); // room for header
       }
       m_bps=bps;
       m_nch=nch>1?2:1;

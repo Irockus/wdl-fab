@@ -40,6 +40,10 @@
 #include "RtMidi.h"
 #include <sstream>
 
+#if (_MSC_VER >=1500)
+#pragma comment(lib, "Winmm.lib") 
+#endif
+ 
 //*********************************************************************//
 //  Common RtMidi Definitions
 //*********************************************************************//
@@ -923,13 +927,13 @@ extern "C" void *alsaMidiHandler( void *ptr )
     doDecode = false;
     switch ( ev->type ) {
 
-		case SND_SEQ_EVENT_PORT_SUBSCRIBED:
+        case SND_SEQ_EVENT_PORT_SUBSCRIBED:
 #if defined(__RTMIDI_DEBUG__)
       std::cout << "RtMidiIn::alsaMidiHandler: port connection made!\n";
 #endif
       break;
 
-		case SND_SEQ_EVENT_PORT_UNSUBSCRIBED:
+        case SND_SEQ_EVENT_PORT_UNSUBSCRIBED:
 #if defined(__RTMIDI_DEBUG__)
       std::cerr << "RtMidiIn::alsaMidiHandler: port connection has closed!\n";
       std::cout << "sender = " << (int) ev->data.connect.sender.client << ":"
@@ -952,7 +956,7 @@ extern "C" void *alsaMidiHandler( void *ptr )
       if ( !( data->ignoreFlags & 0x04 ) ) doDecode = true;
       break;
 
-		case SND_SEQ_EVENT_SYSEX:
+        case SND_SEQ_EVENT_SYSEX:
       if ( (data->ignoreFlags & 0x01) ) break;
       if ( ev->data.ext.len > apiData->bufferSize ) {
         apiData->bufferSize = ev->data.ext.len;
@@ -1042,7 +1046,7 @@ void RtMidiIn :: initialize( const std::string& clientName )
   if ( result < 0 ) {
     errorString_ = "RtMidiIn::initialize: error creating ALSA sequencer input client object.";
     error( RtError::DRIVER_ERROR );
-	}
+    }
 
   // Set client name.
   snd_seq_set_client_name( seq, clientName.c_str() );
@@ -1070,27 +1074,27 @@ void RtMidiIn :: initialize( const std::string& clientName )
 // This function is used to count or get the pinfo structure for a given port number.
 unsigned int portInfo( snd_seq_t *seq, snd_seq_port_info_t *pinfo, unsigned int type, int portNumber )
 {
-	snd_seq_client_info_t *cinfo;
+    snd_seq_client_info_t *cinfo;
   int client;
   int count = 0;
-	snd_seq_client_info_alloca( &cinfo );
+    snd_seq_client_info_alloca( &cinfo );
 
-	snd_seq_client_info_set_client( cinfo, -1 );
-	while ( snd_seq_query_next_client( seq, cinfo ) >= 0 ) {
+    snd_seq_client_info_set_client( cinfo, -1 );
+    while ( snd_seq_query_next_client( seq, cinfo ) >= 0 ) {
     client = snd_seq_client_info_get_client( cinfo );
     if ( client == 0 ) continue;
-		// Reset query info
-		snd_seq_port_info_set_client( pinfo, client );
-		snd_seq_port_info_set_port( pinfo, -1 );
-		while ( snd_seq_query_next_port( seq, pinfo ) >= 0 ) {
+        // Reset query info
+        snd_seq_port_info_set_client( pinfo, client );
+        snd_seq_port_info_set_port( pinfo, -1 );
+        while ( snd_seq_query_next_port( seq, pinfo ) >= 0 ) {
       unsigned int atyp = snd_seq_port_info_get_type( pinfo );
       if ( ( atyp & SND_SEQ_PORT_TYPE_MIDI_GENERIC ) == 0 ) continue;
       unsigned int caps = snd_seq_port_info_get_capability( pinfo );
       if ( ( caps & type ) != type ) continue;
       if ( count == portNumber ) return 1;
       ++count;
-		}
-	}
+        }
+    }
 
   // If a negative portNumber was used, return the port count.
   if ( portNumber < 0 ) return count;
@@ -1111,8 +1115,8 @@ void RtMidiIn :: openPort( unsigned int portNumber, const std::string portName )
     error( RtError::NO_DEVICES_FOUND );
   }
 
-	snd_seq_port_info_t *pinfo;
-	snd_seq_port_info_alloca( &pinfo );
+    snd_seq_port_info_t *pinfo;
+    snd_seq_port_info_alloca( &pinfo );
   std::ostringstream ost;
   AlsaMidiData *data = static_cast<AlsaMidiData *> (apiData_);
   if ( portInfo( data->seq, pinfo, SND_SEQ_PORT_CAP_READ|SND_SEQ_PORT_CAP_SUBS_READ, (int) portNumber ) == 0 ) {
@@ -1195,11 +1199,11 @@ void RtMidiIn :: openVirtualPort( std::string portName )
     snd_seq_port_info_t *pinfo;
     snd_seq_port_info_alloca( &pinfo );
     snd_seq_port_info_set_capability( pinfo,
-				      SND_SEQ_PORT_CAP_WRITE |
-				      SND_SEQ_PORT_CAP_SUBS_WRITE );
+                      SND_SEQ_PORT_CAP_WRITE |
+                      SND_SEQ_PORT_CAP_SUBS_WRITE );
     snd_seq_port_info_set_type( pinfo,
-				SND_SEQ_PORT_TYPE_MIDI_GENERIC |
-				SND_SEQ_PORT_TYPE_APPLICATION );
+                SND_SEQ_PORT_TYPE_MIDI_GENERIC |
+                SND_SEQ_PORT_TYPE_APPLICATION );
     snd_seq_port_info_set_midi_channels(pinfo, 16);
 #ifndef AVOID_TIMESTAMPING
     snd_seq_port_info_set_timestamping(pinfo, 1);
@@ -1278,8 +1282,8 @@ RtMidiIn :: ~RtMidiIn()
 
 unsigned int RtMidiIn :: getPortCount()
 {
-	snd_seq_port_info_t *pinfo;
-	snd_seq_port_info_alloca( &pinfo );
+    snd_seq_port_info_t *pinfo;
+    snd_seq_port_info_alloca( &pinfo );
 
   AlsaMidiData *data = static_cast<AlsaMidiData *> (apiData_);
   return portInfo( data->seq, pinfo, SND_SEQ_PORT_CAP_READ|SND_SEQ_PORT_CAP_SUBS_READ, -1 );
@@ -1319,8 +1323,8 @@ std::string RtMidiIn :: getPortName( unsigned int portNumber )
 
 unsigned int RtMidiOut :: getPortCount()
 {
-	snd_seq_port_info_t *pinfo;
-	snd_seq_port_info_alloca( &pinfo );
+    snd_seq_port_info_t *pinfo;
+    snd_seq_port_info_alloca( &pinfo );
 
   AlsaMidiData *data = static_cast<AlsaMidiData *> (apiData_);
   return portInfo( data->seq, pinfo, SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE, -1 );
@@ -1361,7 +1365,7 @@ void RtMidiOut :: initialize( const std::string& clientName )
   if ( result < 0 ) {
     errorString_ = "RtMidiOut::initialize: error creating ALSA sequencer client object.";
     error( RtError::DRIVER_ERROR );
-	}
+    }
 
   // Set client name.
   snd_seq_set_client_name( seq, clientName.c_str() );
@@ -1403,8 +1407,8 @@ void RtMidiOut :: openPort( unsigned int portNumber, const std::string portName 
     error( RtError::NO_DEVICES_FOUND );
   }
 
-	snd_seq_port_info_t *pinfo;
-	snd_seq_port_info_alloca( &pinfo );
+    snd_seq_port_info_t *pinfo;
+    snd_seq_port_info_alloca( &pinfo );
   std::ostringstream ost;
   AlsaMidiData *data = static_cast<AlsaMidiData *> (apiData_);
   if ( portInfo( data->seq, pinfo, SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE, (int) portNumber ) == 0 ) {
@@ -2034,7 +2038,7 @@ static void CALLBACK midiInputCallback( HMIDIIN hmin,
     // buffer when an application closes and in this case, we should
     // avoid requeueing it, else the computer suddenly reboots after
     // one or two minutes.
-	if ( apiData->sysexBuffer[sysex->dwUser]->dwBytesRecorded > 0 ) {
+    if ( apiData->sysexBuffer[sysex->dwUser]->dwBytesRecorded > 0 ) {
     //if ( sysex->dwBytesRecorded > 0 ) {
       MMRESULT result = midiInAddBuffer( apiData->inHandle, apiData->sysexBuffer[sysex->dwUser], sizeof(MIDIHDR) );
       if ( result != MMSYSERR_NOERROR )

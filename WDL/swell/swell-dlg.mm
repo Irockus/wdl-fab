@@ -1159,7 +1159,7 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
 - (void)mouseUp:(NSEvent *)theEvent
 {
   if (!m_enabled) return;
-	if (m_isfakerightmouse) [self rightMouseUp:theEvent];
+    if (m_isfakerightmouse) [self rightMouseUp:theEvent];
   else SWELL_SendMouseMessage(self,WM_LBUTTONUP,theEvent);
 }
 - (void)scrollWheel:(NSEvent *)theEvent
@@ -1658,7 +1658,7 @@ static HWND last_key_window;
 
 #define SWELLDIALOGCOMMONIMPLEMENTS_WND(ISMODAL) \
 -(BOOL)acceptsFirstResponder { return m_enabled?YES:NO; } \
-- (BOOL)acceptsFirstMouse:(NSEvent *)theEvent {	return m_enabled?YES:NO; } \
+- (BOOL)acceptsFirstMouse:(NSEvent *)theEvent {    return m_enabled?YES:NO; } \
 - (void)setFrame:(NSRect)frameRect display:(BOOL)displayFlag \
 { \
   [super setFrame:frameRect display:displayFlag]; \
@@ -2190,7 +2190,7 @@ SWELL_DialogResourceIndex *SWELL_curmodule_dialogresource_head; // this eventual
 static void PrintAllHIViews(HIViewRef f, const char *bla)
 {
   char tmp[4096];
-  sprintf(tmp,"%s:%08x",bla,f);
+  snprintf(tmp,sizeof(tmp), "%s:%08x",bla,f);
   
   HIRect r;
   HIViewGetFrame(f,&r);
@@ -2369,7 +2369,7 @@ void SWELL_CarbonWndHost_SetWantAllKeys(void* carbonhost, bool want)
     //CFRetain(wndref);
 
     m_cwnd = [[NSWindow alloc] initWithWindowRef:wndref];
-#if __MAC_OS_X_VERSION_MAX_ALLOWED > 1060
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 1060
     [m_cwnd setDelegate:(id<NSWindowDelegate>)self];
 #else
     [m_cwnd setDelegate: self];
@@ -2660,7 +2660,7 @@ HWND SWELL_GetAudioUnitCocoaView(HWND parent, AudioUnit aunit, AudioUnitCocoaVie
   }
 
   if (!bundle) return 0;
-	
+    
   Class factoryclass = [bundle classNamed:classname];
   if (![factoryclass conformsToProtocol: @protocol(AUCocoaUIBase)]) return 0;
   if (![factoryclass instancesRespondToSelector: @selector(uiViewForAudioUnit:withSize:)]) return 0;

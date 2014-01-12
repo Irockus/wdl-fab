@@ -66,7 +66,7 @@ struct LogFile
     #else
     char logFilePath[100];
     char* home = getenv("HOME");
-    sprintf(logFilePath, "%s/Desktop/%s", home, LOGFILE);
+    snprintf(logFilePath, sizeof(logFilePath), "%s/Desktop/%s", home, LOGFILE);
     mFP = fopen(logFilePath, "w");
     #endif
     assert(mFP);
@@ -148,27 +148,27 @@ const char* CurrentTime()
   time_t t = time(0);
   tm* pT = localtime(&t);
 
-	char cStr[32];
-	strftime(cStr, 32, "%Y%m%d %H:%M ", pT);
+    char cStr[32];
+    strftime(cStr, sizeof(cStr), "%Y%m%d %H:%M ", pT);
 
-	int tz = 60 * pT->tm_hour + pT->tm_min;
-	int yday = pT->tm_yday;
-	pT = gmtime(&t);
-	tz -= 60 * pT->tm_hour + pT->tm_min;
-	yday -= pT->tm_yday;
-	if (yday != 0)
-	{
-		if (yday > 1) yday = -1;
-		else if (yday < -1) yday = 1;
-		tz += 24 * 60 * yday;
-	}
-	int i = strlen(cStr);
-	cStr[i++] = tz >= 0 ? '+' : '-';
-	if (tz < 0) tz = -tz;
-	sprintf(&cStr[i], "%02d%02d", tz / 60, tz % 60);
+    int tz = 60 * pT->tm_hour + pT->tm_min;
+    int yday = pT->tm_yday;
+    pT = gmtime(&t);
+    tz -= 60 * pT->tm_hour + pT->tm_min;
+    yday -= pT->tm_yday;
+    if (yday != 0)
+    {
+        if (yday > 1) yday = -1;
+        else if (yday < -1) yday = 1;
+        tz += 24 * 60 * yday;
+    }
+    int i = strlen(cStr);
+    cStr[i++] = tz >= 0 ? '+' : '-';
+    if (tz < 0) tz = -tz;
+    sprintf(&cStr[i], "%02d%02d", tz / 60, tz % 60);
   
   static char sTimeStr[32];
-  strcpy(sTimeStr, cStr);
+  strncpy(sTimeStr, cStr, sizeof(sTimeStr)-1);
   return sTimeStr;
 }
 

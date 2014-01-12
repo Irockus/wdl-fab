@@ -1,8 +1,8 @@
 #ifndef __IAUTOGUI__
 #define __IAUTOGUI__
 
-#include "IControl.h"
-#include "wdlstring.h"
+#include <IControl.h>
+#include <../wdlstring.h>
 
 #define SLIDER_HANDLE_WIDTH 5
 
@@ -50,7 +50,7 @@ public:
     pGraphics->FillRoundRect(&mFGColor, &sliderHandleRect, &mBlend, 2, true);
 
     char cstr[32];    
-    mPlug->GetParam(mParamIdx)->GetDisplayForHost(cstr);
+    mPlug->GetParam(mParamIdx)->GetDisplayForHost(cstr, sizeof(cstr));
     mParamValueStr.Set(cstr);
     mParamValueStr.Append(" ");
     mParamValueStr.Append(mPlug->GetParam(mParamIdx)->GetLabelForHost());
@@ -171,7 +171,7 @@ public:
     pGraphics->DrawLine(&mFGColor, x1, y1, x2, y2, &mBlend, true);
     
     char cstr[32];    
-    mPlug->GetParam(mParamIdx)->GetDisplayForHost(cstr);
+    mPlug->GetParam(mParamIdx)->GetDisplayForHost(cstr, sizeof(cstr));
     mParamValueStr.Set(cstr);
     mParamValueStr.Append(" ");
     mParamValueStr.Append(mPlug->GetParam(mParamIdx)->GetLabelForHost());

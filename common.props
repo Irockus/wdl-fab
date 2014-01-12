@@ -15,6 +15,7 @@
     <VST2_32_PATH>$(CommonProgramFiles)\VSTPlugins</VST2_32_PATH>
     <VST2_64_PATH>$(CommonProgramW6432)\VSTPlugins</VST2_64_PATH>
     <COPY_VST2>0</COPY_VST2>
+    <APP_DEFS>SA_API;__WINDOWS_DS__;__WINDOWS_MM__;__WINDOWS_ASIO__</APP_DEFS>
   </PropertyGroup>
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
@@ -69,6 +70,10 @@
     </BuildMacro>
     <BuildMacro Include="COPY_VST2">
       <Value>$(COPY_VST2)</Value>
+    </BuildMacro>
+    <BuildMacro Include="APP_DEFS">
+      <Value>$(APP_DEFS)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
   </ItemGroup>
 </Project>

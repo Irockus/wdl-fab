@@ -33,7 +33,7 @@ struct CocoaAutoReleasePool
 @end
 
 IGraphicsMac::IGraphicsMac(IPlugBase* pPlug, int w, int h, int refreshFPS)
-  :	IGraphics(pPlug, w, h, refreshFPS),
+  :    IGraphics(pPlug, w, h, refreshFPS),
     #ifndef IPLUG_NO_CARBON_SUPPORT
     mGraphicsCarbon(0),
     #endif
@@ -303,56 +303,94 @@ void IGraphicsMac::ShowMouseCursor()
   }
 }
 
+static int getRespIdFromType(int type, CFOptionFlags response)
+{
+    switch (type)
+    {
+        case MB_OKCANCEL:
+            return (response == kCFUserNotificationDefaultResponse ? IDOK  : IDCANCEL) ;
+        case MB_YESNO:
+            return (response == kCFUserNotificationDefaultResponse ? IDYES : IDNO) ;
+        case MB_YESNOCANCEL:
+            return (response == kCFUserNotificationDefaultResponse ?   IDYES : 
+                   (response == kCFUserNotificationAlternateResponse ? IDNO : IDCANCEL)) ;
+            
+        case MB_ABORTRETRYIGNORE:
+            return (response == kCFUserNotificationDefaultResponse ?    IDABORT : 
+                   (response == kCFUserNotificationAlternateResponse ?  IDRETRY : IDIGNORE)) ;
+            
+        case MB_RETRYCANCEL:
+            return (response == kCFUserNotificationDefaultResponse ?    IDRETRY : IDCANCEL);
+            break;
+            
+        case MB_CANCELTRYCONTINUE: /* WINVER >= 0x0500 */
+            return (response == kCFUserNotificationDefaultResponse ?    IDCANCEL : 
+                   (response == kCFUserNotificationAlternateResponse ?  IDRETRY : IDIGNORE)) ;
+            
+        case MB_OK:
+        default:
+            return IDOK;
+    }
+}
+
 int IGraphicsMac::ShowMessageBox(const char* pText, const char* pCaption, int type)
 {
-  int result = 0;
-
-  CFStringRef defaultButtonTitle = NULL;
-  CFStringRef alternateButtonTitle = NULL;
-  CFStringRef otherButtonTitle = NULL;
-
-  CFStringRef alertMessage = CFStringCreateWithCStringNoCopy(NULL, pText, 0, kCFAllocatorNull);
-  CFStringRef alertHeader = CFStringCreateWithCStringNoCopy(NULL, pCaption, 0, kCFAllocatorNull);
-
-  switch (type)
-  {
-    case MB_OKCANCEL:
-      alternateButtonTitle = CFSTR("Cancel");
-      break;
-    case MB_YESNO:
-      defaultButtonTitle = CFSTR("Yes");
-      alternateButtonTitle = CFSTR("No");
-      break;
-    case MB_YESNOCANCEL:
-      defaultButtonTitle = CFSTR("Yes");
-      alternateButtonTitle = CFSTR("No");
-      otherButtonTitle = CFSTR("Cancel");
-      break;
-  }
-
-  CFOptionFlags response = 0;
-  CFUserNotificationDisplayAlert(0, kCFUserNotificationNoteAlertLevel, NULL, NULL, NULL,
-                                 alertHeader, alertMessage,
-                                 defaultButtonTitle, alternateButtonTitle, otherButtonTitle,
-                                 &response);
-
-  CFRelease(alertMessage);
-  CFRelease(alertHeader);
-
-  switch (response) // TODO: check the return type, what about IDYES
-  {
-    case kCFUserNotificationDefaultResponse:
-      result = IDOK;
-      break;
-    case kCFUserNotificationAlternateResponse:
-      result = IDNO;
-      break;
-    case kCFUserNotificationOtherResponse:
-      result = IDCANCEL;
-      break;
-  }
-
-  return result;
+    int result = 0;
+    
+    CFStringRef defaultButtonTitle = NULL;
+    CFStringRef alternateButtonTitle = NULL;
+    CFStringRef otherButtonTitle = NULL;
+    
+    CFStringRef alertMessage = CFStringCreateWithCStringNoCopy(NULL, pText, 0, kCFAllocatorNull);
+    CFStringRef alertHeader = CFStringCreateWithCStringNoCopy(NULL, pCaption, 0, kCFAllocatorNull);
+    
+    switch (type)
+    {
+        case MB_OKCANCEL:
+            alternateButtonTitle = CFSTR("Cancel");
+            break;
+        case MB_YESNO:
+            defaultButtonTitle = CFSTR("Yes");
+            alternateButtonTitle = CFSTR("No");
+            break;
+        case MB_YESNOCANCEL:
+            defaultButtonTitle = CFSTR("Yes");
+            alternateButtonTitle = CFSTR("No");
+            otherButtonTitle = CFSTR("Cancel");
+            
+        case MB_ABORTRETRYIGNORE:
+            defaultButtonTitle = CFSTR("Abort");
+            alternateButtonTitle = CFSTR("Retry");
+            otherButtonTitle = CFSTR("Ignore");
+            break;
+            
+        case MB_RETRYCANCEL:
+            defaultButtonTitle = CFSTR("Retry");
+            alternateButtonTitle = CFSTR("Cancel");
+            break;
+            
+        case MB_CANCELTRYCONTINUE: /* WINVER >= 0x0500 */
+            defaultButtonTitle = CFSTR("Cancel");
+            alternateButtonTitle = CFSTR("Try");
+            otherButtonTitle = CFSTR("Continue");
+            break;
+            
+        default:
+            break;
+    }
+    
+    CFOptionFlags response = 0;
+    CFUserNotificationDisplayAlert(0, kCFUserNotificationNoteAlertLevel, NULL, NULL, NULL,
+                                   alertHeader, alertMessage,
+                                   defaultButtonTitle, alternateButtonTitle, otherButtonTitle,
+                                   &response);
+    
+    CFRelease(alertMessage);
+    CFRelease(alertHeader);
+    
+    result = getRespIdFromType(type, response);
+    
+    return result;
 }
 
 void IGraphicsMac::ForceEndUserEdit()
@@ -520,9 +558,9 @@ void IGraphicsMac::PromptForFile(WDL_String* pFilename, EFileAction action, WDL_
 bool IGraphicsMac::PromptForColor(IColor* pColor, char* prompt)
 {
 //  NSColorPanel *colorPanel = [NSColorPanel sharedColorPanel];
-//	[colorPanel setTarget:self]; // target??
-//	[colorPanel setAction:@selector(colorPanelAction:)];
-//	[NSApp orderFrontColorPanel:self];
+//    [colorPanel setTarget:self]; // target??
+//    [colorPanel setAction:@selector(colorPanelAction:)];
+//    [NSApp orderFrontColorPanel:self];
 
   return false;
 }

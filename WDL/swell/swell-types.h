@@ -621,9 +621,11 @@ __attribute__ ((visibility ("default"))) BOOL WINAPI DllMain(HINSTANCE hInstDLL,
  */
 #define MB_OK 0
 #define MB_OKCANCEL 1
+#define MB_ABORTRETRYIGNORE 2
 #define MB_YESNOCANCEL 3
 #define MB_YESNO 4
 #define MB_RETRYCANCEL 5
+#define MB_CANCELTRYCONTINUE 6 /* WINVER >= 0x0500 */
 
 #define MB_ICONERROR 0
 #define MB_ICONSTOP 0
@@ -886,7 +888,7 @@ __attribute__ ((visibility ("default"))) BOOL WINAPI DllMain(HINSTANCE hInstDLL,
 #define WM_MOVE                         0x0003
 #define WM_SIZE                         0x0005
 #define WM_ACTIVATE                     0x0006
-#define WM_SETTEXT			0x000C // not implemented on OSX, used internally on Linux
+#define WM_SETTEXT            0x000C // not implemented on OSX, used internally on Linux
 #define WM_PAINT                        0x000F
 #define WM_CLOSE                        0x0010
 #define WM_ERASEBKGND                   0x0014
@@ -898,7 +900,7 @@ __attribute__ ((visibility ("default"))) BOOL WINAPI DllMain(HINSTANCE hInstDLL,
 #define WM_DRAWITEM                     0x002B
 #define WM_SETFONT                      0x0030
 #define WM_GETFONT                      0x0031
-#define WM_GETOBJECT 			0x003D // implemented differently than win32 -- see virtwnd/virtwnd-nsaccessibility.mm
+#define WM_GETOBJECT             0x003D // implemented differently than win32 -- see virtwnd/virtwnd-nsaccessibility.mm
 #define WM_NOTIFY                       0x004E
 
 #define WM_CONTEXTMENU                  0x007B
@@ -936,7 +938,7 @@ __attribute__ ((visibility ("default"))) BOOL WINAPI DllMain(HINSTANCE hInstDLL,
 #define WM_HSCROLL                      0x0114
 #define WM_VSCROLL                      0x0115
 #define WM_INITMENUPOPUP                0x0117
-#define WM_GESTURE 			0x0119
+#define WM_GESTURE             0x0119
 #define WM_MOUSEFIRST                   0x0200
 #define WM_MOUSEMOVE                    0x0200
 #define WM_LBUTTONDOWN                  0x0201

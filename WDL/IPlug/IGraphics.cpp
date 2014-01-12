@@ -157,7 +157,7 @@ inline int LiceBlendMode(const IChannelBlend* pBlend)
 }
 
 IGraphics::IGraphics(IPlugBase* pPlug, int w, int h, int refreshFPS)
-  :	mPlug(pPlug)
+  :    mPlug(pPlug)
   , mWidth(w)
   , mHeight(h)
   , mIdleTicks(0)
@@ -372,7 +372,7 @@ void IGraphics::PromptUserInput(IControl* pControl, IParam* pParam, IRECT* pText
 
   if ( (type == IParam::kTypeEnum || type == IParam::kTypeBool) && n)
   {
-    pParam->GetDisplayForHost(currentText);
+    pParam->GetDisplayForHost(currentText, sizeof(currentText));
     IPopupMenu menu;
 
     // Fill the menu
@@ -394,7 +394,7 @@ void IGraphics::PromptUserInput(IControl* pControl, IParam* pParam, IRECT* pText
   // TODO: what if there are Int/Double Params with a display text e.g. -96db = "mute"
   else // type == IParam::kTypeInt || type == IParam::kTypeDouble
   {
-    pParam->GetDisplayForHostNoDisplayText(currentText);
+    pParam->GetDisplayForHostNoDisplayText(currentText, sizeof(currentText));
     CreateTextEntry(pControl, pControl->GetText(), pTextRect, currentText, pParam );
   }
 
@@ -476,7 +476,7 @@ bool IGraphics::DrawRotatedMask(IBitmap* pIBase, IBitmap* pIMask, IBitmap* pITop
   double dA = angle * PI / 180.0;
   int W = pIBase->W;
   int H = pIBase->H;
-  //	RECT srcR = { 0, 0, W, H };
+  //    RECT srcR = { 0, 0, W, H };
   float xOffs = (W % 2 ? -0.5f : 0.0f);
 
   if (!mTmpBitmap)
@@ -494,7 +494,7 @@ bool IGraphics::DrawRotatedMask(IBitmap* pIBase, IBitmap* pIMask, IBitmap* pITop
   IRECT r = IRECT(x, y, x + W, y + H).Intersect(&mDrawRECT);
   _LICE::LICE_Blit(mDrawBitmap, mTmpBitmap, r.L, r.T, r.L - x, r.T - y, r.R - r.L, r.B - r.T,
                    LiceWeight(pBlend), LiceBlendMode(pBlend));
-  //	ReaperExt::LICE_Blit(mDrawBitmap, mTmpBitmap, x, y, &srcR, LiceWeight(pBlend), LiceBlendMode(pBlend));
+  //    ReaperExt::LICE_Blit(mDrawBitmap, mTmpBitmap, x, y, &srcR, LiceWeight(pBlend), LiceBlendMode(pBlend));
   return true;
 }
 

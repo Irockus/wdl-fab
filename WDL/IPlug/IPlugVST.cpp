@@ -312,6 +312,8 @@ void IPlugVST::HostSpecificInit()
       case kHostSAWStudio:
         LimitToStereoIO();
         break;
+      default:
+            break;
     }
 
     // This won't always solve a picky host problem -- for example Forte
@@ -322,6 +324,8 @@ void IPlugVST::HostSpecificInit()
     OnHostIdentified();
   }
 }
+
+#define VST_MAX_SUPPORTED_STR_LEN 8
 
 VstIntPtr VSTCALLBACK IPlugVST::VSTDispatcher(AEffect *pEffect, VstInt32 opCode, VstInt32 idx, VstIntPtr value, void *ptr, float opt)
 {
@@ -372,7 +376,7 @@ VstIntPtr VSTCALLBACK IPlugVST::VSTDispatcher(AEffect *pEffect, VstInt32 opCode,
     {
       if (idx >= 0 && idx < _this->NParams())
       {
-        _this->GetParam(idx)->GetDisplayForHost((char*) ptr);
+        _this->GetParam(idx)->GetDisplayForHost((char*) ptr, VST_MAX_SUPPORTED_STR_LEN); // VST interface supports by default a max of 7+1 0 terminated chars
       }
       return 0;
     }
@@ -604,11 +608,11 @@ VstIntPtr VSTCALLBACK IPlugVST::VSTDispatcher(AEffect *pEffect, VstInt32 opCode,
 
         if (_this->GetInputLabel(idx)->GetLength())
         {
-          sprintf(pp->label, "%s", _this->GetInputLabel(idx)->Get());
+          snprintf(pp->label, kVstMaxLabelLen, "%s", _this->GetInputLabel(idx)->Get());
         }
         else
         {
-          sprintf(pp->label, "Input %d", idx + 1);
+          snprintf(pp->label, kVstMaxLabelLen, "Input %d", idx + 1);
         }
 
         return 1;
@@ -628,11 +632,11 @@ VstIntPtr VSTCALLBACK IPlugVST::VSTDispatcher(AEffect *pEffect, VstInt32 opCode,
 
         if (_this->GetOutputLabel(idx)->GetLength())
         {
-          sprintf(pp->label, "%s", _this->GetOutputLabel(idx)->Get());
+          snprintf(pp->label, kVstMaxLabelLen, "%s", _this->GetOutputLabel(idx)->Get());
         }
         else
         {
-          sprintf(pp->label, "Output %d", idx + 1);
+          snprintf(pp->label, kVstMaxLabelLen, "Output %d", idx + 1);
         }
 
         return 1;
@@ -749,7 +753,7 @@ VstIntPtr VSTCALLBACK IPlugVST::VSTDispatcher(AEffect *pEffect, VstInt32 opCode,
       {
         if (value >= 0 && value < _this->NParams())
         {
-          _this->GetParam(value)->GetDisplayForHost((double) opt, true, (char*) ptr);
+          _this->GetParam(value)->GetDisplayForHost((double) opt, true, (char*) ptr, VST_MAX_SUPPORTED_STR_LEN);
         }
         return 0xbeef;
       }

@@ -1,5 +1,8 @@
 #ifndef _IGRAPHICS_
 #define _IGRAPHICS_
+#ifdef WIN32
+#pragma warning(disable:4996) // Pointer size cast mismatch.
+#endif
 
 #include "IPlugStructs.h"
 #include "IPopupMenu.h"
