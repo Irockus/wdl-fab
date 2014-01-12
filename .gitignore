@@ -40,3 +40,5 @@ Icon?
 IPlugExamples/build_errors.log
 
 /IPlugExamples/IPlugEEL/libEEL/build/
+*.bak
+*.orig
