@@ -127,9 +127,8 @@ bool IGraphicsMac::DrawScreen(IRECT* pR)
 
 bool IGraphicsMac::MeasureIText(IText* pTxt, char* str, IRECT* pR)
 {
-#if defined(SWELL_FORCE_COCOA_TEXT) || defined(ARCH_64BIT)
   CocoaAutoReleasePool pool;
-#endif
+
   return DrawIText(pTxt, str, pR, true);
 }
 
@@ -155,6 +154,9 @@ void* IGraphicsMac::OpenCocoaWindow(void* pParentView)
   {
     [(NSView*) pParentView addSubview: (IGRAPHICS_COCOA*) mGraphicsCocoa];
   }
+    
+  UpdateTooltips();
+  
   // Else we are being called by IGraphicsCocoaFactory, which is being called by a Cocoa AU host,
   // and the host will take care of attaching the view to the window.
   return mGraphicsCocoa;
@@ -241,6 +243,7 @@ void IGraphicsMac::CloseWindow()
   if (mGraphicsCocoa)
   {
     IGRAPHICS_COCOA* graphicscocoa = (IGRAPHICS_COCOA*)mGraphicsCocoa;
+    [graphicscocoa removeAllToolTips];
     [graphicscocoa killTimer];
     mGraphicsCocoa = 0;
 
@@ -407,19 +410,44 @@ void IGraphicsMac::ForceEndUserEdit()
   }
 }
 
+void IGraphicsMac::UpdateTooltips()
+{
+  if (!(mGraphicsCocoa && TooltipsEnabled())) return;
+
+  CocoaAutoReleasePool pool;
+  
+  [(IGRAPHICS_COCOA*) mGraphicsCocoa removeAllToolTips];
+  
+  IControl** ppControl = mControls.GetList();
+  
+  for (int i = 0, n = mControls.GetSize(); i < n; ++i, ++ppControl) 
+  {
+    IControl* pControl = *ppControl;
+    const char* tooltip = pControl->GetTooltip();
+    if (tooltip && !pControl->IsHidden()) 
+    {
+      IRECT* pR = pControl->GetTargetRECT();
+      if (!pControl->GetTargetRECT()->Empty()) 
+      {
+        [(IGRAPHICS_COCOA*) mGraphicsCocoa registerToolTip: pR];
+      }
+    }
+  }
+}
+
 const char* IGraphicsMac::GetGUIAPI()
 {
   #ifndef IPLUG_NO_CARBON_SUPPORT
   if (mGraphicsCarbon)
   {
     if (mGraphicsCarbon->GetIsComposited())
-      return "Carbon Composited gui";
+      return "Carbon Composited GUI";
     else
-      return "Carbon Non-Composited gui";
+      return "Carbon Non-Composited GUI";
   }
   else
   #endif
-    return "Cocoa gui";
+    return "Cocoa GUI";
 }
 
 void IGraphicsMac::HostPath(WDL_String* pPath)
@@ -456,9 +484,16 @@ void IGraphicsMac::PluginPath(WDL_String* pPath)
 
 void IGraphicsMac::DesktopPath(WDL_String* pPath)
 {
-  char* home = getenv("HOME");
-  pPath->Set(home);
-  pPath->Append("/Desktop/");
+  NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSUserDomainMask, YES);
+  NSString *desktopDirectory = [paths objectAtIndex:0];
+  pPath->Set([desktopDirectory UTF8String]);
+}
+
+void IGraphicsMac::AppSupportPath(WDL_String* pPath)
+{
+  NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
+  NSString *applicationSupportDirectory = [paths objectAtIndex:0];
+  pPath->Set([applicationSupportDirectory UTF8String]);
 }
 
 // extensions = "txt wav" for example

@@ -6,6 +6,111 @@
 
 #define SLIDER_HANDLE_WIDTH 5
 
+struct AGTab 
+{
+  IRECT mRECT;
+  WDL_TypedBuf<int> mParamsToMux;
+  WDL_String mLabel;
+  
+  AGTab(IRECT rect, const char* pLabel)
+  {
+    mRECT = rect;
+    mLabel.Set(pLabel);
+  }
+  
+};
+
+class AGPanelTabs : public IControl
+{
+private:
+  WDL_PtrList<AGTab> mTabs;
+  IColor mBGColor, mFGColor, mOnColor;
+  int mActive;
+  
+public:
+  
+	AGPanelTabs(IPlugBase *pPlug, IRECT tabsRect, IText *pText, const IColor *pBGColor, const IColor *pFGColor, const IColor *pOnColor)
+	: IControl(pPlug, tabsRect, -1) 
+  , mBGColor(*pBGColor)
+  , mFGColor(*pFGColor)
+  , mOnColor(*pOnColor)
+  , mActive(0)
+	{
+		mDblAsSingleClick = true;
+    mText = *pText;
+    mText.mAlign = IText::kAlignCenter;
+	}
+  
+  ~AGPanelTabs()
+  {
+    mTabs.Empty(true);
+  }
+  
+  void AddTab(AGTab* tab)
+  {
+    mTabs.Add(tab);
+  }
+  
+  void OnMouseWheel(int x, int y, IMouseMod* pMod) {}
+  
+  void OnMouseDown(int x, int y, IMouseMod* pMod) 
+  {
+    int i, n = mTabs.GetSize();
+    int hit = -1;
+    
+    for (i = 0; i < n; ++i) 
+    {
+      if (mTabs.Get(i)->mRECT.Contains(x, y)) 
+      {
+        hit = i;
+        mValue = (double) i / (double) (n - 1);
+        
+        for (int t = 0; t < n; t++) 
+        {
+          if (t == i) 
+          {
+            for (int p = 0; p < mTabs.Get(t)->mParamsToMux.GetSize(); p++) 
+            {
+              mPlug->GetGUI()->HideControl(mTabs.Get(t)->mParamsToMux.Get()[p], false);
+            }
+          }
+          else 
+          {
+            for (int p = 0; p < mTabs.Get(t)->mParamsToMux.GetSize(); p++) 
+            {
+              mPlug->GetGUI()->HideControl(mTabs.Get(t)->mParamsToMux.Get()[p], true);
+            }
+          }
+          
+        }
+        
+        break;
+      }
+    }
+    
+    if (hit != -1) 
+    {
+      mActive = hit;
+    }
+    
+    SetDirty();
+  }
+  
+  bool Draw(IGraphics* pGraphics)
+  {
+    for (int t = 0; t < mTabs.GetSize(); t++) 
+    {
+      if (t == mActive) {
+        pGraphics->FillIRect(&mOnColor, &mTabs.Get(t)->mRECT);
+      }
+      pGraphics->DrawRect(&mFGColor, &mTabs.Get(t)->mRECT);
+      pGraphics->DrawIText(&mText, mTabs.Get(t)->mLabel.Get(), &mTabs.Get(t)->mRECT);
+    }
+    
+    return true;
+  }
+};
+
 class AGHSliderControl: public IControl
 {
 public:
@@ -76,7 +181,6 @@ public:
 private:
   IColor mBGColor, mFGColor;
   int mHandleWidth;
-  IBitmap mTextBitmap;
   IRECT mSliderRECT;
   IRECT mParamValueRECT;  
   IRECT mParamNameRECT;
@@ -201,6 +305,41 @@ private:
   WDL_String mParamNameStr, mParamValueStr;
 };
 
+class AGPresetSaveButtonControl : public IPanelControl
+{
+private:
+  const char** mParamNameStrings;
+  
+public:
+  AGPresetSaveButtonControl(IPlugBase *pPlug, IRECT pR, IText *pText, const char** pParamNameStrings)
+  : IPanelControl(pPlug, pR, &COLOR_RED)
+  , mParamNameStrings(pParamNameStrings)
+  {
+    mText = *pText;
+    mText.mAlign = IText::kAlignCenter;
+  }
+  
+  void OnMouseDown(int x, int y, IMouseMod* pMod)
+  {
+    WDL_String presetFilePath, desktopPath;
+    
+    mPlug->GetGUI()->DesktopPath(&desktopPath);
+    mPlug->GetGUI()->PromptForFile(&presetFilePath, kFileSave, &desktopPath, "txt");
+    
+    if (strcmp(presetFilePath.Get(), "") != 0) {
+      mPlug->DumpPresetSrcCode(presetFilePath.Get(), mParamNameStrings);
+    }
+  }
+  
+  bool Draw(IGraphics* pGraphics)
+  {
+    pGraphics->FillIRect(&mColor, &mRECT);
+    pGraphics->DrawIText(&mText, "Dump preset", &mRECT);
+    
+    return true;
+  }
+};
+
 #define WIDTH 48
 #define HEIGHT 50
 #define GAP 2
@@ -291,9 +430,14 @@ void GenerateSliderGUI(IGraphics* pGraphics,
                  IText *pText,
                  const IColor *pBGColor, 
                  const IColor *pFGColor,
-                 int colWidth = 300)
+                 int colWidth = 300,
+                 int tabs = 0, // 0 = off, 1 = numbers, 2 = group name
+                 const char** pParamNameStrings = 0) 
 {
   pGraphics->AttachPanelBackground(pBGColor);
+
+  WDL_PtrList<const char> groupNames;
+  WDL_String thisGroup("");
   
   // Calculate max bounds
   WDL_String tmpText;
@@ -316,32 +460,103 @@ void GenerateSliderGUI(IGraphics* pGraphics,
       pGraphics->MeasureIText(pText, tmpText.Get(), &thisParamValueMaxBounds);
       paramValueMaxBounds = paramValueMaxBounds.Union(&thisParamValueMaxBounds);
     }
+    
+    const char* label = pPlug->GetParam(p)->GetParamGroupForHost();
+    
+    if (strcmp(label, thisGroup.Get()) != 0) 
+    {
+      groupNames.Add(label);
+      thisGroup.Set(label);
+    }
   }
+  
+  //printf("%i groups\n", groupNames.GetSize());
   
   int yoffs = 2;
   int row = 0;
   int col = 0;
   
+  if (pParamNameStrings) 
+  {
+    IRECT buttonsRect = IRECT(2, yoffs, colWidth-2, yoffs + paramNameMaxBounds.H());
+    
+    pGraphics->AttachControl(new AGPresetSaveButtonControl(pPlug, buttonsRect, pText, pParamNameStrings));
+    
+    yoffs += 20;
+  }
+
+  AGPanelTabs* pTabsControl = 0;
+  IRECT tabsRect = IRECT(2, yoffs, colWidth-2, yoffs + paramNameMaxBounds.H());
+  
+  if (tabs) 
+  {
+    pTabsControl = new AGPanelTabs(pPlug, tabsRect, pText, pBGColor, pFGColor, &COLOR_RED);
+    pGraphics->AttachControl(pTabsControl);
+    yoffs += 20;
+  }
+  
+  AGTab* pTab = 0;
+  thisGroup.Set("");
+  IRECT thisTabRect;
+  int groupIdx = 0;
+  char buf[32];
+  
+  int paramStartYoffs = yoffs;
+  
   for(int p = 0; p < pPlug->NParams(); p++)
-  {    
+  {
+    if (tabs && groupNames.GetSize()) 
+    {
+      const char* label = pPlug->GetParam(p)->GetParamGroupForHost();
+
+      if (strcmp(label, thisGroup.Get()) != 0) 
+      {
+        thisTabRect = tabsRect.SubRectHorizontal(groupNames.GetSize(), groupIdx);
+        thisGroup.Set(label);
+        if (tabs == 1)
+        {
+          sprintf(buf, "%i", groupIdx+1);
+        }
+        else {
+          strcpy(buf, label);
+        }
+        pTab = new AGTab(thisTabRect, buf);
+        pTabsControl->AddTab(pTab);
+        groupIdx++;
+        
+        col = 0;
+        yoffs = paramStartYoffs;
+      }
+      
+      pTab->mParamsToMux.Add(p);
+    }
+
     IRECT paramRect = IRECT(2 + (col * colWidth), yoffs, (col+1) * colWidth, yoffs + paramNameMaxBounds.H());
     
-    switch (pPlug->GetParam(p)->Type()) 
+//    switch (pPlug->GetParam(p)->Type()) 
+//    {
+//      case IParam::kTypeBool:
+//        pGraphics->AttachControl(new AGHSliderControl(pPlug, paramRect, p, pText, pBGColor, pFGColor, paramNameMaxBounds.W(), paramValueMaxBounds.W()));
+//        break;
+//      case IParam::kTypeInt:
+//        pGraphics->AttachControl(new AGHSliderControl(pPlug, paramRect, p, pText, pBGColor, pFGColor, paramNameMaxBounds.W(), paramValueMaxBounds.W()));
+//        break;
+//      case IParam::kTypeEnum:
+//        pGraphics->AttachControl(new AGHSliderControl(pPlug, paramRect, p, pText, pBGColor, pFGColor, paramNameMaxBounds.W(), paramValueMaxBounds.W()));
+//        break;
+//      case IParam::kTypeDouble:
+//        pGraphics->AttachControl(new AGHSliderControl(pPlug, paramRect, p, pText, pBGColor, pFGColor, paramNameMaxBounds.W(), paramValueMaxBounds.W()));
+//        break;
+//      default:
+//        break;
+//    }
+    
+    IControl* pControl = new AGHSliderControl(pPlug, paramRect, p, pText, pBGColor, pFGColor, paramNameMaxBounds.W(), paramValueMaxBounds.W());
+    pGraphics->AttachControl(pControl);
+    
+    if (tabs && groupIdx != 1) 
     {
-      case IParam::kTypeBool:
-        pGraphics->AttachControl(new AGHSliderControl(pPlug, paramRect, p, pText, pBGColor, pFGColor, paramNameMaxBounds.W(), paramValueMaxBounds.W()));
-        break;
-      case IParam::kTypeInt:
-        pGraphics->AttachControl(new AGHSliderControl(pPlug, paramRect, p, pText, pBGColor, pFGColor, paramNameMaxBounds.W(), paramValueMaxBounds.W()));
-        break;
-      case IParam::kTypeEnum:
-        pGraphics->AttachControl(new AGHSliderControl(pPlug, paramRect, p, pText, pBGColor, pFGColor, paramNameMaxBounds.W(), paramValueMaxBounds.W()));
-        break;
-      case IParam::kTypeDouble:
-        pGraphics->AttachControl(new AGHSliderControl(pPlug, paramRect, p, pText, pBGColor, pFGColor, paramNameMaxBounds.W(), paramValueMaxBounds.W()));
-        break;
-      default:
-        break;
+      pControl->Hide(true);
     }
     
     if (yoffs + paramNameMaxBounds.H() >= pGraphics->Height() - 5) 

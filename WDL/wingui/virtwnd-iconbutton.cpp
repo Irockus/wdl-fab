@@ -64,7 +64,13 @@ WDL_VirtualIconButton::~WDL_VirtualIconButton()
   }
 }
 
-void WDL_VirtualIconButton::SetTextLabel(const char *text, char align, LICE_IFont *font) 
+void WDL_VirtualIconButton::SetTextLabel(const char *text)
+{ 
+  m_textlbl.Set(text); 
+  if (!m_iconCfg || m_forcetext) RequestRedraw(NULL); 
+} 
+
+void WDL_VirtualIconButton::SetTextLabel(const char *text, int align, LICE_IFont *font) 
 { 
   if (font) m_textfont=font;
   m_textalign=align;
@@ -432,6 +438,11 @@ void WDL_VirtualIconButton::OnMouseMove(int xpos, int ypos)
     if (parhit)
     {
       parhit = parhit->VirtWndFromPoint(m_position.left+xpos,m_position.top+ypos,0);
+    }
+    else if (!parhit)
+    {
+      // special case if no parent
+      if (xpos >= 0 && xpos < m_position.right-m_position.left && ypos >= 0 && ypos < m_position.bottom-m_position.top) parhit=this;      
     }
     
     if (parhit == this)

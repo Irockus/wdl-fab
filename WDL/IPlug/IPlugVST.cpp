@@ -41,8 +41,6 @@ IPlugVST::IPlugVST(IPlugInstanceInfo instanceInfo,
               plugDoesChunks,
               plugIsInst,
               kAPIVST2)
-
-  , mDoesMidi(plugDoesMidi)
   , mHostCallback(instanceInfo.mVSTHostCallback)
   , mHostSpecificInitDone(false)
 {
@@ -580,10 +578,11 @@ VstIntPtr VSTCALLBACK IPlugVST::VSTDispatcher(AEffect *pEffect, VstInt32 opCode,
               //  msg.LogMsg();
               //#endif
             }
-            else if (pEvent->type == kVstSysExType) {
-                VstMidiSysexEvent* pSE = (VstMidiSysexEvent*) pEvent;
-                ISysEx sysex(pSE->deltaFrames, (const BYTE*)pSE->sysexDump, pSE->dumpBytes);
-                _this->ProcessSysEx(&sysex);
+            else if (pEvent->type == kVstSysExType) 
+            {
+              VstMidiSysexEvent* pSE = (VstMidiSysexEvent*) pEvent;
+              ISysEx sysex(pSE->deltaFrames, (const BYTE*)pSE->sysexDump, pSE->dumpBytes);
+              _this->ProcessSysEx(&sysex);
             }
           }
         }
@@ -721,7 +720,7 @@ VstIntPtr VSTCALLBACK IPlugVST::VSTDispatcher(AEffect *pEffect, VstInt32 opCode,
         {
           return 1;
         }
-        if (_this->mDoesMidi)
+        if (_this->DoesMIDI())
         {
           if (!strcmp((char*) ptr, "sendVstEvents") ||
               !strcmp((char*) ptr, "sendVstMidiEvent") ||
@@ -841,7 +840,7 @@ VstIntPtr VSTCALLBACK IPlugVST::VSTDispatcher(AEffect *pEffect, VstInt32 opCode,
 template <class SAMPLETYPE>
 void IPlugVST::VSTPrepProcess(SAMPLETYPE** inputs, SAMPLETYPE** outputs, VstInt32 nFrames)
 {
-  if (mDoesMidi)
+  if (DoesMIDI())
   {
     mHostCallback(&mAEffect, __audioMasterWantMidiDeprecated, 0, 0, 0, 0.0f);
   }

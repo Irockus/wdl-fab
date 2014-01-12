@@ -74,10 +74,9 @@ public:
 
 protected:
   bool SendMidiMsg(IMidiMsg* pMsg);
+  bool SendSysEx(ISysEx* pSysEx);
 
 private:
-  bool mDoesMidi;
-
   #ifdef OS_IOS
   IOSLink* mIOSLink;
   #else // OSX or WIN

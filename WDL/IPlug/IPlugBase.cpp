@@ -80,6 +80,7 @@ IPlugBase::IPlugBase(int nParams,
   , mGraphics(0)
   , mCurrentPresetIdx(0)
   , mIsInst(plugIsInst)
+  , mDoesMIDI(plugDoesMidi)
   , mAPI(plugAPI)
   , mIsBypassed(false)
   , mDelay(0)
@@ -530,7 +531,7 @@ void IPlugBase::SetLatency(int samples)
   }
 }
 
-// this is over-ridden for VST3 and AAX formats
+// this is over-ridden for AAX
 void IPlugBase::SetParameterFromGUI(int idx, double normalizedValue)
 {
   Trace(TRACELOC, "%d:%f", idx, normalizedValue);
@@ -1332,6 +1333,7 @@ bool IPlugBase::LoadProgramFromFXP()
           GetIPlugVerFromChunk(&pgm, &pos);
           UnserializeState(&pgm, pos);
           ModifyCurrentPreset(prgName);
+          RestorePreset(GetCurrentPresetIdx());
           InformHostOfProgramChange();
 
           return true;

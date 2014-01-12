@@ -91,10 +91,13 @@ public:
   void ForceEndUserEdit();
 
   const char* GetGUIAPI();
+  
+  void UpdateTooltips();
 
   void HostPath(WDL_String* pPath);
   void PluginPath(WDL_String* pPath);
   void DesktopPath(WDL_String* pPath);
+  void AppSupportPath(WDL_String* pPath);
 
   void PromptForFile(WDL_String* pFilename, EFileAction action = kFileOpen, WDL_String* pDir = 0, char* extensions = "");   // extensions = "txt wav" for example.
   bool PromptForColor(IColor* pColor, char* prompt = "");
@@ -106,14 +109,12 @@ public:
 
   void* GetWindow();
 
-  int mIdleTicks;
-
   const char* GetBundleID()  { return mBundleID.Get(); }
   static int GetUserOSVersion();   // Returns a number like 0x1050 (10.5).
 
 protected:
   virtual LICE_IBitmap* OSLoadBitmap(int ID, const char* name);
-
+  
 private:
 #ifndef IPLUG_NO_CARBON_SUPPORT
   IGraphicsCarbon* mGraphicsCarbon;
@@ -121,7 +122,13 @@ private:
   void* mGraphicsCocoa;   // Can't forward-declare IGraphicsCocoa because it's an obj-C object.
 
   WDL_String mBundleID;
-
+  
+  friend int GetMouseOver(IGraphicsMac* pGraphics);
+  
+#ifndef IPLUG_NO_CARBON_SUPPORT
+  friend class IGraphicsCarbon;
+#endif
+  
 public: //TODO: make this private
   void* mHostNSWindow;
 };

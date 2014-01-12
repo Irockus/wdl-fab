@@ -38,8 +38,6 @@ IPlugVST3::IPlugVST3(IPlugInstanceInfo instanceInfo,
               plugDoesChunks,
               plugIsInst,
               kAPIVST3)
-
-  , mDoesMidi(plugDoesMidi)
   , mScChans(plugScChans)
   , mSidechainActive(false)
 {
@@ -133,7 +131,7 @@ tresult PLUGIN_API IPlugVST3::initialize (FUnknown* context)
       addAudioInput(tmpStringBuf, getSpeakerArrForChans(mScChans), kAux, 0);
     }
 
-    if(mDoesMidi)
+    if(DoesMIDI())
     {
       addEventInput (STR16("MIDI Input"), 1);
       //addEventOutput(STR16("MIDI Output"), 1);
@@ -171,11 +169,11 @@ tresult PLUGIN_API IPlugVST3::initialize (FUnknown* context)
 
       if (CSTR_NOT_EMPTY(paramGroupName))
       {        
-        for(int i = 0; i< mParamGroups.GetSize(); i++)
+        for(int j = 0; j < mParamGroups.GetSize(); j++)
         {
-          if(strcmp(paramGroupName, mParamGroups.Get(i)) == 0)
+          if(strcmp(paramGroupName, mParamGroups.Get(j)) == 0)
           {
-            unitID = i+1;
+            unitID = j+1;
           }
         }
         
@@ -239,7 +237,8 @@ tresult PLUGIN_API IPlugVST3::initialize (FUnknown* context)
   }
 
   OnHostIdentified();
-
+  RestorePreset(0);
+  
   return result;
 }
 
@@ -398,7 +397,7 @@ tresult PLUGIN_API IPlugVST3::process(ProcessData& data)
     }
   }
 
-  if(mDoesMidi)
+  if(DoesMIDI())
   {
     //process events.. only midi note on and note off?
     IEventList* eventList = data.inputEvents;
@@ -623,6 +622,11 @@ tresult PLUGIN_API IPlugVST3::canProcessSampleSize(int32 symbolicSampleSize)
 
   return retval;
 }
+
+Steinberg::uint32 PLUGIN_API IPlugVST3::getLatencySamples () 
+{ 
+  return mLatency;
+} 
 
 #pragma mark -
 #pragma mark IEditController overrides
@@ -965,10 +969,10 @@ void IPlugVST3::ResizeGraphics(int w, int h)
 
 void IPlugVST3::SetLatency(int latency)
 {
+  IPlugBase::SetLatency(latency);
+
   FUnknownPtr<IComponentHandler>handler(componentHandler);
-  handler->restartComponent (kLatencyChanged);
-  
-  IPlugBase::SetLatency(latency); // will update delay time
+  handler->restartComponent(kLatencyChanged);  
 }
 
 void IPlugVST3::PopupHostContextMenuForParam(int param, int x, int y)

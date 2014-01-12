@@ -58,7 +58,7 @@
         pPlug->mAEffect.numPrograms = IPMAX(pPlug->mAEffect.numPrograms, 1);
         return &(pPlug->mAEffect);
       }
-        return 0;
+      return 0;
     }
     EXPORT int main(int hostCallback)
     {
@@ -91,17 +91,17 @@ using namespace Steinberg::Vst;
 bool InitModule ()
 {
   #ifdef OS_WIN
-    extern void* moduleHandle;
-    gHInstance = (HINSTANCE) moduleHandle;
+  extern void* moduleHandle;
+  gHInstance = (HINSTANCE) moduleHandle;
   #endif
 
-    return true;
+  return true;
 }
 
 // called after library is unloaded
 bool DeinitModule ()
 {
-    return true;
+  return true;
 }
 
 IPlug* MakePlug()
