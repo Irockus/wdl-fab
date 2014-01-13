@@ -20,6 +20,7 @@ SET(WDL_SRC
 	sha.cpp
 	shm_connection.cpp
 	shm_msgreply.cpp
+	md5.c
 	blowfish.c
 	fft.c
 	timing.c
@@ -140,6 +141,7 @@ SET(WDL_HEADERS
 	wdlendian.h
 	wdlstring.h
 	wdltypes.h
+	md5.h
 )
 
 if(WIN32)

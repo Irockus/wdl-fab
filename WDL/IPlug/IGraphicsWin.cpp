@@ -5,6 +5,9 @@
 #include <Shlobj.h>
 #include <commctrl.h>
 
+#if (_MSC_VER >=1500)
+#pragma comment(lib, "comctl32.lib")
+#endif
 #ifdef RTAS_API
   #include "PlugInUtils.h"
 #endif
