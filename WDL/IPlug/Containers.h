@@ -9,11 +9,11 @@
   #pragma warning(disable:4018 4267)    // size_t/signed/unsigned mismatch..
   #pragma warning(disable:4800)        // if (pointer) ...
   #pragma warning(disable:4805)   
+#ifndef snprintf
+#define snprintf(a, b, c, ...) _snprintf_s(a,b, _TRUNCATE, c, __VA_ARGS__)
 #endif
 
 // Compare bool and BOOL.
-#ifndef snprintf
-#define snprintf _snprintf
 #endif
 
 #include <math.h>
@@ -33,6 +33,10 @@
 #define BOUNDED(x,lo,hi) ((x) < (lo) ? (lo) : (x) > (hi) ? (hi) : (x))
 #define CSTR_NOT_EMPTY(cStr) ((cStr) && (cStr)[0] != '\0')
 #define SAFE_STRNCPY(a,b,s) {strncpy(a,b,s);a[s-1]='\0';}
+#ifndef SAFE_DEL
+# define SAFE_DEL(a)     if (a) {delete a; a = NULL;}
+# define SAFE_DEL_ARR(a) if (a) {delete[] a; a = NULL;}
+#endif
 #define MAKE_QUOTE(str) #str
 #define MAKE_STR(str) MAKE_QUOTE(str)
 

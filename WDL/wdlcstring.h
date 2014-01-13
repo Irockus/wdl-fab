@@ -48,7 +48,7 @@ C string manipulation utilities -- [v]snprintf for Win32, also snprintf_append, 
   #ifdef snprintf
   #undef snprintf
   #endif
-  #define snprintf WDL_snprintf
+#define snprintf(a, b, c, ...) _snprintf_s(a,b, _TRUNCATE, c, __VA_ARGS__)
 
   #ifdef vsnprintf
   #undef vsnprintf

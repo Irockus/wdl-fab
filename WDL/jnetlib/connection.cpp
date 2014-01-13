@@ -88,7 +88,7 @@ void JNL_Connection::connect(const char *hostname, int port)
   m_socket=::socket(AF_INET,SOCK_STREAM,0);
   if (m_socket==-1)
   {
-    Error("Error Creating socket <%d> passed to connect errno = %d", m_socket, ERRNO);
+	Error("Error Creating socket <%d> passed to connect errno = %d", m_socket, ERRNO);
     m_state=STATE_ERROR;
   }
   else
@@ -106,7 +106,7 @@ void JNL_Connection::connect(const char *hostname, int port)
     memset(m_saddr,0,sizeof(struct sockaddr_in));
     if (!m_host[0])
     {
-      Error("Empty hostname !");
+	  Error("Empty hostname !");
       m_state=STATE_ERROR;
     }
     else
