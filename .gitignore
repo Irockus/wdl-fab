@@ -47,3 +47,13 @@ IPlugExamples/build_errors.log
 *.dep
 
 *.pbxbtree
+
+*.pbxuser
+
+*.pbxsymbols
+
+WDL/lice/build/lice.build/lice.pbxindex/strings.pbxstrings/strings
+
+WDL/lice/build/lice.build/lice.pbxindex/strings.pbxstrings/control
+
+WDL/lice/build/lice.build/lice.pbxindex/pbxindex.header
