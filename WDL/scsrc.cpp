@@ -41,7 +41,7 @@
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/stat.h>
-typedef int DWORD;
+typedef unsigned DWORD;
 
 static void Sleep(int ms)
 {
@@ -245,7 +245,7 @@ void WDL_ShoutcastSource::OnSamples(float **samples, int nch, int chspread, int 
     float *outptr=m_rsbuf.Resize(outlen*m_nch,false);
 
     int x;
-    int loffs=-1000;
+    //int loffs=-1000;
     double ls[2]={m_last_samples[0],m_last_samples[1]};
     for (x = 0; x < outlen; x ++)
     {
@@ -582,7 +582,7 @@ void WDL_ShoutcastSource::PostModeConnect()
     m_sendcon->run();
     DWORD start=GetTickCount();
     bool done=false,hadResp=false;
-    while (GetTickCount() < start+1000 && !done)
+    while (GetTickCount() < (start+1000) && !done)
     {
       Sleep(50);
       m_sendcon->run();

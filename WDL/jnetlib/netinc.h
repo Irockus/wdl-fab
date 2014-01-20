@@ -51,10 +51,13 @@ typedef int socklen_t;
 #define ERRNO errno
 #define closesocket(s) close(s)
 #define SET_SOCK_BLOCK(s,block) { int __flags; if ((__flags = fcntl(s, F_GETFL, 0)) != -1) { if (!block) __flags |= O_NONBLOCK; else __flags &= ~O_NONBLOCK; fcntl(s, F_SETFL, __flags);  } }
-
+#ifndef stricmp
 #define stricmp(x,y) strcasecmp(x,y)
 #define strnicmp(x,y,z) strncasecmp(x,y,z)  
+#endif
+#ifndef wsprintf
 #define wsprintf sprintf
+#endif
 
 #ifdef MACOSX
 typedef int socklen_t;

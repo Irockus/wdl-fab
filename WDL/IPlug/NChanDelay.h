@@ -41,7 +41,7 @@ public:
       signed long readAddress = mWriteAddress - mDTSamples;
       readAddress %= mDTSamples;
       
-      for (int chan = 0; chan < mNumInChans; chan++) 
+      for (unsigned chan = 0; chan < mNumInChans; chan++) 
       {
         if (chan < mNumOutChans)
         {

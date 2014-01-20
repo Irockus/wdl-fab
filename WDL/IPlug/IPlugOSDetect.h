@@ -10,7 +10,9 @@
   #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
     #define OS_IOS
   #elif TARGET_OS_MAC
-    #define OS_OSX
+    #ifndef OS_OSX
+      #define OS_OSX
+    #endif
   #endif
 #elif defined __linux || defined __linux__ || defined linux
   #define OS_LINUX

@@ -42,6 +42,10 @@
 #define WDL_HEAPBUF_TRACEPARM(x)
 #endif
 
+#include <string.h> 
+#include <stdlib.h>
+
+
 #include "wdltypes.h"
 
 class WDL_HeapBuf

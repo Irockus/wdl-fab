@@ -105,13 +105,13 @@ public:
   virtual void PluginPath(WDL_String* pPath) = 0; // Full path to plugin dll.
   virtual void DesktopPath(WDL_String* pPath) = 0; // Full path to user's desktop.
   
-  //Windows7: %LOCALAPPDATA%\
-  //Windows XP/Vista: %USERPROFILE%\Local Settings\Application Data\
-  //OSX: ~/Library/Application Support/
+  //Windows7: %LOCALAPPDATA%
+  //Windows XP/Vista: %USERPROFILE%\Local Settings\Application Data
+  //OSX: ~/Library/Application Support
   virtual void AppSupportPath(WDL_String* pPath) = 0;
   
   // Run the "open file" or "save file" dialog.  Default to host executable path.
-  virtual void PromptForFile(WDL_String* pFilename, EFileAction action = kFileOpen, WDL_String* pDir = 0, char* extensions = 0) = 0;  // extensions = "txt wav" for example.
+  virtual void PromptForFile(WDL_String* pFilename, EFileAction action = kFileOpen, WDL_String* pDir = 0, const char* extensions = 0) = 0;  // extensions = "txt wav" for example.
   virtual bool PromptForColor(IColor* pColor, char* prompt = 0) = 0;
 
   virtual bool OpenURL(const char* url, const char* msgWindowTitle = 0, const char* confirmMsg = 0, const char* errMsgOnFailure = 0) = 0;

@@ -160,7 +160,7 @@ void ProjectStateContext_Mem::AddLine(const char *fmt, ...)
     #else
       // vsnprintf() on non-win32, always null terminates
       l = vsnprintf(tmp,sizeof(tmp),fmt,va);
-      if (l>sizeof(tmp)-1) l=sizeof(tmp)-1;
+      if (l>((int)sizeof(tmp))-1) l=sizeof(tmp)-1;
     #endif
     use_buf = tmp;
     l++; // include NULL term
@@ -375,7 +375,7 @@ void ProjectStateContext_File::AddLine(const char *fmt, ...)
      #else
        // vsnprintf() on non-win32, always null terminates
        l = vsnprintf(tmp,sizeof(tmp),fmt,va);
-       if (l>sizeof(tmp)-1) l=sizeof(tmp)-1;
+       if (l>((int)sizeof(tmp))-1) l=sizeof(tmp)-1;
      #endif
 
        use_buf = tmp;
@@ -391,10 +391,10 @@ void ProjectStateContext_File::AddLine(const char *fmt, ...)
     {
       m_bytesOut+=a;
       char tb[128];
-      memset(tb,' ',a < sizeof(tb) ? a : sizeof(tb));
+      memset(tb,' ',(a < (int) sizeof(tb) ? (size_t) a : sizeof(tb)) );
       while (a>0) 
       {
-        const int tl = a < sizeof(tb) ? a : sizeof(tb);
+        const int tl = a < (int) sizeof(tb) ? a : (int) sizeof(tb);
         a-=tl;     
         m_wr->Write(tb,tl);
       }
@@ -509,7 +509,7 @@ void ProjectStateContext_FastQueue::AddLine(const char *fmt, ...)
     #else
       // vsnprintf() on non-win32, always null terminates
       l = vsnprintf(tmp,sizeof(tmp),fmt,va);
-      if (l>sizeof(tmp)-1) l=sizeof(tmp)-1;
+      if (l>((int)sizeof(tmp))-1) l=sizeof(tmp)-1;
     #endif
     use_buf = tmp;
     l++; // include NULL term

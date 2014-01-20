@@ -1,8 +1,22 @@
 cmake_minimum_required (VERSION 2.6)
+
+if(APPLE)
+	set(CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX10.6.sdk/")
+	set(CMAKE_OSX_DEPLOYMENT_TARGET "10.6")
+	
+#	find_library( COREFOUNDATION_FRAMEWORK NAMES CoreFoundation)
+endif(APPLE)
+
+
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 #set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} $ENV{VORBISDIR}/include )
 
- # find something portable
+# simple, unified lib & bin dir for all libs and exe
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+# find something portable
 
 # find_package(bzip2 required)
 # find_package(png required)
@@ -11,6 +25,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 # find_package(OpenGL REQUIRED)
 # find_package(GLU REQUIRED)
 # find_package(SDL REQUIRED)
+
 if (WIN32)
 	SET(VORBIS_INCLUDE_DIR $ENV{VORBIS_DIR}/include)
 	SET(OGG_INCLUDE_DIR $ENV{VORBIS_DIR}/include)
@@ -23,6 +38,7 @@ if (WIN32)
 	add_definitions(-D__WINDOWS_DS__)
 	
 else(WIN32)
+	add_definitions(-DOS_OSX)
 	find_package(Vorbis REQUIRED)
 endif(WIN32)
 
@@ -32,6 +48,7 @@ macro(configure_msvc_runtime)
     if("${MSVC_RUNTIME}" STREQUAL "")
       set(MSVC_RUNTIME "static")
     endif()
+    
     # Set compiler options.
     set(variables
       CMAKE_C_FLAGS_DEBUG
@@ -43,6 +60,7 @@ macro(configure_msvc_runtime)
       CMAKE_CXX_FLAGS_RELEASE
       CMAKE_CXX_FLAGS_RELWITHDEBINFO
     )
+    
     if(${MSVC_RUNTIME} STREQUAL "static")
       message(STATUS
         "MSVC -> forcing use of statically-linked runtime."
@@ -62,13 +80,24 @@ macro(configure_msvc_runtime)
         endif()
       endforeach()
     endif()
-	
-  endif(MSVC)
+    
+  else(MSVC)
+    set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG")
+    set(CMAKE_C_FLAGS_DEBUG     "${CMAKE_C_FLAGS_DEBUG} -D_DEBUG")
+    set(CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE} -DNDEBUG")
+    
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse3 -mssse3")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder -msse3 -mssse3")
+
+  endif()
 endmacro()
 
 IF(MSVC)
   ADD_DEFINITIONS(-DMSVC_RUNTIME=static)
   ADD_DEFINITIONS(/arch:SSE2)
+ELSEIF(APPLE)
+  ADD_DEFINITIONS(-D__MACOSX_CORE__ -DSWELL_FORCE_COCOA_TEXT)
 ENDIF(MSVC)
 
 configure_msvc_runtime()
@@ -183,6 +212,12 @@ if(HAVE_VST)
 	add_subdirectory(VST_SDK)
 endif(HAVE_VST)
 
+# for future Xcode 4+ builds if needed
+if(HAVE_AUDIOUNITS)
+	#add_subdirectory(CA_SDK) 
+endif(HAVE_AUDIOUNITS)
+
+
 #	Common
 add_subdirectory(WDL) # wdl lice iplug libs
-add_subdirectory(MyIPlugProjects)
+#add_subdirectory(MyIPlugProjects)

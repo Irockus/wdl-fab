@@ -884,7 +884,7 @@ LameEncoder::~LameEncoder()
     {
       unsigned char buf[16384];
       int a=lame_get_lametag_frame(m_lamestate,buf,sizeof(buf));
-      if (a>0 && a<=sizeof(buf))
+      if (a>0 && a<=(int)sizeof(buf))
       {
         FILE *fp=NULL;
 #ifdef _WIN32

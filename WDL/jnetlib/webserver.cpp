@@ -237,7 +237,7 @@ int WebServerBaseClass::run_connection(WS_conInst *con)
     int l=con->m_serv.bytes_cansend();
     if (l > 0)
     {
-      if (l > sizeof(buf))l=sizeof(buf);
+      if (l > (int) sizeof(buf))l=sizeof(buf);
       l=con->m_pagegen->GetData(buf,l);
       if (l < (con->m_pagegen->IsNonBlocking() ? 0 : 1)) // if nonblocking, this is l < 0, otherwise it's l<1
       {

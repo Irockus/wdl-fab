@@ -68,7 +68,7 @@ int LICE_SetGIFColorMapFromOctree(void *ww, void *octree, int numcolors)
   }
 
   // map palette to 16 bit
-  GifColorType *ct = cmap->Colors;
+  //GifColorType *ct = cmap->Colors;
   unsigned char r,g,b;
   for(r=0;r<32;r++)  
   {
