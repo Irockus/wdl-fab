@@ -36,8 +36,8 @@ public:
   void DesktopPath(WDL_String* pPath);
   void AppSupportPath(WDL_String* pPath);
 
-  void PromptForFile(WDL_String* pFilename, EFileAction action = kFileOpen, WDL_String* pDir = 0, char* extensions = "");   // extensions = "txt wav" for example.
-  bool PromptForColor(IColor* pColor, char* prompt = "");
+  void PromptForFile(WDL_String* pFilename, EFileAction action = kFileOpen, WDL_String* pDir = 0, const char* extensions = "");   // extensions = "txt wav" for example.
+  bool PromptForColor(IColor* pColor, const char* prompt = "");
 
   IPopupMenu* GetItemMenu(long idx, long &idxInMenu, long &offsetIdx, IPopupMenu* pMenu);
   HMENU CreateMenu(IPopupMenu* pMenu, long* offsetIdx);
