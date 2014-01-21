@@ -220,4 +220,7 @@ endif(HAVE_AUDIOUNITS)
 
 #	Common
 add_subdirectory(WDL) # wdl lice iplug libs
-#add_subdirectory(MyIPlugProjects)
+add_subdirectory(IPlugExamples)
+
+# TODO externalize the custom user projects and completely split the lib from its use in the path ...
+# add_subdirectory(IPlugProjects)

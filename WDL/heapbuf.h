@@ -42,9 +42,8 @@
 #define WDL_HEAPBUF_TRACEPARM(x)
 #endif
 
-#include <string.h> 
 #include <stdlib.h>
-
+#include <string.h>
 
 #include "wdltypes.h"
 
@@ -64,7 +63,6 @@ class WDL_HeapBuf
     int GetGranul() const { return m_granul; }
 
     void SetMinAllocSize(int mas) { m_mas=mas; }
-
 
     WDL_HeapBuf(const WDL_HeapBuf &cp)
     {

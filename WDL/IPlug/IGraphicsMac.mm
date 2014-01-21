@@ -497,7 +497,7 @@ void IGraphicsMac::AppSupportPath(WDL_String* pPath)
 }
 
 // extensions = "txt wav" for example
-void IGraphicsMac::PromptForFile(WDL_String* pFilename, EFileAction action, WDL_String* pDir, char* extensions)
+void IGraphicsMac::PromptForFile(WDL_String* pFilename, EFileAction action, WDL_String* pDir, const char* extensions)
 {
   if (!WindowIsOpen())
   {
@@ -590,7 +590,7 @@ void IGraphicsMac::PromptForFile(WDL_String* pFilename, EFileAction action, WDL_
 // [fileTypes release];
 }
 
-bool IGraphicsMac::PromptForColor(IColor* pColor, char* prompt)
+bool IGraphicsMac::PromptForColor(IColor* pColor, const char* prompt)
 {
 //  NSColorPanel *colorPanel = [NSColorPanel sharedColorPanel];
 //    [colorPanel setTarget:self]; // target??
