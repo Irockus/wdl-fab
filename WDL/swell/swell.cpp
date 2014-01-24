@@ -34,7 +34,7 @@
 #include <sys/fcntl.h>
 
 
-#include "swell-internal.h"
+#include "swell-internal-structs.h"
 
 
 #ifdef __APPLE__

@@ -173,7 +173,7 @@ HTREEITEM__::~HTREEITEM__()
 {
   free(m_value);
   m_children.Empty(true);
-  [m_dh release];
+  [((id)m_dh) release];
 }
 
 
@@ -1500,7 +1500,7 @@ LRESULT SendMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       {
         NSRange range={0,};
         NSResponder *rs = [[obj window] firstResponder];
-        if ([rs isKindOfClass:[NSView class]] && [rs isDescendantOf:obj])
+        if ([rs isKindOfClass:[NSView class]] && [(NSView*)rs isDescendantOf:obj])
         {
           NSText* text=[[obj window] fieldEditor:YES forObject:(NSTextField*)obj];  
           if (text) range=[text selectedRange];
@@ -1513,7 +1513,7 @@ LRESULT SendMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         //        [(NSTextField*)obj selectText:obj]; // Force the window's text field editor onto this control
         // don't force it, just ignore EM_GETSEL/EM_SETSEL if not in focus
         NSResponder *rs = [[obj window] firstResponder];
-        if ([rs isKindOfClass:[NSView class]] && [rs isDescendantOf:obj])
+        if ([rs isKindOfClass:[NSView class]] && [(NSView*)rs isDescendantOf:obj])
         {
           NSText* text = [[obj window] fieldEditor:YES forObject:(NSTextField*)obj]; // then get it from the window 
           int sl = [[text string] length];
@@ -5385,7 +5385,7 @@ BOOL TreeView_Expand(HWND hwnd, HTREEITEM item, UINT flag)
   
   SWELL_TreeView *tv=(SWELL_TreeView*)hwnd;
   
-  id itemid=((HTREEITEM__*)item)->m_dh;
+  id itemid= (id)(((HTREEITEM__*)item)->m_dh);
   bool isExp=!![tv isItemExpanded:itemid];
   
   if (flag == TVE_EXPAND && !isExp) [tv expandItem:itemid];
@@ -5441,7 +5441,7 @@ void TreeView_SelectItem(HWND hwnd, HTREEITEM item)
 {
   if (!hwnd || ![(id)hwnd isKindOfClass:[SWELL_TreeView class]]) return;
   
-  int row=[(SWELL_TreeView*)hwnd rowForItem:((HTREEITEM__*)item)->m_dh];
+  int row=[(SWELL_TreeView*)hwnd rowForItem: (id) ((HTREEITEM__*)item)->m_dh];
   if (row>=0)
     [(SWELL_TreeView*)hwnd selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];            
   static int __rent;
@@ -5468,10 +5468,10 @@ BOOL TreeView_GetItem(HWND hwnd, LPTVITEM pitem)
   pitem->state=0;
   
   
-  int itemRow = [(SWELL_TreeView*)hwnd rowForItem:ti->m_dh];
+  int itemRow = [(SWELL_TreeView*)hwnd rowForItem: (id) ti->m_dh];
   if (itemRow >= 0 && [(SWELL_TreeView*)hwnd isRowSelected:itemRow])
     pitem->state |= TVIS_SELECTED;   
-  if ([(SWELL_TreeView*)hwnd isItemExpanded:ti->m_dh])
+  if ([(SWELL_TreeView*)hwnd isItemExpanded: (id) ti->m_dh])
     pitem->state |= TVIS_EXPANDED;   
   
   return TRUE;
@@ -5500,7 +5500,7 @@ BOOL TreeView_SetItem(HWND hwnd, LPTVITEM pitem)
 
   if (pitem->stateMask & TVIS_SELECTED)
   {
-    int itemRow = [(SWELL_TreeView*)hwnd rowForItem:ti->m_dh];
+    int itemRow = [(SWELL_TreeView*)hwnd rowForItem: (id) ti->m_dh];
     if (itemRow >= 0)
     {
       if (pitem->state&TVIS_SELECTED)
