@@ -30,7 +30,7 @@
 #import <CoreFoundation/CFDictionary.h>
 #import <objc/objc-runtime.h>
 #include "swell.h"
-#include "swell-internal.h"
+#include "swell-internal-structs.h"
 
 #include "../mutex.h"
 #include "../assocarray.h"
@@ -1373,7 +1373,7 @@ HDC GetDC(HWND h)
     if ([(id)h respondsToSelector:@selector(getSwellPaintInfo:)]) 
     {
       PAINTSTRUCT ps={0,}; 
-      [(id)h getSwellPaintInfo:(PAINTSTRUCT *)&ps];
+      [(id)h performSelector:@selector(getSwellPaintInfo:) withObject: (id) (PAINTSTRUCT *)&ps];
       if (ps.hdc) 
       {
         if ((ps.hdc)->ctx) CGContextSaveGState((ps.hdc)->ctx);
@@ -1388,7 +1388,7 @@ HDC GetDC(HWND h)
     if ([(id)h respondsToSelector:@selector(getSwellPaintInfo:)]) 
     {
       PAINTSTRUCT ps={0,}; 
-      [(id)h getSwellPaintInfo:(PAINTSTRUCT *)&ps];
+        [(id)h performSelector:@selector(getSwellPaintInfo:) withObject: (id) (PAINTSTRUCT *)&ps];
       if (HDC_VALID((HDC__*)ps.hdc)) 
       {
         if (((HDC__*)ps.hdc)->ctx) CGContextSaveGState((ps.hdc)->ctx);
@@ -1440,7 +1440,7 @@ void ReleaseDC(HWND h, HDC hdc)
     if ([(id)h respondsToSelector:@selector(getSwellPaintInfo:)]) 
     {
       PAINTSTRUCT ps={0,}; 
-      [(id)h getSwellPaintInfo:(PAINTSTRUCT *)&ps];
+      [(id)h performSelector:@selector(getSwellPaintInfo:) withObject: (id) (PAINTSTRUCT *)&ps];
       if (ps.hdc && ps.hdc==hdc) return;
     }
     h=(HWND)[(id)h contentView];
@@ -1451,7 +1451,7 @@ void ReleaseDC(HWND h, HDC hdc)
     if ([(id)h respondsToSelector:@selector(getSwellPaintInfo:)]) 
     {
       PAINTSTRUCT ps={0,}; 
-      [(id)h getSwellPaintInfo:(PAINTSTRUCT *)&ps];
+      [(id)h performSelector:@selector(getSwellPaintInfo:) withObject: (id) (PAINTSTRUCT *)&ps];
       if (ps.hdc && ps.hdc==hdc) return;
     }
   }    
