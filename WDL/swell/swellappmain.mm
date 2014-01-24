@@ -1,7 +1,7 @@
 #import "swellappmain.h"
 
 #include "swell.h"
-#include "swell-internal.h"
+#include "swell-internal-structs.h"
 
 
 HMENU SWELL_app_stocksysmenu; // exposed to app, simply the contents of the default system menu (as defined in the nib)
@@ -75,7 +75,8 @@ static bool IsMultiLineEditControl(NSView *cv, id fs)
                 // perhaps it'd be good to have a flag on these to see if they want it .. i.e. SWELL_SetCarbonHostView_WantKeyFlgs()..
                 while (f)
                 {
-                    if ((dest_view=(NSView *)[f delegate]) && [dest_view respondsToSelector:@selector(swellIsCarbonHostingView)] && [(SWELL_hwndCarbonHost*)dest_view swellIsCarbonHostingView])
+                    if ((dest_view=(NSView *)[f delegate]) && [dest_view respondsToSelector:@selector(swellIsCarbonHostingView)] && 
+                        [dest_view performSelector:@selector(swellIsCarbonHostingView:) ])
                     {
                         focwnd = [dest_view window]; 
                         break;
