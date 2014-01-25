@@ -1,6 +1,8 @@
 #ifndef __IPLUGCONTROLSDEMO__
 #define __IPLUGCONTROLSDEMO__
 
+#include "resource.h"
+
 #include "IPlug_include_in_plug_hdr.h"
 
 class IPlugControls : public IPlug

@@ -26,6 +26,15 @@ SET(WDL_SRC
 	timing.c
 )
 
+SET(SWELL
+    swell/swell.cpp
+    swell/swell-kb.mm
+    swell/swell-gdi.mm
+    swell/swell-ini.cpp
+    swell/swell-miscdlg.mm
+    swell/swell-appstub.mm
+)
+
 SET(WDL_HEADERS
 	adpcm_decode.h
 	adpcm_encode.h
@@ -156,6 +165,11 @@ if(WIN32)
 		win7filedialog.h
 	)
 else(WIN32)
+	SET(WDL_SRC
+		${WDL_SRC}
+		${SWELL}
+	)
+
 	set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
 endif(WIN32)
 

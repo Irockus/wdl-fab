@@ -9,6 +9,10 @@ SET(IPLUG_SRC
 	IPlugStructs.cpp
 	IPopupMenu.cpp
 	Log.cpp
+	
+	app_main.cpp
+	app_dialog.cpp
+
 )
 
 SET(IPLUG_HEADERS
@@ -49,6 +53,7 @@ elseif(APPLE)
 SET (IPLUG_SRC
 	${IPLUG_SRC}
 	IGraphicsCarbon.cpp
+	IPlugCocoa.mm
 )
 endif(WIN32)
 

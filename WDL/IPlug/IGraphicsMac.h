@@ -28,7 +28,8 @@
 #endif
 
 #ifndef COCOA_PREFIX
-  #define COCOA_PREFIX vOliLarkin
+#define COCOA_PREFIX_AUTO(a) a##__COUNTER__
+#define COCOA_PREFIX COCOA_PREFIX_AUTO(CocoaPre)
 #endif
 
 #if defined(VST_API)
