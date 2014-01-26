@@ -286,7 +286,7 @@ void IPlugMultiTargets::ProcessMidiMsg(IMidiMsg* pMsg)
     default:
       return; // if !note message, nothing gets added to the queue
   }
-  
+
   mKeyboard->SetDirty();
   mMidiQueue.Add(pMsg);
 #endif

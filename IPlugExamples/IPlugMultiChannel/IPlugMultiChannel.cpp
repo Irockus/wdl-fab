@@ -20,12 +20,12 @@ IPlugMultiChannel::IPlugMultiChannel(IPlugInstanceInfo instanceInfo)
   //arguments are: name, defaultVal, minVal, maxVal, step, label
   GetParam(kGain)->InitDouble("Gain", 50., 0., 100.0, 0.01, "%");
   GetParam(kGain)->SetShape(2.);
-  
+
   IGraphics* pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT);
   IText textProps(12, &COLOR_BLACK, "Verdana", IText::kStyleNormal, IText::kAlignNear, 0, IText::kQualityNonAntiAliased);
-	GenerateKnobGUI(pGraphics, this, &textProps, &COLOR_WHITE, &COLOR_BLACK, 60, 70);
+  GenerateKnobGUI(pGraphics, this, &textProps, &COLOR_WHITE, &COLOR_BLACK, 60, 70);
   AttachGraphics(pGraphics);
-  
+
   MakeDefaultPreset((char *) "-", kNumPrograms);
 }
 
@@ -39,9 +39,9 @@ void IPlugMultiChannel::ProcessDoubleReplacing(double** inputs, double** outputs
 //  bool in2ic = IsInChannelConnected(1);
 //  bool in3ic = IsInChannelConnected(2);
 //  bool in4ic = IsInChannelConnected(3);
-//  
+//
 //  DBGMSG("%i %i %i %i, ------------------------- \n", in1ic, in2ic, in3ic, in4ic);
-  
+
   double* in1 = inputs[0];
   double* in2 = inputs[1];
   double* in3 = inputs[2];

@@ -19,22 +19,22 @@
 */
 
 #ifdef OS_WIN
-  #include <windows.h>
-  #include <commctrl.h>
+#include <windows.h>
+#include <commctrl.h>
 
-  #define DEFAULT_INPUT_DEV "Default Device"
-  #define DEFAULT_OUTPUT_DEV "Default Device"
+#define DEFAULT_INPUT_DEV "Default Device"
+#define DEFAULT_OUTPUT_DEV "Default Device"
 
-  #define DAC_DS 0
-  #define DAC_ASIO 1
+#define DAC_DS 0
+#define DAC_ASIO 1
 #else if defined OS_OSX
-  #include "swell.h"
-  #define SLEEP( milliseconds ) usleep( (unsigned long) (milliseconds * 1000.0) )
+#include "swell.h"
+#define SLEEP( milliseconds ) usleep( (unsigned long) (milliseconds * 1000.0) )
 
-  #define DEFAULT_INPUT_DEV "Built-in Input"
-  #define DEFAULT_OUTPUT_DEV "Built-in Output"
+#define DEFAULT_INPUT_DEV "Built-in Input"
+#define DEFAULT_OUTPUT_DEV "Built-in Output"
 
-  #define DAC_COREAUDIO 0
+#define DAC_COREAUDIO 0
 //  #define DAC_JACK 1
 #endif
 

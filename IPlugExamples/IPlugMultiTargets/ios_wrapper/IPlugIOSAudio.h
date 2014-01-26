@@ -95,7 +95,7 @@ typedef Float64 FLT;
  * for use with armv6 devices
  */
 - (id)initWithIPlugInstance:(IPlug*)pluginInstance andSampleRate:(float)newSampleRate andTicksPerBuffer:(int)ticks
-andNumberOfInputChannels:(int)inputChannels andNumberOfOutputChannels:(int)outputChannels;
+  andNumberOfInputChannels:(int)inputChannels andNumberOfOutputChannels:(int)outputChannels;
 
 /** Initialising with a sample rate, ticks per buffer, number of input and output channels
  * and AudioSession Category
@@ -106,8 +106,8 @@ andNumberOfInputChannels:(int)inputChannels andNumberOfOutputChannels:(int)outpu
  * (iPhone EDGE, iPhone 3G, iTouch 1g, iTouch 2g)
  */
 - (id)initWithIPlugInstance:(IPlug*)pluginInstance andSampleRate:(float)newSampleRate andTicksPerBuffer:(int)ticks
-andNumberOfInputChannels:(int)inputChannels andNumberOfOutputChannels:(int)outputChannels
-andAudioSessionCategory:(UInt32)audioSessionCategory;
+  andNumberOfInputChannels:(int)inputChannels andNumberOfOutputChannels:(int)outputChannels
+  andAudioSessionCategory:(UInt32)audioSessionCategory;
 
 /** Begin audio/scene playback. To avoid clicks, you have to create a subclass and override this
  * function and add ramping or any other custom behaviour. Make sure to call the superclass method

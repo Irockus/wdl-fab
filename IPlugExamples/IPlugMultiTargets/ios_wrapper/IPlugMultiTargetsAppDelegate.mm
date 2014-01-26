@@ -52,10 +52,10 @@
 #endif
 
   mIOSAudio = [[IPlugIOSAudio alloc] initWithIPlugInstance:mPluginInstance
-  andSampleRate:sr
-  andTicksPerBuffer:ticksPerBuffer
-  andNumberOfInputChannels:IOS_INCHANS
-  andNumberOfOutputChannels:IOS_OUTCHANS];
+               andSampleRate:sr
+               andTicksPerBuffer:ticksPerBuffer
+               andNumberOfInputChannels:IOS_INCHANS
+               andNumberOfOutputChannels:IOS_OUTCHANS];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

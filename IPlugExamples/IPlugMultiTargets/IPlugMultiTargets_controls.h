@@ -247,9 +247,9 @@ public:
   {
     switch (key)
     {
-        //case KEY_SPACE:
-        ///  DBGMSG("Space\n");
-        //  return true;
+      //case KEY_SPACE:
+      ///  DBGMSG("Space\n");
+      //  return true;
       case KEY_LEFTARROW:;
         DBGMSG("Left\n");
         return true;

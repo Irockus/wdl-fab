@@ -17,7 +17,7 @@
 
  // WARNING - I'm not happy with how the multislider data is shared with the high priority thread
  // need to rethink that
- 
+
 */
 
 
@@ -39,7 +39,7 @@ public:
   bool SerializeState(ByteChunk* pChunk);
   int UnserializeState(ByteChunk* pChunk, int startPos);
   bool CompareState(const unsigned char* incomingState, int startPos);
-  
+
   void PresetsChangedByHost();
 
 private:

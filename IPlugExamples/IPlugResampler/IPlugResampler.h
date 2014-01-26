@@ -2,21 +2,21 @@
 #define __IPLUGEFFECT__
 
 /*
- 
+
  IPlug Resampler example
  Oli Larkin, 2011
  Thanks to Justin Frankel for explaining how to use it
 
  A simple IPlug plug-in effect that shows how to use WDL_Resampler
- On load it writes a 441hz sine wave into an array of 44100 double precision samples. 
- If you change the sample rate in the host you still hear a 441hz sine wave, 
+ On load it writes a 441hz sine wave into an array of 44100 double precision samples.
+ If you change the sample rate in the host you still hear a 441hz sine wave,
  The plugin will resample the 44100hz sample to the host samplerate.
 
 */
 
 #include "IPlug_include_in_plug_hdr.h"
 
-//if the audio you want to resample is single precision uncomment this line 
+//if the audio you want to resample is single precision uncomment this line
 //and make appropriate changes in ProcessDoubleReplacing()
 //#define WDL_RESAMPLE_TYPE float
 
@@ -34,7 +34,7 @@ public:
 
   void ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames);
 
-  private:
+private:
 
   int mSampleIndx;
   WDL_Resampler mResampler;

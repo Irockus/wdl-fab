@@ -1,9 +1,9 @@
 #include "app_main.h"
 
 #ifdef OS_WIN
-  #include <windows.h>
-  #include <shlobj.h>
-  #include <sys/stat.h>
+#include <windows.h>
+#include <shlobj.h>
+#include <sys/stat.h>
 #endif
 
 HWND gHWND;
@@ -94,10 +94,10 @@ unsigned int GetMIDIInPortNumber(const char* nameToTest)
 
   if(!strcmp(nameToTest, "off")) return 0;
 
-  #ifdef OS_OSX
+#ifdef OS_OSX
   start = 2;
   if(!strcmp(nameToTest, "virtual input")) return 1;
-  #endif
+#endif
 
   for (int i = 0; i < gMidiIn->getPortCount(); i++)
   {
@@ -114,10 +114,10 @@ unsigned int GetMIDIOutPortNumber(const char* nameToTest)
 
   if(!strcmp(nameToTest, "off")) return 0;
 
-  #ifdef OS_OSX
+#ifdef OS_OSX
   start = 2;
   if(!strcmp(nameToTest, "virtual output")) return 1;
-  #endif
+#endif
 
   for (int i = 0; i < gMidiOut->getPortCount(); i++)
   {
@@ -146,13 +146,13 @@ void ProbeAudioIO()
     info = gDAC->getDeviceInfo(i);
     std::string deviceName = info.name;
 
-    #ifdef OS_OSX
+#ifdef OS_OSX
     size_t colonIdx = deviceName.rfind(": ");
 
     if(colonIdx != std::string::npos && deviceName.length() >= 2)
       deviceName = deviceName.substr(colonIdx + 2, deviceName.length() - colonIdx - 2);
 
-    #endif
+#endif
 
     gAudioIDDevNames.push_back(deviceName);
 
@@ -181,9 +181,9 @@ void ProbeMidiIO()
 
     gMIDIInputDevNames.push_back("off");
 
-    #ifndef OS_WIN
+#ifndef OS_WIN
     gMIDIInputDevNames.push_back("virtual input");
-    #endif
+#endif
 
     for (int i=0; i<nInputPorts; i++ )
     {
@@ -294,16 +294,18 @@ int AudioCallback(void *outputBuffer,
       if (gBufIndex == 0)
       {
         // TODO: this is horrible, sort it out
-        
-        double* inputs[4] = {inputBufferD + i, 
+
+        double* inputs[4] = {inputBufferD + i,
                              inputBufferD + nFrames + i,
                              inputBufferD + nFrames + nFrames + i,
-                             inputBufferD + nFrames + nFrames + nFrames + i};
-        
-        double* outputs[4] = {outputBufferD + i, 
+                             inputBufferD + nFrames + nFrames + nFrames + i
+                            };
+
+        double* outputs[4] = {outputBufferD + i,
                               outputBufferD + nFrames + i,
                               outputBufferD + nFrames + nFrames + i,
-                              outputBufferD + nFrames + nFrames + nFrames + i};
+                              outputBufferD + nFrames + nFrames + nFrames + i
+                             };
 
         gPluginInstance->LockMutexAndProcessDoubleReplacing(inputs, outputs, gSigVS);
       }
@@ -528,13 +530,13 @@ bool ChooseMidiInput(const char* pPortName)
     {
       return true;
     }
-    #ifdef OS_WIN
+#ifdef OS_WIN
     else
     {
       gMidiIn->openPort(port-1);
       return true;
     }
-    #else
+#else
     else if(port == 1)
     {
       std::string virtualMidiInputName = "To ";
@@ -547,7 +549,7 @@ bool ChooseMidiInput(const char* pPortName)
       gMidiIn->openPort(port-2);
       return true;
     }
-    #endif
+#endif
   }
 
   return false;
@@ -583,13 +585,13 @@ bool ChooseMidiOutput(const char* pPortName)
     {
       return true;
     }
-    #ifdef OS_WIN
+#ifdef OS_WIN
     else
     {
       gMidiOut->openPort(port-1);
       return true;
     }
-    #else
+#else
     else if(port == 1)
     {
       std::string virtualMidiOutputName = "From ";
@@ -602,7 +604,7 @@ bool ChooseMidiOutput(const char* pPortName)
       gMidiOut->openPort(port-2);
       return true;
     }
-    #endif
+#endif
   }
 
   return false;

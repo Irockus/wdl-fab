@@ -18,7 +18,7 @@
   {
     samplerateSegControl.selectedSegmentIndex = 1;
   }
-  else 
+  else
   {
     samplerateSegControl.selectedSegmentIndex = 0;
   }

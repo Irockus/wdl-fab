@@ -55,10 +55,10 @@ IPlugConvoEngine::IPlugConvoEngine(IPlugInstanceInfo instanceInfo):
 
   GetParam(kDry)->InitDouble("Dry", 1.,  0., 1., 0.001);
   GetParam(kWet)->InitDouble("Wet", 0.5, 0., 1., 0.001);
-  
+
   IGraphics* pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT);
   IText textProps(12, &COLOR_BLACK, "Verdana", IText::kStyleNormal, IText::kAlignNear, 0, IText::kQualityNonAntiAliased);
-	GenerateKnobGUI(pGraphics, this, &textProps, &COLOR_WHITE, &COLOR_BLACK, 60, 70);
+  GenerateKnobGUI(pGraphics, this, &textProps, &COLOR_WHITE, &COLOR_BLACK, 60, 70);
   AttachGraphics(pGraphics);
 }
 
@@ -137,7 +137,7 @@ void IPlugConvoEngine::ProcessDoubleReplacing(double** inputs, double** outputs,
 
   // If not enough samples are available yet, then only output the dry
   // signal.
-  for (int i = 0; i < nFrames - nAvail; ++i) *out_l++ = mDry * *in++;
+  for (int i = 0; i < nFrames - nAvail; ++i) *out_l++ = mDry **in++;
 
   // Output samples from the convolution engine.
   if (nAvail > 0)
@@ -145,7 +145,7 @@ void IPlugConvoEngine::ProcessDoubleReplacing(double** inputs, double** outputs,
     // Apply the dry/wet mix (and convert from WDL_FFT_REALs back to
     // doubles).
     WDL_FFT_REAL* convo = mEngine.Get()[0];
-    for (int i = 0; i < nAvail; ++i) *out_l++ = *out_r++ = mDry * *in++ + mWet * *convo++;
+    for (int i = 0; i < nAvail; ++i) *out_l++ = *out_r++ = mDry **in++ + mWet **convo++;
 
     // Remove the sample block from the convolution engine's buffer.
     mEngine.Advance(nAvail);

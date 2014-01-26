@@ -24,20 +24,20 @@ HWND gHWND=0;
 WDL_DLGRET AppWrapper::MainDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   AppWrapper& i = AppWrapper::Instance();
-  
+
   switch (uMsg)
   {
     case WM_INITDIALOG:
-	{
+    {
       gHWND=hwndDlg;
 
-	  if (!i.AttachGUI()) Error("couldn't attach gui\n");
+      if (!i.AttachGUI()) Error("couldn't attach gui\n");
 
 #ifdef _WIN32
       i.ClientResize(hwndDlg, GUI_WIDTH, GUI_HEIGHT);
-	  HINSTANCE hInst = GetModuleHandle(NULL);
-	  HICON hIcon = LoadIcon(hInst, MAKEINTRESOURCE(IDI_ICON1));
-	  HICON hIconSm  = (HICON)LoadImage(hInst, MAKEINTRESOURCE(IDI_ICON1), IMAGE_ICON, 16, 16, 0);
+      HINSTANCE hInst = GetModuleHandle(NULL);
+      HICON hIcon = LoadIcon(hInst, MAKEINTRESOURCE(IDI_ICON1));
+      HICON hIconSm  = (HICON)LoadImage(hInst, MAKEINTRESOURCE(IDI_ICON1), IMAGE_ICON, 16, 16, 0);
       if (hIcon) SendMessage(hwndDlg, WM_SETICON, ICON_BIG, (LPARAM) hIcon);
       if (hIconSm) SendMessage(hwndDlg, WM_SETICON, ICON_SMALL, (LPARAM) hIconSm);
 
@@ -47,9 +47,9 @@ WDL_DLGRET AppWrapper::MainDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 
       ShowWindow(hwndDlg,SW_SHOW);
       return 1;
-	}
+    }
     case WM_DESTROY:
-		gHWND = NULL;
+      gHWND = NULL;
 
 #ifdef _WIN32
       PostQuitMessage(0);
@@ -76,7 +76,7 @@ WDL_DLGRET AppWrapper::MainDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
           DestroyWindow(hwndDlg);
           return 0;
         case ID_ABOUT:
-			if (!i.gPluginInstance->HostRequestingAboutBox())
+          if (!i.gPluginInstance->HostRequestingAboutBox())
           {
             char version[50];
             snprintf(version, sizeof(version), BUNDLE_MFR"\nBuilt on "__DATE__);
@@ -89,7 +89,7 @@ WDL_DLGRET AppWrapper::MainDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 
           if(ret == IDOK)
           {
-			  i.UpdateINI();
+            i.UpdateINI();
           }
 
           return 0;
@@ -103,152 +103,152 @@ WDL_DLGRET AppWrapper::MainDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 #ifdef OS_WIN
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nShowCmd)
 {
-	AppWrapper& i = AppWrapper::Instance();
-	HINSTANCE& gHINST = i.gHINST;
+  AppWrapper& i = AppWrapper::Instance();
+  HINSTANCE& gHINST = i.gHINST;
 
-	// first check to make sure this is the only instance running
-	// http://www.bcbjournal.org/articles/vol3/9911/Single-instance_applications.htm
-	try
-	{
-		// Try to open the mutex.
-		HANDLE hMutex = OpenMutex(
-			MUTEX_ALL_ACCESS, 0, BUNDLE_NAME);
+  // first check to make sure this is the only instance running
+  // http://www.bcbjournal.org/articles/vol3/9911/Single-instance_applications.htm
+  try
+  {
+    // Try to open the mutex.
+    HANDLE hMutex = OpenMutex(
+                      MUTEX_ALL_ACCESS, 0, BUNDLE_NAME);
 
-		// If hMutex is 0 then the mutex doesn't exist.
-		if (!hMutex)
-			hMutex = CreateMutex(0, 0, BUNDLE_NAME);
-		else
-		{
-			// This is a second instance. Bring the
-			// original instance to the top.
-			HWND hWnd = FindWindow(0, BUNDLE_NAME);
-			SetForegroundWindow(hWnd);
+    // If hMutex is 0 then the mutex doesn't exist.
+    if (!hMutex)
+      hMutex = CreateMutex(0, 0, BUNDLE_NAME);
+    else
+    {
+      // This is a second instance. Bring the
+      // original instance to the top.
+      HWND hWnd = FindWindow(0, BUNDLE_NAME);
+      SetForegroundWindow(hWnd);
 
-			return 0;
-		}
+      return 0;
+    }
 
-		i.gHINST = hInstance;
+    i.gHINST = hInstance;
 
-		InitCommonControls();
-		i.gScrollMessage = RegisterWindowMessage("MSWHEEL_ROLLMSG");
+    InitCommonControls();
+    i.gScrollMessage = RegisterWindowMessage("MSWHEEL_ROLLMSG");
 
-		i.gState = new AppState();
-		i.gTempState = new AppState();
-		i.gActiveState = new AppState();
+    i.gState = new AppState();
+    i.gTempState = new AppState();
+    i.gActiveState = new AppState();
 
-		if (SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, i.gINIPath) != S_OK)
-		{
-			DBGMSG("could not retrieve the user's application data directory!\n");
+    if (SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, i.gINIPath) != S_OK)
+    {
+      DBGMSG("could not retrieve the user's application data directory!\n");
 
-			//TODO error msg?
-			return 1;
-		}
-		
-		char * & gINIPath = i.gINIPath;
-		AppState* gState = i.gState;
+      //TODO error msg?
+      return 1;
+    }
 
-		snprintf(gINIPath, MAX_APP_INIPATH, "%s\\%s", gINIPath, BUNDLE_NAME); // Add the app name to the path
+    char * & gINIPath = i.gINIPath;
+    AppState* gState = i.gState;
 
-		struct stat st;
-		if (stat(gINIPath, &st) == 0) // if directory exists
-		{
-			snprintf(gINIPath, MAX_APP_INIPATH, "%s\\%s", gINIPath, "settings.ini"); // add file name to path
+    snprintf(gINIPath, MAX_APP_INIPATH, "%s\\%s", gINIPath, BUNDLE_NAME); // Add the app name to the path
 
-			if (stat(gINIPath, &st) == 0) // if settings file exists read values into state
-			{
-				gState->mAudioDriverType = GetPrivateProfileInt("audio", "driver", 0, gINIPath);
+    struct stat st;
+    if (stat(gINIPath, &st) == 0) // if directory exists
+    {
+      snprintf(gINIPath, MAX_APP_INIPATH, "%s\\%s", gINIPath, "settings.ini"); // add file name to path
 
-				GetPrivateProfileString("audio", "indev", DEFAULT_INPUT_DEV, gState->mAudioInDev, 100, gINIPath);
-				GetPrivateProfileString("audio", "outdev", DEFAULT_OUTPUT_DEV, gState->mAudioOutDev, 100, gINIPath);
+      if (stat(gINIPath, &st) == 0) // if settings file exists read values into state
+      {
+        gState->mAudioDriverType = GetPrivateProfileInt("audio", "driver", 0, gINIPath);
 
-				//audio
-				gState->mAudioInChanL = GetPrivateProfileInt("audio", "in1", 1, gINIPath); // 1 is first audio input
-				gState->mAudioInChanR = GetPrivateProfileInt("audio", "in2", 2, gINIPath);
-				gState->mAudioOutChanL = GetPrivateProfileInt("audio", "out1", 1, gINIPath); // 1 is first audio output
-				gState->mAudioOutChanR = GetPrivateProfileInt("audio", "out2", 2, gINIPath);
-				gState->mAudioInIsMono = GetPrivateProfileInt("audio", "monoinput", 0, gINIPath);
+        GetPrivateProfileString("audio", "indev", DEFAULT_INPUT_DEV, gState->mAudioInDev, 100, gINIPath);
+        GetPrivateProfileString("audio", "outdev", DEFAULT_OUTPUT_DEV, gState->mAudioOutDev, 100, gINIPath);
 
-				GetPrivateProfileString("audio", "iovs", "512", gState->mAudioIOVS, 100, gINIPath);
-				GetPrivateProfileString("audio", "sigvs", "32", gState->mAudioSigVS, 100, gINIPath);
-				GetPrivateProfileString("audio", "sr", "44100", gState->mAudioSR, 100, gINIPath);
+        //audio
+        gState->mAudioInChanL = GetPrivateProfileInt("audio", "in1", 1, gINIPath); // 1 is first audio input
+        gState->mAudioInChanR = GetPrivateProfileInt("audio", "in2", 2, gINIPath);
+        gState->mAudioOutChanL = GetPrivateProfileInt("audio", "out1", 1, gINIPath); // 1 is first audio output
+        gState->mAudioOutChanR = GetPrivateProfileInt("audio", "out2", 2, gINIPath);
+        gState->mAudioInIsMono = GetPrivateProfileInt("audio", "monoinput", 0, gINIPath);
 
-				//midi
-				GetPrivateProfileString("midi", "indev", "no input", gState->mMidiInDev, 100, gINIPath);
-				GetPrivateProfileString("midi", "outdev", "no output", gState->mMidiOutDev, 100, gINIPath);
+        GetPrivateProfileString("audio", "iovs", "512", gState->mAudioIOVS, 100, gINIPath);
+        GetPrivateProfileString("audio", "sigvs", "32", gState->mAudioSigVS, 100, gINIPath);
+        GetPrivateProfileString("audio", "sr", "44100", gState->mAudioSR, 100, gINIPath);
 
-				gState->mMidiInChan = GetPrivateProfileInt("midi", "inchan", 0, gINIPath); // 0 is any
-				gState->mMidiOutChan = GetPrivateProfileInt("midi", "outchan", 0, gINIPath); // 1 is first chan
+        //midi
+        GetPrivateProfileString("midi", "indev", "no input", gState->mMidiInDev, 100, gINIPath);
+        GetPrivateProfileString("midi", "outdev", "no output", gState->mMidiOutDev, 100, gINIPath);
 
-				i.UpdateINI(); // this will write over any invalid values in the file
-			}
-			else // settings file doesn't exist, so populate with default values
-			{
-				i.UpdateINI();
-			}
-		}
-		else
-		{
-			// folder doesn't exist - make folder and make file
-			CreateDirectory(gINIPath, NULL);
-			sprintf(gINIPath, "%s%s", gINIPath, "settings.ini"); // add file name to path
-			i.UpdateINI(); // will write file if doesn't exist
-		}
+        gState->mMidiInChan = GetPrivateProfileInt("midi", "inchan", 0, gINIPath); // 0 is any
+        gState->mMidiOutChan = GetPrivateProfileInt("midi", "outchan", 0, gINIPath); // 1 is first chan
 
-		i.Init();
+        i.UpdateINI(); // this will write over any invalid values in the file
+      }
+      else // settings file doesn't exist, so populate with default values
+      {
+        i.UpdateINI();
+      }
+    }
+    else
+    {
+      // folder doesn't exist - make folder and make file
+      CreateDirectory(gINIPath, NULL);
+      sprintf(gINIPath, "%s%s", gINIPath, "settings.ini"); // add file name to path
+      i.UpdateINI(); // will write file if doesn't exist
+    }
 
-		CreateDialog(gHINST, MAKEINTRESOURCE(IDD_DIALOG_MAIN), GetDesktopWindow(), AppWrapper::MainDlgProc);
+    i.Init();
 
-		for (;;)
-		{
-			MSG msg = { 0, };
-			int vvv = GetMessage(&msg, NULL, 0, 0);
-			if (!vvv)  break;
+    CreateDialog(gHINST, MAKEINTRESOURCE(IDD_DIALOG_MAIN), GetDesktopWindow(), AppWrapper::MainDlgProc);
 
-			if (vvv<0)
-			{
-				Sleep(10);
-				continue;
-			}
-			if (!msg.hwnd)
-			{
-				DispatchMessage(&msg);
-				continue;
-			}
+    for (;;)
+    {
+      MSG msg = { 0, };
+      int vvv = GetMessage(&msg, NULL, 0, 0);
+      if (!vvv)  break;
 
-			if (gHWND && IsDialogMessage(gHWND, &msg)) continue;
+      if (vvv<0)
+      {
+        Sleep(10);
+        continue;
+      }
+      if (!msg.hwnd)
+      {
+        DispatchMessage(&msg);
+        continue;
+      }
 
-			// default processing for other dialogs
-			HWND hWndParent = NULL;
-			HWND temphwnd = msg.hwnd;
-			do
-			{
-				if (GetClassLong(temphwnd, GCW_ATOM) == (INT)32770)
-				{
-					hWndParent = temphwnd;
-					if (!(GetWindowLong(temphwnd, GWL_STYLE)&WS_CHILD)) break; // not a child, exit
-				}
-			} while (temphwnd = GetParent(temphwnd));
+      if (gHWND && IsDialogMessage(gHWND, &msg)) continue;
 
-			if (hWndParent && IsDialogMessage(hWndParent, &msg)) continue;
+      // default processing for other dialogs
+      HWND hWndParent = NULL;
+      HWND temphwnd = msg.hwnd;
+      do
+      {
+        if (GetClassLong(temphwnd, GCW_ATOM) == (INT)32770)
+        {
+          hWndParent = temphwnd;
+          if (!(GetWindowLong(temphwnd, GWL_STYLE)&WS_CHILD)) break; // not a child, exit
+        }
+      } while (temphwnd = GetParent(temphwnd));
 
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+      if (hWndParent && IsDialogMessage(hWndParent, &msg)) continue;
 
-		}
+      TranslateMessage(&msg);
+      DispatchMessage(&msg);
 
-		// in case gHWND didnt get destroyed -- this corresponds to SWELLAPP_DESTROY roughly
-		if (gHWND) DestroyWindow(gHWND);
+    }
 
-		i.Cleanup();
+    // in case gHWND didnt get destroyed -- this corresponds to SWELLAPP_DESTROY roughly
+    if (gHWND) DestroyWindow(gHWND);
 
-		ReleaseMutex(hMutex);
-	}
-	catch (...)
-	{
-		//TODO proper error catching
-		DBGMSG("another instance running");
-	}
-	return 0;
+    i.Cleanup();
+
+    ReleaseMutex(hMutex);
+  }
+  catch (...)
+  {
+    //TODO proper error catching
+    DBGMSG("another instance running");
+  }
+  return 0;
 }
 
 #else
@@ -258,151 +258,151 @@ const char *homeDir;
 
 INT_PTR SWELLAppMain(int msg, INT_PTR parm1, INT_PTR parm2)
 {
-    AppWrapper& i = AppWrapper::Instance();
-	char * &gINIPath = i.gINIPath;
-	AppState*& gState = i.gState;
-	switch (msg)
-	{
-	case SWELLAPP_ONLOAD:
+  AppWrapper& i = AppWrapper::Instance();
+  char * &gINIPath = i.gINIPath;
+  AppState*& gState = i.gState;
+  switch (msg)
+  {
+    case SWELLAPP_ONLOAD:
 
-		i.gState = new AppState();
-		i.gTempState = new AppState();
-		i.gActiveState = new AppState();
-            
-		homeDir = getenv("HOME");
-		sprintf(gINIPath, "%s/Library/Application Support/%s/", homeDir, BUNDLE_NAME);
+      i.gState = new AppState();
+      i.gTempState = new AppState();
+      i.gActiveState = new AppState();
 
-		struct stat st;
-		if (stat(gINIPath, &st) == 0) // if directory exists
-		{
-			sprintf(gINIPath, "%s%s", gINIPath, "settings.ini"); // add file name to path
+      homeDir = getenv("HOME");
+      sprintf(gINIPath, "%s/Library/Application Support/%s/", homeDir, BUNDLE_NAME);
 
-			if (stat(gINIPath, &st) == 0) // if settings file exists read values into state
-			{
-				gState->mAudioDriverType = GetPrivateProfileInt("audio", "driver", 0, gINIPath);
+      struct stat st;
+      if (stat(gINIPath, &st) == 0) // if directory exists
+      {
+        sprintf(gINIPath, "%s%s", gINIPath, "settings.ini"); // add file name to path
 
-				GetPrivateProfileString("audio", "indev", "Built-in Input", gState->mAudioInDev, 100, gINIPath);
-				GetPrivateProfileString("audio", "outdev", "Built-in Output", gState->mAudioOutDev, 100, gINIPath);
+        if (stat(gINIPath, &st) == 0) // if settings file exists read values into state
+        {
+          gState->mAudioDriverType = GetPrivateProfileInt("audio", "driver", 0, gINIPath);
 
-				//audio
-				gState->mAudioInChanL = GetPrivateProfileInt("audio", "in1", 1, gINIPath); // 1 is first audio input
-				gState->mAudioInChanR = GetPrivateProfileInt("audio", "in2", 2, gINIPath);
-				gState->mAudioOutChanL = GetPrivateProfileInt("audio", "out1", 1, gINIPath); // 1 is first audio output
-				gState->mAudioOutChanR = GetPrivateProfileInt("audio", "out2", 2, gINIPath);
-				gState->mAudioInIsMono = GetPrivateProfileInt("audio", "monoinput", 0, gINIPath);
+          GetPrivateProfileString("audio", "indev", "Built-in Input", gState->mAudioInDev, 100, gINIPath);
+          GetPrivateProfileString("audio", "outdev", "Built-in Output", gState->mAudioOutDev, 100, gINIPath);
 
-				GetPrivateProfileString("audio", "iovs", "512", gState->mAudioIOVS, 100, gINIPath);
-				GetPrivateProfileString("audio", "sigvs", "32", gState->mAudioSigVS, 100, gINIPath);
-				GetPrivateProfileString("audio", "sr", "44100", gState->mAudioSR, 100, gINIPath);
+          //audio
+          gState->mAudioInChanL = GetPrivateProfileInt("audio", "in1", 1, gINIPath); // 1 is first audio input
+          gState->mAudioInChanR = GetPrivateProfileInt("audio", "in2", 2, gINIPath);
+          gState->mAudioOutChanL = GetPrivateProfileInt("audio", "out1", 1, gINIPath); // 1 is first audio output
+          gState->mAudioOutChanR = GetPrivateProfileInt("audio", "out2", 2, gINIPath);
+          gState->mAudioInIsMono = GetPrivateProfileInt("audio", "monoinput", 0, gINIPath);
 
-				//midi
-				GetPrivateProfileString("midi", "indev", "no input", gState->mMidiInDev, 100, gINIPath);
-				GetPrivateProfileString("midi", "outdev", "no output", gState->mMidiOutDev, 100, gINIPath);
+          GetPrivateProfileString("audio", "iovs", "512", gState->mAudioIOVS, 100, gINIPath);
+          GetPrivateProfileString("audio", "sigvs", "32", gState->mAudioSigVS, 100, gINIPath);
+          GetPrivateProfileString("audio", "sr", "44100", gState->mAudioSR, 100, gINIPath);
 
-				gState->mMidiInChan = GetPrivateProfileInt("midi", "inchan", 0, gINIPath); // 0 is any
-				gState->mMidiOutChan = GetPrivateProfileInt("midi", "outchan", 0, gINIPath); // 1 is first chan
+          //midi
+          GetPrivateProfileString("midi", "indev", "no input", gState->mMidiInDev, 100, gINIPath);
+          GetPrivateProfileString("midi", "outdev", "no output", gState->mMidiOutDev, 100, gINIPath);
 
-				i.UpdateINI(); // this will write over any invalid values in the file
-			}
-			else // settings file doesn't exist, so populate with default values
-			{
-				i.UpdateINI();
-			}
+          gState->mMidiInChan = GetPrivateProfileInt("midi", "inchan", 0, gINIPath); // 0 is any
+          gState->mMidiOutChan = GetPrivateProfileInt("midi", "outchan", 0, gINIPath); // 1 is first chan
 
-		}
-		else   // folder doesn't exist - make folder and make file
-		{
-			// http://blog.tremend.ro/2008/10/06/create-directories-in-c-using-mkdir-with-proper-permissions/
+          i.UpdateINI(); // this will write over any invalid values in the file
+        }
+        else // settings file doesn't exist, so populate with default values
+        {
+          i.UpdateINI();
+        }
 
-			mode_t process_mask = umask(0);
-			int result_code = mkdir(gINIPath, S_IRWXU | S_IRWXG | S_IRWXO);
-			umask(process_mask);
+      }
+      else   // folder doesn't exist - make folder and make file
+      {
+        // http://blog.tremend.ro/2008/10/06/create-directories-in-c-using-mkdir-with-proper-permissions/
 
-			if (result_code) return 1;
-			else
-			{
-				sprintf(gINIPath, "%s%s", gINIPath, "settings.ini"); // add file name to path
-				i.UpdateINI(); // will write file if doesn't exist
-			}
-		}
-		break;
+        mode_t process_mask = umask(0);
+        int result_code = mkdir(gINIPath, S_IRWXU | S_IRWXG | S_IRWXO);
+        umask(process_mask);
+
+        if (result_code) return 1;
+        else
+        {
+          sprintf(gINIPath, "%s%s", gINIPath, "settings.ini"); // add file name to path
+          i.UpdateINI(); // will write file if doesn't exist
+        }
+      }
+      break;
 #pragma mark loaded
-	case SWELLAPP_LOADED:
-	{
-		i.Init();
+    case SWELLAPP_LOADED:
+    {
+      i.Init();
 
-		HMENU menu = SWELL_GetCurrentMenu();
+      HMENU menu = SWELL_GetCurrentMenu();
 
-		if (menu)
-		{
-			// other windows will get the stock (bundle) menus
-			//SWELL_SetDefaultModalWindowMenu(menu);
-			//SWELL_SetDefaultWindowMenu(menu);
+      if (menu)
+      {
+        // other windows will get the stock (bundle) menus
+        //SWELL_SetDefaultModalWindowMenu(menu);
+        //SWELL_SetDefaultWindowMenu(menu);
 
-			// work on a new menu
-			menu = SWELL_DuplicateMenu(menu);
-			HMENU src = LoadMenu(NULL, MAKEINTRESOURCE(IDR_MENU1));
-			int x;
-			for (x = 0; x<GetMenuItemCount(src) - 1; x++)
-			{
-				HMENU sm = GetSubMenu(src, x);
-				if (sm)
-				{
-					char str[1024];
-					MENUITEMINFO mii = { sizeof(mii), MIIM_TYPE, };
-					mii.dwTypeData = str;
-					mii.cch = sizeof(str);
-					str[0] = 0;
-					GetMenuItemInfo(src, x, TRUE, &mii);
-					MENUITEMINFO mi = { sizeof(mi), MIIM_STATE | MIIM_SUBMENU | MIIM_TYPE, MFT_STRING, 0, 0, SWELL_DuplicateMenu(sm), NULL, NULL, 0, str };
-					InsertMenuItem(menu, x + 1, TRUE, &mi);
-				}
-			}
-		}
+        // work on a new menu
+        menu = SWELL_DuplicateMenu(menu);
+        HMENU src = LoadMenu(NULL, MAKEINTRESOURCE(IDR_MENU1));
+        int x;
+        for (x = 0; x<GetMenuItemCount(src) - 1; x++)
+        {
+          HMENU sm = GetSubMenu(src, x);
+          if (sm)
+          {
+            char str[1024];
+            MENUITEMINFO mii = { sizeof(mii), MIIM_TYPE, };
+            mii.dwTypeData = str;
+            mii.cch = sizeof(str);
+            str[0] = 0;
+            GetMenuItemInfo(src, x, TRUE, &mii);
+            MENUITEMINFO mi = { sizeof(mi), MIIM_STATE | MIIM_SUBMENU | MIIM_TYPE, MFT_STRING, 0, 0, SWELL_DuplicateMenu(sm), NULL, NULL, 0, str };
+            InsertMenuItem(menu, x + 1, TRUE, &mi);
+          }
+        }
+      }
 
-		if (menu)
-		{
-			HMENU sm = GetSubMenu(menu, 1);
-			DeleteMenu(sm, ID_QUIT, MF_BYCOMMAND); // remove QUIT from our file menu, since it is in the system menu on OSX
-			DeleteMenu(sm, ID_PREFERENCES, MF_BYCOMMAND); // remove PREFERENCES from the file menu, since it is in the system menu on OSX
+      if (menu)
+      {
+        HMENU sm = GetSubMenu(menu, 1);
+        DeleteMenu(sm, ID_QUIT, MF_BYCOMMAND); // remove QUIT from our file menu, since it is in the system menu on OSX
+        DeleteMenu(sm, ID_PREFERENCES, MF_BYCOMMAND); // remove PREFERENCES from the file menu, since it is in the system menu on OSX
 
-			// remove any trailing separators
-			int a = GetMenuItemCount(sm);
-			while (a > 0 && GetMenuItemID(sm, a - 1) == 0) DeleteMenu(sm, --a, MF_BYPOSITION);
+        // remove any trailing separators
+        int a = GetMenuItemCount(sm);
+        while (a > 0 && GetMenuItemID(sm, a - 1) == 0) DeleteMenu(sm, --a, MF_BYPOSITION);
 
-			DeleteMenu(menu, 1, MF_BYPOSITION); // delete file menu
-		}
+        DeleteMenu(menu, 1, MF_BYPOSITION); // delete file menu
+      }
 
-		// if we want to set any default modifiers for items in the menus, we can use:
-		// SetMenuItemModifier(menu,commandID,MF_BYCOMMAND,'A',FCONTROL) etc.
+      // if we want to set any default modifiers for items in the menus, we can use:
+      // SetMenuItemModifier(menu,commandID,MF_BYCOMMAND,'A',FCONTROL) etc.
 
-		HWND hwnd = CreateDialog(i.gHINST, MAKEINTRESOURCE(IDD_DIALOG_MAIN), NULL, AppWrapper::MainDlgProc);
-		if (menu)
-		{
-			SetMenu(hwnd, menu); // set the menu for the dialog to our menu (on Windows that menu is set from the .rc, but on SWELL
-			SWELL_SetDefaultModalWindowMenu(menu); // other windows will get the stock (bundle) menus
-		}
-		// we need to set it manually (and obviously we've edited the menu anyway)
-	}
+      HWND hwnd = CreateDialog(i.gHINST, MAKEINTRESOURCE(IDD_DIALOG_MAIN), NULL, AppWrapper::MainDlgProc);
+      if (menu)
+      {
+        SetMenu(hwnd, menu); // set the menu for the dialog to our menu (on Windows that menu is set from the .rc, but on SWELL
+        SWELL_SetDefaultModalWindowMenu(menu); // other windows will get the stock (bundle) menus
+      }
+      // we need to set it manually (and obviously we've edited the menu anyway)
+    }
 
-		if (!i.AttachGUI()) DBGMSG("couldn't attach gui\n"); //todo error
+    if (!i.AttachGUI()) DBGMSG("couldn't attach gui\n"); //todo error
 
-		break;
-	case SWELLAPP_ONCOMMAND:
-		// this is to catch commands coming from the system menu etc
-		if (gHWND && (parm1 & 0xffff)) SendMessage(gHWND, WM_COMMAND, parm1 & 0xffff, 0);
-		break;
+    break;
+    case SWELLAPP_ONCOMMAND:
+      // this is to catch commands coming from the system menu etc
+      if (gHWND && (parm1 & 0xffff)) SendMessage(gHWND, WM_COMMAND, parm1 & 0xffff, 0);
+      break;
 #pragma mark destroy
-	case SWELLAPP_DESTROY:
+    case SWELLAPP_DESTROY:
 
-		if (gHWND) DestroyWindow(gHWND);
-		i.Cleanup();
-		break;
-	case SWELLAPP_PROCESSMESSAGE: // can hook keyboard input here
-		// parm1 = (MSG*), should we want it -- look in swell.h to see what the return values refer to
-		break;
-	}
-	return 0;
+      if (gHWND) DestroyWindow(gHWND);
+      i.Cleanup();
+      break;
+    case SWELLAPP_PROCESSMESSAGE: // can hook keyboard input here
+      // parm1 = (MSG*), should we want it -- look in swell.h to see what the return values refer to
+      break;
+  }
+  return 0;
 }
 
 #endif

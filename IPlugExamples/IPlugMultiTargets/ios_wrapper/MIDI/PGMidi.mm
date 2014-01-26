@@ -44,7 +44,7 @@ NSString *NameOfEndpoint(MIDIEndpointRef ref)
   {
     //NSLog(@"Properties = %@", properties);
     NSDictionary *dictionary = (NSDictionary*)properties;
-string = [NSString stringWithFormat:@"%@", [dictionary valueForKey:@"name"]];
+    string = [NSString stringWithFormat:@"%@", [dictionary valueForKey:@"name"]];
     CFRelease(properties);
   }
 
@@ -63,7 +63,7 @@ BOOL IsNetworkSession(MIDIEndpointRef ref)
   if (!s)
   {
     NSDictionary *dictionary = (NSDictionary*)properties;
-hasMidiRtpKey = [dictionary valueForKey:@"apple.midirtp.session"] != nil;
+    hasMidiRtpKey = [dictionary valueForKey:@"apple.midirtp.session"] != nil;
     CFRelease(properties);
   }
 
@@ -101,7 +101,7 @@ hasMidiRtpKey = [dictionary valueForKey:@"apple.midirtp.session"] != nil;
 
 - (id) initWithMidi:(PGMidi*)m endpoint:(MIDIEndpointRef)e
 {
-if ((self = [super initWithMidi:m endpoint:e]))
+  if ((self = [super initWithMidi:m endpoint:e]))
   {
   }
   return self;
@@ -110,14 +110,14 @@ if ((self = [super initWithMidi:m endpoint:e]))
 // NOTE: Called on a separate high-priority thread, not the main runloop
 - (void) midiRead:(const MIDIPacketList *)pktlist
 {
-[delegate midiSource:self midiReceived:pktlist];
+  [delegate midiSource:self midiReceived:pktlist];
 }
 
 static
 void PGMIDIReadProc(const MIDIPacketList *pktlist, void *readProcRefCon, void *srcConnRefCon)
 {
   PGMidiSource *self = (PGMidiSource*)srcConnRefCon;
-[self midiRead:pktlist];
+  [self midiRead:pktlist];
 }
 
 @end
@@ -128,7 +128,7 @@ void PGMIDIReadProc(const MIDIPacketList *pktlist, void *readProcRefCon, void *s
 
 - (id) initWithMidi:(PGMidi*)m endpoint:(MIDIEndpointRef)e
 {
-if ((self = [super initWithMidi:m endpoint:e]))
+  if ((self = [super initWithMidi:m endpoint:e]))
   {
     midi     = m;
     endpoint = e;
@@ -145,7 +145,7 @@ if ((self = [super initWithMidi:m endpoint:e]))
   MIDIPacket     *packet     = MIDIPacketListInit(packetList);
   packet = MIDIPacketListAdd(packetList, sizeof(packetBuffer), packet, 0, size, bytes);
 
-[self sendPacketList:packetList];
+  [self sendPacketList:packetList];
 }
 
 - (void) sendPacketList:(const MIDIPacketList *)packetList
@@ -252,9 +252,9 @@ if ((self = [super initWithMidi:m endpoint:e]))
 
 - (void) connectSource:(MIDIEndpointRef)endpoint
 {
-PGMidiSource *source = [[PGMidiSource alloc] initWithMidi:self endpoint:endpoint];
-[sources addObject:source];
-[delegate midi:self sourceAdded:source];
+  PGMidiSource *source = [[PGMidiSource alloc] initWithMidi:self endpoint:endpoint];
+  [sources addObject:source];
+  [delegate midi:self sourceAdded:source];
 
   OSStatus s = MIDIPortConnectSource(inputPort, endpoint, source);
   NSLogError(s, @"Connecting to MIDI source");
@@ -262,16 +262,16 @@ PGMidiSource *source = [[PGMidiSource alloc] initWithMidi:self endpoint:endpoint
 
 - (void) disconnectSource:(MIDIEndpointRef)endpoint
 {
-PGMidiSource *source = [self getSource:endpoint];
+  PGMidiSource *source = [self getSource:endpoint];
 
   if (source)
   {
     OSStatus s = MIDIPortDisconnectSource(inputPort, endpoint);
     NSLogError(s, @"Disconnecting from MIDI source");
 
-[delegate midi:self sourceRemoved:source];
+    [delegate midi:self sourceRemoved:source];
 
-[sources removeObject:source];
+    [sources removeObject:source];
     [source release];
   }
 }
@@ -279,21 +279,21 @@ PGMidiSource *source = [self getSource:endpoint];
 - (void) connectDestination:(MIDIEndpointRef)endpoint
 {
   //[delegate midiInput:self event:@"Added a destination"];
-PGMidiDestination *destination = [[PGMidiDestination alloc] initWithMidi:self endpoint:endpoint];
-[destinations addObject:destination];
-[delegate midi:self destinationAdded:destination];
+  PGMidiDestination *destination = [[PGMidiDestination alloc] initWithMidi:self endpoint:endpoint];
+  [destinations addObject:destination];
+  [delegate midi:self destinationAdded:destination];
 }
 
 - (void) disconnectDestination:(MIDIEndpointRef)endpoint
 {
   //[delegate midiInput:self event:@"Removed a device"];
 
-PGMidiDestination *destination = [self getDestination:endpoint];
+  PGMidiDestination *destination = [self getDestination:endpoint];
 
   if (destination)
   {
-[delegate midi:self destinationRemoved:destination];
-[destinations removeObject:destination];
+    [delegate midi:self destinationRemoved:destination];
+    [destinations removeObject:destination];
     [destination release];
   }
 }
@@ -304,9 +304,9 @@ PGMidiDestination *destination = [self getDestination:endpoint];
   const ItemCount numberOfSources      = MIDIGetNumberOfSources();
 
   for (ItemCount index = 0; index < numberOfDestinations; ++index)
-[self connectDestination:MIDIGetDestination(index)];
+    [self connectDestination:MIDIGetDestination(index)];
   for (ItemCount index = 0; index < numberOfSources; ++index)
-[self connectSource:MIDIGetSource(index)];
+    [self connectSource:MIDIGetSource(index)];
 }
 
 //==============================================================================
@@ -315,17 +315,17 @@ PGMidiDestination *destination = [self getDestination:endpoint];
 - (void) midiNotifyAdd:(const MIDIObjectAddRemoveNotification *)notification
 {
   if (notification->childType == kMIDIObjectType_Destination)
-[self connectDestination:(MIDIEndpointRef)notification->child];
+    [self connectDestination:(MIDIEndpointRef)notification->child];
   else if (notification->childType == kMIDIObjectType_Source)
-[self connectSource:(MIDIEndpointRef)notification->child];
+    [self connectSource:(MIDIEndpointRef)notification->child];
 }
 
 - (void) midiNotifyRemove:(const MIDIObjectAddRemoveNotification *)notification
 {
   if (notification->childType == kMIDIObjectType_Destination)
-[self disconnectDestination:(MIDIEndpointRef)notification->child];
+    [self disconnectDestination:(MIDIEndpointRef)notification->child];
   else if (notification->childType == kMIDIObjectType_Source)
-[self disconnectSource:(MIDIEndpointRef)notification->child];
+    [self disconnectSource:(MIDIEndpointRef)notification->child];
 }
 
 - (void) midiNotify:(const MIDINotification*)notification
@@ -333,10 +333,10 @@ PGMidiDestination *destination = [self getDestination:endpoint];
   switch (notification->messageID)
   {
     case kMIDIMsgObjectAdded:
-[self midiNotifyAdd:(const MIDIObjectAddRemoveNotification *)notification];
+      [self midiNotifyAdd:(const MIDIObjectAddRemoveNotification *)notification];
       break;
     case kMIDIMsgObjectRemoved:
-[self midiNotifyRemove:(const MIDIObjectAddRemoveNotification *)notification];
+      [self midiNotifyRemove:(const MIDIObjectAddRemoveNotification *)notification];
       break;
     case kMIDIMsgSetupChanged:
     case kMIDIMsgPropertyChanged:
@@ -350,7 +350,7 @@ PGMidiDestination *destination = [self getDestination:endpoint];
 void PGMIDINotifyProc(const MIDINotification *message, void *refCon)
 {
   PGMidi *self = (PGMidi*)refCon;
-[self midiNotify:message];
+  [self midiNotify:message];
 }
 
 //==============================================================================
@@ -380,7 +380,7 @@ void PGMIDINotifyProc(const MIDINotification *message, void *refCon)
 
   packet = MIDIPacketListAdd(packetList, sizeof(packetBuffer), packet, 0, size, data);
 
-[self sendPacketList:packetList];
+  [self sendPacketList:packetList];
 }
 
 @end

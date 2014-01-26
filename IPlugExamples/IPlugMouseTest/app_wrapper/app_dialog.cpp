@@ -420,12 +420,12 @@ WDL_DLGRET PreferencesDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
 
         case IDC_BUTTON_ASIO:
           if (HIWORD(wParam) == BN_CLICKED)
-            #ifdef OS_OSX
+#ifdef OS_OSX
             system("open \"/Applications/Utilities/Audio MIDI Setup.app\"");
-            #elif defined OS_WIN
+#elif defined OS_WIN
             if( gState->mAudioDriverType == DAC_ASIO )
               ASIOControlPanel();
-            #endif
+#endif
           break;
 
         case IDC_COMBO_MIDI_IN_DEV:

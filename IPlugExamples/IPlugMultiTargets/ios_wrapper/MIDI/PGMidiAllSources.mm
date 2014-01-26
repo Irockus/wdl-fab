@@ -49,7 +49,7 @@
 
 - (void) midiSource:(PGMidiSource*)input midiReceived:(const MIDIPacketList *)packetList
 {
-[delegate midiSource:input midiReceived:packetList];
+  [delegate midiSource:input midiReceived:packetList];
 }
 
 @end
