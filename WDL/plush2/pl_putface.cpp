@@ -390,32 +390,41 @@ public:
 
     {
       pl_sInt32 dY = Y2 - Y0;
-      if (dY) {
+      if (dY)
+      {
         dX2 = (Scrx[i2] - X1) / dY;
         for(a=0; a<3; a++) dC2[a] = (C3[a] - C1[a]) / dY;
         dZ2 = (Z3 - Z1) / dY;
       }
       dY = Y1 - Y0;
-      if (dY) {
+      if (dY)
+      {
         dX1 = (Scrx[i1] - X1) / dY;
         for(a=0; a<3; a++)
           dC1[a] = (C2[a] - C1[a]) / dY;
         dZ1 = (Z2 - Z1) / dY;
-        if (dX2 < dX1) {
+        if (dX2 < dX1)
+        {
           SWAP(dX2,dX1,pl_sInt32);
           for(a=0; a<3; a++)  SWAP(dC1[a],dC2[a],pl_sInt32);
           SWAP(dZ1,dZ2,pl_Float);
           stat = 2;
-        } else stat = 1;
+        }
+        else stat = 1;
         Z2 = Z1;
         C2[0] = C1[0];
         C2[1] = C1[1];
         C2[2] = C1[2];
-      } else {
-        if (Scrx[i1] > X1) {
+      }
+      else
+      {
+        if (Scrx[i1] > X1)
+        {
           X2 = Scrx[i1];
           stat = 2|4;
-        } else {
+        }
+        else
+        {
           for(a=0; a<3; a++) SWAP(C1[a],C2[a],pl_sInt32);
           SWAP(Z1,Z2,pl_Float);
           X1 = Scrx[i1];
@@ -424,14 +433,18 @@ public:
       }
 
       pl_sInt32 tmp = (dX1-dX2)*dY;
-      if (tmp) {
+      if (tmp)
+      {
         double v=(1<<XPOS_BITS)/(double)tmp;
         for(a=0; a<3; a++)
           dCL[a] = (pl_sInt32) (((dC1[a]-dC2[a])*dY)*v);
         dZL = ((dZ1-dZ2)*dY)*v;
-      } else {
+      }
+      else
+      {
         tmp = X2-X1;
-        if (tmp) {
+        if (tmp)
+        {
           double v=(1<<XPOS_BITS)/(double)tmp;
           for(a=0; a<3; a++)
             dCL[a] = (pl_sInt32) ((C2[a]-C1[a])*v);
@@ -443,10 +456,13 @@ public:
     gmem += (Y0 * swidth);
     zbuf += (Y0 * zfb_width);
 
-    while (Y0 < Y2) {
-      if (Y0 == Y1) {
+    while (Y0 < Y2)
+    {
+      if (Y0 == Y1)
+      {
         pl_sInt32 dY = Y2 - Scry[i1];
-        if (dY) {
+        if (dY)
+        {
           double v=1.0/dY;
           dZ1 = (Z3-Z1)*v;
           dC1[0] = (pl_sInt32) ((C3[0]-C1[0])*v);
@@ -459,7 +475,8 @@ public:
       }
       pl_sInt32 XL1 = (X1+(1<<(XPOS_BITS-1)))>>XPOS_BITS;
       pl_sInt32 XL2 = ((X2+(1<<(XPOS_BITS-1)))>>XPOS_BITS) - XL1;
-      if (XL2 > 0) {
+      if (XL2 > 0)
+      {
         gmem += XL1;
         XL1 += XL2;
         pl_sInt32 CL[3] = {C1[0],C1[1],C1[2]};
@@ -467,8 +484,10 @@ public:
         {
           pl_Float ZL = Z1;
           zbuf += XL1-XL2;
-          do {
-            if (*zbuf < ZL) {
+          do
+          {
+            if (*zbuf < ZL)
+            {
               *zbuf = (pl_ZBuffer) ZL;
 
               Comb::doPix((LICE_pixel_chan *)gmem,CL[0]/65536,CL[1]/65536,CL[2]/65536,255,alpha);
@@ -479,16 +498,19 @@ public:
             CL[0] += dCL[0];
             CL[1] += dCL[1];
             CL[2] += dCL[2];
-          } while (--XL2);
+          }
+          while (--XL2);
           zbuf -= XL1;
         }
-        else do {
+        else do
+          {
             Comb::doPix((LICE_pixel_chan *)gmem,CL[0]/65536,CL[1]/65536,CL[2]/65536,255,alpha);
             gmem++;
             CL[0] += dCL[0];
             CL[1] += dCL[1];
             CL[2] += dCL[2];
-          } while (--XL2);
+          }
+          while (--XL2);
         gmem -= XL1;
       }
       gmem += swidth;
@@ -528,25 +550,34 @@ public:
 
     {
       pl_sInt32 dY = Y2-Y0;
-      if (dY) {
+      if (dY)
+      {
         dX2 = (Scrx[i2] - X1) / dY;
         dZ2 = (Z3 - Z1) / dY;
       }
       dY = Y1-Y0;
-      if (dY) {
+      if (dY)
+      {
         dX1 = (Scrx[i1] - X1) / dY;
         dZ1 = (Z2 - Z1) / dY;
-        if (dX2 < dX1) {
+        if (dX2 < dX1)
+        {
           SWAP(dX1,dX2,pl_sInt32);
           SWAP(dZ1,dZ2,pl_Float);
           stat = 2;
-        } else stat = 1;
+        }
+        else stat = 1;
         Z2 = Z1;
-      } else {
-        if (Scrx[i1] > X1) {
+      }
+      else
+      {
+        if (Scrx[i1] > X1)
+        {
           X2 = Scrx[i1];
           stat = 2|4;
-        } else {
+        }
+        else
+        {
           X1 = Scrx[i1];
           SWAP(Z1,Z2,pl_Float);
           stat = 1|8;
@@ -557,7 +588,8 @@ public:
       {
         pl_sInt32 tmp=(dX1-dX2)*dY;
         if (tmp) dZL = ((dZ1-dZ2)*dY)*(double)(1<<XPOS_BITS)/(double)tmp;
-        else {
+        else
+        {
           tmp = X2-X1;
           if (tmp) dZL = (Z2-Z1)*(double)(1<<XPOS_BITS)/tmp;
         }
@@ -567,40 +599,49 @@ public:
     gmem += (Y0 * swidth);
     zbuf += (Y0 * zfb_width);
 
-    while (Y0 < Y2) {
-      if (Y0 == Y1) {
+    while (Y0 < Y2)
+    {
+      if (Y0 == Y1)
+      {
         pl_sInt32 dY = Y2 - Scry[i1];
-        if (dY) {
+        if (dY)
+        {
           DO_STAT_XDELTAS
           dZ1 = (Z3-Z1)/dY;
         }
       }
       pl_sInt32 XL1 = (X1+(1<<(XPOS_BITS-1)))>>XPOS_BITS;
       pl_sInt32 XL2 = ((X2+(1<<(XPOS_BITS-1)))>>XPOS_BITS) - XL1;
-      if (XL2 > 0) {
+      if (XL2 > 0)
+      {
         gmem += XL1;
         XL1 += XL2;
         if (zbuf)
         {
           pl_Float ZL = Z1;
           zbuf += XL1-XL2;
-          do {
-            if (*zbuf < ZL) {
+          do
+          {
+            if (*zbuf < ZL)
+            {
               *zbuf = (pl_ZBuffer) ZL;
               Comb::doPix((LICE_pixel_chan *)gmem,col0,col1,col2,255,alpha);
             }
             gmem++;
             zbuf++;
             ZL += dZL;
-          } while (--XL2);
+          }
+          while (--XL2);
           zbuf -= XL1;
         }
         else
         {
-          do {
+          do
+          {
             Comb::doPix((LICE_pixel_chan *)gmem,col0,col1,col2,255,alpha);
             gmem++;
-          } while (--XL2);
+          }
+          while (--XL2);
         }
         gmem -= XL1;
 

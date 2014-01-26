@@ -18,7 +18,8 @@
 
 /* Private state */
 
-typedef struct {
+typedef struct
+{
   struct jpeg_input_controller pub; /* public fields */
 
   boolean inheaders;		/* TRUE until first SOS is reached */
@@ -60,7 +61,8 @@ initial_setup (j_decompress_ptr cinfo)
   cinfo->max_h_samp_factor = 1;
   cinfo->max_v_samp_factor = 1;
   for (ci = 0, compptr = cinfo->comp_info; ci < cinfo->num_components;
-       ci++, compptr++) {
+       ci++, compptr++)
+  {
     if (compptr->h_samp_factor<=0 || compptr->h_samp_factor>MAX_SAMP_FACTOR ||
         compptr->v_samp_factor<=0 || compptr->v_samp_factor>MAX_SAMP_FACTOR)
       ERREXIT(cinfo, JERR_BAD_SAMPLING);
@@ -78,7 +80,8 @@ initial_setup (j_decompress_ptr cinfo)
 
   /* Compute dimensions of components */
   for (ci = 0, compptr = cinfo->comp_info; ci < cinfo->num_components;
-       ci++, compptr++) {
+       ci++, compptr++)
+  {
     compptr->DCT_scaled_size = DCTSIZE;
     /* Size in DCT blocks */
     compptr->width_in_blocks = (JDIMENSION)
@@ -125,7 +128,8 @@ per_scan_setup (j_decompress_ptr cinfo)
   int ci, mcublks, tmp;
   jpeg_component_info *compptr;
 
-  if (cinfo->comps_in_scan == 1) {
+  if (cinfo->comps_in_scan == 1)
+  {
 
     /* Noninterleaved (single-component) scan */
     compptr = cinfo->cur_comp_info[0];
@@ -151,7 +155,9 @@ per_scan_setup (j_decompress_ptr cinfo)
     cinfo->blocks_in_MCU = 1;
     cinfo->MCU_membership[0] = 0;
 
-  } else {
+  }
+  else
+  {
 
     /* Interleaved (multi-component) scan */
     if (cinfo->comps_in_scan <= 0 || cinfo->comps_in_scan > MAX_COMPS_IN_SCAN)
@@ -168,7 +174,8 @@ per_scan_setup (j_decompress_ptr cinfo)
 
     cinfo->blocks_in_MCU = 0;
 
-    for (ci = 0; ci < cinfo->comps_in_scan; ci++) {
+    for (ci = 0; ci < cinfo->comps_in_scan; ci++)
+    {
       compptr = cinfo->cur_comp_info[ci];
       /* Sampling factors give # of blocks of component in each MCU */
       compptr->MCU_width = compptr->h_samp_factor;
@@ -186,7 +193,8 @@ per_scan_setup (j_decompress_ptr cinfo)
       mcublks = compptr->MCU_blocks;
       if (cinfo->blocks_in_MCU + mcublks > D_MAX_BLOCKS_IN_MCU)
         ERREXIT(cinfo, JERR_BAD_MCU_SIZE);
-      while (mcublks-- > 0) {
+      while (mcublks-- > 0)
+      {
         cinfo->MCU_membership[cinfo->blocks_in_MCU++] = ci;
       }
     }
@@ -223,7 +231,8 @@ latch_quant_tables (j_decompress_ptr cinfo)
   jpeg_component_info *compptr;
   JQUANT_TBL * qtbl;
 
-  for (ci = 0; ci < cinfo->comps_in_scan; ci++) {
+  for (ci = 0; ci < cinfo->comps_in_scan; ci++)
+  {
     compptr = cinfo->cur_comp_info[ci];
     /* No work if we already saved Q-table for this component */
     if (compptr->quant_table != NULL)
@@ -295,16 +304,20 @@ consume_markers (j_decompress_ptr cinfo)
 
   val = (*cinfo->marker->read_markers) (cinfo);
 
-  switch (val) {
+  switch (val)
+  {
     case JPEG_REACHED_SOS:	/* Found SOS */
-      if (inputctl->inheaders) {	/* 1st SOS */
+      if (inputctl->inheaders)  	/* 1st SOS */
+      {
         initial_setup(cinfo);
         inputctl->inheaders = FALSE;
         /* Note: start_input_pass must be called by jdmaster.c
          * before any more input can be consumed.  jdapimin.c is
          * responsible for enforcing this sequencing.
          */
-      } else {			/* 2nd or later SOS marker */
+      }
+      else  			/* 2nd or later SOS marker */
+      {
         if (! inputctl->pub.has_multiple_scans)
           ERREXIT(cinfo, JERR_EOI_EXPECTED); /* Oops, I wasn't expecting this! */
         start_input_pass(cinfo);
@@ -312,10 +325,13 @@ consume_markers (j_decompress_ptr cinfo)
       break;
     case JPEG_REACHED_EOI:	/* Found EOI */
       inputctl->pub.eoi_reached = TRUE;
-      if (inputctl->inheaders) {	/* Tables-only datastream, apparently */
+      if (inputctl->inheaders)  	/* Tables-only datastream, apparently */
+      {
         if (cinfo->marker->saw_SOF)
           ERREXIT(cinfo, JERR_SOF_NO_SOS);
-      } else {
+      }
+      else
+      {
         /* Prevent infinite loop in coef ctlr's decompress_data routine
          * if user set output_scan_number larger than number of scans.
          */

@@ -20,16 +20,19 @@ gz_statep state;
 
   /* allocate input buffer */
   state->in = malloc(state->want);
-  if (state->in == NULL) {
+  if (state->in == NULL)
+  {
     gz_error(state, Z_MEM_ERROR, "out of memory");
     return -1;
   }
 
   /* only need output buffer and deflate state if compressing */
-  if (!state->direct) {
+  if (!state->direct)
+  {
     /* allocate output buffer */
     state->out = malloc(state->want);
-    if (state->out == NULL) {
+    if (state->out == NULL)
+    {
       free(state->in);
       gz_error(state, Z_MEM_ERROR, "out of memory");
       return -1;
@@ -41,7 +44,8 @@ gz_statep state;
     strm->opaque = Z_NULL;
     ret = deflateInit2(strm, state->level, Z_DEFLATED,
                        MAX_WBITS + 16, DEF_MEM_LEVEL, state->strategy);
-    if (ret != Z_OK) {
+    if (ret != Z_OK)
+    {
       free(state->out);
       free(state->in);
       gz_error(state, Z_MEM_ERROR, "out of memory");
@@ -53,7 +57,8 @@ gz_statep state;
   state->size = state->want;
 
   /* initialize write buffer if compressing */
-  if (!state->direct) {
+  if (!state->direct)
+  {
     strm->avail_out = state->size;
     strm->next_out = state->out;
     state->x.next = strm->next_out;
@@ -80,9 +85,11 @@ int flush;
     return -1;
 
   /* write directly if requested */
-  if (state->direct) {
+  if (state->direct)
+  {
     got = write(state->fd, strm->next_in, strm->avail_in);
-    if (got < 0 || (unsigned)got != strm->avail_in) {
+    if (got < 0 || (unsigned)got != strm->avail_in)
+    {
       gz_error(state, Z_ERRNO, zstrerror());
       return -1;
     }
@@ -92,18 +99,22 @@ int flush;
 
   /* run deflate() on provided input until it produces no more output */
   ret = Z_OK;
-  do {
+  do
+  {
     /* write out current buffer contents if full, or if flushing, but if
        doing Z_FINISH then don't write until we get to Z_STREAM_END */
     if (strm->avail_out == 0 || (flush != Z_NO_FLUSH &&
-                                 (flush != Z_FINISH || ret == Z_STREAM_END))) {
+                                 (flush != Z_FINISH || ret == Z_STREAM_END)))
+    {
       have = (unsigned)(strm->next_out - state->x.next);
       if (have && ((got = write(state->fd, state->x.next, have)) < 0 ||
-                   (unsigned)got != have)) {
+                   (unsigned)got != have))
+      {
         gz_error(state, Z_ERRNO, zstrerror());
         return -1;
       }
-      if (strm->avail_out == 0) {
+      if (strm->avail_out == 0)
+      {
         strm->avail_out = state->size;
         strm->next_out = state->out;
       }
@@ -113,13 +124,15 @@ int flush;
     /* compress */
     have = strm->avail_out;
     ret = deflate(strm, flush);
-    if (ret == Z_STREAM_ERROR) {
+    if (ret == Z_STREAM_ERROR)
+    {
       gz_error(state, Z_STREAM_ERROR,
                "internal error: deflate stream corrupt");
       return -1;
     }
     have -= strm->avail_out;
-  } while (have);
+  }
+  while (have);
 
   /* if that completed a deflate stream, allow another to start */
   if (flush == Z_FINISH)
@@ -144,10 +157,12 @@ z_off64_t len;
 
   /* compress len zeros (len guaranteed > 0) */
   first = 1;
-  while (len) {
+  while (len)
+  {
     n = GT_OFF(state->size) || (z_off64_t)state->size > len ?
         (unsigned)len : state->size;
-    if (first) {
+    if (first)
+    {
       memset(state->in, 0, n);
       first = 0;
     }
@@ -184,7 +199,8 @@ unsigned len;
 
   /* since an int is returned, make sure len fits in one, otherwise return
      with an error (this avoids the flaw in the interface) */
-  if ((int)len < 0) {
+  if ((int)len < 0)
+  {
     gz_error(state, Z_DATA_ERROR, "requested length does not fit in int");
     return 0;
   }
@@ -198,16 +214,19 @@ unsigned len;
     return 0;
 
   /* check for seek request */
-  if (state->seek) {
+  if (state->seek)
+  {
     state->seek = 0;
     if (gz_zero(state, state->skip) == -1)
       return 0;
   }
 
   /* for small len, copy to input buffer, otherwise compress directly */
-  if (len < state->size) {
+  if (len < state->size)
+  {
     /* copy to input buffer, compress when full */
-    do {
+    do
+    {
       if (strm->avail_in == 0)
         strm->next_in = state->in;
       n = state->size - strm->avail_in;
@@ -220,9 +239,11 @@ unsigned len;
       len -= n;
       if (len && gz_comp(state, Z_NO_FLUSH) == -1)
         return 0;
-    } while (len);
+    }
+    while (len);
   }
-  else {
+  else
+  {
     /* consume whatever's left in the input buffer */
     if (strm->avail_in && gz_comp(state, Z_NO_FLUSH) == -1)
       return 0;
@@ -259,7 +280,8 @@ int c;
     return -1;
 
   /* check for seek request */
-  if (state->seek) {
+  if (state->seek)
+  {
     state->seek = 0;
     if (gz_zero(state, state->skip) == -1)
       return -1;
@@ -267,7 +289,8 @@ int c;
 
   /* try writing to input buffer for speed (state->size == 0 if buffer not
      initialized) */
-  if (strm->avail_in < state->size) {
+  if (strm->avail_in < state->size)
+  {
     if (strm->avail_in == 0)
       strm->next_in = state->in;
     strm->next_in[strm->avail_in++] = c;
@@ -322,7 +345,8 @@ int ZEXPORTVA gzprintf (gzFile file, const char *format, ...)
     return 0;
 
   /* check for seek request */
-  if (state->seek) {
+  if (state->seek)
+  {
     state->seek = 0;
     if (gz_zero(state, state->skip) == -1)
       return 0;
@@ -401,7 +425,8 @@ int a1, a2, a3, a4, a5, a6, a7, a8, a9, a10,
     return 0;
 
   /* check for seek request */
-  if (state->seek) {
+  if (state->seek)
+  {
     state->seek = 0;
     if (gz_zero(state, state->skip) == -1)
       return 0;
@@ -469,7 +494,8 @@ int flush;
     return Z_STREAM_ERROR;
 
   /* check for seek request */
-  if (state->seek) {
+  if (state->seek)
+  {
     state->seek = 0;
     if (gz_zero(state, state->skip) == -1)
       return -1;
@@ -504,14 +530,16 @@ int strategy;
     return Z_OK;
 
   /* check for seek request */
-  if (state->seek) {
+  if (state->seek)
+  {
     state->seek = 0;
     if (gz_zero(state, state->skip) == -1)
       return -1;
   }
 
   /* change compression parameters for subsequent input */
-  if (state->size) {
+  if (state->size)
+  {
     /* flush previous input with previous parameters before changing */
     if (strm->avail_in && gz_comp(state, Z_PARTIAL_FLUSH) == -1)
       return state->err;
@@ -539,7 +567,8 @@ gzFile file;
     return Z_STREAM_ERROR;
 
   /* check for seek request */
-  if (state->seek) {
+  if (state->seek)
+  {
     state->seek = 0;
     if (gz_zero(state, state->skip) == -1)
       ret = state->err;
@@ -548,7 +577,8 @@ gzFile file;
   /* flush, free memory, and close file */
   if (gz_comp(state, Z_FINISH) == -1)
     ret = state->err;
-  if (!state->direct) {
+  if (!state->direct)
+  {
     (void)deflateEnd(&(state->strm));
     free(state->out);
   }

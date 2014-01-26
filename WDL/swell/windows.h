@@ -25,7 +25,8 @@ typedef int (CALLBACK* BFFCALLBACK)(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM 
 typedef struct __ITEMIDLIST ITEMIDLIST;
 typedef const ITEMIDLIST *LPCITEMIDLIST;
 
-typedef struct _browseinfoA {
+typedef struct _browseinfoA
+{
   HWND        hwndOwner;
   LPCITEMIDLIST pidlRoot;
   LPSTR        pszDisplayName;
@@ -62,7 +63,8 @@ SWELL_API_DEFINE(ITEMIDLIST *, SHBrowseForFolder, (LPBROWSEINFO))
 
 typedef UINT (CALLBACK *LPOFNHOOKPROC) (HWND, UINT, WPARAM, LPARAM);
 
-typedef struct tagOFNA {
+typedef struct tagOFNA
+{
   DWORD        lStructSize;
   HWND         hwndOwner;
   HINSTANCE    hInstance;

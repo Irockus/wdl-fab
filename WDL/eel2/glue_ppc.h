@@ -27,7 +27,8 @@ static const unsigned int GLUE_JMP_IF_P1_NZ[]=
 #define GLUE_MOV_PX_DIRECTVALUE_SIZE 8
 static void GLUE_MOV_PX_DIRECTVALUE_GEN(void *b, INT_PTR v, int wv)
 {
-  static const unsigned short tab[3][2] = {
+  static const unsigned short tab[3][2] =
+  {
     {0x3C60, 0x6063}, // addis r3, r0, hw -- ori r3,r3, lw
     {0x3DC0, 0x61CE}, // addis r14, r0, hw -- ori r14, r14, lw
     {0x3DE0, 0x61EF}, // addis r15, r0, hw -- oris r15, r15, lw
@@ -72,7 +73,8 @@ const static unsigned int GLUE_PUSH_P1[1]= { 0x9461FFF0};
 #define GLUE_POP_PX_SIZE 8
 static void GLUE_POP_PX(void *b, int wv)
 {
-  static const unsigned int tab[3] = {
+  static const unsigned int tab[3] =
+  {
     0x80610000, // lwz r3, 0(r1)
     0x81c10000, // lwz r14, 0(r1)
     0x81e10000, // lwz r15, 0(r1)
@@ -84,7 +86,8 @@ static void GLUE_POP_PX(void *b, int wv)
 #define GLUE_SET_PX_FROM_P1_SIZE 4
 static void GLUE_SET_PX_FROM_P1(void *b, int wv)
 {
-  static const unsigned int tab[3]= {
+  static const unsigned int tab[3]=
+  {
     0x7c631b78, // never used: mr r3, r3
     0x7c6e1b78, // mr r14, r3
     0x7c6f1b78, // mr r15, r3
@@ -137,7 +140,8 @@ static int GLUE_COPY_VALUE_AT_P1_TO_PTR(unsigned char *buf, void *destptr)
 
 static void GLUE_CALL_CODE(INT_PTR bp, INT_PTR cp, INT_PTR rt)
 {
-  static const double consttab[] = {
+  static const double consttab[] =
+  {
     NSEEL_CLOSEFACTOR,
     4503601774854144.0 /* 0x43300000, 0x80000000, used for integer conversion*/,
   };
@@ -180,7 +184,8 @@ static unsigned char *EEL_GLUE_set_immediate(void *_p, INT_PTR newv)
 #define GLUE_SET_PX_FROM_WTP_SIZE sizeof(int)
 static void GLUE_SET_PX_FROM_WTP(void *b, int wv)
 {
-  static const unsigned int tab[3]= {
+  static const unsigned int tab[3]=
+  {
     0x7e038378, // mr r3, r16
     0x7e0e8378, // mr r14, r16
     0x7e0f8378, // mr r15, r16
@@ -204,18 +209,21 @@ static int GLUE_POP_FPSTACK_TO_PTR(unsigned char *buf, void *destptr)
 #define GLUE_POP_FPSTACK_SIZE 0
 static const unsigned int GLUE_POP_FPSTACK[1] = { 0 }; // no need to pop, not a stack
 
-static const unsigned int GLUE_POP_FPSTACK_TOSTACK[] = {
+static const unsigned int GLUE_POP_FPSTACK_TOSTACK[] =
+{
   0xdc21fff0, // stfdu f1, -16(r1)
 };
 
-static const unsigned int GLUE_POP_FPSTACK_TO_WTP[] = {
+static const unsigned int GLUE_POP_FPSTACK_TO_WTP[] =
+{
   0xdc300008, // stfdu f1, 8(r16)
 };
 
 #define GLUE_PUSH_VAL_AT_PX_TO_FPSTACK_SIZE 4
 static void GLUE_PUSH_VAL_AT_PX_TO_FPSTACK(void *b, int wv)
 {
-  static const unsigned int tab[3] = {
+  static const unsigned int tab[3] =
+  {
     0xC8230000, // lfd f1, 0(r3)
     0xC82E0000, // lfd f1, 0(r14)
     0xC82F0000, // lfd f1, 0(r15)

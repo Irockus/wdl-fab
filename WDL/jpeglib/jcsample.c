@@ -57,7 +57,8 @@ typedef JMETHOD(void, downsample1_ptr,
 
 /* Private subobject */
 
-typedef struct {
+typedef struct
+{
   struct jpeg_downsampler pub;	/* public fields */
 
   /* Downsampling method pointers, one per component */
@@ -93,8 +94,10 @@ expand_right_edge (JSAMPARRAY image_data, int num_rows,
   int row;
   int numcols = (int) (output_cols - input_cols);
 
-  if (numcols > 0) {
-    for (row = 0; row < num_rows; row++) {
+  if (numcols > 0)
+  {
+    for (row = 0; row < num_rows; row++)
+    {
       ptr = image_data[row] + input_cols;
       pixval = ptr[-1];		/* don't need GETJSAMPLE() here */
       for (count = numcols; count > 0; count--)
@@ -121,7 +124,8 @@ sep_downsample (j_compress_ptr cinfo,
   JSAMPARRAY in_ptr, out_ptr;
 
   for (ci = 0, compptr = cinfo->comp_info; ci < cinfo->num_components;
-       ci++, compptr++) {
+       ci++, compptr++)
+  {
     in_ptr = input_buf[ci] + in_row_index;
     out_ptr = output_buf[ci] + (out_row_group_index * compptr->v_samp_factor);
     (*downsample->methods[ci]) (cinfo, compptr, in_ptr, out_ptr);
@@ -159,14 +163,18 @@ int_downsample (j_compress_ptr cinfo, jpeg_component_info * compptr,
                     cinfo->image_width, output_cols * h_expand);
 
   inrow = 0;
-  for (outrow = 0; outrow < compptr->v_samp_factor; outrow++) {
+  for (outrow = 0; outrow < compptr->v_samp_factor; outrow++)
+  {
     outptr = output_data[outrow];
     for (outcol = 0, outcol_h = 0; outcol < output_cols;
-         outcol++, outcol_h += h_expand) {
+         outcol++, outcol_h += h_expand)
+    {
       outvalue = 0;
-      for (v = 0; v < v_expand; v++) {
+      for (v = 0; v < v_expand; v++)
+      {
         inptr = input_data[inrow+v] + outcol_h;
-        for (h = 0; h < h_expand; h++) {
+        for (h = 0; h < h_expand; h++)
+        {
           outvalue += (INT32) GETJSAMPLE(*inptr++);
         }
       }
@@ -225,11 +233,13 @@ h2v1_downsample (j_compress_ptr cinfo, jpeg_component_info * compptr,
   expand_right_edge(input_data, cinfo->max_v_samp_factor,
                     cinfo->image_width, output_cols * 2);
 
-  for (outrow = 0; outrow < compptr->v_samp_factor; outrow++) {
+  for (outrow = 0; outrow < compptr->v_samp_factor; outrow++)
+  {
     outptr = output_data[outrow];
     inptr = input_data[outrow];
     bias = 0;			/* bias = 0,1,0,1,... for successive samples */
-    for (outcol = 0; outcol < output_cols; outcol++) {
+    for (outcol = 0; outcol < output_cols; outcol++)
+    {
       *outptr++ = (JSAMPLE) ((GETJSAMPLE(*inptr) + GETJSAMPLE(inptr[1])
                               + bias) >> 1);
       bias ^= 1;		/* 0=>1, 1=>0 */
@@ -263,12 +273,14 @@ h2v2_downsample (j_compress_ptr cinfo, jpeg_component_info * compptr,
                     cinfo->image_width, output_cols * 2);
 
   inrow = 0;
-  for (outrow = 0; outrow < compptr->v_samp_factor; outrow++) {
+  for (outrow = 0; outrow < compptr->v_samp_factor; outrow++)
+  {
     outptr = output_data[outrow];
     inptr0 = input_data[inrow];
     inptr1 = input_data[inrow+1];
     bias = 1;			/* bias = 1,2,1,2,... for successive samples */
-    for (outcol = 0; outcol < output_cols; outcol++) {
+    for (outcol = 0; outcol < output_cols; outcol++)
+    {
       *outptr++ = (JSAMPLE) ((GETJSAMPLE(*inptr0) + GETJSAMPLE(inptr0[1]) +
                               GETJSAMPLE(*inptr1) + GETJSAMPLE(inptr1[1])
                               + bias) >> 2);
@@ -322,7 +334,8 @@ h2v2_smooth_downsample (j_compress_ptr cinfo, jpeg_component_info * compptr,
   neighscale = cinfo->smoothing_factor * 16; /* scaled SF/4 */
 
   inrow = 0;
-  for (outrow = 0; outrow < compptr->v_samp_factor; outrow++) {
+  for (outrow = 0; outrow < compptr->v_samp_factor; outrow++)
+  {
     outptr = output_data[outrow];
     inptr0 = input_data[inrow];
     inptr1 = input_data[inrow+1];
@@ -343,7 +356,8 @@ h2v2_smooth_downsample (j_compress_ptr cinfo, jpeg_component_info * compptr,
     *outptr++ = (JSAMPLE) ((membersum + 32768) >> 16);
     inptr0 += 2; inptr1 += 2; above_ptr += 2; below_ptr += 2;
 
-    for (colctr = output_cols - 2; colctr > 0; colctr--) {
+    for (colctr = output_cols - 2; colctr > 0; colctr--)
+    {
       /* sum of pixels directly mapped to this output element */
       membersum = GETJSAMPLE(*inptr0) + GETJSAMPLE(inptr0[1]) +
                   GETJSAMPLE(*inptr1) + GETJSAMPLE(inptr1[1]);
@@ -415,7 +429,8 @@ fullsize_smooth_downsample (j_compress_ptr cinfo, jpeg_component_info *compptr,
   memberscale = 65536L - cinfo->smoothing_factor * 512L; /* scaled 1-8*SF */
   neighscale = cinfo->smoothing_factor * 64; /* scaled SF */
 
-  for (outrow = 0; outrow < compptr->v_samp_factor; outrow++) {
+  for (outrow = 0; outrow < compptr->v_samp_factor; outrow++)
+  {
     outptr = output_data[outrow];
     inptr = input_data[outrow];
     above_ptr = input_data[outrow-1];
@@ -432,7 +447,8 @@ fullsize_smooth_downsample (j_compress_ptr cinfo, jpeg_component_info *compptr,
     *outptr++ = (JSAMPLE) ((membersum + 32768) >> 16);
     lastcolsum = colsum; colsum = nextcolsum;
 
-    for (colctr = output_cols - 2; colctr > 0; colctr--) {
+    for (colctr = output_cols - 2; colctr > 0; colctr--)
+    {
       membersum = GETJSAMPLE(*inptr++);
       above_ptr++; below_ptr++;
       nextcolsum = GETJSAMPLE(*above_ptr) + GETJSAMPLE(*below_ptr) +
@@ -481,34 +497,47 @@ jinit_downsampler (j_compress_ptr cinfo)
 
   /* Verify we can handle the sampling factors, and set up method pointers */
   for (ci = 0, compptr = cinfo->comp_info; ci < cinfo->num_components;
-       ci++, compptr++) {
+       ci++, compptr++)
+  {
     if (compptr->h_samp_factor == cinfo->max_h_samp_factor &&
-        compptr->v_samp_factor == cinfo->max_v_samp_factor) {
+        compptr->v_samp_factor == cinfo->max_v_samp_factor)
+    {
 #ifdef INPUT_SMOOTHING_SUPPORTED
-      if (cinfo->smoothing_factor) {
+      if (cinfo->smoothing_factor)
+      {
         downsample->methods[ci] = fullsize_smooth_downsample;
         downsample->pub.need_context_rows = TRUE;
-      } else
+      }
+      else
 #endif
         downsample->methods[ci] = fullsize_downsample;
-    } else if (compptr->h_samp_factor * 2 == cinfo->max_h_samp_factor &&
-               compptr->v_samp_factor == cinfo->max_v_samp_factor) {
+    }
+    else if (compptr->h_samp_factor * 2 == cinfo->max_h_samp_factor &&
+             compptr->v_samp_factor == cinfo->max_v_samp_factor)
+    {
       smoothok = FALSE;
       downsample->methods[ci] = h2v1_downsample;
-    } else if (compptr->h_samp_factor * 2 == cinfo->max_h_samp_factor &&
-               compptr->v_samp_factor * 2 == cinfo->max_v_samp_factor) {
+    }
+    else if (compptr->h_samp_factor * 2 == cinfo->max_h_samp_factor &&
+             compptr->v_samp_factor * 2 == cinfo->max_v_samp_factor)
+    {
 #ifdef INPUT_SMOOTHING_SUPPORTED
-      if (cinfo->smoothing_factor) {
+      if (cinfo->smoothing_factor)
+      {
         downsample->methods[ci] = h2v2_smooth_downsample;
         downsample->pub.need_context_rows = TRUE;
-      } else
+      }
+      else
 #endif
         downsample->methods[ci] = h2v2_downsample;
-    } else if ((cinfo->max_h_samp_factor % compptr->h_samp_factor) == 0 &&
-               (cinfo->max_v_samp_factor % compptr->v_samp_factor) == 0) {
+    }
+    else if ((cinfo->max_h_samp_factor % compptr->h_samp_factor) == 0 &&
+             (cinfo->max_v_samp_factor % compptr->v_samp_factor) == 0)
+    {
       smoothok = FALSE;
       downsample->methods[ci] = int_downsample;
-    } else
+    }
+    else
       ERREXIT(cinfo, JERR_FRACT_SAMPLE_NOTIMPL);
   }
 

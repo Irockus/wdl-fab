@@ -780,7 +780,8 @@ typedef BOOL (WINAPI * PFNWGLQUERYFRAMETRACKINGI3DPROC) (DWORD* pFrameCount, DWO
 #define WGL_ERROR_MISSING_AFFINITY_MASK_NV 0x20D1
 
 DECLARE_HANDLE(HGPUNV);
-typedef struct _GPU_DEVICE {
+typedef struct _GPU_DEVICE
+{
   DWORD cb;
   CHAR DeviceName[32];
   CHAR DeviceString[128];

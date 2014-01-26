@@ -22,7 +22,8 @@
 
 /* Expanded data destination object for stdio output */
 
-typedef struct {
+typedef struct
+{
   struct jpeg_destination_mgr pub; /* public fields */
 
   FILE * outfile;		/* target stream */
@@ -109,7 +110,8 @@ term_destination (j_compress_ptr cinfo)
   size_t datacount = OUTPUT_BUF_SIZE - dest->pub.free_in_buffer;
 
   /* Write any data remaining in the buffer */
-  if (datacount > 0) {
+  if (datacount > 0)
+  {
     if (JFWRITE(dest->outfile, dest->buffer, datacount) != datacount)
       ERREXIT(cinfo, JERR_FILE_WRITE);
   }
@@ -137,7 +139,8 @@ jpeg_stdio_dest (j_compress_ptr cinfo, FILE * outfile)
    * manager serially with the same JPEG object, because their private object
    * sizes may be different.  Caveat programmer.
    */
-  if (cinfo->dest == NULL) {	/* first time for this JPEG object? */
+  if (cinfo->dest == NULL)  	/* first time for this JPEG object? */
+  {
     cinfo->dest = (struct jpeg_destination_mgr *)
                   (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
                       SIZEOF(my_destination_mgr));

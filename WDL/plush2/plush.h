@@ -155,7 +155,8 @@ private:
 } WDL_FIXALIGN;
 
 
-class pl_Vertex {
+class pl_Vertex
+{
 public:
   pl_Vertex() { }
   ~pl_Vertex () { }
@@ -167,7 +168,8 @@ public:
   pl_Float xformednx, xformedny, xformednz;  /* Transformed unit vertex normal  (cameraspace) */
 };
 
-class pl_Face {
+class pl_Face
+{
 public:
   pl_Face()
   {
@@ -197,7 +199,8 @@ public:
 };
 
 
-class pl_Obj {
+class pl_Obj
+{
 public:
   pl_Obj(int nv=0, int nf=0)
   {
@@ -234,7 +237,8 @@ public:
 };
 
 
-class pl_Spline {
+class pl_Spline
+{
 public:
   pl_Spline() { cont=1.0; bias=0.3; tens=0.3; keyWidth=1; }
   ~pl_Spline () { }
@@ -248,7 +252,8 @@ public:
 };
 
 
-class pl_Light {
+class pl_Light
+{
 public:
   pl_Light() { Type = PL_LIGHT_VECTOR; Xp=Yp=0.0; Zp=1.0; Intensity[0]=Intensity[1]=Intensity[2]=1.0; }
   ~pl_Light() { }
@@ -277,7 +282,8 @@ public:
 };
 
 
-class pl_Cam {
+class pl_Cam
+{
 public:
   pl_Cam()
   {
@@ -356,13 +362,15 @@ private:
   pl_uInt _ClipToPlane(pl_uInt numVerts, pl_Float  *plane);
 
 
-  struct _faceInfo {
+  struct _faceInfo
+  {
     pl_Float zd;
     pl_Face *face;
     pl_Obj *obj;
   } WDL_FIXALIGN;
 
-  struct _lightInfo {
+  struct _lightInfo
+  {
     pl_Float l[3];
     pl_Light *light;
   } WDL_FIXALIGN;

@@ -96,7 +96,8 @@ LICE_CachedFont::LICE_CachedFont() : m_cachestore(65536)
 
 LICE_CachedFont::~LICE_CachedFont()
 {
-  if ((m_flags&LICE_FONT_FLAG_OWNS_HFONT) && m_font) {
+  if ((m_flags&LICE_FONT_FLAG_OWNS_HFONT) && m_font)
+  {
     DeleteObject(m_font);
   }
 }

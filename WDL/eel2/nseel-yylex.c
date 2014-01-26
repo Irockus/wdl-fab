@@ -97,33 +97,40 @@ int nseel_yylex(compileContext *ctx, char **exp)
     final = -1;
     lp = &nseel_lextab;
 
-    do {
-      if (lp->lllook && (l = lp->lllook[st])) {
+    do
+    {
+      if (lp->lllook && (l = lp->lllook[st]))
+      {
         for (c=0; c<NBPW; c++)
           if (l&(1<<c))
             ctx->llsave[c] = ctx->llp1;
         llk++;
       }
-      if ((i = lp->llfinal[st]) != -1) {
+      if ((i = lp->llfinal[st]) != -1)
+      {
         final = i;
         ctx->llend = ctx->llp1;
       }
       if ((c = llinp(ctx,exp)) < 0)
         break;
-      if ((cp = lp->llbrk) && llk==0 && tst__b(c, cp)) {
+      if ((cp = lp->llbrk) && llk==0 && tst__b(c, cp))
+      {
         ctx->llp1--;
         break;
       }
-    } while ((st = (*lp->llmove)(lp, c, st)) != -1);
+    }
+    while ((st = (*lp->llmove)(lp, c, st)) != -1);
 
 
     if (ctx->llp2 < ctx->llp1)
       ctx->llp2 = ctx->llp1;
-    if (final == -1) {
+    if (final == -1)
+    {
       ctx->llend = ctx->llp1;
       if (st == 0 && c < 0)
         return(0);
-      if ((cp = lp->llill) && tst__b(c, cp)) {
+      if ((cp = lp->llill) && tst__b(c, cp))
+      {
         continue;
       }
       return(YYERRORVAL);
@@ -151,7 +158,8 @@ static int llinp(compileContext *ctx, char **exp)
 
   lp = &nseel_lextab;
   cp = lp->llign;                         /* Ignore class         */
-  for (;;) {
+  for (;;)
+  {
     /*
      * Get the next character from the save buffer (if possible)
      * If the save buffer's empty, then return EOF or the next
@@ -159,14 +167,17 @@ static int llinp(compileContext *ctx, char **exp)
      * ignore class.
      */
     c = (ctx->llp1 < ctx->llp2) ? *ctx->llp1 & 0377 : (ctx->lleof) ? EOF : lexgetc(exp);
-    if (c >= 0) {                   /* Got a character?     */
+    if (c >= 0)                     /* Got a character?     */
+    {
       if (cp && tst__b(c, cp))
         continue;       /* Ignore it            */
-      if (ctx->llp1 >= ctx->llebuf) {   /* No, is there room?   */
+      if (ctx->llp1 >= ctx->llebuf)     /* No, is there room?   */
+      {
         return -1;
       }
       *ctx->llp1++ = c;            /* Store in token buff  */
-    } else
+    }
+    else
       ctx->lleof = 1;              /* Set EOF signal       */
     return(c);
   }

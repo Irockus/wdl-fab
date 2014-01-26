@@ -212,7 +212,8 @@ void PrintExtensions (const char* s)
     t[i++] = *s;
     if(*s == ' ')
     {
-      if (*(s+1) != '\0') {
+      if (*(s+1) != '\0')
+      {
         t[i-1] = ',';
         t[i] = ' ';
         p = &t[i++];

@@ -111,7 +111,8 @@ write_JPEG_file (char * filename, int quality)
    * VERY IMPORTANT: use "b" option to fopen() if you are on a machine that
    * requires it in order to write binary files.
    */
-  if ((outfile = fopen(filename, "wb")) == NULL) {
+  if ((outfile = fopen(filename, "wb")) == NULL)
+  {
     fprintf(stderr, "can't open %s\n", filename);
     exit(1);
   }
@@ -153,7 +154,8 @@ write_JPEG_file (char * filename, int quality)
    */
   row_stride = image_width * 3;	/* JSAMPLEs per row in image_buffer */
 
-  while (cinfo.next_scanline < cinfo.image_height) {
+  while (cinfo.next_scanline < cinfo.image_height)
+  {
     /* jpeg_write_scanlines expects an array of pointers to scanlines.
      * Here the array is only one element long, but you could pass
      * more than one scanline at a time if that's more convenient.
@@ -247,7 +249,8 @@ write_JPEG_file (char * filename, int quality)
  * Here's the extended error handler struct:
  */
 
-struct my_error_mgr {
+struct my_error_mgr
+{
   struct jpeg_error_mgr pub;	/* "public" fields */
 
   jmp_buf setjmp_buffer;	/* for return to caller */
@@ -303,7 +306,8 @@ read_JPEG_file (char * filename)
    * requires it in order to read binary files.
    */
 
-  if ((infile = fopen(filename, "rb")) == NULL) {
+  if ((infile = fopen(filename, "rb")) == NULL)
+  {
     fprintf(stderr, "can't open %s\n", filename);
     return 0;
   }
@@ -314,7 +318,8 @@ read_JPEG_file (char * filename)
   cinfo.err = jpeg_std_error(&jerr.pub);
   jerr.pub.error_exit = my_error_exit;
   /* Establish the setjmp return context for my_error_exit to use. */
-  if (setjmp(jerr.setjmp_buffer)) {
+  if (setjmp(jerr.setjmp_buffer))
+  {
     /* If we get here, the JPEG code has signaled an error.
      * We need to clean up the JPEG object, close the input file, and return.
      */
@@ -369,7 +374,8 @@ read_JPEG_file (char * filename)
   /* Here we use the library's state variable cinfo.output_scanline as the
    * loop counter, so that we don't have to keep track ourselves.
    */
-  while (cinfo.output_scanline < cinfo.output_height) {
+  while (cinfo.output_scanline < cinfo.output_height)
+  {
     /* jpeg_read_scanlines expects an array of pointers to scanlines.
      * Here the array is only one element long, but you could ask for
      * more than one scanline at a time if that's more convenient.

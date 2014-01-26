@@ -92,7 +92,8 @@ void _InsertHashTable(GifHashTableType *HashTable, UINT32 Key, int Code)
   NumberOfMisses++;
 #endif /* DEBUG_HIT_RATE */
 
-  while (HT_GET_KEY(HTable[HKey]) != 0xFFFFFL) {
+  while (HT_GET_KEY(HTable[HKey]) != 0xFFFFFL)
+  {
 #ifdef DEBUG_HIT_RATE
     NumberOfMisses++;
 #endif /* DEBUG_HIT_RATE */
@@ -115,7 +116,8 @@ int _ExistsHashTable(GifHashTableType *HashTable, UINT32 Key)
   NumberOfMisses++;
 #endif /* DEBUG_HIT_RATE */
 
-  while ((HTKey = HT_GET_KEY(HTable[HKey])) != 0xFFFFFL) {
+  while ((HTKey = HT_GET_KEY(HTable[HKey])) != 0xFFFFFL)
+  {
 #ifdef DEBUG_HIT_RATE
     NumberOfMisses++;
 #endif /* DEBUG_HIT_RATE */

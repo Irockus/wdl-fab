@@ -104,7 +104,8 @@ static const void *body(MD5_CTX *ctx, const void *data, unsigned long size)
   c = ctx->c;
   d = ctx->d;
 
-  do {
+  do
+  {
     saved_a = a;
     saved_b = b;
     saved_c = c;
@@ -188,7 +189,8 @@ static const void *body(MD5_CTX *ctx, const void *data, unsigned long size)
     d += saved_d;
 
     ptr += 64;
-  } while (size -= 64);
+  }
+  while (size -= 64);
 
   ctx->a = a;
   ctx->b = b;
@@ -221,10 +223,12 @@ void MD5_Update(MD5_CTX *ctx, const void *data, unsigned long size)
 
   used = saved_lo & 0x3f;
 
-  if (used) {
+  if (used)
+  {
     free = 64 - used;
 
-    if (size < free) {
+    if (size < free)
+    {
       memcpy(&ctx->buffer[used], data, size);
       return;
     }
@@ -235,7 +239,8 @@ void MD5_Update(MD5_CTX *ctx, const void *data, unsigned long size)
     body(ctx, ctx->buffer, 64);
   }
 
-  if (size >= 64) {
+  if (size >= 64)
+  {
     data = body(ctx, data, size & ~(unsigned long)0x3f);
     size &= 0x3f;
   }
@@ -253,7 +258,8 @@ void MD5_Final(unsigned char *result, MD5_CTX *ctx)
 
   free = 64 - used;
 
-  if (free < 8) {
+  if (free < 8)
+  {
     memset(&ctx->buffer[used], 0, free);
     body(ctx, ctx->buffer, 64);
     used = 0;

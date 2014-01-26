@@ -377,7 +377,8 @@ int nsv_Unpacketer::unpacket(nsv_InBS &bs)
           (valid &&
            (width != w || height != h ||
             vidfmt != vfmt || audfmt != afmt || framerate_idx != frt)))
-      { // frame is definately not valid
+      {
+        // frame is definately not valid
         bs.seek(8-NSV_SYNC_HEADERLEN_BITS); // seek back what we just read
         synched=0;
         continue;
@@ -609,7 +610,8 @@ int nsv_readheader(nsv_InBS &bs, nsv_fileHeader *hdr)
   hdr->toc_size=0;
   hdr->metadata_len=0;
 
-  if (bs.avail()<64) {
+  if (bs.avail()<64)
+  {
     return 8-bs.avail()/8;
   }
   s+=32;

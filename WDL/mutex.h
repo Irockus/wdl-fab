@@ -55,7 +55,8 @@
 
 #include "wdltypes.h"
 
-class WDL_Mutex {
+class WDL_Mutex
+{
 public:
   WDL_Mutex()
   {
@@ -151,7 +152,8 @@ private:
 
 } WDL_FIXALIGN;
 
-class WDL_MutexLock {
+class WDL_MutexLock
+{
 public:
   WDL_MutexLock(WDL_Mutex *m) : m_m(m) { if (m) m->Enter(); }
   ~WDL_MutexLock() { if (m_m) m_m->Leave(); }
@@ -227,7 +229,8 @@ private:
 
 
 
-class WDL_MutexLockShared {
+class WDL_MutexLockShared
+{
 public:
   WDL_MutexLockShared(WDL_SharedMutex *m) : m_m(m) { if (m) m->LockShared(); }
   ~WDL_MutexLockShared() { if (m_m) m_m->UnlockShared(); }
@@ -235,7 +238,8 @@ private:
   WDL_SharedMutex *m_m;
 } WDL_FIXALIGN;
 
-class WDL_MutexLockExclusive {
+class WDL_MutexLockExclusive
+{
 public:
   WDL_MutexLockExclusive(WDL_SharedMutex *m) : m_m(m) { if (m) m->LockExclusive(); }
   ~WDL_MutexLockExclusive() { if (m_m) m_m->UnlockExclusive(); }

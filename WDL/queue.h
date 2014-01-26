@@ -174,7 +174,8 @@ public:
   template<class T> T *GetTFromLE(T* val=0)
   {
     T *p = GetT(val);
-    if (p) {
+    if (p)
+    {
       WDL_Queue__bswap_buffer(p,sizeof(T));
       if (val) *val = *p;
     }

@@ -170,7 +170,8 @@ char* SysExStr(char *str, int maxlen, const BYTE* pData, int size)
 {
   assert(str != NULL && maxlen >= 3);
 
-  if (!pData || !size) {
+  if (!pData || !size)
+  {
     *str = '\0';
     return str;
   }
@@ -178,7 +179,8 @@ char* SysExStr(char *str, int maxlen, const BYTE* pData, int size)
   char* pStr = str;
   int n = maxlen / 3;
   if (n > size) n = size;
-  for (int i = 0; i < n; ++i, ++pData) {
+  for (int i = 0; i < n; ++i, ++pData)
+  {
     sprintf(pStr, "%02X", (int)*pData);
     pStr += 2;
     *pStr++ = ' ';

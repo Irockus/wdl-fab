@@ -127,16 +127,19 @@ HANDLE SWELL_CreateProcess(const char *exe, int nparams, const char **params)
 
   if (tsk)
   {
-    @try {
+    @try
+    {
       [tsk setArguments:ar];
       [tsk setLaunchPath:ex];
       [tsk launch];
     }
-    @catch (NSException *exception) {
+    @catch (NSException *exception)
+    {
       [tsk release];
       tsk=0;
     }
-    @catch (id ex) {
+    @catch (id ex)
+    {
     }
   }
 
@@ -629,9 +632,11 @@ void SWELL_DisableAppNap(int disable)
         }
       }
     }
-    @catch (NSException *exception) {
+    @catch (NSException *exception)
+    {
     }
-    @catch (id ex) {
+    @catch (id ex)
+    {
     }
   }
 }

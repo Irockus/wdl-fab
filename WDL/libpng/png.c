@@ -179,7 +179,8 @@ png_user_version_check(png_structp png_ptr, png_const_charp user_png_ver)
     {
       if (user_png_ver[i] != png_libpng_ver[i])
         png_ptr->flags |= PNG_FLAG_LIBRARY_MISMATCH;
-    } while (png_libpng_ver[i++]);
+    }
+    while (png_libpng_ver[i++]);
   }
 
   else
@@ -593,7 +594,8 @@ png_const_charp PNGAPI
 png_convert_to_rfc1123(png_structp png_ptr, png_const_timep ptime)
 {
   static PNG_CONST char short_months[12][4] =
-  { "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  {
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
   };
 

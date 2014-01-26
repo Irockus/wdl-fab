@@ -225,7 +225,8 @@ HFONT CreateFont(int lfHeight, int lfWidth, int lfEscapement, int lfOrientation,
               }
             }
           }
-        } while (!face && !ds.Next());
+        }
+        while (!face && !ds.Next());
       if (!face && bestmatch[0])
       {
         snprintf(tmp,sizeof(tmp),"%s/%s",leadpath,bestmatch);
@@ -375,7 +376,8 @@ void RoundRect(HDC ctx, int x, int y, int x2, int y2, int xrnd, int yrnd)
 {
   xrnd/=3;
   yrnd/=3;
-  POINT pts[10]= { // todo: curves between edges
+  POINT pts[10]=   // todo: curves between edges
+  {
     {x,y+yrnd},
     {x+xrnd,y},
     {x2-xrnd,y},

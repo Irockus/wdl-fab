@@ -188,7 +188,8 @@ static void onCompileNewLine(compileContext *ctx, int srcBytes, int destBytes)
 static void *__newBlock(llBlock **start,int size, int wantMprotect);
 
 #define OPCODE_IS_TRIVIAL(x) ((x)->opcodeType <= OPCODETYPE_VARPTRPTR)
-enum {
+enum
+{
   OPCODETYPE_DIRECTVALUE=0,
   OPCODETYPE_VALUE_FROM_NAMESPACENAME, // this.* or namespace.* are encoded this way
   OPCODETYPE_VARPTR,
@@ -209,9 +210,11 @@ struct opcodeRec
   int fntype;
   void *fn;
 
-  union {
+  union
+  {
     struct opcodeRec *parms[3];
-    struct {
+    struct
+    {
       double directValue;
       EEL_F *valuePtr; // if direct value, valuePtr can be cached
     } dv;
@@ -502,7 +505,8 @@ EEL_F NSEEL_CGEN_CALL nseel_int_rand(EEL_F f);
 
 #define FNPTR_HAS_CONDITIONAL_EXEC(op) (op->fntype == FUNCTYPE_FUNCTIONTYPEREC && (functionType*)op->fn >= fnTable1 && (functionType*)op->fn < fnTable1+5)
 
-static functionType fnTable1[] = {
+static functionType fnTable1[] =
+{
   { "_if",     nseel_asm_if,nseel_asm_if_end,    3|NSEEL_NPARAMS_FLAG_CONST|BIF_WONTMAKEDENORMAL, },
   { "_and",   nseel_asm_band,nseel_asm_band_end,  2|NSEEL_NPARAMS_FLAG_CONST|BIF_RETURNSBOOL } ,
   { "_or",    nseel_asm_bor,nseel_asm_bor_end,   2|NSEEL_NPARAMS_FLAG_CONST|BIF_RETURNSBOOL } ,
@@ -597,7 +601,8 @@ static functionType fnTable1[] = {
 #endif // end EEL1 compat
 
 
-  { "_mem",_asm_megabuf,_asm_megabuf_end,1|BIF_LASTPARMONSTACK|BIF_FPSTACKUSE(1)|BIF_CLEARDENORMAL,{&__NSEEL_RAMAlloc},
+  {
+    "_mem",_asm_megabuf,_asm_megabuf_end,1|BIF_LASTPARMONSTACK|BIF_FPSTACKUSE(1)|BIF_CLEARDENORMAL,{&__NSEEL_RAMAlloc},
 #ifdef GLUE_MEM_NEEDS_PPROC
     NSEEL_PProc_RAM,
 #else
@@ -3492,7 +3497,8 @@ NSEEL_CODEHANDLE NSEEL_code_compile(NSEEL_VMCTX _ctx, const char *__expression, 
   return NSEEL_code_compile_ex(_ctx,__expression,lineoffs,0);
 }
 
-typedef struct topLevelCodeSegmentRec {
+typedef struct topLevelCodeSegmentRec
+{
   struct topLevelCodeSegmentRec *_next;
   void *code;
   int codesz;

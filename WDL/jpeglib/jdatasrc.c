@@ -22,7 +22,8 @@
 
 /* Expanded data source object for stdio input */
 
-typedef struct {
+typedef struct
+{
   struct jpeg_source_mgr pub;	/* public fields */
 
   FILE * infile;		/* source stream */
@@ -94,7 +95,8 @@ fill_input_buffer (j_decompress_ptr cinfo)
 
   nbytes = JFREAD(src->infile, src->buffer, INPUT_BUF_SIZE);
 
-  if (nbytes <= 0) {
+  if (nbytes <= 0)
+  {
     if (src->start_of_file)	/* Treat empty input file as fatal error */
       ERREXIT(cinfo, JERR_INPUT_EMPTY);
     WARNMS(cinfo, JWRN_JPEG_EOF);
@@ -133,8 +135,10 @@ skip_input_data (j_decompress_ptr cinfo, long num_bytes)
    * it doesn't work on pipes.  Not clear that being smart is worth
    * any trouble anyway --- large skips are infrequent.
    */
-  if (num_bytes > 0) {
-    while (num_bytes > (long) src->pub.bytes_in_buffer) {
+  if (num_bytes > 0)
+  {
+    while (num_bytes > (long) src->pub.bytes_in_buffer)
+    {
       num_bytes -= (long) src->pub.bytes_in_buffer;
       (void) fill_input_buffer(cinfo);
       /* note we assume that fill_input_buffer will never return FALSE,
@@ -190,7 +194,8 @@ jpeg_stdio_src (j_decompress_ptr cinfo, FILE * infile)
    * This makes it unsafe to use this manager and a different source
    * manager serially with the same JPEG object.  Caveat programmer.
    */
-  if (cinfo->src == NULL) {	/* first time for this JPEG object? */
+  if (cinfo->src == NULL)  	/* first time for this JPEG object? */
+  {
     cinfo->src = (struct jpeg_source_mgr *)
                  (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
                      SIZEOF(my_source_mgr));

@@ -161,7 +161,8 @@ private:
   unsigned char m_curb;
 };
 
-class nsv_InBS {
+class nsv_InBS
+{
 public:
   nsv_InBS() { m_bitpos=0; m_eof=0; }
   ~nsv_InBS() { }

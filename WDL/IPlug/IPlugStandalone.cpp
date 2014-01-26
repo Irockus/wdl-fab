@@ -101,7 +101,8 @@ bool IPlugStandalone::SendSysEx(ISysEx* pSysEx)
   {
     std::vector<unsigned char> message;
 
-    for (int i = 0; i < pSysEx->mSize; i++) {
+    for (int i = 0; i < pSysEx->mSize; i++)
+    {
       message.push_back(pSysEx->mData[i]);
     }
 

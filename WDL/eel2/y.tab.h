@@ -38,7 +38,8 @@
 # define YYTOKENTYPE
 /* Put the tokens into the symbol table, so that GDB and other debuggers
    know about them.  */
-enum yytokentype {
+enum yytokentype
+{
   VALUE = 258,
   IDENTIFIER = 259,
   FUNCTION1 = 260,

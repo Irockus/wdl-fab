@@ -121,7 +121,8 @@ unsigned int nsv_string_to_type(char *in);
  *
  */
 
-class nsv_Packeter {
+class nsv_Packeter
+{
 public:
   nsv_Packeter();
   ~nsv_Packeter();
@@ -203,7 +204,8 @@ private:
  *  }
  */
 
-class nsv_Unpacketer {
+class nsv_Unpacketer
+{
 public:
   nsv_Unpacketer() { reset(); }
   ~nsv_Unpacketer() { }
@@ -304,7 +306,8 @@ private:
 */
 
 
-typedef struct {
+typedef struct
+{
   // header_size is the size of NSV header. nsv_writeheader() and nsv_readheader()
   // will set this automatically
   unsigned int header_size;

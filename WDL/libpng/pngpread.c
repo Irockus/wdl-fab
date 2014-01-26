@@ -1257,7 +1257,8 @@ png_read_push_finish_row(png_structp png_ptr)
                            png_pass_ystart[png_ptr->pass]) /
                           png_pass_yinc[png_ptr->pass];
 
-    } while (png_ptr->iwidth == 0 || png_ptr->num_rows == 0);
+    }
+    while (png_ptr->iwidth == 0 || png_ptr->num_rows == 0);
   }
 #endif /* PNG_READ_INTERLACING_SUPPORTED */
 }

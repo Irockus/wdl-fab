@@ -18,7 +18,8 @@ static struct
 {
   const char *name;
   void **func;
-} api_tab[]= {
+} api_tab[]=
+{
 
 #undef _WDL_SWELL_H_API_DEFINED_
 #undef SWELL_API_DEFINE

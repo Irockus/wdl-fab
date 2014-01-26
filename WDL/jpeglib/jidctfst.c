@@ -187,7 +187,8 @@ jpeg_idct_ifast (j_decompress_ptr cinfo, jpeg_component_info * compptr,
   inptr = coef_block;
   quantptr = (IFAST_MULT_TYPE *) compptr->dct_table;
   wsptr = workspace;
-  for (ctr = DCTSIZE; ctr > 0; ctr--) {
+  for (ctr = DCTSIZE; ctr > 0; ctr--)
+  {
     /* Due to quantization, we will usually find that many of the input
      * coefficients are zero, especially the AC terms.  We can exploit this
      * by short-circuiting the IDCT calculation for any column in which all
@@ -200,7 +201,8 @@ jpeg_idct_ifast (j_decompress_ptr cinfo, jpeg_component_info * compptr,
     if (inptr[DCTSIZE*1] == 0 && inptr[DCTSIZE*2] == 0 &&
         inptr[DCTSIZE*3] == 0 && inptr[DCTSIZE*4] == 0 &&
         inptr[DCTSIZE*5] == 0 && inptr[DCTSIZE*6] == 0 &&
-        inptr[DCTSIZE*7] == 0) {
+        inptr[DCTSIZE*7] == 0)
+    {
       /* AC terms all zero */
       int dcval = (int) DEQUANTIZE(inptr[DCTSIZE*0], quantptr[DCTSIZE*0]);
 
@@ -279,7 +281,8 @@ jpeg_idct_ifast (j_decompress_ptr cinfo, jpeg_component_info * compptr,
   /* and also undo the PASS1_BITS scaling. */
 
   wsptr = workspace;
-  for (ctr = 0; ctr < DCTSIZE; ctr++) {
+  for (ctr = 0; ctr < DCTSIZE; ctr++)
+  {
     outptr = output_buf[ctr] + output_col;
     /* Rows of zeroes can be exploited in the same way as we did with columns.
      * However, the column calculation has created many nonzero AC terms, so
@@ -291,7 +294,8 @@ jpeg_idct_ifast (j_decompress_ptr cinfo, jpeg_component_info * compptr,
 
 #ifndef NO_ZERO_ROW_TEST
     if (wsptr[1] == 0 && wsptr[2] == 0 && wsptr[3] == 0 && wsptr[4] == 0 &&
-        wsptr[5] == 0 && wsptr[6] == 0 && wsptr[7] == 0) {
+        wsptr[5] == 0 && wsptr[6] == 0 && wsptr[7] == 0)
+    {
       /* AC terms all zero */
       JSAMPLE dcval = range_limit[IDESCALE(wsptr[0], PASS1_BITS+3)
                                   & RANGE_MASK];

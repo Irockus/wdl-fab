@@ -68,7 +68,8 @@
 #include <time.h>
 #include <math.h>
 
-class MTRand {
+class MTRand
+{
 // Data
 public:
   typedef unsigned int uint32;  // unsigned integer type, at least 32 bits

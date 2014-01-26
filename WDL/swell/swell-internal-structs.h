@@ -104,7 +104,8 @@ struct HGDIOBJ__
   char font_quality;
 };
 
-struct HDC__ {
+struct HDC__
+{
   CGContextRef ctx;
   void *ownedData; // always use via SWELL_GetContextFrameBuffer() (which performs necessary alignment)
   HGDIOBJ__ *curpen;
@@ -240,7 +241,8 @@ struct HGDIOBJ__
 };
 
 
-struct HDC__ {
+struct HDC__
+{
 #  ifdef SWELL_LICE_GDI
   LICE_IBitmap *surface; // owned by context. can be (and usually is, if clipping is desired) LICE_SubBitmap
   POINT surface_offs; // offset drawing into surface by this amount

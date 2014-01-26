@@ -83,7 +83,8 @@ static void GLUE_MOV_PX_DIRECTVALUE_GEN(void *b, INT_PTR v, int wv)
   }
   else
   {
-    const static unsigned char tab[3] = {
+    const static unsigned char tab[3] =
+    {
       0xB8 /* mov eax, dv*/,
       0xBF /* mov edi, dv */ ,
       0xB9 /* mov ecx, dv */
@@ -110,7 +111,8 @@ static void GLUE_POP_PX(void *b, int wv)
 #define GLUE_SET_PX_FROM_P1_SIZE 2
 static void GLUE_SET_PX_FROM_P1(void *b, int wv)
 {
-  static const unsigned char tab[3][GLUE_SET_PX_FROM_P1_SIZE]= {
+  static const unsigned char tab[3][GLUE_SET_PX_FROM_P1_SIZE]=
+  {
     {0x90,0x90}, // should never be used! (nopnop)
     {0x89,0xC7}, // mov edi, eax
     {0x89,0xC1}, // mov ecx, eax
@@ -121,17 +123,20 @@ static void GLUE_SET_PX_FROM_P1(void *b, int wv)
 #define GLUE_POP_FPSTACK_SIZE 2
 static const unsigned char GLUE_POP_FPSTACK[2] = { 0xDD, 0xD8 }; // fstp st0
 
-static const unsigned char GLUE_POP_FPSTACK_TOSTACK[] = {
+static const unsigned char GLUE_POP_FPSTACK_TOSTACK[] =
+{
   0x83, 0xEC, 16, // sub esp, 16
   0xDD, 0x1C, 0x24 // fstp qword (%esp)
 };
 
-static const unsigned char GLUE_POP_STACK_TO_FPSTACK[] = {
+static const unsigned char GLUE_POP_STACK_TO_FPSTACK[] =
+{
   0xDD, 0x04, 0x24, // fld qword (%esp)
   0x83, 0xC4, 16 //  add esp, 16
 };
 
-static const unsigned char GLUE_POP_FPSTACK_TO_WTP[] = {
+static const unsigned char GLUE_POP_FPSTACK_TO_WTP[] =
+{
   0xDD, 0x1E, /* fstp qword [esi] */
   0x83, 0xC6, 8, /* add esi, 8 */
 };
@@ -139,7 +144,8 @@ static const unsigned char GLUE_POP_FPSTACK_TO_WTP[] = {
 #define GLUE_SET_PX_FROM_WTP_SIZE 2
 static void GLUE_SET_PX_FROM_WTP(void *b, int wv)
 {
-  static const unsigned char tab[3][GLUE_SET_PX_FROM_WTP_SIZE]= {
+  static const unsigned char tab[3][GLUE_SET_PX_FROM_WTP_SIZE]=
+  {
     {0x89,0xF0}, // mov eax, esi
     {0x89,0xF7}, // mov edi, esi
     {0x89,0xF1}, // mov ecx, esi
@@ -150,7 +156,8 @@ static void GLUE_SET_PX_FROM_WTP(void *b, int wv)
 #define GLUE_PUSH_VAL_AT_PX_TO_FPSTACK_SIZE 2
 static void GLUE_PUSH_VAL_AT_PX_TO_FPSTACK(void *b, int wv)
 {
-  static const unsigned char tab[3][GLUE_PUSH_VAL_AT_PX_TO_FPSTACK_SIZE]= {
+  static const unsigned char tab[3][GLUE_PUSH_VAL_AT_PX_TO_FPSTACK_SIZE]=
+  {
     {0xDD,0x00}, // fld qword [eax]
     {0xDD,0x07}, // fld qword [edi]
     {0xDD,0x01}, // fld qword [ecx]
@@ -266,23 +273,27 @@ static unsigned char *EEL_GLUE_set_immediate(void *_p, INT_PTR newv)
 
 #define GLUE_INLINE_LOOPS
 
-static const unsigned char GLUE_LOOP_LOADCNT[]= {
+static const unsigned char GLUE_LOOP_LOADCNT[]=
+{
   0xDB, 0x1E,           //fistp dword [esi]
   0x8B, 0x0E,           // mov ecx, [esi]
   0x81, 0xf9, 1,0,0,0,  // cmp ecx, 1
   0x0F, 0x8C, 0,0,0,0,  // JL <skipptr>
 };
-static const unsigned char GLUE_LOOP_CLAMPCNT[]= {
+static const unsigned char GLUE_LOOP_CLAMPCNT[]=
+{
   0x81, 0xf9, INT_TO_LECHARS(NSEEL_LOOPFUNC_SUPPORT_MAXLEN), // cmp ecx, NSEEL_LOOPFUNC_SUPPORT_MAXLEN
   0x0F, 0x8C, 5,0,0,0,  // JL over-the-mov
   0xB9, INT_TO_LECHARS(NSEEL_LOOPFUNC_SUPPORT_MAXLEN), // mov ecx, NSEEL_LOOPFUNC_SUPPORT_MAXLEN
 };
-static const unsigned char GLUE_LOOP_BEGIN[]= {
+static const unsigned char GLUE_LOOP_BEGIN[]=
+{
   0x56, //push esi
   0x51, // push ecx
   0x81, 0xEC, 0x08, 0,0,0, // sub esp, 8
 };
-static const unsigned char GLUE_LOOP_END[]= {
+static const unsigned char GLUE_LOOP_END[]=
+{
   0x81, 0xC4, 0x08, 0,0,0, // add esp, 8
   0x59, //pop ecx
   0x5E, // pop esi
@@ -291,15 +302,18 @@ static const unsigned char GLUE_LOOP_END[]= {
 };
 
 
-static const unsigned char GLUE_WHILE_SETUP[]= {
+static const unsigned char GLUE_WHILE_SETUP[]=
+{
   0xB9, INT_TO_LECHARS(NSEEL_LOOPFUNC_SUPPORT_MAXLEN), // mov ecx, NSEEL_LOOPFUNC_SUPPORT_MAXLEN
 };
-static const unsigned char GLUE_WHILE_BEGIN[]= {
+static const unsigned char GLUE_WHILE_BEGIN[]=
+{
   0x56, //push esi
   0x51, // push ecx
   0x81, 0xEC, 0x08, 0,0,0, // sub esp, 8
 };
-static const unsigned char GLUE_WHILE_END[]= {
+static const unsigned char GLUE_WHILE_END[]=
+{
   0x81, 0xC4, 0x08, 0,0,0, // add esp, 8
   0x59, //pop ecx
   0x5E, // pop esi
@@ -308,7 +322,8 @@ static const unsigned char GLUE_WHILE_END[]= {
   0x49, // dec ecx
   0x0f, 0x84, 0,0,0,0,  // jz endpt
 };
-static const unsigned char GLUE_WHILE_CHECK_RV[] = {
+static const unsigned char GLUE_WHILE_CHECK_RV[] =
+{
   0x85, 0xC0, // test eax, eax
   0x0F, 0x85, 0,0,0,0 // jnz  looppt
 };

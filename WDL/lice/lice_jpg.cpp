@@ -13,7 +13,8 @@ extern "C" {
 #include "../jpeglib/jpeglib.h"
 };
 
-struct my_error_mgr {
+struct my_error_mgr
+{
   struct jpeg_error_mgr pub;	/* "public" fields */
   jmp_buf setjmp_buffer;	/* for return to caller */
 };
@@ -236,7 +237,8 @@ LICE_IBitmap *LICE_LoadJPG(const char *filename, LICE_IBitmap *bmp)
     dbmpptr=-dbmpptr;
   }
 
-  while (cinfo.output_scanline < cinfo.output_height) {
+  while (cinfo.output_scanline < cinfo.output_height)
+  {
     /* jpeg_read_scanlines expects an array of pointers to scanlines.
      * Here the array is only one element long, but you could ask for
      * more than one scanline at a time if that's more convenient.

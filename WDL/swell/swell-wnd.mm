@@ -115,11 +115,13 @@ static int arr_bsearch_mod(void *key, NSArray *arr, int (*compar)(const void *, 
   int lim, cmp;
   int p;
 
-  for (lim = nmemb; lim != 0; lim >>= 1) {
+  for (lim = nmemb; lim != 0; lim >>= 1)
+  {
     p = base + (lim >> 1);
     cmp = compar(key, [arr objectAtIndex:p]);
     if (cmp == 0) return (p);
-    if (cmp > 0) {    /* key > p: move right */
+    if (cmp > 0)      /* key > p: move right */
+    {
       // check to see if key is less than p+1, if it is, we're done
       base = p + 1;
       if (base >= nmemb || compar(key,[arr objectAtIndex:base])<=0) return base;
@@ -137,11 +139,13 @@ template<class T> static int ptrlist_bsearch_mod(void *key, WDL_PtrList<T> *arr,
   int lim, cmp;
   int p;
 
-  for (lim = nmemb; lim != 0; lim >>= 1) {
+  for (lim = nmemb; lim != 0; lim >>= 1)
+  {
     p = base + (lim >> 1);
     cmp = compar(key, arr->Get(p),ctx);
     if (cmp == 0) return (p);
-    if (cmp > 0) {    /* key > p: move right */
+    if (cmp > 0)      /* key > p: move right */
+    {
       // check to see if key is less than p+1, if it is, we're done
       base = p + 1;
       if (base >= nmemb || compar(key,arr->Get(base),ctx)<=0) return base;
@@ -1313,7 +1317,8 @@ bool IsWindow(HWND hwnd)
   int x,n=[ch count];
   for(x=0; x<n; x ++)
   {
-    @try {
+    @try
+    {
       NSWindow *w = [ch objectAtIndex:x];
       if (w == (NSWindow *)hwnd || [w contentView] == (NSView *)hwnd)
       {
@@ -1321,14 +1326,17 @@ bool IsWindow(HWND hwnd)
         return true;
       }
     }
-    @catch (NSException *ex) {
+    @catch (NSException *ex)
+    {
     }
-    @catch (id ex) {
+    @catch (id ex)
+    {
     }
   }
   for(x=0; x<n; x ++)
   {
-    @try {
+    @try
+    {
       NSWindow *w = [ch objectAtIndex:x];
       if (w &&
           // only validate children of our windows (maybe an option for this?)
@@ -1339,9 +1347,11 @@ bool IsWindow(HWND hwnd)
         return true;
       }
     }
-    @catch (NSException *ex) {
+    @catch (NSException *ex)
+    {
     }
-    @catch (id ex) {
+    @catch (id ex)
+    {
     }
   }
   [ch release];
@@ -1400,9 +1410,11 @@ static void *__GetNSImageFromHICON(HICON ico) // local copy to not be link depen
 
 STANDARD_CONTROL_NEEDSDISPLAY_IMPL
 
--(id) init {
+-(id) init
+{
   self = [super init];
-  if (self != nil) {
+  if (self != nil)
+  {
     m_userdata=0;
     m_swellGDIimage=0;
     m_radioflags=0;
@@ -4418,7 +4430,8 @@ int ListView_SubItemHitTest(HWND h, LVHITTESTINFO *pinf)
 
   NSPoint pt= {pinf->pt.x,pinf->pt.y};
   if (row < 0 && pt.y < 0)
-  { // Fake the point in the client area of the listview to get the column # (like win32)
+  {
+    // Fake the point in the client area of the listview to get the column # (like win32)
     pt.y = 0;
   }
   pinf->iSubItem=[(NSTableView *)h columnAtPoint:pt];

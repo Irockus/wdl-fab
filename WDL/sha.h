@@ -34,7 +34,8 @@
 
 // sha
 
-class WDL_SHA1 {
+class WDL_SHA1
+{
 
 public:
   WDL_SHA1();

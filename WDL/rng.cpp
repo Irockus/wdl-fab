@@ -65,7 +65,8 @@ int WDL_RNG_int32()
   WDL_SHA1 tmp;
   tmp.add(state,sizeof(state));
   rngcycle();
-  union {
+  union
+  {
     char buf[WDL_SHA1SIZE];
     int a;
   } b;

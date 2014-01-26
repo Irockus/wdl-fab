@@ -151,7 +151,8 @@ jpeg_fdct_islow (DCTELEM * data)
   /* furthermore, we scale the results by 2**PASS1_BITS. */
 
   dataptr = data;
-  for (ctr = DCTSIZE-1; ctr >= 0; ctr--) {
+  for (ctr = DCTSIZE-1; ctr >= 0; ctr--)
+  {
     tmp0 = dataptr[0] + dataptr[7];
     tmp7 = dataptr[0] - dataptr[7];
     tmp1 = dataptr[1] + dataptr[6];
@@ -216,7 +217,8 @@ jpeg_fdct_islow (DCTELEM * data)
    */
 
   dataptr = data;
-  for (ctr = DCTSIZE-1; ctr >= 0; ctr--) {
+  for (ctr = DCTSIZE-1; ctr >= 0; ctr--)
+  {
     tmp0 = dataptr[DCTSIZE*0] + dataptr[DCTSIZE*7];
     tmp7 = dataptr[DCTSIZE*0] - dataptr[DCTSIZE*7];
     tmp1 = dataptr[DCTSIZE*1] + dataptr[DCTSIZE*6];

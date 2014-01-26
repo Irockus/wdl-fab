@@ -45,15 +45,18 @@ DWORD error;
                               (LPVOID)&msgbuf,
                               0,
                               NULL);
-  if (chars != 0) {
+  if (chars != 0)
+  {
     /* If there is an \r\n appended, zap it.  */
     if (chars >= 2
-        && msgbuf[chars - 2] == '\r' && msgbuf[chars - 1] == '\n') {
+        && msgbuf[chars - 2] == '\r' && msgbuf[chars - 1] == '\n')
+    {
       chars -= 2;
       msgbuf[chars] = 0;
     }
 
-    if (chars > sizeof (buf) - 1) {
+    if (chars > sizeof (buf) - 1)
+    {
       chars = sizeof (buf) - 1;
       msgbuf[chars] = 0;
     }
@@ -61,7 +64,8 @@ DWORD error;
     wcstombs(buf, msgbuf, chars + 1);
     LocalFree(msgbuf);
   }
-  else {
+  else
+  {
     sprintf(buf, "unknown win32 error (%ld)", error);
   }
 
@@ -76,7 +80,8 @@ local void gz_reset(state)
 gz_statep state;
 {
   state->x.have = 0;              /* no output data available */
-  if (state->mode == GZ_READ) {   /* for reading ... */
+  if (state->mode == GZ_READ)     /* for reading ... */
+  {
     state->eof = 0;             /* not at end of file */
     state->past = 0;            /* have not read past end yet */
     state->how = LOOK;          /* look for gzip header */
@@ -112,11 +117,13 @@ const char *mode;
   state->level = Z_DEFAULT_COMPRESSION;
   state->strategy = Z_DEFAULT_STRATEGY;
   state->direct = 0;
-  while (*mode) {
+  while (*mode)
+  {
     if (*mode >= '0' && *mode <= '9')
       state->level = *mode - '0';
     else
-      switch (*mode) {
+      switch (*mode)
+      {
         case 'r':
           state->mode = GZ_READ;
           break;
@@ -153,14 +160,17 @@ const char *mode;
   }
 
   /* must provide an "r", "w", or "a" */
-  if (state->mode == GZ_NONE) {
+  if (state->mode == GZ_NONE)
+  {
     free(state);
     return NULL;
   }
 
   /* can't force transparent read */
-  if (state->mode == GZ_READ) {
-    if (state->direct) {
+  if (state->mode == GZ_READ)
+  {
+    if (state->direct)
+    {
       free(state);
       return NULL;
     }
@@ -169,7 +179,8 @@ const char *mode;
 
   /* save the path name for error messages */
   state->path = malloc(strlen(path) + 1);
-  if (state->path == NULL) {
+  if (state->path == NULL)
+  {
     free(state);
     return NULL;
   }
@@ -191,7 +202,8 @@ const char *mode;
                        O_TRUNC :
                        O_APPEND))),
                    0666);
-  if (state->fd == -1) {
+  if (state->fd == -1)
+  {
     free(state->path);
     free(state);
     return NULL;
@@ -200,7 +212,8 @@ const char *mode;
     state->mode = GZ_WRITE;         /* simplify later checks */
 
   /* save the current position for rewinding (only if reading) */
-  if (state->mode == GZ_READ) {
+  if (state->mode == GZ_READ)
+  {
     state->start = LSEEK(state->fd, 0, SEEK_CUR);
     if (state->start == -1) state->start = 0;
   }
@@ -326,7 +339,8 @@ int whence;
 
   /* if within raw area while reading, just go there */
   if (state->mode == GZ_READ && state->how == COPY &&
-      state->x.pos + offset >= 0) {
+      state->x.pos + offset >= 0)
+  {
     ret = LSEEK(state->fd, offset - state->x.have, SEEK_CUR);
     if (ret == -1)
       return -1;
@@ -341,7 +355,8 @@ int whence;
   }
 
   /* calculate skip amount, rewinding if needed for back seek when reading */
-  if (offset < 0) {
+  if (offset < 0)
+  {
     if (state->mode != GZ_READ)         /* writing -- can't go backwards */
       return -1;
     offset += state->x.pos;
@@ -352,7 +367,8 @@ int whence;
   }
 
   /* if reading, skip what's in output buffer (one less gzgetc() check) */
-  if (state->mode == GZ_READ) {
+  if (state->mode == GZ_READ)
+  {
     n = GT_OFF(state->x.have) || (z_off64_t)state->x.have > offset ?
         (unsigned)offset : state->x.have;
     state->x.have -= n;
@@ -362,7 +378,8 @@ int whence;
   }
 
   /* request skip (if not zero) */
-  if (offset) {
+  if (offset)
+  {
     state->seek = 1;
     state->skip = offset;
   }
@@ -492,7 +509,8 @@ gzFile file;
     return;
 
   /* clear error and end-of-file */
-  if (state->mode == GZ_READ) {
+  if (state->mode == GZ_READ)
+  {
     state->eof = 0;
     state->past = 0;
   }
@@ -511,7 +529,8 @@ int err;
 const char *msg;
 {
   /* free previously allocated message and clear */
-  if (state->msg != NULL) {
+  if (state->msg != NULL)
+  {
     if (state->err != Z_MEM_ERROR)
       free(state->msg);
     state->msg = NULL;
@@ -527,13 +546,15 @@ const char *msg;
     return;
 
   /* for an out of memory error, save as static string */
-  if (err == Z_MEM_ERROR) {
+  if (err == Z_MEM_ERROR)
+  {
     state->msg = (char *)msg;
     return;
   }
 
   /* construct error message with path */
-  if ((state->msg = malloc(strlen(state->path) + strlen(msg) + 3)) == NULL) {
+  if ((state->msg = malloc(strlen(state->path) + strlen(msg) + 3)) == NULL)
+  {
     state->err = Z_MEM_ERROR;
     state->msg = (char *)"out of memory";
     return;
@@ -554,11 +575,13 @@ unsigned ZLIB_INTERNAL gz_intmax()
   unsigned p, q;
 
   p = 1;
-  do {
+  do
+  {
     q = p;
     p <<= 1;
     p++;
-  } while (p > q);
+  }
+  while (p > q);
   return q >> 1;
 }
 #endif

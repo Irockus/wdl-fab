@@ -3809,7 +3809,8 @@ png_read_finish_row(png_structp png_ptr)
       else  /* if (png_ptr->transformations & PNG_INTERLACE) */
         break; /* libpng deinterlacing sees every row */
 
-    } while (png_ptr->num_rows == 0 || png_ptr->iwidth == 0);
+    }
+    while (png_ptr->num_rows == 0 || png_ptr->iwidth == 0);
 
     if (png_ptr->pass < 7)
       return;

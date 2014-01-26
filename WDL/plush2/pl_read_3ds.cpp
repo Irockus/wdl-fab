@@ -34,7 +34,8 @@ static void _pl3DSFaceMatReader(pl_uChar *f, pl_uInt32 p);
 static void MapListReader(pl_uChar *f, pl_uInt32 p);
 static pl_sInt16 _pl3DSFindChunk(pl_uInt16 id);
 
-static _pl_3DSChunk _pl3DSChunkNames[] = {
+static _pl_3DSChunk _pl3DSChunkNames[] =
+{
   {0x4D4D,NULL}, /* Main */
   {0x3D3D,NULL}, /* Object Mesh */
   {0x4000,_pl3DSObjBlockReader},
@@ -106,7 +107,8 @@ pl_Obj *plRead3DSObj(void *ptr, int size, pl_Mat *m)
   return bobj;
 }
 
-static pl_Float _pl3DSReadFloat(pl_uChar **ptr) {
+static pl_Float _pl3DSReadFloat(pl_uChar **ptr)
+{
   pl_uInt32 *i;
   pl_IEEEFloat32 c;
   i = (pl_uInt32 *) &c;
@@ -185,7 +187,8 @@ static void _pl3DSTriMeshReader(pl_uChar *ptr, pl_uInt32 p)
   while (i--)
   {
     pl_Vertex *vp=obj->Vertices.Get();
-    pl_Vertex *fVertices[3] = {
+    pl_Vertex *fVertices[3] =
+    {
       vp+face->VertexIndices[0],
       vp+face->VertexIndices[1],
       vp+face->VertexIndices[2],

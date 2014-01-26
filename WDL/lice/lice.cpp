@@ -1900,11 +1900,14 @@ public:
     int r = LICE_GETR(color), g = LICE_GETG(color), b = LICE_GETB(color), a = LICE_GETA(color);
 
     int xi, yi;
-    for (yi = 0; yi < src_h; ++yi, srcalpha += src_span, destpx += span) {
+    for (yi = 0; yi < src_h; ++yi, srcalpha += src_span, destpx += span)
+    {
       const LICE_pixel_chan* tsrc = srcalpha;
       LICE_pixel* tdest = destpx;
-      for (xi = 0; xi < src_w; ++xi, ++tsrc, ++tdest) {
-        if (*tsrc) {  // glyphs should be expected to have a lot of "holes"
+      for (xi = 0; xi < src_w; ++xi, ++tsrc, ++tdest)
+      {
+        if (*tsrc)    // glyphs should be expected to have a lot of "holes"
+        {
           COMBFUNC::doPix((LICE_pixel_chan*) tdest, r, g, b, a, *tsrc*aa/256);
         }
       }
@@ -1927,31 +1930,37 @@ void LICE_DrawGlyphEx(LICE_IBitmap* dest, int x, int y, LICE_pixel color, const 
   int ia= (int)(alpha*256.0f);
 
   int src_x = 0, src_y = 0, src_w = glyph_w, src_h = glyph_h;
-  if (x < 0) {
+  if (x < 0)
+  {
     src_x -= x;
     src_w += x;
     x = 0;
   }
-  if (x+src_w >= dest->getWidth()) {
+  if (x+src_w >= dest->getWidth())
+  {
     src_w = dest->getWidth()-x;
   }
-  if (y < 0) {
+  if (y < 0)
+  {
     src_y -= y;
     src_h += y;
     y = 0;
   }
-  if (y+src_h >= dest->getHeight()) {
+  if (y+src_h >= dest->getHeight())
+  {
     src_h = dest->getHeight()-y;
   }
 
 
   LICE_pixel* destpx = dest->getBits();
   int span = dest->getRowSpan();
-  if (dest->isFlipped()) {
+  if (dest->isFlipped())
+  {
     destpx += (dest->getHeight()-y-1)*span+x;
     span = -span;
   }
-  else {
+  else
+  {
     destpx += y*dest->getRowSpan()+x;
   }
 
@@ -2019,7 +2028,8 @@ void LICE_HalveBlitAA(LICE_IBitmap *dest, LICE_IBitmap *src)
 
 int LICE_BitmapCmp(LICE_IBitmap* a, LICE_IBitmap* b, int *coordsOut)
 {
-  if (!a || !b) {
+  if (!a || !b)
+  {
     if (!a && b) return -1;
     if (a && !b) return 1;
     return 0;
@@ -2132,7 +2142,8 @@ int LICE_BitmapCmp(LICE_IBitmap* a, LICE_IBitmap* b, int *coordsOut)
   return 0;
 }
 
-unsigned short _LICE_RGB2HSV_invtab[256]= { // 65536/idx - 1
+unsigned short _LICE_RGB2HSV_invtab[256]=   // 65536/idx - 1
+{
   0,      0xffff, 0x7fff, 0x5554, 0x3fff, 0x3332, 0x2aa9, 0x2491,
   0x1fff, 0x1c70, 0x1998, 0x1744, 0x1554, 0x13b0, 0x1248, 0x1110,
   0x0fff, 0x0f0e, 0x0e37, 0x0d78, 0x0ccb, 0x0c2f, 0x0ba1, 0x0b20,

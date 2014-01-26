@@ -123,8 +123,10 @@ static LRESULT SWELL_SendMouseMessageImpl(SWELL_hwndChild *slf, int msg, NSEvent
 
   LRESULT ret=slf->m_wndproc((HWND)slf,msg,l,(xpos&0xffff) + (ypos<<16));
 
-  if (msg==WM_LBUTTONUP || msg==WM_RBUTTONUP || msg==WM_MOUSEMOVE || msg==WM_MBUTTONUP) {
-    if (!GetCapture() && (slf->m_hashaddestroy || !slf->m_wndproc || !slf->m_wndproc((HWND)slf,WM_SETCURSOR,(WPARAM)slf,htc | (msg<<16)))) {
+  if (msg==WM_LBUTTONUP || msg==WM_RBUTTONUP || msg==WM_MOUSEMOVE || msg==WM_MBUTTONUP)
+  {
+    if (!GetCapture() && (slf->m_hashaddestroy || !slf->m_wndproc || !slf->m_wndproc((HWND)slf,WM_SETCURSOR,(WPARAM)slf,htc | (msg<<16))))
+    {
       NSCursor *arr= [NSCursor arrowCursor];
       if (GetCursor() != (HCURSOR)arr) SetCursor((HCURSOR)arr);
     }
@@ -879,7 +881,8 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
 
 -(HMENU)swellGetMenu {   return m_menu; }
 -(BOOL)swellHasBeenDestroyed { return !!m_hashaddestroy; }
--(void)swellSetMenu:(HMENU)menu {
+-(void)swellSetMenu:(HMENU)menu
+{
   if (m_menu) SWELL_SetMenuDestination(m_menu,NULL); // don't free m_menu, but at least make it not point to us anymore
   m_menu=menu;
   if (m_menu) SWELL_SetMenuDestination(m_menu,(HWND)self);
@@ -1186,7 +1189,8 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
 {
   if (DelegateMouseMove(self,theEvent)) return;
 
-  if (m_enabled) if (!GetCapture() || GetCapture()==(HWND)self) {
+  if (m_enabled) if (!GetCapture() || GetCapture()==(HWND)self)
+    {
       SWELL_SendMouseMessage(self,WM_MOUSEMOVE, theEvent);
     }
 //  [super mouseMoved:theEvent];
@@ -2787,7 +2791,8 @@ void SWELL_AddCarbonPaneToView(HWND cwv, void* pane)  // not currently used
   NSRange range = NSMakeRange(0, MIN(len, 1)); // take color from first char
   NSDictionary *attrs = [attrTitle fontAttributesInRange:range];
   NSColor *textColor = [NSColor controlTextColor];
-  if (attrs) {
+  if (attrs)
+  {
     textColor = [attrs objectForKey:NSForegroundColorAttributeName];
   }
   return textColor;
@@ -3007,7 +3012,8 @@ void SWELL_SetViewGL(HWND h, bool wantGL)
     {
       if (wantGL)
       {
-        NSOpenGLPixelFormatAttribute atr[] = {
+        NSOpenGLPixelFormatAttribute atr[] =
+        {
           96/*NSOpenGLPFAAllowOfflineRenderers*/, // allows use of NSSupportsAutomaticGraphicsSwitching and no gpu-forcing
           (NSOpenGLPixelFormatAttribute)0
         }; // todo: optionally add any attributes before the 0
@@ -3057,7 +3063,8 @@ void DrawSwellViewRectImpl(SWELL_hwndChild *view, NSRect rect, HDC hdc)
     [NSOpenGLContext clearCurrentContext];
   }
   view->m_paintctx_hdc=0;
-  if (!view->m_paintctx_used) {
+  if (!view->m_paintctx_used)
+  {
     /*[super drawRect:rect];*/
   }
 

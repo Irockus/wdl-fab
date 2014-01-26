@@ -7,7 +7,8 @@
 #include <windows.h>
 #endif
 
-static struct {
+static struct
+{
   __int64 st_time;
   __int64 cycles,mint,maxt;
   int foo;

@@ -25,9 +25,11 @@
 {
   TRACE;
   mPlug = (IPlugBase*) GetComponentInstanceStorage(audioUnit);
-  if (mPlug) {
+  if (mPlug)
+  {
     IGraphics* pGraphics = mPlug->GetGUI();
-    if (pGraphics) {
+    if (pGraphics)
+    {
       IGRAPHICS_COCOA* pView = (IGRAPHICS_COCOA*) pGraphics->OpenWindow(0);
       return pView;
     }

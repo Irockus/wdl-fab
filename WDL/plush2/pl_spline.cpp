@@ -7,7 +7,8 @@ Copyright (c) 1996-2000, Justin Frankel
 
 #include "plush.h"
 
-void pl_Spline::GetPoint(pl_Float frame, pl_Float *out) {
+void pl_Spline::GetPoint(pl_Float frame, pl_Float *out)
+{
   pl_sInt32 i, i_1, i0, i1, i2;
   pl_Float time1,time2,time3;
   pl_Float t1,t2,t3,t4,u1,u2,u3,u4,v1,v2,v3;
@@ -41,7 +42,8 @@ void pl_Spline::GetPoint(pl_Float frame, pl_Float *out) {
   i1 *= keyWidth;
   i2 *= keyWidth;
   i_1 *= keyWidth;
-  for (i = 0; i < keyWidth; i ++) {
+  for (i = 0; i < keyWidth; i ++)
+  {
     a = t1*keyptrs[i+i_1]+t2*keyptrs[i+i0]+t3*keyptrs[i+i1]+t4*keyptrs[i+i2];
     b = u1*keyptrs[i+i_1]+u2*keyptrs[i+i0]+u3*keyptrs[i+i1]+u4*keyptrs[i+i2];
     c = v1*keyptrs[i+i_1]+v2*keyptrs[i+i0]+v3*keyptrs[i+i1];

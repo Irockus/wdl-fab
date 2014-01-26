@@ -94,7 +94,8 @@ AAX_Result  AAX_CIPlugParameters::StaticDescribe(AAX_IEffectDescriptor * ioDescr
   err |= properties->AddProperty ( AAX_eProperty_ProductID, setupInfo.mProductID );
   err |= properties->AddProperty ( AAX_eProperty_PlugInID_RTAS, setupInfo.mPluginID );        //This is a native only convenience layer, so there is no need for a DSP type.
 
-  if (setupInfo.mAudioSuiteID != 'none') {
+  if (setupInfo.mAudioSuiteID != 'none')
+  {
     err |= properties->AddProperty ( AAX_eProperty_PlugInID_AudioSuite, setupInfo.mAudioSuiteID );
   }
 

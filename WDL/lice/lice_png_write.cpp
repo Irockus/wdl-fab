@@ -40,19 +40,22 @@ bool LICE_WritePNG(const char *filename, LICE_IBitmap *bmp, bool wantalpha /*=tr
 
   png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING,NULL, NULL, NULL);
 
-  if (png_ptr == NULL) {
+  if (png_ptr == NULL)
+  {
     fclose(fp);
     return false;
   }
 
   info_ptr = png_create_info_struct(png_ptr);
-  if (info_ptr == NULL) {
+  if (info_ptr == NULL)
+  {
     fclose(fp);
     png_destroy_write_struct(&png_ptr,  (png_infopp)NULL);
     return false;
   }
 
-  if (setjmp(png_jmpbuf(png_ptr))) {
+  if (setjmp(png_jmpbuf(png_ptr)))
+  {
     /* If we get here, we had a problem reading the file */
     if (fp) fclose(fp);
     fp=0;

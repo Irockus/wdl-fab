@@ -30,7 +30,8 @@
 #define IS_READABLE(Private)    (Private->FileState & FILE_STATE_READ)
 #define IS_WRITEABLE(Private)   (Private->FileState & FILE_STATE_WRITE)
 
-typedef struct GifFilePrivateType {
+typedef struct GifFilePrivateType
+{
   GifWord FileState, FileHandle,  /* Where all this data goes to! */
           BitsPerPixel,     /* Bits per pixel (Codes uses at least this + 1). */
           ClearCode,   /* The CLEAR LZ code. */

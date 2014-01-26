@@ -11,7 +11,8 @@
 struct internal_state      {int dummy;}; /* for buggy compilers */
 #endif
 
-const char * const z_errmsg[10] = {
+const char * const z_errmsg[10] =
+{
   "need dictionary",     /* Z_NEED_DICT       2  */
   "stream end",          /* Z_STREAM_END      1  */
   "",                    /* Z_OK              0  */
@@ -36,25 +37,29 @@ uLong ZEXPORT zlibCompileFlags()
   uLong flags;
 
   flags = 0;
-  switch ((int)(sizeof(uInt))) {
+  switch ((int)(sizeof(uInt)))
+  {
     case 2:     break;
     case 4:     flags += 1;     break;
     case 8:     flags += 2;     break;
     default:    flags += 3;
   }
-  switch ((int)(sizeof(uLong))) {
+  switch ((int)(sizeof(uLong)))
+  {
     case 2:     break;
     case 4:     flags += 1 << 2;        break;
     case 8:     flags += 2 << 2;        break;
     default:    flags += 3 << 2;
   }
-  switch ((int)(sizeof(voidpf))) {
+  switch ((int)(sizeof(voidpf)))
+  {
     case 2:     break;
     case 4:     flags += 1 << 4;        break;
     case 8:     flags += 2 << 4;        break;
     default:    flags += 3 << 4;
   }
-  switch ((int)(sizeof(z_off_t))) {
+  switch ((int)(sizeof(z_off_t)))
+  {
     case 2:     break;
     case 4:     flags += 1 << 6;        break;
     case 8:     flags += 2 << 6;        break;
@@ -135,9 +140,11 @@ const Bytef* source;
 uInt  len;
 {
   if (len == 0) return;
-  do {
+  do
+  {
     *dest++ = *source++; /* ??? to be unrolled */
-  } while (--len != 0);
+  }
+  while (--len != 0);
 }
 
 int ZLIB_INTERNAL zmemcmp(s1, s2, len)
@@ -147,7 +154,8 @@ uInt  len;
 {
   uInt j;
 
-  for (j = 0; j < len; j++) {
+  for (j = 0; j < len; j++)
+  {
     if (s1[j] != s2[j]) return 2*(s1[j] > s2[j])-1;
   }
   return 0;
@@ -158,9 +166,11 @@ Bytef* dest;
 uInt  len;
 {
   if (len == 0) return;
-  do {
+  do
+  {
     *dest++ = 0;  /* ??? to be unrolled */
-  } while (--len != 0);
+  }
+  while (--len != 0);
 }
 #endif
 
@@ -184,7 +194,8 @@ uInt  len;
 
 local int next_ptr = 0;
 
-typedef struct ptr_table_s {
+typedef struct ptr_table_s
+{
   voidpf org_ptr;
   voidpf new_ptr;
 } ptr_table;
@@ -205,10 +216,13 @@ voidpf ZLIB_INTERNAL zcalloc (voidpf opaque, unsigned items, unsigned size)
   /* If we allocate less than 65520 bytes, we assume that farmalloc
    * will return a usable pointer which doesn't have to be normalized.
    */
-  if (bsize < 65520L) {
+  if (bsize < 65520L)
+  {
     buf = farmalloc(bsize);
     if (*(ush*)&buf != 0) return buf;
-  } else {
+  }
+  else
+  {
     buf = farmalloc(bsize + 16L);
   }
   if (buf == NULL || next_ptr >= MAX_PTR) return NULL;
@@ -224,16 +238,19 @@ voidpf ZLIB_INTERNAL zcalloc (voidpf opaque, unsigned items, unsigned size)
 void ZLIB_INTERNAL zcfree (voidpf opaque, voidpf ptr)
 {
   int n;
-  if (*(ush*)&ptr != 0) { /* object < 64K */
+  if (*(ush*)&ptr != 0)   /* object < 64K */
+  {
     farfree(ptr);
     return;
   }
   /* Find the original pointer */
-  for (n = 0; n < next_ptr; n++) {
+  for (n = 0; n < next_ptr; n++)
+  {
     if (ptr != table[n].new_ptr) continue;
 
     farfree(table[n].org_ptr);
-    while (++n < next_ptr) {
+    while (++n < next_ptr)
+    {
       table[n-1] = table[n];
     }
     next_ptr--;

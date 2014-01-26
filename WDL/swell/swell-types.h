@@ -167,9 +167,11 @@ typedef const char *LPCSTR;
 
 typedef unsigned __int64 ULONGLONG;
 
-typedef union {
+typedef union
+{
   unsigned long long QuadPart;
-  struct {
+  struct
+  {
 #ifdef __ppc__
     DWORD HighPart;
     DWORD LowPart;
@@ -207,25 +209,29 @@ typedef struct
 } RECT, *LPRECT;
 
 
-typedef struct {
+typedef struct
+{
   unsigned char fVirt;
   unsigned short key,cmd;
 } ACCEL, *LPACCEL;
 
 
-typedef struct {
+typedef struct
+{
   DWORD dwLowDateTime;
   DWORD dwHighDateTime;
 } FILETIME;
 
-typedef struct _GUID {
+typedef struct _GUID
+{
   unsigned int Data1;
   unsigned short Data2;
   unsigned short Data3;
   unsigned char  Data4[8];
 } GUID;
 
-typedef struct {
+typedef struct
+{
   HWND hwnd;
   UINT message;
   WPARAM wParam;
@@ -254,7 +260,8 @@ typedef struct
 } NMHDR, *LPNMHDR;
 
 
-typedef struct {
+typedef struct
+{
   NMHDR   hdr;
   DWORD_PTR   dwItemSpec;
   DWORD_PTR   dwItemData;
@@ -337,7 +344,8 @@ typedef struct TCITEM
   LPARAM lParam;
 } TCITEM, *LPTCITEM;
 
-typedef struct tagDRAWITEMSTRUCT {
+typedef struct tagDRAWITEMSTRUCT
+{
   UINT        CtlType;
   UINT        CtlID;
   UINT        itemID;
@@ -349,7 +357,8 @@ typedef struct tagDRAWITEMSTRUCT {
   DWORD_PTR   itemData;
 } DRAWITEMSTRUCT, *PDRAWITEMSTRUCT, *LPDRAWITEMSTRUCT;
 
-typedef struct tagBITMAP {
+typedef struct tagBITMAP
+{
   LONG bmWidth;
   LONG bmHeight;
 } BITMAP, *PBITMAP, *LPBITMAP;
@@ -426,7 +435,8 @@ typedef struct HTREEITEM__ *HTREEITEM;
 #define TVHT_TORIGHT            0x0400
 #define TVHT_TOLEFT             0x0800
 
-typedef struct {
+typedef struct
+{
   UINT      mask;
   HTREEITEM hItem;
   UINT      state;
@@ -439,19 +449,22 @@ typedef struct {
   LPARAM    lParam;
 } TVITEM, TV_ITEM, *LPTVITEM, *LPTV_ITEM;
 
-typedef struct {
+typedef struct
+{
   HTREEITEM hParent;
   HTREEITEM hInsertAfter;
   TVITEM item;
 } TVINSERTSTRUCT, *LPTVINSERTSTRUCT, TV_INSERTSTRUCT, *LPTV_INSERTSTRUCT;
 
-typedef struct {
+typedef struct
+{
   POINT       pt;
   UINT        flags;
   HTREEITEM   hItem;
 } TVHITTESTINFO, *LPTVHITTESTINFO;
 
-typedef struct {
+typedef struct
+{
   NMHDR       hdr;
   UINT        action;
   TVITEM    itemOld;
@@ -472,7 +485,8 @@ typedef struct
 
 #define SetMenuDefaultItem(a,b,c) (0)
 
-typedef struct {
+typedef struct
+{
   POINT ptReserved, ptMaxSize, ptMaxPosition, ptMinTrackSize, ptMaxTrackSize;
 } MINMAXINFO, *LPMINMAXINFO;
 
@@ -494,7 +508,8 @@ typedef struct
   // todo: implement rest
 } TEXTMETRIC;
 
-typedef struct {
+typedef struct
+{
   HDC         hdc;
   BOOL        fErase;
   RECT        rcPaint;
@@ -517,7 +532,8 @@ typedef struct
   DWORD   styleNew;
 } STYLESTRUCT, *LPSTYLESTRUCT;
 
-typedef struct _DROPFILES {
+typedef struct _DROPFILES
+{
   DWORD pFiles;                       // offset of file list
   POINT pt;                           // drop point (client coords)
   BOOL fNC;                           // is it on NonClient area

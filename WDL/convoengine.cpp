@@ -40,7 +40,8 @@ static void WDL_CONVO_CplxMul2(WDL_FFT_COMPLEX *c, WDL_FFT_COMPLEX *a, WDL_CONVO
   WDL_FFT_REAL t1, t2, t3, t4, t5, t6, t7, t8;
   if (n<2 || (n&1)) return;
 
-  do {
+  do
+  {
     t1 = a[0].re * b[0].re;
     t2 = a[0].im * b[0].im;
     t3 = a[0].im * b[0].re;
@@ -60,14 +61,16 @@ static void WDL_CONVO_CplxMul2(WDL_FFT_COMPLEX *c, WDL_FFT_COMPLEX *a, WDL_CONVO
     a += 2;
     b += 2;
     c += 2;
-  } while (n -= 2);
+  }
+  while (n -= 2);
 }
 static void WDL_CONVO_CplxMul3(WDL_FFT_COMPLEX *c, WDL_FFT_COMPLEX *a, WDL_CONVO_IMPULSEBUFCPLXf *b, int n)
 {
   WDL_FFT_REAL t1, t2, t3, t4, t5, t6, t7, t8;
   if (n<2 || (n&1)) return;
 
-  do {
+  do
+  {
     t1 = a[0].re * b[0].re;
     t2 = a[0].im * b[0].im;
     t3 = a[0].im * b[0].re;
@@ -87,7 +90,8 @@ static void WDL_CONVO_CplxMul3(WDL_FFT_COMPLEX *c, WDL_FFT_COMPLEX *a, WDL_CONVO
     a += 2;
     b += 2;
     c += 2;
-  } while (n -= 2);
+  }
+  while (n -= 2);
 }
 
 static bool CompareQueueToBuf(WDL_FastQueue *q, const void *data, int len)
@@ -491,7 +495,8 @@ int WDL_ConvolutionEngine::Avail(int want)
         m_samplesin[ch].Available()==m_samplesin[ch+1].Available() &&
         m_samplesout[ch].Available()==m_samplesout[ch+1].Available()
        )
-    { // 2x processing mode
+    {
+      // 2x processing mode
       mono_impulse_mode=true;
       allow_mono_input_mode=false;
     }

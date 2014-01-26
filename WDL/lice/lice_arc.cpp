@@ -65,9 +65,12 @@ static bool CachedCircle(LICE_IBitmap* dest, float cx, float cy, float r, LICE_p
     }
     return true;
   }
-  else if (r == 2.5f) {
-    if (aa) {
-      LICE_pixel_chan alphas[36] = {
+  else if (r == 2.5f)
+  {
+    if (aa)
+    {
+      LICE_pixel_chan alphas[36] =
+      {
         A(0.06), A(0.75), A(1.00), A(1.00), A(0.75), A(0.06),
         A(0.75), A(0.82), A(0.31), A(0.31), A(0.82), A(0.75),
         A(1.00), A(0.31), A(0.00), A(0.00), A(0.31), A(1.00),
@@ -77,8 +80,10 @@ static bool CachedCircle(LICE_IBitmap* dest, float cx, float cy, float r, LICE_p
       };
       LICE_DrawGlyph(dest, cx-r, cy-r, color, alphas, 6, 6, alpha, mode);
     }
-    else {
-      LICE_pixel_chan alphas[36] = {
+    else
+    {
+      LICE_pixel_chan alphas[36] =
+      {
         A(0.00), A(0.00), A(1.00), A(1.00), A(0.00), A(0.00),
         A(0.00), A(1.00), A(0.00), A(0.00), A(1.00), A(0.00),
         A(1.00), A(0.00), A(0.00), A(0.00), A(0.00), A(1.00),
@@ -90,9 +95,12 @@ static bool CachedCircle(LICE_IBitmap* dest, float cx, float cy, float r, LICE_p
     }
     return true;
   }
-  else if (r == 3.0f) {
-    if (aa) {
-      LICE_pixel_chan alphas[49] = {
+  else if (r == 3.0f)
+  {
+    if (aa)
+    {
+      LICE_pixel_chan alphas[49] =
+      {
         A(0.00), A(0.56), A(1.00), A(1.00), A(1.00), A(0.56), A(0.00),
         A(0.56), A(1.00), A(0.38), A(0.25), A(0.38), A(1.00), A(0.56),
         A(1.00), A(0.44), A(0.00), A(0.00), A(0.00), A(0.44), A(1.00),
@@ -103,8 +111,10 @@ static bool CachedCircle(LICE_IBitmap* dest, float cx, float cy, float r, LICE_p
       };
       LICE_DrawGlyph(dest, cx-r, cy-r, color, alphas, 7, 7, alpha, mode);
     }
-    else {
-      LICE_pixel_chan alphas[49] = {
+    else
+    {
+      LICE_pixel_chan alphas[49] =
+      {
         A(0.00), A(0.00), A(1.00), A(1.00), A(1.00), A(0.00), A(0.00),
         A(0.00), A(1.00), A(0.00), A(0.00), A(0.00), A(1.00), A(0.00),
         A(1.00), A(0.00), A(0.00), A(0.00), A(0.00), A(0.00), A(1.00),
@@ -117,9 +127,12 @@ static bool CachedCircle(LICE_IBitmap* dest, float cx, float cy, float r, LICE_p
     }
     return true;
   }
-  else if (r == 3.5f) {
-    if (aa) {
-      LICE_pixel_chan alphas[64] = {
+  else if (r == 3.5f)
+  {
+    if (aa)
+    {
+      LICE_pixel_chan alphas[64] =
+      {
         A(0.00), A(0.31), A(0.87), A(1.00), A(1.00), A(0.87), A(0.31), A(0.00),
         A(0.31), A(1.00), A(0.69), A(0.25), A(0.25), A(0.69), A(1.00), A(0.31),
         A(0.87), A(0.69), A(0.00), A(0.00), A(0.00), A(0.00), A(0.69), A(0.87),
@@ -131,8 +144,10 @@ static bool CachedCircle(LICE_IBitmap* dest, float cx, float cy, float r, LICE_p
       };
       LICE_DrawGlyph(dest, cx-r, cy-r, color, alphas, 8, 8, alpha, mode);
     }
-    else {
-      LICE_pixel_chan alphas[64] = {
+    else
+    {
+      LICE_pixel_chan alphas[64] =
+      {
         A(0.00), A(0.00), A(1.00), A(1.00), A(1.00), A(1.00), A(0.00), A(0.00),
         A(0.00), A(1.00), A(1.00), A(0.00), A(0.00), A(1.00), A(1.00), A(0.00),
         A(1.00), A(1.00), A(0.00), A(0.00), A(0.00), A(0.00), A(1.00), A(1.00),
@@ -146,9 +161,12 @@ static bool CachedCircle(LICE_IBitmap* dest, float cx, float cy, float r, LICE_p
     }
     return true;
   }
-  else if (r == 4.0f) {
-    if (aa) {
-      LICE_pixel_chan alphas[81] = {
+  else if (r == 4.0f)
+  {
+    if (aa)
+    {
+      LICE_pixel_chan alphas[81] =
+      {
         A(0.00), A(0.12), A(0.69), A(1.00), A(1.00), A(1.00), A(0.69), A(0.12), A(0.00),
         A(0.12), A(0.94), A(0.82), A(0.31), A(0.25), A(0.31), A(0.82), A(0.94), A(0.12),
         A(0.69), A(0.82), A(0.06), A(0.00), A(0.00), A(0.00), A(0.06), A(0.82), A(0.69),
@@ -161,8 +179,10 @@ static bool CachedCircle(LICE_IBitmap* dest, float cx, float cy, float r, LICE_p
       };
       LICE_DrawGlyph(dest, cx-r, cy-r, color, alphas, 9, 9, alpha, mode);
     }
-    else {
-      LICE_pixel_chan alphas[81] = {
+    else
+    {
+      LICE_pixel_chan alphas[81] =
+      {
         A(0.00), A(0.00), A(1.00), A(1.00), A(1.00), A(1.00), A(1.00), A(0.00), A(0.00),
         A(0.00), A(1.00), A(1.00), A(0.00), A(0.00), A(0.00), A(1.00), A(1.00), A(0.00),
         A(1.00), A(1.00), A(0.00), A(0.00), A(0.00), A(0.00), A(0.00), A(1.00), A(1.00),
@@ -197,13 +217,15 @@ public:
   static void DrawClippedHorzLine(LICE_IBitmap* dest, int y, int xlo, int xhi, int clip[],
                                   int r, int g, int b, int a, int alpha, bool doclip)
   {
-    if (doclip) {
+    if (doclip)
+    {
       if (y < clip[1] || y >= clip[3]) return;
       xlo = max(xlo, clip[0]);
       xhi = min(xhi, clip[2]-1);
     }
     LICE_pixel* px = dest->getBits()+y*dest->getRowSpan()+xlo;
-    while (xlo <= xhi) {
+    while (xlo <= xhi)
+    {
       COMBFUNC::doPix((LICE_pixel_chan*)px, r, g, b, a, alpha);
       ++px;
       ++xlo;
@@ -290,17 +312,21 @@ public:
     DrawClippedPt(dest, cx+rad, cy, clip, r, g, b, a, ai, doclip);
     DrawClippedPt(dest, cx-rad, cy, clip, r, g, b, a, ai, doclip);
 
-    if (filled) {
+    if (filled)
+    {
       DrawClippedHorzLine(dest, cy, cx-rad+1, cx+rad-1, clip, r, g, b, a, ai, doclip);
     }
 
-    while (x < y) {
+    while (x < y)
+    {
       x += 1.0f;
 
-      if (p < 0) {
+      if (p < 0)
+      {
         p += 2.0f*x+1.0f;
       }
-      else {
+      else
+      {
         y -= 1.0f;
         p += 2.0*(x-y)+1.0f;
       }
@@ -314,7 +340,8 @@ public:
       DrawClippedPt(dest, cx+y, cy-x, clip, r, g, b, a, ai, doclip);
       DrawClippedPt(dest, cx-y, cy-x, clip, r, g, b, a, ai, doclip);
 
-      if (filled) {
+      if (filled)
+      {
         DrawClippedHorzLine(dest, cy-y, cx-x+1, cx+x-1, clip, r, g, b, a, ai, doclip);
         DrawClippedHorzLine(dest, cy+y, cx-x+1, cx+x-1, clip, r, g, b, a, ai, doclip);
         DrawClippedHorzLine(dest, cy-x, cx-y+1, cx+y-1, clip, r, g, b, a, ai, doclip);

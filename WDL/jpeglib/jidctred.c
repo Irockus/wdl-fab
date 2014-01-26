@@ -135,13 +135,15 @@ jpeg_idct_4x4 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
   inptr = coef_block;
   quantptr = (ISLOW_MULT_TYPE *) compptr->dct_table;
   wsptr = workspace;
-  for (ctr = DCTSIZE; ctr > 0; inptr++, quantptr++, wsptr++, ctr--) {
+  for (ctr = DCTSIZE; ctr > 0; inptr++, quantptr++, wsptr++, ctr--)
+  {
     /* Don't bother to process column 4, because second pass won't use it */
     if (ctr == DCTSIZE-4)
       continue;
     if (inptr[DCTSIZE*1] == 0 && inptr[DCTSIZE*2] == 0 &&
         inptr[DCTSIZE*3] == 0 && inptr[DCTSIZE*5] == 0 &&
-        inptr[DCTSIZE*6] == 0 && inptr[DCTSIZE*7] == 0) {
+        inptr[DCTSIZE*6] == 0 && inptr[DCTSIZE*7] == 0)
+    {
       /* AC terms all zero; we need not examine term 4 for 4x4 output */
       int dcval = DEQUANTIZE(inptr[DCTSIZE*0], quantptr[DCTSIZE*0]) << PASS1_BITS;
 
@@ -194,13 +196,15 @@ jpeg_idct_4x4 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
   /* Pass 2: process 4 rows from work array, store into output array. */
 
   wsptr = workspace;
-  for (ctr = 0; ctr < 4; ctr++) {
+  for (ctr = 0; ctr < 4; ctr++)
+  {
     outptr = output_buf[ctr] + output_col;
     /* It's not clear whether a zero row test is worthwhile here ... */
 
 #ifndef NO_ZERO_ROW_TEST
     if (wsptr[1] == 0 && wsptr[2] == 0 && wsptr[3] == 0 &&
-        wsptr[5] == 0 && wsptr[6] == 0 && wsptr[7] == 0) {
+        wsptr[5] == 0 && wsptr[6] == 0 && wsptr[7] == 0)
+    {
       /* AC terms all zero */
       JSAMPLE dcval = range_limit[(int) DESCALE((INT32) wsptr[0], PASS1_BITS+3)
                                   & RANGE_MASK];
@@ -287,12 +291,14 @@ jpeg_idct_2x2 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
   inptr = coef_block;
   quantptr = (ISLOW_MULT_TYPE *) compptr->dct_table;
   wsptr = workspace;
-  for (ctr = DCTSIZE; ctr > 0; inptr++, quantptr++, wsptr++, ctr--) {
+  for (ctr = DCTSIZE; ctr > 0; inptr++, quantptr++, wsptr++, ctr--)
+  {
     /* Don't bother to process columns 2,4,6 */
     if (ctr == DCTSIZE-2 || ctr == DCTSIZE-4 || ctr == DCTSIZE-6)
       continue;
     if (inptr[DCTSIZE*1] == 0 && inptr[DCTSIZE*3] == 0 &&
-        inptr[DCTSIZE*5] == 0 && inptr[DCTSIZE*7] == 0) {
+        inptr[DCTSIZE*5] == 0 && inptr[DCTSIZE*7] == 0)
+    {
       /* AC terms all zero; we need not examine terms 2,4,6 for 2x2 output */
       int dcval = DEQUANTIZE(inptr[DCTSIZE*0], quantptr[DCTSIZE*0]) << PASS1_BITS;
 
@@ -327,12 +333,14 @@ jpeg_idct_2x2 (j_decompress_ptr cinfo, jpeg_component_info * compptr,
   /* Pass 2: process 2 rows from work array, store into output array. */
 
   wsptr = workspace;
-  for (ctr = 0; ctr < 2; ctr++) {
+  for (ctr = 0; ctr < 2; ctr++)
+  {
     outptr = output_buf[ctr] + output_col;
     /* It's not clear whether a zero row test is worthwhile here ... */
 
 #ifndef NO_ZERO_ROW_TEST
-    if (wsptr[1] == 0 && wsptr[3] == 0 && wsptr[5] == 0 && wsptr[7] == 0) {
+    if (wsptr[1] == 0 && wsptr[3] == 0 && wsptr[5] == 0 && wsptr[7] == 0)
+    {
       /* AC terms all zero */
       JSAMPLE dcval = range_limit[(int) DESCALE((INT32) wsptr[0], PASS1_BITS+3)
                                   & RANGE_MASK];

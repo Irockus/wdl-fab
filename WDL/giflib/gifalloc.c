@@ -25,7 +25,8 @@
 
 /* return smallest bitfield size n will fit in */
 int
-BitSize(int n) {
+BitSize(int n)
+{
 
   register int i;
 
@@ -45,30 +46,35 @@ BitSize(int n) {
  */
 ColorMapObject *
 MakeMapObject(int ColorCount,
-              const GifColorType * ColorMap) {
+              const GifColorType * ColorMap)
+{
 
   ColorMapObject *Object;
 
   /*** FIXME: Our ColorCount has to be a power of two.  Is it necessary to
    * make the user know that or should we automatically round up instead? */
-  if (ColorCount != (1 << BitSize(ColorCount))) {
+  if (ColorCount != (1 << BitSize(ColorCount)))
+  {
     return ((ColorMapObject *) NULL);
   }
 
   Object = (ColorMapObject *)malloc(sizeof(ColorMapObject));
-  if (Object == (ColorMapObject *) NULL) {
+  if (Object == (ColorMapObject *) NULL)
+  {
     return ((ColorMapObject *) NULL);
   }
 
   Object->Colors = (GifColorType *)calloc(ColorCount, sizeof(GifColorType));
-  if (Object->Colors == (GifColorType *) NULL) {
+  if (Object->Colors == (GifColorType *) NULL)
+  {
     return ((ColorMapObject *) NULL);
   }
 
   Object->ColorCount = ColorCount;
   Object->BitsPerPixel = BitSize(ColorCount);
 
-  if (ColorMap) {
+  if (ColorMap)
+  {
     memcpy((char *)Object->Colors,
            (char *)ColorMap, ColorCount * sizeof(GifColorType));
   }
@@ -80,9 +86,11 @@ MakeMapObject(int ColorCount,
  * Free a color map object
  */
 void
-FreeMapObject(ColorMapObject * Object) {
+FreeMapObject(ColorMapObject * Object)
+{
 
-  if (Object != NULL) {
+  if (Object != NULL)
+  {
     free(Object->Colors);
     free(Object);
     /*** FIXME:
@@ -97,13 +105,17 @@ FreeMapObject(ColorMapObject * Object) {
 #ifdef DEBUG
 void
 DumpColorMap(ColorMapObject * Object,
-             FILE * fp) {
+             FILE * fp)
+{
 
-  if (Object) {
+  if (Object)
+  {
     int i, j, Len = Object->ColorCount;
 
-    for (i = 0; i < Len; i += 4) {
-      for (j = 0; j < 4 && j < Len; j++) {
+    for (i = 0; i < Len; i += 4)
+    {
+      for (j = 0; j < 4 && j < Len; j++)
+      {
         fprintf(fp, "%3d: %02x %02x %02x   ", i + j,
                 Object->Colors[i + j].Red,
                 Object->Colors[i + j].Green,
@@ -125,7 +137,8 @@ DumpColorMap(ColorMapObject * Object,
 ColorMapObject *
 UnionColorMap(const ColorMapObject * ColorIn1,
               const ColorMapObject * ColorIn2,
-              GifPixelType ColorTransIn2[]) {
+              GifPixelType ColorTransIn2[])
+{
 
   int i, j, CrntSlot, RoundUpTo, NewBitSize;
   ColorMapObject *ColorUnion;
@@ -159,7 +172,8 @@ UnionColorMap(const ColorMapObject * ColorIn1,
     CrntSlot--;
 
   /* Copy ColorIn2 to ColorUnionSize (use old colors if they exist): */
-  for (i = 0; i < ColorIn2->ColorCount && CrntSlot <= 256; i++) {
+  for (i = 0; i < ColorIn2->ColorCount && CrntSlot <= 256; i++)
+  {
     /* Let's see if this color already exists: */
     /*** FIXME: Will it ever occur that ColorIn2 will contain duplicate
      * entries?  So we should search from 0 to CrntSlot rather than
@@ -172,14 +186,16 @@ UnionColorMap(const ColorMapObject * ColorIn1,
 
     if (j < ColorIn1->ColorCount)
       ColorTransIn2[i] = j;    /* color exists in Color1 */
-    else {
+    else
+    {
       /* Color is new - copy it to a new slot: */
       ColorUnion->Colors[CrntSlot] = ColorIn2->Colors[i];
       ColorTransIn2[i] = CrntSlot++;
     }
   }
 
-  if (CrntSlot > 256) {
+  if (CrntSlot > 256)
+  {
     FreeMapObject(ColorUnion);
     return ((ColorMapObject *) NULL);
   }
@@ -187,7 +203,8 @@ UnionColorMap(const ColorMapObject * ColorIn1,
   NewBitSize = BitSize(CrntSlot);
   RoundUpTo = (1 << NewBitSize);
 
-  if (RoundUpTo != ColorUnion->ColorCount) {
+  if (RoundUpTo != ColorUnion->ColorCount)
+  {
     register GifColorType *Map = ColorUnion->Colors;
 
     /*
@@ -215,7 +232,8 @@ UnionColorMap(const ColorMapObject * ColorIn1,
  */
 void
 ApplyTranslation(SavedImage * Image,
-                 GifPixelType Translation[]) {
+                 GifPixelType Translation[])
+{
 
   register int i;
   register int RasterSize = Image->ImageDesc.Height * Image->ImageDesc.Width;
@@ -230,7 +248,8 @@ ApplyTranslation(SavedImage * Image,
 
 void
 MakeExtension(SavedImage * New,
-              int Function) {
+              int Function)
+{
 
   New->Function = Function;
   /*** FIXME:
@@ -248,7 +267,8 @@ MakeExtension(SavedImage * New,
 int
 AddExtensionBlock(SavedImage * New,
                   int Len,
-                  unsigned char ExtData[]) {
+                  unsigned char ExtData[])
+{
 
   ExtensionBlock *ep;
 
@@ -269,7 +289,8 @@ AddExtensionBlock(SavedImage * New,
   if (ep->Bytes == NULL)
     return (GIF_ERROR);
 
-  if (ExtData) {
+  if (ExtData)
+  {
     memcpy(ep->Bytes, ExtData, Len);
     ep->Function = New->Function;
   }
@@ -282,7 +303,8 @@ FreeExtension(SavedImage * Image)
 {
   ExtensionBlock *ep;
 
-  if ((Image == NULL) || (Image->ExtensionBlocks == NULL)) {
+  if ((Image == NULL) || (Image->ExtensionBlocks == NULL))
+  {
     return;
   }
   for (ep = Image->ExtensionBlocks;
@@ -300,7 +322,8 @@ FreeExtension(SavedImage * Image)
  * Frees the last image in the GifFile->SavedImages array
  */
 void
-FreeLastSavedImage(GifFileType *GifFile) {
+FreeLastSavedImage(GifFileType *GifFile)
+{
 
   SavedImage *sp;
 
@@ -312,7 +335,8 @@ FreeLastSavedImage(GifFileType *GifFile) {
   sp = &GifFile->SavedImages[GifFile->ImageCount];
 
   /* Deallocate its Colormap */
-  if (sp->ImageDesc.ColorMap) {
+  if (sp->ImageDesc.ColorMap)
+  {
     FreeMapObject(sp->ImageDesc.ColorMap);
     sp->ImageDesc.ColorMap = NULL;
   }
@@ -338,7 +362,8 @@ FreeLastSavedImage(GifFileType *GifFile) {
  */
 SavedImage *
 MakeSavedImage(GifFileType * GifFile,
-               const SavedImage * CopyFrom) {
+               const SavedImage * CopyFrom)
+{
 
   SavedImage *sp;
 
@@ -350,11 +375,13 @@ MakeSavedImage(GifFileType * GifFile,
 
   if (GifFile->SavedImages == NULL)
     return ((SavedImage *)NULL);
-  else {
+  else
+  {
     sp = &GifFile->SavedImages[GifFile->ImageCount++];
     memset((char *)sp, '\0', sizeof(SavedImage));
 
-    if (CopyFrom) {
+    if (CopyFrom)
+    {
       memcpy((char *)sp, CopyFrom, sizeof(SavedImage));
 
       /*
@@ -364,11 +391,13 @@ MakeSavedImage(GifFileType * GifFile,
        */
 
       /* first, the local color map */
-      if (sp->ImageDesc.ColorMap) {
+      if (sp->ImageDesc.ColorMap)
+      {
         sp->ImageDesc.ColorMap = MakeMapObject(
                                    CopyFrom->ImageDesc.ColorMap->ColorCount,
                                    CopyFrom->ImageDesc.ColorMap->Colors);
-        if (sp->ImageDesc.ColorMap == NULL) {
+        if (sp->ImageDesc.ColorMap == NULL)
+        {
           FreeLastSavedImage(GifFile);
           return (SavedImage *)(NULL);
         }
@@ -378,7 +407,8 @@ MakeSavedImage(GifFileType * GifFile,
       sp->RasterBits = (unsigned char *)malloc(sizeof(GifPixelType) *
                        CopyFrom->ImageDesc.Height *
                        CopyFrom->ImageDesc.Width);
-      if (sp->RasterBits == NULL) {
+      if (sp->RasterBits == NULL)
+      {
         FreeLastSavedImage(GifFile);
         return (SavedImage *)(NULL);
       }
@@ -387,11 +417,13 @@ MakeSavedImage(GifFileType * GifFile,
              CopyFrom->ImageDesc.Width);
 
       /* finally, the extension blocks */
-      if (sp->ExtensionBlocks) {
+      if (sp->ExtensionBlocks)
+      {
         sp->ExtensionBlocks = (ExtensionBlock *)malloc(
                                 sizeof(ExtensionBlock) *
                                 CopyFrom->ExtensionBlockCount);
-        if (sp->ExtensionBlocks == NULL) {
+        if (sp->ExtensionBlocks == NULL)
+        {
           FreeLastSavedImage(GifFile);
           return (SavedImage *)(NULL);
         }
@@ -416,16 +448,20 @@ MakeSavedImage(GifFileType * GifFile,
 }
 
 void
-FreeSavedImages(GifFileType * GifFile) {
+FreeSavedImages(GifFileType * GifFile)
+{
 
   SavedImage *sp;
 
-  if ((GifFile == NULL) || (GifFile->SavedImages == NULL)) {
+  if ((GifFile == NULL) || (GifFile->SavedImages == NULL))
+  {
     return;
   }
   for (sp = GifFile->SavedImages;
-       sp < GifFile->SavedImages + GifFile->ImageCount; sp++) {
-    if (sp->ImageDesc.ColorMap) {
+       sp < GifFile->SavedImages + GifFile->ImageCount; sp++)
+  {
+    if (sp->ImageDesc.ColorMap)
+    {
       FreeMapObject(sp->ImageDesc.ColorMap);
       sp->ImageDesc.ColorMap = NULL;
     }

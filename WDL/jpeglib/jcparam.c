@@ -45,7 +45,8 @@ jpeg_add_quant_table (j_compress_ptr cinfo, int which_tbl,
   if (*qtblptr == NULL)
     *qtblptr = jpeg_alloc_quant_table((j_common_ptr) cinfo);
 
-  for (i = 0; i < DCTSIZE2; i++) {
+  for (i = 0; i < DCTSIZE2; i++)
+  {
     temp = ((long) basic_table[i] * scale_factor + 50L) / 100L;
     /* limit the values to the valid range */
     if (temp <= 0L) temp = 1L;
@@ -73,7 +74,8 @@ jpeg_set_linear_quality (j_compress_ptr cinfo, int scale_factor,
    * The spec says that the values given produce "good" quality, and
    * when divided by 2, "very good" quality.
    */
-  static const unsigned int std_luminance_quant_tbl[DCTSIZE2] = {
+  static const unsigned int std_luminance_quant_tbl[DCTSIZE2] =
+  {
     16,  11,  10,  16,  24,  40,  51,  61,
     12,  12,  14,  19,  26,  58,  60,  55,
     14,  13,  16,  24,  40,  57,  69,  56,
@@ -83,7 +85,8 @@ jpeg_set_linear_quality (j_compress_ptr cinfo, int scale_factor,
     49,  64,  78,  87, 103, 121, 120, 101,
     72,  92,  95,  98, 112, 100, 103,  99
   };
-  static const unsigned int std_chrominance_quant_tbl[DCTSIZE2] = {
+  static const unsigned int std_chrominance_quant_tbl[DCTSIZE2] =
+  {
     17,  18,  24,  47,  99,  99,  99,  99,
     18,  21,  26,  66,  99,  99,  99,  99,
     24,  26,  56,  99,  99,  99,  99,  99,
@@ -196,7 +199,8 @@ std_huff_tables (j_compress_ptr cinfo)
   static const UINT8 bits_ac_luminance[17] =
   { /* 0-base */ 0, 0, 2, 1, 3, 3, 2, 4, 3, 5, 5, 4, 4, 0, 0, 1, 0x7d };
   static const UINT8 val_ac_luminance[] =
-  { 0x01, 0x02, 0x03, 0x00, 0x04, 0x11, 0x05, 0x12,
+  {
+    0x01, 0x02, 0x03, 0x00, 0x04, 0x11, 0x05, 0x12,
     0x21, 0x31, 0x41, 0x06, 0x13, 0x51, 0x61, 0x07,
     0x22, 0x71, 0x14, 0x32, 0x81, 0x91, 0xa1, 0x08,
     0x23, 0x42, 0xb1, 0xc1, 0x15, 0x52, 0xd1, 0xf0,
@@ -222,7 +226,8 @@ std_huff_tables (j_compress_ptr cinfo)
   static const UINT8 bits_ac_chrominance[17] =
   { /* 0-base */ 0, 0, 2, 1, 2, 4, 4, 3, 4, 7, 5, 4, 4, 0, 1, 2, 0x77 };
   static const UINT8 val_ac_chrominance[] =
-  { 0x00, 0x01, 0x02, 0x03, 0x11, 0x04, 0x05, 0x21,
+  {
+    0x00, 0x01, 0x02, 0x03, 0x11, 0x04, 0x05, 0x21,
     0x31, 0x06, 0x12, 0x41, 0x51, 0x07, 0x61, 0x71,
     0x13, 0x22, 0x32, 0x81, 0x08, 0x14, 0x42, 0x91,
     0xa1, 0xb1, 0xc1, 0x09, 0x23, 0x33, 0x52, 0xf0,
@@ -293,7 +298,8 @@ jpeg_set_defaults (j_compress_ptr cinfo)
   std_huff_tables(cinfo);
 
   /* Initialize default arithmetic coding conditioning */
-  for (i = 0; i < NUM_ARITH_TBLS; i++) {
+  for (i = 0; i < NUM_ARITH_TBLS; i++)
+  {
     cinfo->arith_dc_L[i] = 0;
     cinfo->arith_dc_U[i] = 1;
     cinfo->arith_ac_K[i] = 5;
@@ -360,7 +366,8 @@ jpeg_set_defaults (j_compress_ptr cinfo)
 GLOBAL(void)
 jpeg_default_colorspace (j_compress_ptr cinfo)
 {
-  switch (cinfo->in_color_space) {
+  switch (cinfo->in_color_space)
+  {
     case JCS_GRAYSCALE:
       jpeg_set_colorspace(cinfo, JCS_GRAYSCALE);
       break;
@@ -417,7 +424,8 @@ jpeg_set_colorspace (j_compress_ptr cinfo, J_COLOR_SPACE colorspace)
   cinfo->write_JFIF_header = FALSE; /* No marker for non-JFIF colorspaces */
   cinfo->write_Adobe_marker = FALSE; /* write no Adobe marker by default */
 
-  switch (colorspace) {
+  switch (colorspace)
+  {
     case JCS_GRAYSCALE:
       cinfo->write_JFIF_header = TRUE; /* Write a JFIF marker */
       cinfo->num_components = 1;
@@ -461,7 +469,8 @@ jpeg_set_colorspace (j_compress_ptr cinfo, J_COLOR_SPACE colorspace)
       if (cinfo->num_components < 1 || cinfo->num_components > MAX_COMPONENTS)
         ERREXIT2(cinfo, JERR_COMPONENT_COUNT, cinfo->num_components,
                  MAX_COMPONENTS);
-      for (ci = 0; ci < cinfo->num_components; ci++) {
+      for (ci = 0; ci < cinfo->num_components; ci++)
+      {
         SET_COMP(ci, ci, 1,1, 0, 0,0);
       }
       break;
@@ -495,7 +504,8 @@ fill_scans (jpeg_scan_info * scanptr, int ncomps,
 {
   int ci;
 
-  for (ci = 0; ci < ncomps; ci++) {
+  for (ci = 0; ci < ncomps; ci++)
+  {
     scanptr->comps_in_scan = 1;
     scanptr->component_index[0] = ci;
     scanptr->Ss = Ss;
@@ -513,7 +523,8 @@ fill_dc_scans (jpeg_scan_info * scanptr, int ncomps, int Ah, int Al)
 {
   int ci;
 
-  if (ncomps <= MAX_COMPS_IN_SCAN) {
+  if (ncomps <= MAX_COMPS_IN_SCAN)
+  {
     /* Single interleaved DC scan */
     scanptr->comps_in_scan = ncomps;
     for (ci = 0; ci < ncomps; ci++)
@@ -522,7 +533,9 @@ fill_dc_scans (jpeg_scan_info * scanptr, int ncomps, int Ah, int Al)
     scanptr->Ah = Ah;
     scanptr->Al = Al;
     scanptr++;
-  } else {
+  }
+  else
+  {
     /* Noninterleaved DC scan for each component */
     scanptr = fill_scans(scanptr, ncomps, 0, 0, Ah, Al);
   }
@@ -547,10 +560,13 @@ jpeg_simple_progression (j_compress_ptr cinfo)
     ERREXIT1(cinfo, JERR_BAD_STATE, cinfo->global_state);
 
   /* Figure space needed for script.  Calculation must match code below! */
-  if (ncomps == 3 && cinfo->jpeg_color_space == JCS_YCbCr) {
+  if (ncomps == 3 && cinfo->jpeg_color_space == JCS_YCbCr)
+  {
     /* Custom script for YCbCr color images. */
     nscans = 10;
-  } else {
+  }
+  else
+  {
     /* All-purpose script for other color spaces. */
     if (ncomps > MAX_COMPS_IN_SCAN)
       nscans = 6 * ncomps;	/* 2 DC + 4 AC scans per component */
@@ -565,7 +581,8 @@ jpeg_simple_progression (j_compress_ptr cinfo)
    * object, we try to re-use previously allocated space, and we allocate
    * enough space to handle YCbCr even if initially asked for grayscale.
    */
-  if (cinfo->script_space == NULL || cinfo->script_space_size < nscans) {
+  if (cinfo->script_space == NULL || cinfo->script_space_size < nscans)
+  {
     cinfo->script_space_size = MAX(nscans, 10);
     cinfo->script_space = (jpeg_scan_info *)
                           (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
@@ -575,7 +592,8 @@ jpeg_simple_progression (j_compress_ptr cinfo)
   cinfo->scan_info = scanptr;
   cinfo->num_scans = nscans;
 
-  if (ncomps == 3 && cinfo->jpeg_color_space == JCS_YCbCr) {
+  if (ncomps == 3 && cinfo->jpeg_color_space == JCS_YCbCr)
+  {
     /* Custom script for YCbCr color images. */
     /* Initial DC scan */
     scanptr = fill_dc_scans(scanptr, ncomps, 0, 1);
@@ -595,7 +613,9 @@ jpeg_simple_progression (j_compress_ptr cinfo)
     scanptr = fill_a_scan(scanptr, 1, 1, 63, 1, 0);
     /* Luma bottom bit comes last since it's usually largest scan */
     scanptr = fill_a_scan(scanptr, 0, 1, 63, 1, 0);
-  } else {
+  }
+  else
+  {
     /* All-purpose script for other color spaces. */
     /* Successive approximation first pass */
     scanptr = fill_dc_scans(scanptr, ncomps, 0, 1);

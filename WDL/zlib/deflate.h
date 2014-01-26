@@ -62,12 +62,15 @@
 
 
 /* Data structure describing a single value and its code string. */
-typedef struct ct_data_s {
-  union {
+typedef struct ct_data_s
+{
+  union
+  {
     ush  freq;       /* frequency count */
     ush  code;       /* bit string */
   } fc;
-  union {
+  union
+  {
     ush  dad;        /* father node in Huffman tree */
     ush  len;        /* length of bit string */
   } dl;
@@ -80,7 +83,8 @@ typedef struct ct_data_s {
 
 typedef struct static_tree_desc_s  static_tree_desc;
 
-typedef struct tree_desc_s {
+typedef struct tree_desc_s
+{
   ct_data *dyn_tree;           /* the dynamic tree */
   int     max_code;            /* largest code with non zero frequency */
   static_tree_desc *stat_desc; /* the corresponding static tree */
@@ -94,7 +98,8 @@ typedef unsigned IPos;
  * save space in the various tables. IPos is used only for parameter passing.
  */
 
-typedef struct internal_state {
+typedef struct internal_state
+{
   z_streamp strm;      /* pointer back to this zlib stream */
   int   status;        /* as the name implies */
   Bytef *pending_buf;  /* output still pending */

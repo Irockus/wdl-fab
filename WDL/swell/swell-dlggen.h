@@ -246,7 +246,8 @@ static void SWELL_Register_Cursor_Resource(const char *idx, const char *name, in
 }
 
 
-class SWELL_DialogRegHelper {
+class SWELL_DialogRegHelper
+{
 public:
   SWELL_DialogResourceIndex m_rec;
   SWELL_DialogRegHelper(SWELL_DialogResourceIndex **h, void (*cf)(HWND,int), int recid, int flags, const char *titlestr, int wid, int hei, double scale)

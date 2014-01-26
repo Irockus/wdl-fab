@@ -142,13 +142,15 @@ void AppWrapper::PopulateDriverSpecificControls(HWND hwndDlg)
   SendDlgItemMessage(hwndDlg, IDC_COMBO_AUDIO_OUT_DEV, CB_SETCURSEL, outdevidx, 0);
 
   RtAudio::DeviceInfo inputDevInfo;
-  if (inDevSize) {
+  if (inDevSize)
+  {
     inputDevInfo = gDAC->getDeviceInfo(gAudioInputDevs[indevidx]);
     PopulateAudioInputList(hwndDlg, &inputDevInfo);
   }
 
   RtAudio::DeviceInfo outputDevInfo;
-  if (gAudioOutputDevs.size()) {
+  if (gAudioOutputDevs.size())
+  {
     outputDevInfo = gDAC->getDeviceInfo(gAudioOutputDevs[outdevidx]);
     PopulateAudioOutputList(hwndDlg, &outputDevInfo);
   }

@@ -38,7 +38,8 @@ extern "C" {
 #endif
 
 
-enum {
+enum
+{
 
   // these ignore fn in opcodes, just use fntype to determine function
   FN_MULTIPLY=0,
@@ -105,13 +106,15 @@ typedef struct _codeHandleFunctionRec
 } _codeHandleFunctionRec;
 
 #define LLB_DSIZE (65536-64)
-typedef struct _llBlock {
+typedef struct _llBlock
+{
   struct _llBlock *next;
   int sizeused;
   char block[LLB_DSIZE];
 } llBlock;
 
-typedef struct {
+typedef struct
+{
   llBlock *blocks,
           *blocks_data;
   void *workTable; // references a chunk in blocks_data
@@ -215,7 +218,8 @@ compileContext;
 #define NSEEL_VARS_PER_BLOCK 64
 
 #define NSEEL_NPARAMS_FLAG_CONST 0x80000
-typedef struct {
+typedef struct
+{
   const char *name;
   void *afunc;
   void *func_e;
@@ -283,7 +287,8 @@ int nseel_yyparse(compileContext *ctx, char *exp);
 void nseel_llinit(compileContext *ctx);
 int nseel_gettoken(compileContext *ctx, char *lltb, int lltbsiz);
 
-struct  lextab {
+struct  lextab
+{
   int     llendst;                /* Last state number            */
   char    *lldefault;             /* Default state table          */
   char    *llnext;                /* Next state table             */

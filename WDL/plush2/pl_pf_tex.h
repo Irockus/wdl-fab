@@ -144,7 +144,8 @@ PLTexTri
 
   {
     pl_sInt32 dY = Y2-Y0;
-    if (dY) {
+    if (dY)
+    {
       dX2 = (Scrx[i2] - X1) / dY;
 
       pl_Float v = 1.0/dY;
@@ -158,7 +159,8 @@ PLTexTri
 #endif
     }
     dY = Y1-Y0;
-    if (dY) {
+    if (dY)
+    {
       dX1 = (Scrx[i1] - X1) / dY;
       pl_Float v=1.0/dY;
       dZ1 = (Z2 - Z1) * v;
@@ -169,7 +171,8 @@ PLTexTri
       dU1_2 = (MappingU2_2 - U1_2) * v;
       dV1_2 = (MappingV2_2 - V1_2) * v;
 #endif
-      if (dX2 < dX1) {
+      if (dX2 < dX1)
+      {
         SWAP(dX1,dX2,pl_sInt32);
         SWAP(dU1,dU2,pl_Float);
         SWAP(dV1,dV2,pl_Float);
@@ -181,14 +184,18 @@ PLTexTri
         for(a=0; a<3; a++)
           SWAP(dC1[a],dC2[a],pl_sInt32);
         stat = 2;
-      } else stat = 1;
+      }
+      else stat = 1;
       Z2 = Z1;
       C2[0] = C1[0];
       C2[1] = C1[1];
       C2[2] = C1[2];
 
-    } else {
-      if (Scrx[i1] > X1) {
+    }
+    else
+    {
+      if (Scrx[i1] > X1)
+      {
         X2 = Scrx[i1];
         U2 = MappingU2;
         V2 = MappingV2;
@@ -197,7 +204,9 @@ PLTexTri
         V2_2 = MappingV2_2;
 #endif
         stat = 2|4;
-      } else {
+      }
+      else
+      {
         X1 = Scrx[i1];
         SWAP(Z1,Z2,pl_Float)
         for(a=0; a<3; a++) SWAP(C1[a],C2[a],pl_sInt32);
@@ -211,7 +220,8 @@ PLTexTri
       }
     }
     pl_sInt32 tmp = (dX1-dX2)*dY;
-    if (tmp) {
+    if (tmp)
+    {
       pl_Float v=(1<<XPOS_BITS)/(double)tmp;
       dUL = ((dU1-dU2)*dY)*v;
       dVL = ((dV1-dV2)*dY)*v;
@@ -221,9 +231,12 @@ PLTexTri
 #endif
       dZL = ((dZ1-dZ2)*dY)*v;
       for(a=0; a<3; a++) dCL[a] = (pl_sInt32) ( ((dC1[a]-dC2[a])*dY)*v);
-    } else {
+    }
+    else
+    {
       tmp = X2-X1;
-      if (tmp) {
+      if (tmp)
+      {
         pl_Float v=(1<<XPOS_BITS)/(double)tmp;
         dUL = (U2-U1)*v;
         dVL = (V2-V1)*v;
@@ -250,10 +263,13 @@ PLTexTri
 #endif
   Y1 -= Y0;
   Y0 = Y2-Y0;
-  while (Y0--) {
-    if (!Y1--) {
+  while (Y0--)
+  {
+    if (!Y1--)
+    {
       pl_sInt32 dY = Y2-Scry[i1];
-      if (dY) {
+      if (dY)
+      {
         DO_STAT_XDELTAS
 
         pl_Float tmp=1.0/dY;
@@ -269,7 +285,8 @@ PLTexTri
     }
     pl_sInt32 XL1 = (X1+(1<<(XPOS_BITS-1)))>>XPOS_BITS;
     pl_sInt32 Xlen = ((X2+(1<<(XPOS_BITS-1)))>>XPOS_BITS) - XL1;
-    if (Xlen > 0) {
+    if (Xlen > 0)
+    {
       pl_sInt32 iUL, iVL, idUL, idVL, iULnext, iVLnext;
       pl_Float UL = U1;
       pl_Float VL = V1;
@@ -291,7 +308,8 @@ PLTexTri
       iULnext_2 = ((pl_sInt32) (UL_2*t));
       iVLnext_2 = ((pl_sInt32) (VL_2*t));
 #endif
-      do {
+      do
+      {
         UL += dUL;
         VL += dVL;
         iUL = iULnext;
@@ -338,8 +356,10 @@ PLTexTri
         pl_uInt n = nm;
         Xlen -= n;
         if (Xlen < 0) n += Xlen;
-        if (zfb_width) do {
-            if (*zbuf < ZL) {
+        if (zfb_width) do
+          {
+            if (*zbuf < ZL)
+            {
               *zbuf = (pl_ZBuffer) ZL;
 
 #ifdef PL_PF_MULTITEX
@@ -377,8 +397,10 @@ PLTexTri
             if (iVL_2<0) iVL_2+=MappingV_Max_2;
             else if (iVL_2 >= MappingV_Max_2) iVL_2 -= MappingV_Max_2;
 #endif
-          } while (--n);
-        else do {
+          }
+          while (--n);
+        else do
+          {
 
 #ifdef PL_PF_MULTITEX
             TextureMakePixel2((LICE_pixel_chan *)gmem,solidcomb,solidalpha,solidalpha2,CL, bilinear,
@@ -415,11 +437,15 @@ PLTexTri
             else if (iVL_2 >= MappingV_Max_2) iVL_2 -= MappingV_Max_2;
 #endif
 
-          } while (--n);
-      } while (Xlen > 0);
+          }
+          while (--n);
+      }
+      while (Xlen > 0);
       gmem += swidth-XL1;
       zbuf += zfb_width-XL1;
-    } else { // xlen <=0 ,no drawing
+    }
+    else     // xlen <=0 ,no drawing
+    {
       gmem += swidth;
       zbuf += zfb_width;
     }

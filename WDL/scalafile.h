@@ -270,7 +270,8 @@ protected:
       {
         c = GetChar();
         if (c == EOF) return c;
-      } while (c != '\n');
+      }
+      while (c != '\n');
       c = GetChar();
     }
     return c;

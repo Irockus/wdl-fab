@@ -314,7 +314,8 @@ void InsertMenuItem(HMENU hMenu, int pos, BOOL byPos, MENUITEMINFO *mi)
     inf->dwTypeData = strdup(mi->dwTypeData?mi->dwTypeData:"");
   }
   else if (mi->fType == MFT_BITMAP)
-  { // todo handle bitmap types
+  {
+    // todo handle bitmap types
   }
   else if (mi->fType == MFT_SEPARATOR)
   {

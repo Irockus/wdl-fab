@@ -82,7 +82,8 @@ typedef void   (*free_func)  OF((voidpf opaque, voidpf address));
 
 struct internal_state;
 
-typedef struct z_stream_s {
+typedef struct z_stream_s
+{
   z_const Bytef *next_in;     /* next input byte */
   uInt     avail_in;  /* number of bytes available at next_in */
   uLong    total_in;  /* total number of input bytes read so far */
@@ -109,7 +110,8 @@ typedef z_stream FAR *z_streamp;
      gzip header information passed to and from zlib routines.  See RFC 1952
   for more details on the meanings of these fields.
 */
-typedef struct gz_header_s {
+typedef struct gz_header_s
+{
   int     text;       /* true if compressed data believed to be text */
   uLong   time;       /* modification time */
   int     xflags;     /* extra flags (not used when writing a gzip file) */
@@ -1645,7 +1647,8 @@ ZEXTERN int ZEXPORT inflateBackInit_ OF((z_streamp strm, int windowBits,
  * behavior could change in the future, perhaps even capriciously.  They can
  * only be used by the gzgetc() macro.  You have been warned.
  */
-struct gzFile_s {
+struct gzFile_s
+{
   unsigned have;
   unsigned char *next;
   z_off64_t pos;

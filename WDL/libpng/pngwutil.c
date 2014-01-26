@@ -489,7 +489,8 @@ png_text_compress(png_structp png_ptr,
       png_ptr->zstream.next_out = png_ptr->zbuf;
     }
     /* Continue until we don't have any more to compress */
-  } while (png_ptr->zstream.avail_in);
+  }
+  while (png_ptr->zstream.avail_in);
 
   /* Finish the compression */
   do
@@ -556,7 +557,8 @@ png_text_compress(png_structp png_ptr,
       else
         png_error(png_ptr, "zlib error");
     }
-  } while (ret != Z_STREAM_END);
+  }
+  while (ret != Z_STREAM_END);
 
   /* Text length is number of buffers plus last buffer */
   text_len = png_ptr->zbuf_size * comp->num_output_ptr;
@@ -2172,7 +2174,8 @@ png_write_finish_row(png_structp png_ptr)
         if (png_ptr->transformations & PNG_INTERLACE)
           break;
 
-      } while (png_ptr->usr_width == 0 || png_ptr->num_rows == 0);
+      }
+      while (png_ptr->usr_width == 0 || png_ptr->num_rows == 0);
 
     }
 
@@ -2216,7 +2219,8 @@ png_write_finish_row(png_structp png_ptr)
       else
         png_error(png_ptr, "zlib error");
     }
-  } while (ret != Z_STREAM_END);
+  }
+  while (ret != Z_STREAM_END);
 
   /* Write any extra space */
   if (png_ptr->zstream.avail_out < png_ptr->zbuf_size)
@@ -3152,7 +3156,8 @@ png_write_filtered_row(png_structp png_ptr, png_bytep filtered_row,
       png_write_IDAT(png_ptr, png_ptr->zbuf, png_ptr->zbuf_size);
     }
     /* Repeat until all data has been compressed */
-  } while (avail > 0 || png_ptr->zstream.avail_in > 0);
+  }
+  while (avail > 0 || png_ptr->zstream.avail_in > 0);
 
   /* Swap the current and previous rows */
   if (png_ptr->prev_row != NULL)

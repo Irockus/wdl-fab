@@ -23,7 +23,8 @@
 
 #define HUFF_LOOKAHEAD	8	/* # of bits of lookahead */
 
-typedef struct {
+typedef struct
+{
   /* Basic tables: (element [0] of each array is unused) */
   INT32 maxcode[18];		/* largest code of length k (-1 if none) */
   /* (maxcode[17] is a sentinel to ensure jpeg_huff_decode terminates) */
@@ -79,12 +80,14 @@ typedef INT32 bit_buf_type;	/* type of bit-extraction buffer */
  * because not all machines measure sizeof in 8-bit bytes.
  */
 
-typedef struct {		/* Bitreading state saved across MCUs */
+typedef struct  		/* Bitreading state saved across MCUs */
+{
   bit_buf_type get_buffer;	/* current bit-extraction buffer */
   int bits_left;		/* # of unused bits in it */
 } bitread_perm_state;
 
-typedef struct {		/* Bitreading working state within an MCU */
+typedef struct  		/* Bitreading working state within an MCU */
+{
   /* Current data source location */
   /* We need a copy, rather than munging the original, in case of suspension */
   const JOCTET * next_input_byte; /* => next byte to read from source */

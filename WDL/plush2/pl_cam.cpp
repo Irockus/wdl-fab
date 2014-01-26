@@ -33,28 +33,35 @@ Copyright (c) 1996-2000, Justin Frankel
 
 
 static void _FindNormal(double x2, double x3,double y2, double y3,
-                        double zv, double *res) {
+                        double zv, double *res)
+{
   res[0] = zv*(y2-y3);
   res[1] = zv*(x3-x2);
   res[2] = x2*y3 - y2*x3;
 }
 
 
-void pl_Cam::SetTarget(pl_Float x, pl_Float y, pl_Float z) {
+void pl_Cam::SetTarget(pl_Float x, pl_Float y, pl_Float z)
+{
   double dx, dy, dz;
   dx = x - X;
   dy = y - Y;
   dz = z - Z;
   Roll = 0;
-  if (dz > 0.0001f) {
+  if (dz > 0.0001f)
+  {
     Pan = (pl_Float) (-atan(dx/dz)*(180.0/PL_PI));
     dz /= cos(Pan*(PL_PI/180.0));
     Pitch = (pl_Float) (atan(dy/dz)*(180.0/PL_PI));
-  } else if (dz < -0.0001f) {
+  }
+  else if (dz < -0.0001f)
+  {
     Pan = (pl_Float) (180.0-atan(dx/dz)*(180.0/PL_PI));
     dz /= cos((Pan-180.0f)*(PL_PI/180.0));
     Pitch = (pl_Float) (-atan(dy/dz)*(180.0/PL_PI));
-  } else {
+  }
+  else
+  {
     Pan = 0.0f;
     Pitch = -90.0f;
   }
@@ -159,9 +166,11 @@ pl_uInt pl_Cam::_ClipToPlane(pl_uInt numVerts, pl_Float  *plane)
            m_cl[0].newVertices[0].xformedz*plane[2];
   curin = (curdot >= plane[3]);
 
-  for (i=0 ; i < numVerts; i++) {
+  for (i=0 ; i < numVerts; i++)
+  {
     nextvert = (i + 1) % numVerts;
-    if (curin) {
+    if (curin)
+    {
       memcpy(&m_cl[1].ShadeInfos[outvert][0],&m_cl[0].ShadeInfos[invert][0],3*sizeof(pl_Float));
       int a;
       for(a=0; a<PLUSH_MAX_MAPCOORDS; a++)
@@ -175,7 +184,8 @@ pl_uInt pl_Cam::_ClipToPlane(pl_uInt numVerts, pl_Float  *plane)
               m_cl[0].newVertices[nextvert].xformedy*plane[1] +
               m_cl[0].newVertices[nextvert].xformedz*plane[2];
     nextin = (nextdot >= plane[3]);
-    if (curin != nextin) {
+    if (curin != nextin)
+    {
       scale = (plane[3] - curdot) / (nextdot - curdot);
       m_cl[1].newVertices[outvert].xformedx = (pl_Float) (m_cl[0].newVertices[invert].xformedx +
                                               (m_cl[0].newVertices[nextvert].xformedx - m_cl[0].newVertices[invert].xformedx)
@@ -212,14 +222,16 @@ pl_uInt pl_Cam::_ClipToPlane(pl_uInt numVerts, pl_Float  *plane)
 
 
 
-void pl_Cam::ClipRenderFace(pl_Face *face, pl_Obj *obj) {
+void pl_Cam::ClipRenderFace(pl_Face *face, pl_Obj *obj)
+{
   int cx = CenterX + (frameBuffer->getWidth())/2;
   int cy = CenterY + (frameBuffer->getHeight())/2;
 
   {
     pl_Vertex *vlist=obj->Vertices.Get();
     int a;
-    for (a = 0; a < 3; a ++) {
+    for (a = 0; a < 3; a ++)
+    {
       m_cl[0].newVertices[a] = vlist[face->VertexIndices[a]];
 
       memcpy(&m_cl[0].ShadeInfos[a][0],&face->Shades[a][0],3*sizeof(pl_Float));
@@ -242,13 +254,16 @@ void pl_Cam::ClipRenderFace(pl_Face *face, pl_Obj *obj) {
       a++;
     }
   }
-  if (numVerts > 2) {
+  if (numVerts > 2)
+  {
     pl_Face newface;
     memcpy(&newface,face,sizeof(pl_Face));
     int k;
-    for (k = 2; k < (int)numVerts; k ++) {
+    for (k = 2; k < (int)numVerts; k ++)
+    {
       int a;
-      for (a = 0; a < 3; a ++) {
+      for (a = 0; a < 3; a ++)
+      {
         int w;
         if (a == 0) w = 0;
         else w = a+(k-2);        ;
@@ -308,7 +323,8 @@ void pl_Cam::ClipRenderFace(pl_Face *face, pl_Obj *obj) {
   }
 }
 
-pl_sInt pl_Cam::ClipNeeded(pl_Face *face, pl_Obj *obj) {
+pl_sInt pl_Cam::ClipNeeded(pl_Face *face, pl_Obj *obj)
+{
   double dr,dl,db,dt;
   double f;
   int fbw=(frameBuffer->getWidth());
@@ -351,7 +367,8 @@ pl_sInt pl_Cam::ClipNeeded(pl_Face *face, pl_Obj *obj) {
 
 
 
-void pl_Cam::Begin(LICE_IBitmap *fb, bool want_zbclear, pl_ZBuffer zbclear) {
+void pl_Cam::Begin(LICE_IBitmap *fb, bool want_zbclear, pl_ZBuffer zbclear)
+{
   if (frameBuffer||!fb) return;
 
   if (WantZBuffer)
@@ -386,19 +403,23 @@ void pl_Cam::Begin(LICE_IBitmap *fb, bool want_zbclear, pl_ZBuffer zbclear) {
 
 }
 
-void pl_Cam::RenderLight(pl_Light *light) {
+void pl_Cam::RenderLight(pl_Light *light)
+{
   if (!light||!frameBuffer) return;
 
   pl_Float *pl, xp, yp, zp;
   if (light->Type == PL_LIGHT_NONE) return;
   if (_lights.GetSize()<=_numlights) _lights.Resize(_numlights+1);
   pl = _lights.Get()[_numlights].l;
-  if (light->Type == PL_LIGHT_VECTOR) {
+  if (light->Type == PL_LIGHT_VECTOR)
+  {
     xp = light->Xp;
     yp = light->Yp;
     zp = light->Zp;
     MACRO_plMatrixApply(_cMatrix,xp,yp,zp,pl[0],pl[1],pl[2]);
-  } else if (light->Type & PL_LIGHT_POINT) {
+  }
+  else if (light->Type & PL_LIGHT_POINT)
+  {
     xp = light->Xp-X;
     yp = light->Yp-Y;
     zp = light->Zp-Z;
@@ -407,26 +428,31 @@ void pl_Cam::RenderLight(pl_Light *light) {
   _lights.Get()[_numlights++].light = light;
 }
 
-void pl_Cam::RenderObject(pl_Obj *obj, pl_Float *bmatrix, pl_Float *bnmatrix) {
+void pl_Cam::RenderObject(pl_Obj *obj, pl_Float *bmatrix, pl_Float *bnmatrix)
+{
   if (!obj||!frameBuffer) return;
 
   pl_Float oMatrix[16], nMatrix[16], tempMatrix[16];
 
-  if (obj->GenMatrix) {
+  if (obj->GenMatrix)
+  {
     plMatrixRotate(nMatrix,1,obj->Xa);
     plMatrixRotate(tempMatrix,2,obj->Ya);
     plMatrixMultiply(nMatrix,tempMatrix);
     plMatrixRotate(tempMatrix,3,obj->Za);
     plMatrixMultiply(nMatrix,tempMatrix);
     memcpy(oMatrix,nMatrix,sizeof(pl_Float)*16);
-  } else memcpy(nMatrix,obj->RotMatrix,sizeof(pl_Float)*16);
+  }
+  else memcpy(nMatrix,obj->RotMatrix,sizeof(pl_Float)*16);
 
   if (bnmatrix) plMatrixMultiply(nMatrix,bnmatrix);
 
-  if (obj->GenMatrix) {
+  if (obj->GenMatrix)
+  {
     plMatrixTranslate(tempMatrix, obj->Xp, obj->Yp, obj->Zp);
     plMatrixMultiply(oMatrix,tempMatrix);
-  } else memcpy(oMatrix,obj->Matrix,sizeof(pl_Float)*16);
+  }
+  else memcpy(oMatrix,obj->Matrix,sizeof(pl_Float)*16);
   if (bmatrix) plMatrixMultiply(oMatrix,bmatrix);
 
   {
@@ -479,34 +505,43 @@ void pl_Cam::RenderObject(pl_Obj *obj, pl_Float *bmatrix, pl_Float *bnmatrix) {
     pl_Vertex *v1=vlist+face->VertexIndices[1];
     pl_Vertex *v2=vlist+face->VertexIndices[2];
 
-    if (!mat->BackfaceCull || (MACRO_plDotProduct(nx,ny,nz, v0->xformedx, v0->xformedy, v0->xformedz) < 0.0000001)) {
-      if (ClipNeeded(face,obj)) {
-        if (!mat->Smoothing && (mat->Lightable||mat->FadeDist)) {
+    if (!mat->BackfaceCull || (MACRO_plDotProduct(nx,ny,nz, v0->xformedx, v0->xformedy, v0->xformedz) < 0.0000001))
+    {
+      if (ClipNeeded(face,obj))
+      {
+        if (!mat->Smoothing && (mat->Lightable||mat->FadeDist))
+        {
           pl_Float val[3];
           memcpy(val,face->sLighting,3*sizeof(pl_Float));
-          if (mat->Lightable) {
+          if (mat->Lightable)
+          {
             _lightInfo *inf = _lights.Get();
             int i=_numlights;
             while (i--)
             {
               pl_Light *light = inf->light;
               double lightsc=0.0;
-              if (light->Type & PL_LIGHT_POINT_ANGLE) {
+              if (light->Type & PL_LIGHT_POINT_ANGLE)
+              {
                 double nx2 = inf->l[0] - v0->xformedx;
                 double ny2 = inf->l[1] - v0->xformedy;
                 double nz2 = inf->l[2] - v0->xformedz;
                 MACRO_plNormalizeVector(nx2,ny2,nz2);
                 lightsc = MACRO_plDotProduct(nx,ny,nz,nx2,ny2,nz2);
               }
-              if (light->Type & PL_LIGHT_POINT_DISTANCE) {
+              if (light->Type & PL_LIGHT_POINT_DISTANCE)
+              {
                 double nx2 = inf->l[0] - v0->xformedx;
                 double ny2 = inf->l[1] - v0->xformedy;
                 double nz2 = inf->l[2] - v0->xformedz;
-                if (light->Type & PL_LIGHT_POINT_ANGLE) {
+                if (light->Type & PL_LIGHT_POINT_ANGLE)
+                {
                   nx2 = (1.0 - 0.5*((nx2*nx2+ny2*ny2+nz2*nz2)/
                                     light->HalfDistSquared));
                   lightsc *= plMax(0,plMin(1.0,nx2));
-                } else {
+                }
+                else
+                {
                   lightsc = (1.0 - 0.5*((nx2*nx2+ny2*ny2+nz2*nz2)/
                                         light->HalfDistSquared));
                   lightsc = plMax(0,plMin(1.0,lightsc));
@@ -555,7 +590,8 @@ void pl_Cam::RenderObject(pl_Obj *obj, pl_Float *bmatrix, pl_Float *bnmatrix) {
         }
         else memcpy(face->Shades,mat->Ambient,sizeof(mat->Ambient)); // flat shading
 
-        if ((mat->Texture && mat->TexMapIdx<0)||(mat->Texture2 && mat->Tex2MapIdx<0)) {
+        if ((mat->Texture && mat->TexMapIdx<0)||(mat->Texture2 && mat->Tex2MapIdx<0))
+        {
           face->MappingU[PLUSH_MAX_MAPCOORDS-1][0] = 0.5 + (v0->xformednx);
           face->MappingV[PLUSH_MAX_MAPCOORDS-1][0] = 0.5 - (v0->xformedny);
           face->MappingU[PLUSH_MAX_MAPCOORDS-1][1] = 0.5 + (v1->xformednx);
@@ -567,7 +603,8 @@ void pl_Cam::RenderObject(pl_Obj *obj, pl_Float *bmatrix, pl_Float *bnmatrix) {
         if (mat->Smoothing && (mat->Lightable || mat->FadeDist))
         {
           int a;
-          for (a = 0; a < 3; a ++) {
+          for (a = 0; a < 3; a ++)
+          {
             pl_Float val[3];
             memcpy(val,face->vsLighting[a],sizeof(val));
             pl_Vertex *thisvert  = obj->Vertices.Get()+face->VertexIndices[a];
@@ -580,7 +617,8 @@ void pl_Cam::RenderObject(pl_Obj *obj, pl_Float *bmatrix, pl_Float *bnmatrix) {
               {
                 double lightsc = 0.0;
                 pl_Light *light = inf->light;
-                if (light->Type & PL_LIGHT_POINT_ANGLE) {
+                if (light->Type & PL_LIGHT_POINT_ANGLE)
+                {
                   double nx2 = inf->l[0] - thisvert->xformedx;
                   double ny2 = inf->l[1] - thisvert->xformedy;
                   double nz2 = inf->l[2] - thisvert->xformedz;
@@ -590,14 +628,18 @@ void pl_Cam::RenderObject(pl_Obj *obj, pl_Float *bmatrix, pl_Float *bnmatrix) {
                                                thisvert->xformednz,
                                                nx2,ny2,nz2);
                 }
-                if (light->Type & PL_LIGHT_POINT_DISTANCE) {
+                if (light->Type & PL_LIGHT_POINT_DISTANCE)
+                {
                   double nx2 = inf->l[0] - thisvert->xformedx;
                   double ny2 = inf->l[1] - thisvert->xformedy;
                   double nz2 = inf->l[2] - thisvert->xformedz;
-                  if (light->Type & PL_LIGHT_POINT_ANGLE) {
+                  if (light->Type & PL_LIGHT_POINT_ANGLE)
+                  {
                     double t= (1.0 - 0.5*((nx2*nx2+ny2*ny2+nz2*nz2)/light->HalfDistSquared));
                     lightsc *= plMax(0,plMin(1.0,t));
-                  } else {
+                  }
+                  else
+                  {
                     lightsc = (1.0 - 0.5*((nx2*nx2+ny2*ny2+nz2*nz2)/light->HalfDistSquared));
                     lightsc = plMax(0,plMin(1.0,lightsc));
                   }
@@ -698,7 +740,8 @@ int pl_Cam::sortFwdFunc(const void *a, const void *b)
   return 0;
 }
 
-void pl_Cam::End() {
+void pl_Cam::End()
+{
   if (!frameBuffer) return;
 
   SortToCurrent();
@@ -721,14 +764,16 @@ void pl_Cam::End() {
 
 
 
-void pl_Light::Set(pl_uChar mode, pl_Float x, pl_Float y, pl_Float z, pl_Float intensity_r, pl_Float intensity_g, pl_Float intensity_b, pl_Float halfDist) {
+void pl_Light::Set(pl_uChar mode, pl_Float x, pl_Float y, pl_Float z, pl_Float intensity_r, pl_Float intensity_g, pl_Float intensity_b, pl_Float halfDist)
+{
   pl_Float m[16], m2[16];
   Type = mode;
   Intensity[0] = intensity_r;
   Intensity[1] = intensity_g;
   Intensity[2] = intensity_b;
   HalfDistSquared = halfDist*halfDist;
-  switch (mode) {
+  switch (mode)
+  {
     case PL_LIGHT_VECTOR:
       plMatrixRotate(m,1,x);
       plMatrixRotate(m2,2,y);

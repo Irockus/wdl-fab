@@ -187,7 +187,8 @@ public:
 
   // A MIDI structure used internally by the class to store incoming
   // messages.  Each message represents one and only one MIDI message.
-  struct MidiMessage {
+  struct MidiMessage
+  {
     std::vector<unsigned char> bytes;
     double timeStamp;
 
@@ -198,7 +199,8 @@ public:
 
   // The RtMidiInData structure is used to pass private class data to
   // the MIDI input handling function or thread.
-  struct RtMidiInData {
+  struct RtMidiInData
+  {
     std::queue<MidiMessage> queue;
     MidiMessage message;
     unsigned int queueLimit;

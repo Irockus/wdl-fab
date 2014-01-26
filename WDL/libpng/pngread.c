@@ -574,7 +574,8 @@ png_read_row(png_structp png_ptr, png_bytep row, png_bytep dsp_row)
       png_error(png_ptr, png_ptr->zstream.msg ? png_ptr->zstream.msg :
                 "Decompression error");
 
-  } while (png_ptr->zstream.avail_out);
+  }
+  while (png_ptr->zstream.avail_out);
 
   if (png_ptr->row_buf[0] > PNG_FILTER_VALUE_NONE)
   {
@@ -931,7 +932,8 @@ png_read_end(png_structp png_ptr, png_infop info_ptr)
 
     else
       png_handle_unknown(png_ptr, info_ptr, length);
-  } while (!(png_ptr->mode & PNG_HAVE_IEND));
+  }
+  while (!(png_ptr->mode & PNG_HAVE_IEND));
 }
 #endif /* PNG_SEQUENTIAL_READ_SUPPORTED */
 

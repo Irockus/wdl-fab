@@ -100,7 +100,8 @@ public:
   {
     for (int t = 0; t < mTabs.GetSize(); t++)
     {
-      if (t == mActive) {
+      if (t == mActive)
+      {
         pGraphics->FillIRect(&mOnColor, &mTabs.Get(t)->mRECT);
       }
       pGraphics->DrawRect(&mFGColor, &mTabs.Get(t)->mRECT);
@@ -326,7 +327,8 @@ public:
     mPlug->GetGUI()->DesktopPath(&desktopPath);
     mPlug->GetGUI()->PromptForFile(&presetFilePath, kFileSave, &desktopPath, "txt");
 
-    if (strcmp(presetFilePath.Get(), "") != 0) {
+    if (strcmp(presetFilePath.Get(), "") != 0)
+    {
       mPlug->DumpPresetSrcCode(presetFilePath.Get(), mParamNameStrings);
     }
   }
@@ -517,7 +519,8 @@ void GenerateSliderGUI(IGraphics* pGraphics,
         {
           sprintf(buf, "%i", groupIdx+1);
         }
-        else {
+        else
+        {
           strcpy(buf, label);
         }
         pTab = new AGTab(thisTabRect, buf);

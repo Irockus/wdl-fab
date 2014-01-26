@@ -28,7 +28,8 @@ static SWELL_DialogResourceIndex *resById(SWELL_DialogResourceIndex *reshead, co
 }
 
 // keep list of modal dialogs
-struct modalDlgRet {
+struct modalDlgRet
+{
   HWND hwnd;
   bool has_ret;
   int ret;

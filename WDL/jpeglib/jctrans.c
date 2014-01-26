@@ -85,8 +85,10 @@ jpeg_copy_critical_parameters (j_decompress_ptr srcinfo,
   dstinfo->data_precision = srcinfo->data_precision;
   dstinfo->CCIR601_sampling = srcinfo->CCIR601_sampling;
   /* Copy the source's quantization tables. */
-  for (tblno = 0; tblno < NUM_QUANT_TBLS; tblno++) {
-    if (srcinfo->quant_tbl_ptrs[tblno] != NULL) {
+  for (tblno = 0; tblno < NUM_QUANT_TBLS; tblno++)
+  {
+    if (srcinfo->quant_tbl_ptrs[tblno] != NULL)
+    {
       qtblptr = & dstinfo->quant_tbl_ptrs[tblno];
       if (*qtblptr == NULL)
         *qtblptr = jpeg_alloc_quant_table((j_common_ptr) dstinfo);
@@ -104,7 +106,8 @@ jpeg_copy_critical_parameters (j_decompress_ptr srcinfo,
     ERREXIT2(dstinfo, JERR_COMPONENT_COUNT, dstinfo->num_components,
              MAX_COMPONENTS);
   for (ci = 0, incomp = srcinfo->comp_info, outcomp = dstinfo->comp_info;
-       ci < dstinfo->num_components; ci++, incomp++, outcomp++) {
+       ci < dstinfo->num_components; ci++, incomp++, outcomp++)
+  {
     outcomp->component_id = incomp->component_id;
     outcomp->h_samp_factor = incomp->h_samp_factor;
     outcomp->v_samp_factor = incomp->v_samp_factor;
@@ -119,8 +122,10 @@ jpeg_copy_critical_parameters (j_decompress_ptr srcinfo,
       ERREXIT1(dstinfo, JERR_NO_QUANT_TABLE, tblno);
     slot_quant = srcinfo->quant_tbl_ptrs[tblno];
     c_quant = incomp->quant_table;
-    if (c_quant != NULL) {
-      for (coefi = 0; coefi < DCTSIZE2; coefi++) {
+    if (c_quant != NULL)
+    {
+      for (coefi = 0; coefi < DCTSIZE2; coefi++)
+      {
         if (c_quant->quantval[coefi] != slot_quant->quantval[coefi])
           ERREXIT1(dstinfo, JERR_MISMATCHED_QUANT_TABLE, tblno);
       }
@@ -137,8 +142,10 @@ jpeg_copy_critical_parameters (j_decompress_ptr srcinfo,
    * emit a file that has 1.02 extensions but a claimed version of 1.01.
    * We will *not*, however, copy version info from mislabeled "2.01" files.
    */
-  if (srcinfo->saw_JFIF_marker) {
-    if (srcinfo->JFIF_major_version == 1) {
+  if (srcinfo->saw_JFIF_marker)
+  {
+    if (srcinfo->JFIF_major_version == 1)
+    {
       dstinfo->JFIF_major_version = srcinfo->JFIF_major_version;
       dstinfo->JFIF_minor_version = srcinfo->JFIF_minor_version;
     }
@@ -166,16 +173,21 @@ transencode_master_selection (j_compress_ptr cinfo,
   jinit_c_master_control(cinfo, TRUE /* transcode only */);
 
   /* Entropy encoding: either Huffman or arithmetic coding. */
-  if (cinfo->arith_code) {
+  if (cinfo->arith_code)
+  {
     ERREXIT(cinfo, JERR_ARITH_NOTIMPL);
-  } else {
-    if (cinfo->progressive_mode) {
+  }
+  else
+  {
+    if (cinfo->progressive_mode)
+    {
 #ifdef C_PROGRESSIVE_SUPPORTED
       jinit_phuff_encoder(cinfo);
 #else
       ERREXIT(cinfo, JERR_NOT_COMPILED);
 #endif
-    } else
+    }
+    else
       jinit_huff_encoder(cinfo);
   }
 
@@ -205,7 +217,8 @@ transencode_master_selection (j_compress_ptr cinfo,
 
 /* Private buffer controller object */
 
-typedef struct {
+typedef struct
+{
   struct jpeg_c_coef_controller pub; /* public fields */
 
   JDIMENSION iMCU_row_num;	/* iMCU row # within image */
@@ -233,9 +246,12 @@ start_iMCU_row (j_compress_ptr cinfo)
    * In a noninterleaved scan, an iMCU row has v_samp_factor MCU rows.
    * But at the bottom of the image, process only what's left.
    */
-  if (cinfo->comps_in_scan > 1) {
+  if (cinfo->comps_in_scan > 1)
+  {
     coef->MCU_rows_per_iMCU_row = 1;
-  } else {
+  }
+  else
+  {
     if (coef->iMCU_row_num < (cinfo->total_iMCU_rows-1))
       coef->MCU_rows_per_iMCU_row = cinfo->cur_comp_info[0]->v_samp_factor;
     else
@@ -289,7 +305,8 @@ compress_output (j_compress_ptr cinfo, JSAMPIMAGE input_buf)
   jpeg_component_info *compptr;
 
   /* Align the virtual buffers for the components used in this scan. */
-  for (ci = 0; ci < cinfo->comps_in_scan; ci++) {
+  for (ci = 0; ci < cinfo->comps_in_scan; ci++)
+  {
     compptr = cinfo->cur_comp_info[ci];
     buffer[ci] = (*cinfo->mem->access_virt_barray)
                  ((j_common_ptr) cinfo, coef->whole_image[compptr->component_index],
@@ -299,24 +316,31 @@ compress_output (j_compress_ptr cinfo, JSAMPIMAGE input_buf)
 
   /* Loop to process one whole iMCU row */
   for (yoffset = coef->MCU_vert_offset; yoffset < coef->MCU_rows_per_iMCU_row;
-       yoffset++) {
+       yoffset++)
+  {
     for (MCU_col_num = coef->mcu_ctr; MCU_col_num < cinfo->MCUs_per_row;
-         MCU_col_num++) {
+         MCU_col_num++)
+    {
       /* Construct list of pointers to DCT blocks belonging to this MCU */
       blkn = 0;			/* index of current DCT block within MCU */
-      for (ci = 0; ci < cinfo->comps_in_scan; ci++) {
+      for (ci = 0; ci < cinfo->comps_in_scan; ci++)
+      {
         compptr = cinfo->cur_comp_info[ci];
         start_col = MCU_col_num * compptr->MCU_width;
         blockcnt = (MCU_col_num < last_MCU_col) ? compptr->MCU_width
                    : compptr->last_col_width;
-        for (yindex = 0; yindex < compptr->MCU_height; yindex++) {
+        for (yindex = 0; yindex < compptr->MCU_height; yindex++)
+        {
           if (coef->iMCU_row_num < last_iMCU_row ||
-              yindex+yoffset < compptr->last_row_height) {
+              yindex+yoffset < compptr->last_row_height)
+          {
             /* Fill in pointers to real blocks in this row */
             buffer_ptr = buffer[ci][yindex+yoffset] + start_col;
             for (xindex = 0; xindex < blockcnt; xindex++)
               MCU_buffer[blkn++] = buffer_ptr++;
-          } else {
+          }
+          else
+          {
             /* At bottom of image, need a whole row of dummy blocks */
             xindex = 0;
           }
@@ -326,7 +350,8 @@ compress_output (j_compress_ptr cinfo, JSAMPIMAGE input_buf)
            * block's DC value.  The init routine has already zeroed the
            * AC entries, so we need only set the DC entries correctly.
            */
-          for (; xindex < compptr->MCU_width; xindex++) {
+          for (; xindex < compptr->MCU_width; xindex++)
+          {
             MCU_buffer[blkn] = coef->dummy_buffer[blkn];
             MCU_buffer[blkn][0][0] = MCU_buffer[blkn-1][0][0];
             blkn++;
@@ -334,7 +359,8 @@ compress_output (j_compress_ptr cinfo, JSAMPIMAGE input_buf)
         }
       }
       /* Try to write the MCU. */
-      if (! (*cinfo->entropy->encode_mcu) (cinfo, MCU_buffer)) {
+      if (! (*cinfo->entropy->encode_mcu) (cinfo, MCU_buffer))
+      {
         /* Suspension forced; update state counters and exit */
         coef->MCU_vert_offset = yoffset;
         coef->mcu_ctr = MCU_col_num;
@@ -382,7 +408,8 @@ transencode_coef_controller (j_compress_ptr cinfo,
            (*cinfo->mem->alloc_large) ((j_common_ptr) cinfo, JPOOL_IMAGE,
                                        C_MAX_BLOCKS_IN_MCU * SIZEOF(JBLOCK));
   jzero_far((void FAR *) buffer, C_MAX_BLOCKS_IN_MCU * SIZEOF(JBLOCK));
-  for (i = 0; i < C_MAX_BLOCKS_IN_MCU; i++) {
+  for (i = 0; i < C_MAX_BLOCKS_IN_MCU; i++)
+  {
     coef->dummy_buffer[i] = buffer + i;
   }
 }

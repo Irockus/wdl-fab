@@ -65,23 +65,27 @@ typedef int GifWord;
 #define VoidPtr void *
 #endif /* SYSV */
 
-typedef struct GifColorType {
+typedef struct GifColorType
+{
   GifByteType Red, Green, Blue;
 } GifColorType;
 
-typedef struct ColorMapObject {
+typedef struct ColorMapObject
+{
   int ColorCount;
   int BitsPerPixel;
   GifColorType *Colors;    /* on malloc(3) heap */
 } ColorMapObject;
 
-typedef struct GifImageDesc {
+typedef struct GifImageDesc
+{
   GifWord Left, Top, Width, Height,   /* Current image dimensions. */
           Interlace;                    /* Sequential/Interlaced lines. */
   ColorMapObject *ColorMap;       /* The local color map */
 } GifImageDesc;
 
-typedef struct GifFileType {
+typedef struct GifFileType
+{
   GifWord SWidth, SHeight,        /* Screen dimensions. */
           SColorResolution,         /* How many colors can we generate? */
           SBackGroundColor;         /* I hope you understand this one... */
@@ -93,7 +97,8 @@ typedef struct GifFileType {
   VoidPtr Private;            /* Don't mess with this! */
 } GifFileType;
 
-typedef enum {
+typedef enum
+{
   UNDEFINED_RECORD_TYPE,
   SCREEN_DESC_RECORD_TYPE,
   IMAGE_DESC_RECORD_TYPE, /* Begin with ',' */
@@ -106,7 +111,8 @@ typedef enum {
  * devices (it has many!) and are compatible with the numbering TC2.0
  * (Turbo C 2.0 compiler for IBM PC) gives to these devices.
  */
-typedef enum {
+typedef enum
+{
   GIF_DUMP_SGI_WINDOW = 1000,
   GIF_DUMP_X_WINDOW = 1001
 } GifScreenDumpType;
@@ -277,14 +283,16 @@ extern int BitSize(int n);
  *****************************************************************************/
 
 /* This is the in-core version of an extension record */
-typedef struct {
+typedef struct
+{
   int ByteCount;
   char *Bytes;    /* on malloc(3) heap */
   int Function;   /* Holds the type of the Extension block. */
 } ExtensionBlock;
 
 /* This holds an image header, its unpacked raster bits, and extensions */
-typedef struct SavedImage {
+typedef struct SavedImage
+{
   GifImageDesc ImageDesc;
   unsigned char *RasterBits;  /* on malloc(3) heap */
   int Function;   /* DEPRECATED: Use ExtensionBlocks[x].Function instead */

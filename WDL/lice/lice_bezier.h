@@ -104,13 +104,16 @@ void LICE_Bezier_Norm(T ctrl_x2, T ctrl_y2, double t, T* pX, T* pY)
 template <class T>
 T LICE_Bezier_GetY_Norm(T ctrl_x2, T ctrl_y2, T x)
 {
-  if (x < (T) 0.0) {
+  if (x < (T) 0.0)
+  {
     return (T) 0.0;
   }
-  if (x >= (T) 1.0) {
+  if (x >= (T) 1.0)
+  {
     return (T) 1.0;
   }
-  if (ctrl_x2 == (T) 0.5) { // linear
+  if (ctrl_x2 == (T) 0.5)   // linear
+  {
     return x;
   }
 

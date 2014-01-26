@@ -333,7 +333,8 @@ bool SHM_MsgReplyConnection::RunInternal(int checkForReplyID, WaitingMessage **r
 
     m_shmmutex.Leave();
 
-  } while (s>0);
+  }
+  while (s>0);
 
   if (s<0) m_has_had_error=true;
   else if (m_shm && m_shm->WantSendKeepAlive())

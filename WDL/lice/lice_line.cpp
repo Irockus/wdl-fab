@@ -29,38 +29,47 @@ static bool ClipLine(int* pX1, int* pY1, int* pX2, int* pY2, int nX, int nY)
   bool accept = false, done = false;
   do
   {
-    if (!(e1 | e2)) {
+    if (!(e1 | e2))
+    {
       accept = done = true;
     }
-    else if (e1 & e2) {
+    else if (e1 & e2)
+    {
       done = true;	// Line is entirely offscreen.
     }
-    else {
+    else
+    {
       int x, y;
       int eOut = e1 ? e1 : e2;
-      if (eOut & eYHi) {
+      if (eOut & eYHi)
+      {
         x = x1 + (int) ((double) (x2 - x1) * (double) (nY - y1) / (double) (y2 - y1));
         y = nY - 1;
       }
-      else if (eOut & eYLo) {
+      else if (eOut & eYLo)
+      {
         x = x1 + (int) ((double) (x2 - x1) * (double) -y1 / (double) (y2 - y1));
         y = 0;
       }
-      else if (eOut & eXHi) {
+      else if (eOut & eXHi)
+      {
         y = y1 + (int) ((double) (y2 - y1) * (double) (nX - x1) / (double) (x2 - x1));
         x = nX - 1;
       }
-      else {
+      else
+      {
         y = y1 + (int) ((double) (y2 - y1) * (double) -x1 / (double) (x2 - x1));
         x = 0;
       }
 
-      if (eOut == e1) {
+      if (eOut == e1)
+      {
         x1 = x;
         y1 = y;
         e1 = OffscreenTest(x1, y1, nX, nY);
       }
-      else {
+      else
+      {
         x2 = x;
         y2 = y;
         e2 = OffscreenTest(x2, y2, nX, nY);

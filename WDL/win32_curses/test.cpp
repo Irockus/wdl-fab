@@ -5,13 +5,15 @@ win32CursesCtx g_curses_context; // we only need the one instance
 #endif
 
 #ifdef _WIN32
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+{
   g_curses_context.want_getch_runmsgpump = 1;  // non-block
 
   curses_registerChildClass(hInstance);
   curses_CreateWindow(hInstance,&g_curses_context,"Sample Test App");
 #else
-int main() {
+int main()
+{
 #endif
 
 

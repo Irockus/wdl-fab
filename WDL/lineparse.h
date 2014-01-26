@@ -245,8 +245,10 @@ private:
       const char *p = line;
       while (*line)
       {
-        if (line[0] == '$' && line[1] == '\\') {
-          switch (line[2]) {
+        if (line[0] == '$' && line[1] == '\\')
+        {
+          switch (line[2])
+          {
             case '"':
             case '\'':
             case '`':
@@ -266,9 +268,12 @@ private:
       {
         int i;
         m_tokens[m_nt]=tmpbufalloc(nc+1);
-        for (i = 0; p < line; i++, p++) {
-          if (!ignore_escaping && p[0] == '$' && p[1] == '\\') {
-            switch (p[2]) {
+        for (i = 0; p < line; i++, p++)
+        {
+          if (!ignore_escaping && p[0] == '$' && p[1] == '\\')
+          {
+            switch (p[2])
+            {
               case '"':
               case '\'':
               case '`':

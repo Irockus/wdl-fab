@@ -10,7 +10,8 @@
 #define strncasecmp strnicmp
 #endif
 
-typedef struct compileContext {
+typedef struct compileContext
+{
   int l_stats[4];
 } compileContext;
 #define onCompileNewLine(a,b,c) {}
@@ -29,7 +30,8 @@ int ppOut(char *input)
     int cc=0;
     while (*exp)
     {
-      if (*exp != ' ' && *exp != '\t' && *exp != '\r' && *exp != '\n') {
+      if (*exp != ' ' && *exp != '\t' && *exp != '\r' && *exp != '\n')
+      {
 
         printf("%c",*exp);
         if (cc++ >= 60) { cc=0; printf("\n"); }

@@ -23,7 +23,8 @@
 
 #if 0				/* This table is not actually needed in v6a */
 
-const int jpeg_zigzag_order[DCTSIZE2] = {
+const int jpeg_zigzag_order[DCTSIZE2] =
+{
   0,  1,  5,  6, 14, 15, 27, 28,
   2,  4,  7, 13, 16, 26, 29, 42,
   3,  8, 12, 17, 25, 30, 41, 43,
@@ -50,7 +51,8 @@ const int jpeg_zigzag_order[DCTSIZE2] = {
  * fake entries.
  */
 
-const int jpeg_natural_order[DCTSIZE2+16] = {
+const int jpeg_natural_order[DCTSIZE2+16] =
+{
   0,  1,  8, 16,  9,  2,  3, 10,
   17, 24, 32, 25, 18, 11,  4,  5,
   12, 19, 26, 33, 40, 48, 41, 34,
@@ -128,7 +130,8 @@ jcopy_sample_rows (JSAMPARRAY input_array, int source_row,
   input_array += source_row;
   output_array += dest_row;
 
-  for (row = num_rows; row > 0; row--) {
+  for (row = num_rows; row > 0; row--)
+  {
     inptr = *input_array++;
     outptr = *output_array++;
 #ifdef FMEMCOPY
@@ -154,7 +157,8 @@ jcopy_block_row (JBLOCKROW input_row, JBLOCKROW output_row,
 
   inptr = (JCOEFPTR) input_row;
   outptr = (JCOEFPTR) output_row;
-  for (count = (long) num_blocks * DCTSIZE2; count > 0; count--) {
+  for (count = (long) num_blocks * DCTSIZE2; count > 0; count--)
+  {
     *outptr++ = *inptr++;
   }
 #endif
@@ -172,7 +176,8 @@ jzero_far (void FAR * target, size_t bytestozero)
   register char FAR * ptr = (char FAR *) target;
   register size_t count;
 
-  for (count = bytestozero; count > 0; count--) {
+  for (count = bytestozero; count > 0; count--)
+  {
     *ptr++ = 0;
   }
 #endif

@@ -259,7 +259,8 @@ typedef XID GLXWindow;
 typedef XID GLXPbuffer;
 typedef struct __GLXFBConfigRec *GLXFBConfig;
 
-typedef struct {
+typedef struct
+{
   int event_type;
   int draw_type;
   unsigned long serial;
@@ -272,7 +273,8 @@ typedef struct {
   int width, height;
   int count;
 } GLXPbufferClobberEvent;
-typedef union __GLXEvent {
+typedef union __GLXEvent
+{
   GLXPbufferClobberEvent glxpbufferclobber;
   long pad[24];
 } GLXEvent;
@@ -927,24 +929,28 @@ typedef XVisualInfo* ( * PFNGLXGETVISUALFROMFBCONFIGSGIXPROC) (Display *dpy, GLX
 #define GLX_BAD_HYPERPIPE_SGIX 92
 #define GLX_HYPERPIPE_ID_SGIX 0x8030
 
-typedef struct {
+typedef struct
+{
   char pipeName[GLX_HYPERPIPE_PIPE_NAME_LENGTH_SGIX];
   int  networkId;
 } GLXHyperpipeNetworkSGIX;
-typedef struct {
+typedef struct
+{
   char pipeName[GLX_HYPERPIPE_PIPE_NAME_LENGTH_SGIX];
   int XOrigin;
   int YOrigin;
   int maxHeight;
   int maxWidth;
 } GLXPipeRectLimits;
-typedef struct {
+typedef struct
+{
   char pipeName[GLX_HYPERPIPE_PIPE_NAME_LENGTH_SGIX];
   int channel;
   unsigned int participationType;
   int timeSlice;
 } GLXHyperpipeConfigSGIX;
-typedef struct {
+typedef struct
+{
   char pipeName[GLX_HYPERPIPE_PIPE_NAME_LENGTH_SGIX];
   int srcXOrigin;
   int srcYOrigin;

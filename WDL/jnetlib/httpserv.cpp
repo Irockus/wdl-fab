@@ -55,7 +55,8 @@ JNL_HTTPServ::~JNL_HTTPServ()
 }
 
 int JNL_HTTPServ::run()
-{ // returns: < 0 on error, 0 on connection close, 1 if reading request, 2 if reply not sent, 3 if reply sent, sending data.
+{
+  // returns: < 0 on error, 0 on connection close, 1 if reading request, 2 if reply not sent, 3 if reply sent, sending data.
   int cnt=0;
 run_again:
   m_con->run();

@@ -46,7 +46,8 @@ typedef double WDL_FFT_REAL;
 #error invalid FFT item size
 #endif
 
-typedef struct {
+typedef struct
+{
   WDL_FFT_REAL re;
   WDL_FFT_REAL im;
 } WDL_FFT_COMPLEX;

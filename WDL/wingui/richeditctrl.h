@@ -35,9 +35,11 @@ public:
   WDL_RichEditCtrl(HWND hwnd) { setWnd(hwnd); m_color=0; m_bold=0; }
   ~WDL_RichEditCtrl() { };
 
-  void setWnd(HWND hwnd) {
+  void setWnd(HWND hwnd)
+  {
     m_hwnd=hwnd;
-    if(hwnd) {
+    if(hwnd)
+    {
       SendMessage(m_hwnd, EM_SETEVENTMASK, 0, ENM_LINK);
       SendMessage(m_hwnd, EM_AUTOURLDETECT, 1, 0);
     }

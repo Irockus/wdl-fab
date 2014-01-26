@@ -207,7 +207,8 @@ class RtAudio
 public:
 
   //! Audio API specifier arguments.
-  enum Api {
+  enum Api
+  {
     UNSPECIFIED,    /*!< Search for a working compiled API. */
     LINUX_ALSA,     /*!< The Advanced Linux Sound Architecture API. */
     LINUX_PULSE,    /*!< The Linux PulseAudio API. */
@@ -220,7 +221,8 @@ public:
   };
 
   //! The public device information structure for returning queried values.
-  struct DeviceInfo {
+  struct DeviceInfo
+  {
     bool probed;                  /*!< true if the device capabilities were successfully probed. */
     std::string name;             /*!< Character string device identifier. */
     unsigned int outputChannels;  /*!< Maximum output channels supported by device. */
@@ -238,7 +240,8 @@ public:
   };
 
   //! The structure for specifying input or ouput stream parameters.
-  struct StreamParameters {
+  struct StreamParameters
+  {
     unsigned int deviceId;     /*!< Device index (0 to getDeviceCount() - 1). */
     unsigned int nChannels;    /*!< Number of channels. */
     unsigned int firstChannel; /*!< First channel index on device (default = 0). */
@@ -305,7 +308,8 @@ public:
     RtApiJack.  However, if you wish to create multiple instances of
     RtAudio with Jack, each instance must have a unique client name.
   */
-  struct StreamOptions {
+  struct StreamOptions
+  {
     RtAudioStreamFlags flags;      /*!< A bit-mask of stream flags (RTAUDIO_NONINTERLEAVED, RTAUDIO_MINIMIZE_LATENCY, RTAUDIO_HOG_DEVICE, RTAUDIO_ALSA_USE_DEFAULT). */
     unsigned int numberOfBuffers;  /*!< Number of stream buffers. */
     std::string streamName;        /*!< A stream name (currently used only in Jack). */
@@ -530,7 +534,8 @@ typedef int StreamMutex;
 // This global structure type is used to pass callback information
 // between the private RtAudio stream structure and global callback
 // handling functions.
-struct CallbackInfo {
+struct CallbackInfo
+{
   void *object;    // Used as a "this" pointer.
   ThreadHandle thread;
   void *callback;
@@ -598,14 +603,16 @@ protected:
 
   enum { FAILURE, SUCCESS };
 
-  enum StreamState {
+  enum StreamState
+  {
     STREAM_STOPPED,
     STREAM_STOPPING,
     STREAM_RUNNING,
     STREAM_CLOSED = -50
   };
 
-  enum StreamMode {
+  enum StreamMode
+  {
     OUTPUT,
     INPUT,
     DUPLEX,
@@ -613,7 +620,8 @@ protected:
   };
 
   // A protected structure used for buffer conversion.
-  struct ConvertInfo {
+  struct ConvertInfo
+  {
     int channels;
     int inJump, outJump;
     RtAudioFormat inFormat, outFormat;
@@ -622,7 +630,8 @@ protected:
   };
 
   // A protected structure for audio streams.
-  struct RtApiStream {
+  struct RtApiStream
+  {
     unsigned int device[2];    // Playback and record, respectively.
     void *apiHandle;           // void pointer for API specific stream handle information
     StreamMode mode;           // OUTPUT, INPUT, or DUPLEX.

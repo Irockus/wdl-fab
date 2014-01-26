@@ -23,7 +23,8 @@ WDL_SHM_Connection::WDL_SHM_Connection(bool whichChan,
   m_timeout_cnt=0;
   m_timeout_sec=timeout_sec;
   m_last_recvt=time(NULL)+2; // grace period
-  { // make shmsize the next power of two
+  {
+    // make shmsize the next power of two
     int a = shmsize;
     shmsize=2;
     while (shmsize < SHM_MINSIZE || shmsize<a) shmsize*=2;

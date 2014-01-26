@@ -349,7 +349,8 @@ protected:
     {
       //strncpy( _value, p, *length );	// lots of compilers don't like this function (unsafe),
       // and the null terminator isn't needed
-      for( int i=0; p[i] && i<*length; ++i ) {
+      for( int i=0; p[i] && i<*length; ++i )
+      {
         _value[i] = p[i];
       }
       return p + (*length);
@@ -524,7 +525,8 @@ public:
   TiXmlNode* FirstChild()						{ return firstChild; }
   const TiXmlNode* FirstChild( const char * value ) const;			///< The first child of this node with the matching 'value'. Will be null if none found.
   /// The first child of this node with the matching 'value'. Will be null if none found.
-  TiXmlNode* FirstChild( const char * _value ) {
+  TiXmlNode* FirstChild( const char * _value )
+  {
     // Call through to the const version - safe since nothing is changed. Exiting syntax: cast this to a const (always safe)
     // call the method, cast the return back to non-const.
     return const_cast< TiXmlNode* > ((const_cast< const TiXmlNode* >(this))->FirstChild( _value ));
@@ -533,7 +535,8 @@ public:
   TiXmlNode* LastChild()	{ return lastChild; }
 
   const TiXmlNode* LastChild( const char * value ) const;			/// The last child of this node matching 'value'. Will be null if there are no children.
-  TiXmlNode* LastChild( const char * _value ) {
+  TiXmlNode* LastChild( const char * _value )
+  {
     return const_cast< TiXmlNode* > ((const_cast< const TiXmlNode* >(this))->LastChild( _value ));
   }
 
@@ -561,13 +564,15 @@ public:
   	first. IterateChildren will return null when done.
   */
   const TiXmlNode* IterateChildren( const TiXmlNode* previous ) const;
-  TiXmlNode* IterateChildren( const TiXmlNode* previous ) {
+  TiXmlNode* IterateChildren( const TiXmlNode* previous )
+  {
     return const_cast< TiXmlNode* >( (const_cast< const TiXmlNode* >(this))->IterateChildren( previous ) );
   }
 
   /// This flavor of IterateChildren searches for children with a particular 'value'
   const TiXmlNode* IterateChildren( const char * value, const TiXmlNode* previous ) const;
-  TiXmlNode* IterateChildren( const char * _value, const TiXmlNode* previous ) {
+  TiXmlNode* IterateChildren( const char * _value, const TiXmlNode* previous )
+  {
     return const_cast< TiXmlNode* >( (const_cast< const TiXmlNode* >(this))->IterateChildren( _value, previous ) );
   }
 
@@ -617,7 +622,8 @@ public:
 
   /// Navigate to a sibling node.
   const TiXmlNode* PreviousSibling( const char * ) const;
-  TiXmlNode* PreviousSibling( const char *_prev ) {
+  TiXmlNode* PreviousSibling( const char *_prev )
+  {
     return const_cast< TiXmlNode* >( (const_cast< const TiXmlNode* >(this))->PreviousSibling( _prev ) );
   }
 
@@ -634,7 +640,8 @@ public:
 
   /// Navigate to a sibling node with the given 'value'.
   const TiXmlNode* NextSibling( const char * ) const;
-  TiXmlNode* NextSibling( const char* _next ) {
+  TiXmlNode* NextSibling( const char* _next )
+  {
     return const_cast< TiXmlNode* >( (const_cast< const TiXmlNode* >(this))->NextSibling( _next ) );
   }
 
@@ -643,7 +650,8 @@ public:
   	nodes. Returns 0 if there is not another element.
   */
   const TiXmlElement* NextSiblingElement() const;
-  TiXmlElement* NextSiblingElement() {
+  TiXmlElement* NextSiblingElement()
+  {
     return const_cast< TiXmlElement* >( (const_cast< const TiXmlNode* >(this))->NextSiblingElement() );
   }
 
@@ -652,7 +660,8 @@ public:
   	nodes. Returns 0 if there is not another element.
   */
   const TiXmlElement* NextSiblingElement( const char * ) const;
-  TiXmlElement* NextSiblingElement( const char *_next ) {
+  TiXmlElement* NextSiblingElement( const char *_next )
+  {
     return const_cast< TiXmlElement* >( (const_cast< const TiXmlNode* >(this))->NextSiblingElement( _next ) );
   }
 
@@ -663,13 +672,15 @@ public:
 
   /// Convenience function to get through elements.
   const TiXmlElement* FirstChildElement()	const;
-  TiXmlElement* FirstChildElement() {
+  TiXmlElement* FirstChildElement()
+  {
     return const_cast< TiXmlElement* >( (const_cast< const TiXmlNode* >(this))->FirstChildElement() );
   }
 
   /// Convenience function to get through elements.
   const TiXmlElement* FirstChildElement( const char * _value ) const;
-  TiXmlElement* FirstChildElement( const char * _value ) {
+  TiXmlElement* FirstChildElement( const char * _value )
+  {
     return const_cast< TiXmlElement* >( (const_cast< const TiXmlNode* >(this))->FirstChildElement( _value ) );
   }
 
@@ -688,7 +699,8 @@ public:
   	Returns null if not in a document.
   */
   const TiXmlDocument* GetDocument() const;
-  TiXmlDocument* GetDocument() {
+  TiXmlDocument* GetDocument()
+  {
     return const_cast< TiXmlDocument* >( (const_cast< const TiXmlNode* >(this))->GetDocument() );
   }
 
@@ -848,13 +860,15 @@ public:
 
   /// Get the next sibling attribute in the DOM. Returns null at end.
   const TiXmlAttribute* Next() const;
-  TiXmlAttribute* Next() {
+  TiXmlAttribute* Next()
+  {
     return const_cast< TiXmlAttribute* >( (const_cast< const TiXmlAttribute* >(this))->Next() );
   }
 
   /// Get the previous sibling attribute in the DOM. Returns null at beginning.
   const TiXmlAttribute* Previous() const;
-  TiXmlAttribute* Previous() {
+  TiXmlAttribute* Previous()
+  {
     return const_cast< TiXmlAttribute* >( (const_cast< const TiXmlAttribute* >(this))->Previous() );
   }
 
@@ -868,7 +882,8 @@ public:
   virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding encoding );
 
   // Prints this Attribute to a FILE stream.
-  virtual void Print( FILE* cfile, int depth ) const {
+  virtual void Print( FILE* cfile, int depth ) const
+  {
     Print( cfile, depth, 0 );
   }
   void Print( FILE* cfile, int depth, TIXML_STRING* str ) const;
@@ -916,12 +931,14 @@ public:
   TiXmlAttribute* Last()					{ return ( sentinel.prev == &sentinel ) ? 0 : sentinel.prev; }
 
   const TiXmlAttribute*	Find( const char* _name ) const;
-  TiXmlAttribute*	Find( const char* _name ) {
+  TiXmlAttribute*	Find( const char* _name )
+  {
     return const_cast< TiXmlAttribute* >( (const_cast< const TiXmlAttributeSet* >(this))->Find( _name ) );
   }
 #ifdef TIXML_USE_STL
   const TiXmlAttribute*	Find( const std::string& _name ) const;
-  TiXmlAttribute*	Find( const std::string& _name ) {
+  TiXmlAttribute*	Find( const std::string& _name )
+  {
     return const_cast< TiXmlAttribute* >( (const_cast< const TiXmlAttributeSet* >(this))->Find( _name ) );
   }
 
@@ -990,10 +1007,12 @@ public:
   /// QueryDoubleAttribute examines the attribute - see QueryIntAttribute().
   int QueryDoubleAttribute( const char* name, double* _value ) const;
   /// QueryFloatAttribute examines the attribute - see QueryIntAttribute().
-  int QueryFloatAttribute( const char* name, float* _value ) const {
+  int QueryFloatAttribute( const char* name, float* _value ) const
+  {
     double d;
     int result = QueryDoubleAttribute( name, &d );
-    if ( result == TIXML_SUCCESS ) {
+    if ( result == TIXML_SUCCESS )
+    {
       *_value = (float)d;
     }
     return result;
@@ -1157,7 +1176,8 @@ public:
   /// Constructs an empty comment.
   TiXmlComment() : TiXmlNode( TiXmlNode::COMMENT ) {}
   /// Construct a comment from text.
-  TiXmlComment( const char* _value ) : TiXmlNode( TiXmlNode::COMMENT ) {
+  TiXmlComment( const char* _value ) : TiXmlNode( TiXmlNode::COMMENT )
+  {
     SetValue( _value );
   }
   TiXmlComment( const TiXmlComment& );
@@ -1308,7 +1328,8 @@ public:
   virtual TiXmlNode* Clone() const;
   // Print this declaration to a FILE stream.
   virtual void Print( FILE* cfile, int depth, TIXML_STRING* str ) const;
-  virtual void Print( FILE* cfile, int depth ) const {
+  virtual void Print( FILE* cfile, int depth ) const
+  {
     Print( cfile, depth, 0 );
   }
 
@@ -1504,7 +1525,8 @@ public:
   /** If you have handled the error, it can be reset with this call. The error
   	state is automatically cleared if you Parse a new XML block.
   */
-  void ClearError()						{
+  void ClearError()
+  {
     error = false;
     errorId = 0;
     errorDesc = "";
@@ -1765,7 +1787,8 @@ public:
   /** Switch over to "stream printing" which is the most dense formatting without
   	linebreaks. Common when the XML is needed for network transmission.
   */
-  void SetStreamPrinting()						{
+  void SetStreamPrinting()
+  {
     indent = "";
     lineBreak = "";
   }
@@ -1780,11 +1803,13 @@ public:
 #endif
 
 private:
-  void DoIndent()	{
+  void DoIndent()
+  {
     for( int i=0; i<depth; ++i )
       buffer += indent;
   }
-  void DoLineBreak() {
+  void DoLineBreak()
+  {
     buffer += lineBreak;
   }
 

@@ -372,7 +372,8 @@ png_benign_error(png_structp png_ptr, png_const_charp error_message)
  * if the character is invalid.
  */
 #define isnonalpha(c) ((c) < 65 || (c) > 122 || ((c) > 90 && (c) < 97))
-static PNG_CONST char png_digit[16] = {
+static PNG_CONST char png_digit[16] =
+{
   '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
   'A', 'B', 'C', 'D', 'E', 'F'
 };

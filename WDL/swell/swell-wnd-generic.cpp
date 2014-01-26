@@ -340,7 +340,8 @@ static void swell_gdkEventHandler(GdkEvent *evt, gpointer data)
         break;
         case GDK_KEY_PRESS:
         case GDK_KEY_RELEASE:
-        { // todo: pass through app-specific default processing before sending to child window
+        {
+          // todo: pass through app-specific default processing before sending to child window
           GdkEventKey *k = (GdkEventKey *)evt;
           //printf("key%s: %d %s\n", evt->type == GDK_KEY_PRESS ? "down" : "up", k->keyval, k->string);
           int modifiers = FVIRTKEY;

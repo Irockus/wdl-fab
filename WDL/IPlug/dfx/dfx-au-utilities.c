@@ -53,7 +53,8 @@
 
 const UInt32 kCFAUPreset_CurrentVersion = 0;
 
-typedef struct {
+typedef struct
+{
   AUPreset auPreset;
   UInt32 version;
   CFAllocatorRef allocator;
@@ -204,7 +205,8 @@ static void kCFAUPresetArrayCallBacks_constructor()
 #else
 // XXX I'll use this for other compilers, even though I hate initializing structs with all arguments at once
 // (cuz what if you ever decide to change the order of the struct members or something like that?)
-const CFArrayCallBacks kCFAUPresetArrayCallBacks = {
+const CFArrayCallBacks kCFAUPresetArrayCallBacks =
+{
   0,
   CFAUPresetArrayRetainCallBack,
   CFAUPresetArrayReleaseCallBack,

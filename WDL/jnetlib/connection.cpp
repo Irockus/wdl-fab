@@ -394,7 +394,8 @@ int JNL_Connection::peek_bytes(void *_data, int maxlength)
   {
     len=maxlength;
   }
-  if (data != NULL) {
+  if (data != NULL)
+  {
     memcpy(data,m_recv_buffer+read_pos,len);
     if (len < maxlength)
     {

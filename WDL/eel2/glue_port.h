@@ -11,7 +11,8 @@
 #define BIF_FPSTACKUSE(x) (0) // fp stack is not used within functions
 #define BIF_GETFPSTACKUSE(x) (1)
 
-enum {
+enum
+{
   EEL_BC_NOP=1,
   EEL_BC_RET,
   EEL_BC_JMP_NC, // followed by GLUE_JMP_TYPE
@@ -169,7 +170,8 @@ BC_DECL_JMP(WHILE_CHECK_RV)
 #define GLUE_MOV_PX_DIRECTVALUE_TOSTACK_SIZE GLUE_MOV_PX_DIRECTVALUE_SIZE
 static void GLUE_MOV_PX_DIRECTVALUE_GEN(void *b, INT_PTR v, int wv)
 {
-  static const EEL_BC_TYPE tab[] = {
+  static const EEL_BC_TYPE tab[] =
+  {
     EEL_BC_MOV_FPTOP_DV,
     EEL_BC_MOV_P1_DV,
     EEL_BC_MOV_P2_DV,
@@ -195,7 +197,8 @@ static int GLUE_RESET_WTP(unsigned char *out, void *ptr)
 #define GLUE_POP_PX_SIZE sizeof(EEL_BC_TYPE)
 static void GLUE_POP_PX(void *b, int wv)
 {
-  static const EEL_BC_TYPE tab[3] = {
+  static const EEL_BC_TYPE tab[3] =
+  {
     EEL_BC_POP_P1,
     EEL_BC_POP_P2,
     EEL_BC_POP_P3,
@@ -206,7 +209,8 @@ static void GLUE_POP_PX(void *b, int wv)
 #define GLUE_SET_PX_FROM_P1_SIZE sizeof(EEL_BC_TYPE)
 static void GLUE_SET_PX_FROM_P1(void *b, int wv)
 {
-  static const unsigned int tab[3]= {
+  static const unsigned int tab[3]=
+  {
     EEL_BC_NOP,
     EEL_BC_SET_P2_FROM_P1,
     EEL_BC_SET_P3_FROM_P1,
@@ -252,7 +256,8 @@ static unsigned char *EEL_GLUE_set_immediate(void *_p, INT_PTR newv)
 #define GLUE_SET_PX_FROM_WTP_SIZE sizeof(EEL_BC_TYPE)
 static void GLUE_SET_PX_FROM_WTP(void *b, int wv)
 {
-  static const EEL_BC_TYPE tab[3]= {
+  static const EEL_BC_TYPE tab[3]=
+  {
     EEL_BC_SET_P1_FROM_WTP,
     EEL_BC_SET_P2_FROM_WTP,
     EEL_BC_SET_P3_FROM_WTP,
@@ -273,7 +278,8 @@ static int GLUE_POP_FPSTACK_TO_PTR(unsigned char *buf, void *destptr)
 #define GLUE_PUSH_VAL_AT_PX_TO_FPSTACK_SIZE sizeof(EEL_BC_TYPE)
 static void GLUE_PUSH_VAL_AT_PX_TO_FPSTACK(void *b, int wv)
 {
-  static const EEL_BC_TYPE tab[3] = {
+  static const EEL_BC_TYPE tab[3] =
+  {
     EEL_BC_PUSH_VAL_AT_P1_TO_FPSTACK,
     EEL_BC_PUSH_VAL_AT_P2_TO_FPSTACK,
     EEL_BC_PUSH_VAL_AT_P3_TO_FPSTACK,

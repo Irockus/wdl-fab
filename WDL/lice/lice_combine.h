@@ -247,7 +247,8 @@ static inline void __LICE_RGB2HSV(int r, int g, int b, int* h, int* s, int* v)
 
   *v = maxrgb;
 #ifndef LICE_RGB2HSV_USE_TABLE // table mode doesnt need this check
-  if (!df) {
+  if (!df)
+  {
     *h = *s = 0;
   }
   else

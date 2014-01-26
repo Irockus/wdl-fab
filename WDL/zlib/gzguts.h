@@ -139,7 +139,8 @@ ZEXTERN z_off64_t ZEXPORT gzoffset64 OF((gzFile));
 #define GZIP 2      /* decompress a gzip stream */
 
 /* internal gzip file state data structure */
-typedef struct {
+typedef struct
+{
   /* exposed contents for gzgetc() macro */
   struct gzFile_s x;      /* "x" for exposed */
   /* x.have: number of bytes available at x.next */

@@ -24,7 +24,8 @@ Copyright (c) 1996-2000, Justin Frankel
 
 #include "plush.h"
 
-pl_Obj *plReadJAWObj(char *filename, pl_Mat *m) {
+pl_Obj *plReadJAWObj(char *filename, pl_Mat *m)
+{
   FILE *jawfile;
   pl_Obj *obj;
   pl_uInt32 i;
@@ -44,7 +45,8 @@ pl_Obj *plReadJAWObj(char *filename, pl_Mat *m) {
   obj = new pl_Obj(total_points,total_polys);
 
   i = 0;
-  while (fgets(line, 256, jawfile) != NULL) if (strstr(line, ":") != NULL) {
+  while (fgets(line, 256, jawfile) != NULL) if (strstr(line, ":") != NULL)
+    {
       float x, y, z;
       sscanf(line, "%d: %f %f %f",&crap,&x,&y,&z);
       obj->Vertices.Get()[i].x = (pl_Float) x;
@@ -54,7 +56,8 @@ pl_Obj *plReadJAWObj(char *filename, pl_Mat *m) {
     }
   rewind(jawfile); fgets(line, 256, jawfile);
   i = 0;
-  while (fgets(line, 256, jawfile) != NULL) if (strstr(line, "tri") != NULL) {
+  while (fgets(line, 256, jawfile) != NULL) if (strstr(line, "tri") != NULL)
+    {
       pl_uInt32 a,b,c;
       sscanf(line, "tri %ld, %ld, %ld", &a, &b, &c);
       obj->Faces.Get()[i].VertexIndices[0] = a;

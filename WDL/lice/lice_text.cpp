@@ -5,7 +5,8 @@
 #define LICE_FONT_HEIGHT 8
 
 
-static unsigned char LICE_deffont[127*LICE_FONT_HEIGHT] = {
+static unsigned char LICE_deffont[127*LICE_FONT_HEIGHT] =
+{
 
   /* 1 0x01 '^A' */
   0x7e, /* 01111110 */

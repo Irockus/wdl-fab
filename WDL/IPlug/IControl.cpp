@@ -87,7 +87,8 @@ void IControl::OnMouseDown(int x, int y, IMouseMod* pMod)
   }
 #endif
 
-  if (pMod->R) {
+  if (pMod->R)
+  {
     PromptUserInput();
   }
 }

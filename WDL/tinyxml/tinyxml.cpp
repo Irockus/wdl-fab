@@ -225,7 +225,8 @@ TiXmlNode* TiXmlNode::InsertEndChild( const TiXmlNode& addThis )
 
 TiXmlNode* TiXmlNode::InsertBeforeChild( TiXmlNode* beforeThis, const TiXmlNode& addThis )
 {
-  if ( !beforeThis || beforeThis->parent != this ) {
+  if ( !beforeThis || beforeThis->parent != this )
+  {
     return 0;
   }
   if ( addThis.Type() == TiXmlNode::DOCUMENT )
@@ -257,7 +258,8 @@ TiXmlNode* TiXmlNode::InsertBeforeChild( TiXmlNode* beforeThis, const TiXmlNode&
 
 TiXmlNode* TiXmlNode::InsertAfterChild( TiXmlNode* afterThis, const TiXmlNode& addThis )
 {
-  if ( !afterThis || afterThis->parent != this ) {
+  if ( !afterThis || afterThis->parent != this )
+  {
     return 0;
   }
   if ( addThis.Type() == TiXmlNode::DOCUMENT )
@@ -577,10 +579,12 @@ const char* TiXmlElement::Attribute( const char* name, int* i ) const
   const char* s = Attribute( name );
   if ( i )
   {
-    if ( s ) {
+    if ( s )
+    {
       *i = atoi( s );
     }
-    else {
+    else
+    {
       *i = 0;
     }
   }
@@ -594,10 +598,12 @@ const std::string* TiXmlElement::Attribute( const std::string& name, int* i ) co
   const std::string* s = Attribute( name );
   if ( i )
   {
-    if ( s ) {
+    if ( s )
+    {
       *i = atoi( s->c_str() );
     }
-    else {
+    else
+    {
       *i = 0;
     }
   }
@@ -611,10 +617,12 @@ const char* TiXmlElement::Attribute( const char* name, double* d ) const
   const char* s = Attribute( name );
   if ( d )
   {
-    if ( s ) {
+    if ( s )
+    {
       *d = atof( s );
     }
-    else {
+    else
+    {
       *d = 0;
     }
   }
@@ -628,10 +636,12 @@ const std::string* TiXmlElement::Attribute( const std::string& name, double* d )
   const std::string* s = Attribute( name );
   if ( d )
   {
-    if ( s ) {
+    if ( s )
+    {
       *d = atof( s->c_str() );
     }
-    else {
+    else
+    {
       *d = 0;
     }
   }
@@ -772,7 +782,8 @@ void TiXmlElement::Print( FILE* cfile, int depth ) const
 {
   int i;
   assert( cfile );
-  for ( i=0; i<depth; i++ ) {
+  for ( i=0; i<depth; i++ )
+  {
     fprintf( cfile, "    " );
   }
 
@@ -813,7 +824,8 @@ void TiXmlElement::Print( FILE* cfile, int depth ) const
       node->Print( cfile, depth+1 );
     }
     fprintf( cfile, "\n" );
-    for( i=0; i<depth; ++i ) {
+    for( i=0; i<depth; ++i )
+    {
       fprintf( cfile, "    " );
     }
     fprintf( cfile, "</%s>", value.c_str() );
@@ -871,9 +883,11 @@ TiXmlNode* TiXmlElement::Clone() const
 const char* TiXmlElement::GetText() const
 {
   const TiXmlNode* child = this->FirstChild();
-  if ( child ) {
+  if ( child )
+  {
     const TiXmlText* childText = child->ToText();
-    if ( childText ) {
+    if ( childText )
+    {
       return childText->Value();
     }
   }
@@ -1024,7 +1038,8 @@ bool TiXmlDocument::LoadFile( FILE* file, TiXmlEncoding encoding )
   char* buf = new char[ length+1 ];
   buf[0] = 0;
 
-  if ( fread( buf, length, 1, file ) != 1 ) {
+  if ( fread( buf, length, 1, file ) != 1 )
+  {
     delete [] buf;
     SetError( TIXML_ERROR_OPENING_FILE, 0, 0, TIXML_ENCODING_UNKNOWN );
     return false;
@@ -1034,9 +1049,11 @@ bool TiXmlDocument::LoadFile( FILE* file, TiXmlEncoding encoding )
   const char* p = buf;
 
   buf[length] = 0;
-  while( *p ) {
+  while( *p )
+  {
     assert( p < (buf+length) );
-    if ( *p == 0xa ) {
+    if ( *p == 0xa )
+    {
       // Newline character. No special rules for this. Append all the characters
       // since the last string, and include the newline.
       data.append( lastPos, (p-lastPos+1) );	// append, include the newline
@@ -1044,33 +1061,39 @@ bool TiXmlDocument::LoadFile( FILE* file, TiXmlEncoding encoding )
       lastPos = p;							// and point to the new buffer (may be 0)
       assert( p <= (buf+length) );
     }
-    else if ( *p == 0xd ) {
+    else if ( *p == 0xd )
+    {
       // Carriage return. Append what we have so far, then
       // handle moving forward in the buffer.
-      if ( (p-lastPos) > 0 ) {
+      if ( (p-lastPos) > 0 )
+      {
         data.append( lastPos, p-lastPos );	// do not add the CR
       }
       data += (char)0xa;						// a proper newline
 
-      if ( *(p+1) == 0xa ) {
+      if ( *(p+1) == 0xa )
+      {
         // Carriage return - new line sequence
         p += 2;
         lastPos = p;
         assert( p <= (buf+length) );
       }
-      else {
+      else
+      {
         // it was followed by something else...that is presumably characters again.
         ++p;
         lastPos = p;
         assert( p <= (buf+length) );
       }
     }
-    else {
+    else
+    {
       ++p;
     }
   }
   // Handle any left over characters.
-  if ( p-lastPos ) {
+  if ( p-lastPos )
+  {
     data.append( lastPos, p-lastPos );
   }
   delete [] buf;
@@ -1218,19 +1241,25 @@ void TiXmlAttribute::Print( FILE* cfile, int /*depth*/, TIXML_STRING* str ) cons
   EncodeString( name, &n );
   EncodeString( value, &v );
 
-  if (value.find ('\"') == TIXML_STRING::npos) {
-    if ( cfile ) {
+  if (value.find ('\"') == TIXML_STRING::npos)
+  {
+    if ( cfile )
+    {
       fprintf (cfile, "%s=\"%s\"", n.c_str(), v.c_str() );
     }
-    if ( str ) {
+    if ( str )
+    {
       (*str) += n; (*str) += "=\""; (*str) += v; (*str) += "\"";
     }
   }
-  else {
-    if ( cfile ) {
+  else
+  {
+    if ( cfile )
+    {
       fprintf (cfile, "%s='%s'", n.c_str(), v.c_str() );
     }
-    if ( str ) {
+    if ( str )
+    {
       (*str) += n; (*str) += "='"; (*str) += v; (*str) += "'";
     }
   }
@@ -1339,7 +1368,8 @@ void TiXmlText::Print( FILE* cfile, int depth ) const
   {
     int i;
     fprintf( cfile, "\n" );
-    for ( i=0; i<depth; i++ ) {
+    for ( i=0; i<depth; i++ )
+    {
       fprintf( cfile, "    " );
     }
     fprintf( cfile, "<![CDATA[%s]]>\n", value.c_str() );	// unformatted output
@@ -1422,15 +1452,18 @@ void TiXmlDeclaration::Print( FILE* cfile, int /*depth*/, TIXML_STRING* str ) co
   if ( cfile ) fprintf( cfile, "<?xml " );
   if ( str )	 (*str) += "<?xml ";
 
-  if ( !version.empty() ) {
+  if ( !version.empty() )
+  {
     if ( cfile ) fprintf (cfile, "version=\"%s\" ", version.c_str ());
     if ( str ) { (*str) += "version=\""; (*str) += version; (*str) += "\" "; }
   }
-  if ( !encoding.empty() ) {
+  if ( !encoding.empty() )
+  {
     if ( cfile ) fprintf (cfile, "encoding=\"%s\" ", encoding.c_str ());
     if ( str ) { (*str) += "encoding=\""; (*str) += encoding; (*str) += "\" "; }
   }
-  if ( !standalone.empty() ) {
+  if ( !standalone.empty() )
+  {
     if ( cfile ) fprintf (cfile, "standalone=\"%s\" ", standalone.c_str ());
     if ( str ) { (*str) += "standalone=\""; (*str) += standalone; (*str) += "\" "; }
   }

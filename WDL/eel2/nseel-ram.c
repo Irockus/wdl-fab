@@ -106,7 +106,8 @@ EEL_F * NSEEL_CGEN_CALL __NSEEL_RAMAllocGMEM(EEL_F ***blocks, unsigned int w)
       if (!(pblocks=*blocks))
       {
         pblocks = *blocks = (EEL_F **)calloc(sizeof(EEL_F *),NSEEL_RAM_BLOCKS);
-        if (!pblocks) {
+        if (!pblocks)
+        {
           if (is_locked) NSEEL_HOSTSTUB_LeaveMutex();
           return &fail;
         }

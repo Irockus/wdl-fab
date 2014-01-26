@@ -18,13 +18,15 @@
 
 /* Private state */
 
-typedef enum {
+typedef enum
+{
   main_pass,		/* input data, also do first output step */
   huff_opt_pass,		/* Huffman code optimization pass */
   output_pass		/* data output pass */
 } c_pass_type;
 
-typedef struct {
+typedef struct
+{
   struct jpeg_comp_master pub;	/* public fields */
 
   c_pass_type pass_type;	/* the type of the current pass */
@@ -80,7 +82,8 @@ initial_setup (j_compress_ptr cinfo)
   cinfo->max_h_samp_factor = 1;
   cinfo->max_v_samp_factor = 1;
   for (ci = 0, compptr = cinfo->comp_info; ci < cinfo->num_components;
-       ci++, compptr++) {
+       ci++, compptr++)
+  {
     if (compptr->h_samp_factor<=0 || compptr->h_samp_factor>MAX_SAMP_FACTOR ||
         compptr->v_samp_factor<=0 || compptr->v_samp_factor>MAX_SAMP_FACTOR)
       ERREXIT(cinfo, JERR_BAD_SAMPLING);
@@ -92,7 +95,8 @@ initial_setup (j_compress_ptr cinfo)
 
   /* Compute dimensions of components */
   for (ci = 0, compptr = cinfo->comp_info; ci < cinfo->num_components;
-       ci++, compptr++) {
+       ci++, compptr++)
+  {
     /* Fill in the correct component_index value; don't rely on application */
     compptr->component_index = ci;
     /* For compression, we never do DCT scaling. */
@@ -149,7 +153,8 @@ validate_script (j_compress_ptr cinfo)
    * for progressive JPEG, no scan can have this.
    */
   scanptr = cinfo->scan_info;
-  if (scanptr->Ss != 0 || scanptr->Se != DCTSIZE2-1) {
+  if (scanptr->Ss != 0 || scanptr->Se != DCTSIZE2-1)
+  {
 #ifdef C_PROGRESSIVE_SUPPORTED
     cinfo->progressive_mode = TRUE;
     last_bitpos_ptr = & last_bitpos[0][0];
@@ -159,18 +164,22 @@ validate_script (j_compress_ptr cinfo)
 #else
     ERREXIT(cinfo, JERR_NOT_COMPILED);
 #endif
-  } else {
+  }
+  else
+  {
     cinfo->progressive_mode = FALSE;
     for (ci = 0; ci < cinfo->num_components; ci++)
       component_sent[ci] = FALSE;
   }
 
-  for (scanno = 1; scanno <= cinfo->num_scans; scanptr++, scanno++) {
+  for (scanno = 1; scanno <= cinfo->num_scans; scanptr++, scanno++)
+  {
     /* Validate component indexes */
     ncomps = scanptr->comps_in_scan;
     if (ncomps <= 0 || ncomps > MAX_COMPS_IN_SCAN)
       ERREXIT2(cinfo, JERR_COMPONENT_COUNT, ncomps, MAX_COMPS_IN_SCAN);
-    for (ci = 0; ci < ncomps; ci++) {
+    for (ci = 0; ci < ncomps; ci++)
+    {
       thisi = scanptr->component_index[ci];
       if (thisi < 0 || thisi >= cinfo->num_components)
         ERREXIT1(cinfo, JERR_BAD_SCAN_SCRIPT, scanno);
@@ -183,7 +192,8 @@ validate_script (j_compress_ptr cinfo)
     Se = scanptr->Se;
     Ah = scanptr->Ah;
     Al = scanptr->Al;
-    if (cinfo->progressive_mode) {
+    if (cinfo->progressive_mode)
+    {
 #ifdef C_PROGRESSIVE_SUPPORTED
       /* The JPEG spec simply gives the ranges 0..13 for Ah and Al, but that
        * seems wrong: the upper bound ought to depend on data precision.
@@ -200,23 +210,31 @@ validate_script (j_compress_ptr cinfo)
       if (Ss < 0 || Ss >= DCTSIZE2 || Se < Ss || Se >= DCTSIZE2 ||
           Ah < 0 || Ah > MAX_AH_AL || Al < 0 || Al > MAX_AH_AL)
         ERREXIT1(cinfo, JERR_BAD_PROG_SCRIPT, scanno);
-      if (Ss == 0) {
+      if (Ss == 0)
+      {
         if (Se != 0)		/* DC and AC together not OK */
           ERREXIT1(cinfo, JERR_BAD_PROG_SCRIPT, scanno);
-      } else {
+      }
+      else
+      {
         if (ncomps != 1)	/* AC scans must be for only one component */
           ERREXIT1(cinfo, JERR_BAD_PROG_SCRIPT, scanno);
       }
-      for (ci = 0; ci < ncomps; ci++) {
+      for (ci = 0; ci < ncomps; ci++)
+      {
         last_bitpos_ptr = & last_bitpos[scanptr->component_index[ci]][0];
         if (Ss != 0 && last_bitpos_ptr[0] < 0) /* AC without prior DC scan */
           ERREXIT1(cinfo, JERR_BAD_PROG_SCRIPT, scanno);
-        for (coefi = Ss; coefi <= Se; coefi++) {
-          if (last_bitpos_ptr[coefi] < 0) {
+        for (coefi = Ss; coefi <= Se; coefi++)
+        {
+          if (last_bitpos_ptr[coefi] < 0)
+          {
             /* first scan of this coefficient */
             if (Ah != 0)
               ERREXIT1(cinfo, JERR_BAD_PROG_SCRIPT, scanno);
-          } else {
+          }
+          else
+          {
             /* not first scan */
             if (Ah != last_bitpos_ptr[coefi] || Al != Ah-1)
               ERREXIT1(cinfo, JERR_BAD_PROG_SCRIPT, scanno);
@@ -225,12 +243,15 @@ validate_script (j_compress_ptr cinfo)
         }
       }
 #endif
-    } else {
+    }
+    else
+    {
       /* For sequential JPEG, all progression parameters must be these: */
       if (Ss != 0 || Se != DCTSIZE2-1 || Ah != 0 || Al != 0)
         ERREXIT1(cinfo, JERR_BAD_PROG_SCRIPT, scanno);
       /* Make sure components are not sent twice */
-      for (ci = 0; ci < ncomps; ci++) {
+      for (ci = 0; ci < ncomps; ci++)
+      {
         thisi = scanptr->component_index[ci];
         if (component_sent[thisi])
           ERREXIT1(cinfo, JERR_BAD_SCAN_SCRIPT, scanno);
@@ -240,20 +261,25 @@ validate_script (j_compress_ptr cinfo)
   }
 
   /* Now verify that everything got sent. */
-  if (cinfo->progressive_mode) {
+  if (cinfo->progressive_mode)
+  {
 #ifdef C_PROGRESSIVE_SUPPORTED
     /* For progressive mode, we only check that at least some DC data
      * got sent for each component; the spec does not require that all bits
      * of all coefficients be transmitted.  Would it be wiser to enforce
      * transmission of all coefficient bits??
      */
-    for (ci = 0; ci < cinfo->num_components; ci++) {
+    for (ci = 0; ci < cinfo->num_components; ci++)
+    {
       if (last_bitpos[ci][0] < 0)
         ERREXIT(cinfo, JERR_MISSING_DATA);
     }
 #endif
-  } else {
-    for (ci = 0; ci < cinfo->num_components; ci++) {
+  }
+  else
+  {
+    for (ci = 0; ci < cinfo->num_components; ci++)
+    {
       if (! component_sent[ci])
         ERREXIT(cinfo, JERR_MISSING_DATA);
     }
@@ -270,13 +296,15 @@ select_scan_parameters (j_compress_ptr cinfo)
   int ci;
 
 #ifdef C_MULTISCAN_FILES_SUPPORTED
-  if (cinfo->scan_info != NULL) {
+  if (cinfo->scan_info != NULL)
+  {
     /* Prepare for current scan --- the script is already validated */
     my_master_ptr master = (my_master_ptr) cinfo->master;
     const jpeg_scan_info * scanptr = cinfo->scan_info + master->scan_number;
 
     cinfo->comps_in_scan = scanptr->comps_in_scan;
-    for (ci = 0; ci < scanptr->comps_in_scan; ci++) {
+    for (ci = 0; ci < scanptr->comps_in_scan; ci++)
+    {
       cinfo->cur_comp_info[ci] =
         &cinfo->comp_info[scanptr->component_index[ci]];
     }
@@ -293,7 +321,8 @@ select_scan_parameters (j_compress_ptr cinfo)
       ERREXIT2(cinfo, JERR_COMPONENT_COUNT, cinfo->num_components,
                MAX_COMPS_IN_SCAN);
     cinfo->comps_in_scan = cinfo->num_components;
-    for (ci = 0; ci < cinfo->num_components; ci++) {
+    for (ci = 0; ci < cinfo->num_components; ci++)
+    {
       cinfo->cur_comp_info[ci] = &cinfo->comp_info[ci];
     }
     cinfo->Ss = 0;
@@ -312,7 +341,8 @@ per_scan_setup (j_compress_ptr cinfo)
   int ci, mcublks, tmp;
   jpeg_component_info *compptr;
 
-  if (cinfo->comps_in_scan == 1) {
+  if (cinfo->comps_in_scan == 1)
+  {
 
     /* Noninterleaved (single-component) scan */
     compptr = cinfo->cur_comp_info[0];
@@ -338,7 +368,9 @@ per_scan_setup (j_compress_ptr cinfo)
     cinfo->blocks_in_MCU = 1;
     cinfo->MCU_membership[0] = 0;
 
-  } else {
+  }
+  else
+  {
 
     /* Interleaved (multi-component) scan */
     if (cinfo->comps_in_scan <= 0 || cinfo->comps_in_scan > MAX_COMPS_IN_SCAN)
@@ -355,7 +387,8 @@ per_scan_setup (j_compress_ptr cinfo)
 
     cinfo->blocks_in_MCU = 0;
 
-    for (ci = 0; ci < cinfo->comps_in_scan; ci++) {
+    for (ci = 0; ci < cinfo->comps_in_scan; ci++)
+    {
       compptr = cinfo->cur_comp_info[ci];
       /* Sampling factors give # of blocks of component in each MCU */
       compptr->MCU_width = compptr->h_samp_factor;
@@ -373,7 +406,8 @@ per_scan_setup (j_compress_ptr cinfo)
       mcublks = compptr->MCU_blocks;
       if (cinfo->blocks_in_MCU + mcublks > C_MAX_BLOCKS_IN_MCU)
         ERREXIT(cinfo, JERR_BAD_MCU_SIZE);
-      while (mcublks-- > 0) {
+      while (mcublks-- > 0)
+      {
         cinfo->MCU_membership[cinfo->blocks_in_MCU++] = ci;
       }
     }
@@ -382,7 +416,8 @@ per_scan_setup (j_compress_ptr cinfo)
 
   /* Convert restart specified in rows to actual MCU count. */
   /* Note that count must fit in 16 bits, so we provide limiting. */
-  if (cinfo->restart_in_rows > 0) {
+  if (cinfo->restart_in_rows > 0)
+  {
     long nominal = (long) cinfo->restart_in_rows * (long) cinfo->MCUs_per_row;
     cinfo->restart_interval = (unsigned int) MIN(nominal, 65535L);
   }
@@ -402,14 +437,16 @@ prepare_for_pass (j_compress_ptr cinfo)
 {
   my_master_ptr master = (my_master_ptr) cinfo->master;
 
-  switch (master->pass_type) {
+  switch (master->pass_type)
+  {
     case main_pass:
       /* Initial pass: will collect input data, and do either Huffman
        * optimization or data output for the first scan.
        */
       select_scan_parameters(cinfo);
       per_scan_setup(cinfo);
-      if (! cinfo->raw_data_in) {
+      if (! cinfo->raw_data_in)
+      {
         (*cinfo->cconvert->start_pass) (cinfo);
         (*cinfo->downsample->start_pass) (cinfo);
         (*cinfo->prep->start_pass) (cinfo, JBUF_PASS_THRU);
@@ -420,10 +457,13 @@ prepare_for_pass (j_compress_ptr cinfo)
                                   (master->total_passes > 1 ?
                                    JBUF_SAVE_AND_PASS : JBUF_PASS_THRU));
       (*cinfo->main->start_pass) (cinfo, JBUF_PASS_THRU);
-      if (cinfo->optimize_coding) {
+      if (cinfo->optimize_coding)
+      {
         /* No immediate data output; postpone writing frame/scan headers */
         master->pub.call_pass_startup = FALSE;
-      } else {
+      }
+      else
+      {
         /* Will write frame/scan headers at first jpeg_write_scanlines call */
         master->pub.call_pass_startup = TRUE;
       }
@@ -433,7 +473,8 @@ prepare_for_pass (j_compress_ptr cinfo)
       /* Do Huffman optimization for a scan after the first one. */
       select_scan_parameters(cinfo);
       per_scan_setup(cinfo);
-      if (cinfo->Ss != 0 || cinfo->Ah == 0 || cinfo->arith_code) {
+      if (cinfo->Ss != 0 || cinfo->Ah == 0 || cinfo->arith_code)
+      {
         (*cinfo->entropy->start_pass) (cinfo, TRUE);
         (*cinfo->coef->start_pass) (cinfo, JBUF_CRANK_DEST);
         master->pub.call_pass_startup = FALSE;
@@ -449,7 +490,8 @@ prepare_for_pass (j_compress_ptr cinfo)
     case output_pass:
       /* Do a data-output pass. */
       /* We need not repeat per-scan setup if prior optimization pass did it. */
-      if (! cinfo->optimize_coding) {
+      if (! cinfo->optimize_coding)
+      {
         select_scan_parameters(cinfo);
         per_scan_setup(cinfo);
       }
@@ -468,7 +510,8 @@ prepare_for_pass (j_compress_ptr cinfo)
   master->pub.is_last_pass = (master->pass_number == master->total_passes-1);
 
   /* Set up progress monitor's pass info if present */
-  if (cinfo->progress != NULL) {
+  if (cinfo->progress != NULL)
+  {
     cinfo->progress->completed_passes = master->pass_number;
     cinfo->progress->total_passes = master->total_passes;
   }
@@ -510,7 +553,8 @@ finish_pass_master (j_compress_ptr cinfo)
   (*cinfo->entropy->finish_pass) (cinfo);
 
   /* Update state for next pass */
-  switch (master->pass_type) {
+  switch (master->pass_type)
+  {
     case main_pass:
       /* next pass is either output of scan 0 (after optimization)
        * or output of scan 1 (if no optimization).
@@ -556,13 +600,16 @@ jinit_c_master_control (j_compress_ptr cinfo, boolean transcode_only)
   /* Validate parameters, determine derived values */
   initial_setup(cinfo);
 
-  if (cinfo->scan_info != NULL) {
+  if (cinfo->scan_info != NULL)
+  {
 #ifdef C_MULTISCAN_FILES_SUPPORTED
     validate_script(cinfo);
 #else
     ERREXIT(cinfo, JERR_NOT_COMPILED);
 #endif
-  } else {
+  }
+  else
+  {
     cinfo->progressive_mode = FALSE;
     cinfo->num_scans = 1;
   }
@@ -571,13 +618,16 @@ jinit_c_master_control (j_compress_ptr cinfo, boolean transcode_only)
     cinfo->optimize_coding = TRUE; /* assume default tables no good for progressive mode */
 
   /* Initialize my private state */
-  if (transcode_only) {
+  if (transcode_only)
+  {
     /* no main pass in transcoding */
     if (cinfo->optimize_coding)
       master->pass_type = huff_opt_pass;
     else
       master->pass_type = output_pass;
-  } else {
+  }
+  else
+  {
     /* for normal compression, first pass is always this type: */
     master->pass_type = main_pass;
   }

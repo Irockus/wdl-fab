@@ -141,12 +141,15 @@ typedef enum
 
 
 
-typedef struct	{
+typedef struct
+{
   DWORD	dwConfig;			// BE_CONFIG_XXXXX
   // Currently only BE_CONFIG_MP3 is supported
-  union	{
+  union
+  {
 
-    struct	{
+    struct
+    {
 
       DWORD	dwSampleRate;	// 48000, 44100 and 32000 allowed.  RG note: also seems to support 16000, 22050, 24000.
       BYTE	byMode;			// BE_MP3_MODE_STEREO, BE_MP3_MODE_DUALCHANNEL, BE_MP3_MODE_MONO
@@ -193,7 +196,8 @@ typedef struct	{
 
     } LHV1;					// LAME header version 1
 
-    struct	{
+    struct
+    {
 
       DWORD	dwSampleRate;
       BYTE	byMode;
@@ -207,7 +211,8 @@ typedef struct	{
 } BE_CONFIG, *PBE_CONFIG;
 
 
-typedef struct	{
+typedef struct
+{
 
   // BladeEnc DLL Version number
 
@@ -298,7 +303,8 @@ static void (*remove_buf)(void *);
 #endif
 
 
-typedef enum MPEG_mode_e {
+typedef enum MPEG_mode_e
+{
   STEREO = 0,
   JOINT_STEREO,
   DUAL_CHANNEL,   /* LAME doesn't supports this! */

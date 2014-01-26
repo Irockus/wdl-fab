@@ -7,9 +7,11 @@ void ChannelPinMapper::SetNPins(int nPins)
   if (nPins<0) nPins=0;
   else if (nPins>CHANNELPINMAPPER_MAXPINS) nPins=CHANNELPINMAPPER_MAXPINS;
   int i;
-  for (i = m_nPins; i < nPins; ++i) {
+  for (i = m_nPins; i < nPins; ++i)
+  {
     ClearPin(i);
-    if (i < m_nCh) {
+    if (i < m_nCh)
+    {
       SetPin(i, i, true);
     }
   }
@@ -19,7 +21,8 @@ void ChannelPinMapper::SetNPins(int nPins)
 void ChannelPinMapper::SetNChannels(int nCh)
 {
   int i;
-  for (i = m_nCh; i < nCh && i < m_nPins; ++i) {
+  for (i = m_nCh; i < nCh && i < m_nPins; ++i)
+  {
     SetPin(i, i, true);
   }
   m_nCh = nCh;
@@ -88,7 +91,8 @@ bool ChannelPinMapper::IsStraightPassthrough() const
   if (m_nCh != m_nPins) return false;
   const WDL_UINT64* pMap = m_mapping;
   int i;
-  for (i = 0; i < m_nPins; ++i, ++pMap) {
+  for (i = 0; i < m_nPins; ++i, ++pMap)
+  {
     if (*pMap != BITMASK64(i)) return false;
   }
   return true;

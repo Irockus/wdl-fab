@@ -38,7 +38,8 @@
 #define HT_PUT_KEY(l)	(l << 12)
 #define HT_PUT_CODE(l)	(l & 0x0FFF)
 
-typedef struct GifHashTableType {
+typedef struct GifHashTableType
+{
   UINT32 HTable[HT_SIZE];
 } GifHashTableType;
 

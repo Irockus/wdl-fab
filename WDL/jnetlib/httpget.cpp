@@ -274,14 +274,16 @@ void JNL_HTTPGet::do_parse_url(char *url, char **host, int *port, char **req, ch
   {
     *np++=0;
     *port=atoi(np);
-  } else *port=80;
+  }
+  else *port=80;
   *host=(char*)malloc(strlen(p)+1);
   if (*host) strcpy(*host,p);
 }
 
 
 const char *JNL_HTTPGet::getallheaders()
-{ // double null terminated, null delimited list
+{
+  // double null terminated, null delimited list
   if (m_recvheaders) return m_recvheaders;
   else return "\0\0";
 }

@@ -183,7 +183,8 @@ static void Dlg_DrawChildWindowBorders(HWND hwndDlg, INT_PTR *tab, int tabsize, 
   DeleteObject(pen2);
 
 #ifdef _WIN32
-  if(hrgn) {
+  if(hrgn)
+  {
     //erase bkgnd while clipping out our own drawn stuff (for flickerless display)
 #ifdef WDL_DLGITEMBORDER_CUSTOMBGCODE
     WDL_DLGITEMBORDER_CUSTOMBGCODE

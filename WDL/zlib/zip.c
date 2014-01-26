@@ -299,7 +299,8 @@ local int zip64local_putValue (const zlib_filefunc64_32_def* pzlib_filefunc_def,
     x >>= 8;
   }
   if (x != 0)
-  { /* data overflow - hack for ZIP64 (X Roche) */
+  {
+    /* data overflow - hack for ZIP64 (X Roche) */
     for (n = 0; n < nbByte; n++)
     {
       buf[n] = 0xff;
@@ -317,13 +318,15 @@ local void zip64local_putValue_inmemory (void* dest, ZPOS64_T x, int nbByte)
 {
   unsigned char* buf=(unsigned char*)dest;
   int n;
-  for (n = 0; n < nbByte; n++) {
+  for (n = 0; n < nbByte; n++)
+  {
     buf[n] = (unsigned char)(x & 0xff);
     x >>= 8;
   }
 
   if (x != 0)
-  { /* data overflow - hack for ZIP64 */
+  {
+    /* data overflow - hack for ZIP64 */
     for (n = 0; n < nbByte; n++)
     {
       buf[n] = 0xff;

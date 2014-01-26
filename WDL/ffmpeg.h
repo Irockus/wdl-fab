@@ -104,7 +104,8 @@ public:
     if (codec && codec->pix_fmts)
     {
       const enum PixelFormat *p= codec->pix_fmts;
-      for (; *p!=-1; p++) {
+      for (; *p!=-1; p++)
+      {
         if (*p == m_video_enc->pix_fmt)
           break;
       }

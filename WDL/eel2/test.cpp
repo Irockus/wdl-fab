@@ -29,7 +29,8 @@ static void writeToStandardError(const char *fmt, ...)
 }
 
 
-class sInst {
+class sInst
+{
 public:
   enum
   {

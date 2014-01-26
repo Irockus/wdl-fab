@@ -20,7 +20,8 @@ class RtError : public std::exception
 {
 public:
   //! Defined RtError types.
-  enum Type {
+  enum Type
+  {
     WARNING,           /*!< A non-critical error. */
     DEBUG_WARNING,     /*!< A non-critical error which might be useful for debugging. */
     UNSPECIFIED,       /*!< The default, unspecified error type. */

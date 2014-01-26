@@ -30,7 +30,8 @@
 
 #ifdef JMAKE_ENUM_LIST
 
-typedef enum {
+typedef enum
+{
 
 #define JMESSAGE(code,string)	code ,
 

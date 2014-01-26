@@ -40,7 +40,8 @@
 
 /* Private subobject for this module */
 
-typedef struct {
+typedef struct
+{
   struct jpeg_inverse_dct pub;	/* public fields */
 
   /* This array contains the IDCT method code that each multiplier table
@@ -56,7 +57,8 @@ typedef my_idct_controller * my_idct_ptr;
 
 /* Allocated multiplier tables: big enough for any supported variant */
 
-typedef union {
+typedef union
+{
   ISLOW_MULT_TYPE islow_array[DCTSIZE2];
 #ifdef DCT_IFAST_SUPPORTED
   IFAST_MULT_TYPE ifast_array[DCTSIZE2];
@@ -96,9 +98,11 @@ start_pass (j_decompress_ptr cinfo)
   JQUANT_TBL * qtbl;
 
   for (ci = 0, compptr = cinfo->comp_info; ci < cinfo->num_components;
-       ci++, compptr++) {
+       ci++, compptr++)
+  {
     /* Select the proper IDCT routine for this component's scaling */
-    switch (compptr->DCT_scaled_size) {
+    switch (compptr->DCT_scaled_size)
+    {
 #ifdef IDCT_SCALING_SUPPORTED
       case 1:
         method_ptr = jpeg_idct_1x1;
@@ -114,7 +118,8 @@ start_pass (j_decompress_ptr cinfo)
         break;
 #endif
       case DCTSIZE:
-        switch (cinfo->dct_method) {
+        switch (cinfo->dct_method)
+        {
 #ifdef DCT_ISLOW_SUPPORTED
           case JDCT_ISLOW:
             method_ptr = jpeg_idct_islow;
@@ -156,7 +161,8 @@ start_pass (j_decompress_ptr cinfo)
     if (qtbl == NULL)		/* happens if no data yet for component */
       continue;
     idct->cur_method[ci] = method;
-    switch (method) {
+    switch (method)
+    {
 #ifdef PROVIDE_ISLOW_TABLES
       case JDCT_ISLOW:
       {
@@ -164,7 +170,8 @@ start_pass (j_decompress_ptr cinfo)
          * coefficients, but are stored as ints to ensure access efficiency.
          */
         ISLOW_MULT_TYPE * ismtbl = (ISLOW_MULT_TYPE *) compptr->dct_table;
-        for (i = 0; i < DCTSIZE2; i++) {
+        for (i = 0; i < DCTSIZE2; i++)
+        {
           ismtbl[i] = (ISLOW_MULT_TYPE) qtbl->quantval[i];
         }
       }
@@ -182,7 +189,8 @@ start_pass (j_decompress_ptr cinfo)
          */
         IFAST_MULT_TYPE * ifmtbl = (IFAST_MULT_TYPE *) compptr->dct_table;
 #define CONST_BITS 14
-        static const INT16 aanscales[DCTSIZE2] = {
+        static const INT16 aanscales[DCTSIZE2] =
+        {
           /* precomputed values scaled up by 14 bits */
           16384, 22725, 21407, 19266, 16384, 12873,  8867,  4520,
           22725, 31521, 29692, 26722, 22725, 17855, 12299,  6270,
@@ -195,7 +203,8 @@ start_pass (j_decompress_ptr cinfo)
         };
         SHIFT_TEMPS
 
-        for (i = 0; i < DCTSIZE2; i++) {
+        for (i = 0; i < DCTSIZE2; i++)
+        {
           ifmtbl[i] = (IFAST_MULT_TYPE)
                       DESCALE(MULTIPLY16V16((INT32) qtbl->quantval[i],
                                             (INT32) aanscales[i]),
@@ -214,14 +223,17 @@ start_pass (j_decompress_ptr cinfo)
          */
         FLOAT_MULT_TYPE * fmtbl = (FLOAT_MULT_TYPE *) compptr->dct_table;
         int row, col;
-        static const double aanscalefactor[DCTSIZE] = {
+        static const double aanscalefactor[DCTSIZE] =
+        {
           1.0, 1.387039845, 1.306562965, 1.175875602,
           1.0, 0.785694958, 0.541196100, 0.275899379
         };
 
         i = 0;
-        for (row = 0; row < DCTSIZE; row++) {
-          for (col = 0; col < DCTSIZE; col++) {
+        for (row = 0; row < DCTSIZE; row++)
+        {
+          for (col = 0; col < DCTSIZE; col++)
+          {
             fmtbl[i] = (FLOAT_MULT_TYPE)
                        ((double) qtbl->quantval[i] *
                         aanscalefactor[row] * aanscalefactor[col]);
@@ -257,7 +269,8 @@ jinit_inverse_dct (j_decompress_ptr cinfo)
   idct->pub.start_pass = start_pass;
 
   for (ci = 0, compptr = cinfo->comp_info; ci < cinfo->num_components;
-       ci++, compptr++) {
+       ci++, compptr++)
+  {
     /* Allocate and pre-zero a multiplier table for each component */
     compptr->dct_table =
       (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,

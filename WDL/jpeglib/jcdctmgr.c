@@ -19,7 +19,8 @@
 
 /* Private subobject for this module */
 
-typedef struct {
+typedef struct
+{
   struct jpeg_forward_dct pub;	/* public fields */
 
   /* Pointer to the DCT routine actually in use */
@@ -60,7 +61,8 @@ start_pass_fdctmgr (j_compress_ptr cinfo)
   DCTELEM * dtbl;
 
   for (ci = 0, compptr = cinfo->comp_info; ci < cinfo->num_components;
-       ci++, compptr++) {
+       ci++, compptr++)
+  {
     qtblno = compptr->quant_tbl_no;
     /* Make sure specified quantization table is present */
     if (qtblno < 0 || qtblno >= NUM_QUANT_TBLS ||
@@ -69,19 +71,22 @@ start_pass_fdctmgr (j_compress_ptr cinfo)
     qtbl = cinfo->quant_tbl_ptrs[qtblno];
     /* Compute divisors for this quant table */
     /* We may do this more than once for same table, but it's not a big deal */
-    switch (cinfo->dct_method) {
+    switch (cinfo->dct_method)
+    {
 #ifdef DCT_ISLOW_SUPPORTED
       case JDCT_ISLOW:
         /* For LL&M IDCT method, divisors are equal to raw quantization
          * coefficients multiplied by 8 (to counteract scaling).
          */
-        if (fdct->divisors[qtblno] == NULL) {
+        if (fdct->divisors[qtblno] == NULL)
+        {
           fdct->divisors[qtblno] = (DCTELEM *)
                                    (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
                                        DCTSIZE2 * SIZEOF(DCTELEM));
         }
         dtbl = fdct->divisors[qtblno];
-        for (i = 0; i < DCTSIZE2; i++) {
+        for (i = 0; i < DCTSIZE2; i++)
+        {
           dtbl[i] = ((DCTELEM) qtbl->quantval[i]) << 3;
         }
         break;
@@ -96,7 +101,8 @@ start_pass_fdctmgr (j_compress_ptr cinfo)
          * We apply a further scale factor of 8.
          */
 #define CONST_BITS 14
-        static const INT16 aanscales[DCTSIZE2] = {
+        static const INT16 aanscales[DCTSIZE2] =
+        {
           /* precomputed values scaled up by 14 bits */
           16384, 22725, 21407, 19266, 16384, 12873,  8867,  4520,
           22725, 31521, 29692, 26722, 22725, 17855, 12299,  6270,
@@ -109,13 +115,15 @@ start_pass_fdctmgr (j_compress_ptr cinfo)
         };
         SHIFT_TEMPS
 
-        if (fdct->divisors[qtblno] == NULL) {
+        if (fdct->divisors[qtblno] == NULL)
+        {
           fdct->divisors[qtblno] = (DCTELEM *)
                                    (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
                                        DCTSIZE2 * SIZEOF(DCTELEM));
         }
         dtbl = fdct->divisors[qtblno];
-        for (i = 0; i < DCTSIZE2; i++) {
+        for (i = 0; i < DCTSIZE2; i++)
+        {
           dtbl[i] = (DCTELEM)
                     DESCALE(MULTIPLY16V16((INT32) qtbl->quantval[i],
                                           (INT32) aanscales[i]),
@@ -137,20 +145,24 @@ start_pass_fdctmgr (j_compress_ptr cinfo)
          */
         FAST_FLOAT * fdtbl;
         int row, col;
-        static const double aanscalefactor[DCTSIZE] = {
+        static const double aanscalefactor[DCTSIZE] =
+        {
           1.0, 1.387039845, 1.306562965, 1.175875602,
           1.0, 0.785694958, 0.541196100, 0.275899379
         };
 
-        if (fdct->float_divisors[qtblno] == NULL) {
+        if (fdct->float_divisors[qtblno] == NULL)
+        {
           fdct->float_divisors[qtblno] = (FAST_FLOAT *)
                                          (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
                                              DCTSIZE2 * SIZEOF(FAST_FLOAT));
         }
         fdtbl = fdct->float_divisors[qtblno];
         i = 0;
-        for (row = 0; row < DCTSIZE; row++) {
-          for (col = 0; col < DCTSIZE; col++) {
+        for (row = 0; row < DCTSIZE; row++)
+        {
+          for (col = 0; col < DCTSIZE; col++)
+          {
             fdtbl[i] = (FAST_FLOAT)
                        (1.0 / (((double) qtbl->quantval[i] *
                                 aanscalefactor[row] * aanscalefactor[col] * 8.0)));
@@ -192,14 +204,17 @@ forward_DCT (j_compress_ptr cinfo, jpeg_component_info * compptr,
 
   sample_data += start_row;	/* fold in the vertical offset once */
 
-  for (bi = 0; bi < num_blocks; bi++, start_col += DCTSIZE) {
+  for (bi = 0; bi < num_blocks; bi++, start_col += DCTSIZE)
+  {
     /* Load data into workspace, applying unsigned->signed conversion */
-    { register DCTELEM *workspaceptr;
+    {
+      register DCTELEM *workspaceptr;
       register JSAMPROW elemptr;
       register int elemr;
 
       workspaceptr = workspace;
-      for (elemr = 0; elemr < DCTSIZE; elemr++) {
+      for (elemr = 0; elemr < DCTSIZE; elemr++)
+      {
         elemptr = sample_data[elemr] + start_col;
 #if DCTSIZE == 8		/* unroll the inner loop */
         *workspaceptr++ = GETJSAMPLE(*elemptr++) - CENTERJSAMPLE;
@@ -211,8 +226,10 @@ forward_DCT (j_compress_ptr cinfo, jpeg_component_info * compptr,
         *workspaceptr++ = GETJSAMPLE(*elemptr++) - CENTERJSAMPLE;
         *workspaceptr++ = GETJSAMPLE(*elemptr++) - CENTERJSAMPLE;
 #else
-        { register int elemc;
-          for (elemc = DCTSIZE; elemc > 0; elemc--) {
+        {
+          register int elemc;
+          for (elemc = DCTSIZE; elemc > 0; elemc--)
+          {
             *workspaceptr++ = GETJSAMPLE(*elemptr++) - CENTERJSAMPLE;
           }
         }
@@ -224,11 +241,13 @@ forward_DCT (j_compress_ptr cinfo, jpeg_component_info * compptr,
     (*do_dct) (workspace);
 
     /* Quantize/descale the coefficients, and store into coef_blocks[] */
-    { register DCTELEM temp, qval;
+    {
+      register DCTELEM temp, qval;
       register int i;
       register JCOEFPTR output_ptr = coef_blocks[bi];
 
-      for (i = 0; i < DCTSIZE2; i++) {
+      for (i = 0; i < DCTSIZE2; i++)
+      {
         qval = divisors[i];
         temp = workspace[i];
         /* Divide the coefficient value by qval, ensuring proper rounding.
@@ -248,12 +267,15 @@ forward_DCT (j_compress_ptr cinfo, jpeg_component_info * compptr,
 #else
 #define DIVIDE_BY(a,b)	if (a >= b) a /= b; else a = 0
 #endif
-        if (temp < 0) {
+        if (temp < 0)
+        {
           temp = -temp;
           temp += qval>>1;	/* for rounding */
           DIVIDE_BY(temp, qval);
           temp = -temp;
-        } else {
+        }
+        else
+        {
           temp += qval>>1;	/* for rounding */
           DIVIDE_BY(temp, qval);
         }
@@ -282,14 +304,17 @@ forward_DCT_float (j_compress_ptr cinfo, jpeg_component_info * compptr,
 
   sample_data += start_row;	/* fold in the vertical offset once */
 
-  for (bi = 0; bi < num_blocks; bi++, start_col += DCTSIZE) {
+  for (bi = 0; bi < num_blocks; bi++, start_col += DCTSIZE)
+  {
     /* Load data into workspace, applying unsigned->signed conversion */
-    { register FAST_FLOAT *workspaceptr;
+    {
+      register FAST_FLOAT *workspaceptr;
       register JSAMPROW elemptr;
       register int elemr;
 
       workspaceptr = workspace;
-      for (elemr = 0; elemr < DCTSIZE; elemr++) {
+      for (elemr = 0; elemr < DCTSIZE; elemr++)
+      {
         elemptr = sample_data[elemr] + start_col;
 #if DCTSIZE == 8		/* unroll the inner loop */
         *workspaceptr++ = (FAST_FLOAT)(GETJSAMPLE(*elemptr++) - CENTERJSAMPLE);
@@ -301,8 +326,10 @@ forward_DCT_float (j_compress_ptr cinfo, jpeg_component_info * compptr,
         *workspaceptr++ = (FAST_FLOAT)(GETJSAMPLE(*elemptr++) - CENTERJSAMPLE);
         *workspaceptr++ = (FAST_FLOAT)(GETJSAMPLE(*elemptr++) - CENTERJSAMPLE);
 #else
-        { register int elemc;
-          for (elemc = DCTSIZE; elemc > 0; elemc--) {
+        {
+          register int elemc;
+          for (elemc = DCTSIZE; elemc > 0; elemc--)
+          {
             *workspaceptr++ = (FAST_FLOAT)
                               (GETJSAMPLE(*elemptr++) - CENTERJSAMPLE);
           }
@@ -315,11 +342,13 @@ forward_DCT_float (j_compress_ptr cinfo, jpeg_component_info * compptr,
     (*do_dct) (workspace);
 
     /* Quantize/descale the coefficients, and store into coef_blocks[] */
-    { register FAST_FLOAT temp;
+    {
+      register FAST_FLOAT temp;
       register int i;
       register JCOEFPTR output_ptr = coef_blocks[bi];
 
-      for (i = 0; i < DCTSIZE2; i++) {
+      for (i = 0; i < DCTSIZE2; i++)
+      {
         /* Apply the quantization and scaling factor */
         temp = workspace[i] * divisors[i];
         /* Round to nearest integer.
@@ -353,7 +382,8 @@ jinit_forward_dct (j_compress_ptr cinfo)
   cinfo->fdct = (struct jpeg_forward_dct *) fdct;
   fdct->pub.start_pass = start_pass_fdctmgr;
 
-  switch (cinfo->dct_method) {
+  switch (cinfo->dct_method)
+  {
 #ifdef DCT_ISLOW_SUPPORTED
     case JDCT_ISLOW:
       fdct->pub.forward_DCT = forward_DCT;
@@ -378,7 +408,8 @@ jinit_forward_dct (j_compress_ptr cinfo)
   }
 
   /* Mark divisor tables unallocated */
-  for (i = 0; i < NUM_QUANT_TBLS; i++) {
+  for (i = 0; i < NUM_QUANT_TBLS; i++)
+  {
     fdct->divisors[i] = NULL;
 #ifdef DCT_FLOAT_SUPPORTED
     fdct->float_divisors[i] = NULL;

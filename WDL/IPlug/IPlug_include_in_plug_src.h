@@ -53,7 +53,8 @@ extern "C"
     IPlugInstanceInfo instanceInfo;
     instanceInfo.mVSTHostCallback = hostCallback;
     IPlugVST* pPlug = new PLUG_CLASS_NAME(instanceInfo);
-    if (pPlug) {
+    if (pPlug)
+    {
       pPlug->EnsureDefaultPreset();
       pPlug->mAEffect.numPrograms = IPMAX(pPlug->mAEffect.numPrograms, 1);
       return &(pPlug->mAEffect);
@@ -113,7 +114,8 @@ IPlug* MakePlug()
   return new PLUG_CLASS_NAME(instanceInfo);
 }
 
-static FUnknown* createInstance (void*) {
+static FUnknown* createInstance (void*)
+{
   return (IAudioProcessor*) MakePlug();
 }
 

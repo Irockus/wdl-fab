@@ -401,7 +401,8 @@ void WDL_VWnd_Painter::PaintBGCfg(WDL_VirtualWnd_BGCfg *bitmap, const RECT *coor
 
   if (allowTint)
   {
-    RECT rr= {
+    RECT rr=
+    {
       max(coords->left,m_ps.rcPaint.left),
       max(coords->top,m_ps.rcPaint.top),
       min(coords->right,m_ps.rcPaint.right),

@@ -202,7 +202,8 @@ int WDL_RFB_Client::Run()
             }
             // request encodings
             {
-              const int encs[]= {
+              const int encs[]=
+              {
 #ifdef WANT_RRE
                 ENCODE_TYPE_RRE,
 #endif

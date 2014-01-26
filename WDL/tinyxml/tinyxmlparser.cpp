@@ -215,7 +215,8 @@ void TiXmlParsingData::Stamp( const char* now, TiXmlEncoding encoding )
     const unsigned char* pU = (const unsigned char*)p;
 
     // Code contributed by Fletcher Dunn: (modified by lee)
-    switch (*pU) {
+    switch (*pU)
+    {
       case 0:
         // We *should* never get here, but in case we do, don't
         // advance past the terminating null character, ever
@@ -229,7 +230,8 @@ void TiXmlParsingData::Stamp( const char* now, TiXmlEncoding encoding )
         ++p;
 
         // Check for \r\n sequence, and treat this as a single character
-        if (*p == '\n') {
+        if (*p == '\n')
+        {
           ++p;
         }
         break;
@@ -245,7 +247,8 @@ void TiXmlParsingData::Stamp( const char* now, TiXmlEncoding encoding )
         // Check for \n\r sequence, and treat this as a single
         // character.  (Yes, this bizarre thing does occur still
         // on some arcane platforms...)
-        if (*p == '\r') {
+        if (*p == '\r')
+        {
           ++p;
         }
         break;
@@ -427,7 +430,8 @@ const char* TiXmlBase::ReadName( const char* p, TIXML_STRING * name, TiXmlEncodi
       //(*name) += *p; // expensive
       ++p;
     }
-    if ( p-start > 0 ) {
+    if ( p-start > 0 )
+    {
       name->assign( start, p-start );
     }
     return p;
@@ -786,7 +790,8 @@ const char* TiXmlDocument::Parse( const char* p, TiXmlParsingData* prevData, TiX
   }
 
   // Was this empty?
-  if ( !firstChild ) {
+  if ( !firstChild )
+  {
     SetError( TIXML_ERROR_DOCUMENT_EMPTY, 0, 0, encoding );
     return 0;
   }
@@ -994,7 +999,8 @@ void TiXmlElement::StreamIn (std::istream * in, TIXML_STRING * tag)
         {
           size_t len = tag->size();
           const char* start = tag->c_str() + len - 9;
-          if ( strcmp( start, "<![CDATA[" ) == 0 ) {
+          if ( strcmp( start, "<![CDATA[" ) == 0 )
+          {
             assert( !closingTag );
             break;
           }
@@ -1114,7 +1120,8 @@ const char* TiXmlElement::Parse( const char* p, TiXmlParsingData* data, TiXmlEnc
       // elements -- read the end tag, and return.
       ++p;
       p = ReadValue( p, data, encoding );		// Note this is an Element method, and will set the error if one happens.
-      if ( !p || !*p ) {
+      if ( !p || !*p )
+      {
         // We were looking for the end tag, but found nothing.
         // Fix for [ 1663758 ] Failure to report error on bad XML
         if ( document ) document->SetError( TIXML_ERROR_READING_END_TAG, p, data, encoding );
@@ -1449,7 +1456,8 @@ const char* TiXmlAttribute::Parse( const char* p, TiXmlParsingData* data, TiXmlE
                && !IsWhiteSpace( *p ) && *p != '\n' && *p != '\r'	// whitespace
                && *p != '/' && *p != '>' )							// tag end
     {
-      if ( *p == SINGLE_QUOTE || *p == DOUBLE_QUOTE ) {
+      if ( *p == SINGLE_QUOTE || *p == DOUBLE_QUOTE )
+      {
         // [ 1451649 ] Attribute values with trailing quotes not handled correctly
         // We did not have an opening quote but seem to have a
         // closing one. Give up and throw an error.
@@ -1484,9 +1492,11 @@ void TiXmlText::StreamIn( std::istream * in, TIXML_STRING * tag )
     (*tag) += (char) c;
     in->get();	// "commits" the peek made above
 
-    if ( cdata && c == '>' && tag->size() >= 3 ) {
+    if ( cdata && c == '>' && tag->size() >= 3 )
+    {
       size_t len = tag->size();
-      if ( (*tag)[len-2] == ']' && (*tag)[len-3] == ']' ) {
+      if ( (*tag)[len-2] == ']' && (*tag)[len-3] == ']' )
+      {
         // terminator of cdata.
         return;
       }
