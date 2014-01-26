@@ -31,46 +31,46 @@ LICE_IBitmap *LICE_LoadPNG(const char *filename, LICE_IBitmap *bmp)
   if (!fp) fp = fopen(filename,"rb");
   if(!fp) return 0;
 
-  png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL); 
-  if(!png_ptr) 
+  png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  if(!png_ptr)
   {
     fclose(fp);
     return 0;
   }
 
-  png_infop info_ptr = png_create_info_struct(png_ptr); 
+  png_infop info_ptr = png_create_info_struct(png_ptr);
   if(!info_ptr)
   {
-    png_destroy_read_struct(&png_ptr, NULL, NULL); 
-    fclose(fp);
-    return 0;
-  }
-  
-  if (setjmp(png_jmpbuf(png_ptr)))
-  { 
-    png_destroy_read_struct(&png_ptr, &info_ptr, NULL); 
+    png_destroy_read_struct(&png_ptr, NULL, NULL);
     fclose(fp);
     return 0;
   }
 
-  png_init_io(png_ptr, fp); 
+  if (setjmp(png_jmpbuf(png_ptr)))
+  {
+    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+    fclose(fp);
+    return 0;
+  }
+
+  png_init_io(png_ptr, fp);
 
   png_read_info(png_ptr, info_ptr);
 
   unsigned int width, height;
   int bit_depth, color_type, interlace_type, compression_type, filter_method;
   png_get_IHDR(png_ptr, info_ptr, &width, &height,
-       &bit_depth, &color_type, &interlace_type,
-       &compression_type, &filter_method);
+               &bit_depth, &color_type, &interlace_type,
+               &compression_type, &filter_method);
 
   //convert whatever it is to RGBA
   if (color_type == PNG_COLOR_TYPE_PALETTE)
     png_set_palette_to_rgb(png_ptr);
 
-  if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8) 
+  if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
     png_set_expand_gray_1_2_4_to_8(png_ptr);
 
-  if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) 
+  if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
   {
     png_set_tRNS_to_alpha(png_ptr);
     color_type |= PNG_COLOR_MASK_ALPHA;
@@ -94,7 +94,7 @@ LICE_IBitmap *LICE_LoadPNG(const char *filename, LICE_IBitmap *bmp)
   if (bmp)
   {
     bmp->resize(width,height);
-    if (bmp->getWidth() != (int)width || bmp->getHeight() != (int)height) 
+    if (bmp->getWidth() != (int)width || bmp->getHeight() != (int)height)
     {
       png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
       fclose(fp);
@@ -112,7 +112,7 @@ LICE_IBitmap *LICE_LoadPNG(const char *filename, LICE_IBitmap *bmp)
     dbmpptr=-dbmpptr;
   }
   unsigned int i;
-  for(i=0;i<height;i++)
+  for(i=0; i<height; i++)
   {
     row_pointers[i]=(unsigned char *)bmpptr;
     bmpptr+=dbmpptr;
@@ -122,8 +122,8 @@ LICE_IBitmap *LICE_LoadPNG(const char *filename, LICE_IBitmap *bmp)
   fclose(fp);
 
   //put shit in correct order
-  #if !(LICE_PIXEL_A == 0 && LICE_PIXEL_R == 1 && LICE_PIXEL_G == 2 && LICE_PIXEL_B == 3)
-  for(i=0;i<height;i++)
+#if !(LICE_PIXEL_A == 0 && LICE_PIXEL_R == 1 && LICE_PIXEL_G == 2 && LICE_PIXEL_B == 3)
+  for(i=0; i<height; i++)
   {
     unsigned char *bmpptr = row_pointers[i];
     int j=width;
@@ -137,13 +137,13 @@ LICE_IBitmap *LICE_LoadPNG(const char *filename, LICE_IBitmap *bmp)
       bmpptr+=4;
     }
   }
-  #endif
+#endif
   free(row_pointers);
-  
+
   return bmp;
 }
 
-typedef struct 
+typedef struct
 {
   unsigned char *data;
   int len;
@@ -167,10 +167,10 @@ LICE_IBitmap *LICE_LoadPNGFromNamedResource(const char *name, LICE_IBitmap *bmp)
   char buf[2048];
   buf[0]=0;
   if (strlen(name)>400) return NULL; // max name for this is 400 chars
-  
-#ifdef __APPLE__  
+
+#ifdef __APPLE__
   CFBundleRef bund = CFBundleGetMainBundle();
-  if (bund) 
+  if (bund)
   {
     CFURLRef url=CFBundleCopyBundleURL(bund);
     if (url)
@@ -181,10 +181,10 @@ LICE_IBitmap *LICE_LoadPNGFromNamedResource(const char *name, LICE_IBitmap *bmp)
   }
   if (!buf[0]) return 0;
   strcat(buf,"/Contents/Resources/");
-#else  
+#else
   char tmp[64];
   sprintf(tmp,"/proc/%d/exe",getpid());
-  int sz = readlink(tmp, buf, sizeof(buf)-512);  
+  int sz = readlink(tmp, buf, sizeof(buf)-512);
   if (sz<0) sz=0;
   else if (sz >= sizeof(buf)-512) sz = sizeof(buf)-512-1;
   buf[sz]=0;
@@ -194,7 +194,7 @@ LICE_IBitmap *LICE_LoadPNGFromNamedResource(const char *name, LICE_IBitmap *bmp)
   *p=0;
   strcat(buf,"/Resources/");
 #endif // !__APPLE__
-  
+
   strcat(buf,name);
   return LICE_LoadPNG(buf,bmp);
 }
@@ -208,22 +208,22 @@ LICE_IBitmap *LICE_LoadPNGFromMemory(const void *data_in, int buflen, LICE_IBitm
 
   pngReadStruct readStruct = {data, buflen};
 
-  png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL); 
-  if(!png_ptr) 
+  png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  if(!png_ptr)
   {
     return 0;
   }
 
-  png_infop info_ptr = png_create_info_struct(png_ptr); 
+  png_infop info_ptr = png_create_info_struct(png_ptr);
   if(!info_ptr)
   {
-    png_destroy_read_struct(&png_ptr, NULL, NULL); 
+    png_destroy_read_struct(&png_ptr, NULL, NULL);
     return 0;
   }
-  
+
   if (setjmp(png_jmpbuf(png_ptr)))
-  { 
-    png_destroy_read_struct(&png_ptr, &info_ptr, NULL); 
+  {
+    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
     return 0;
   }
 
@@ -234,17 +234,17 @@ LICE_IBitmap *LICE_LoadPNGFromMemory(const void *data_in, int buflen, LICE_IBitm
   unsigned int width, height;
   int bit_depth, color_type, interlace_type, compression_type, filter_method;
   png_get_IHDR(png_ptr, info_ptr, &width, &height,
-       &bit_depth, &color_type, &interlace_type,
-       &compression_type, &filter_method);
+               &bit_depth, &color_type, &interlace_type,
+               &compression_type, &filter_method);
 
   //convert whatever it is to RGBA
   if (color_type == PNG_COLOR_TYPE_PALETTE)
     png_set_palette_to_rgb(png_ptr);
 
-  if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8) 
+  if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
     png_set_expand_gray_1_2_4_to_8(png_ptr);
 
-  if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) 
+  if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
   {
     png_set_tRNS_to_alpha(png_ptr);
     color_type |= PNG_COLOR_MASK_ALPHA;
@@ -268,7 +268,7 @@ LICE_IBitmap *LICE_LoadPNGFromMemory(const void *data_in, int buflen, LICE_IBitm
   if (bmp)
   {
     bmp->resize(width,height);
-    if (bmp->getWidth() != (int)width || bmp->getHeight() != (int)height) 
+    if (bmp->getWidth() != (int)width || bmp->getHeight() != (int)height)
     {
       png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
       return 0;
@@ -280,7 +280,7 @@ LICE_IBitmap *LICE_LoadPNGFromMemory(const void *data_in, int buflen, LICE_IBitm
   LICE_pixel *bmpptr = bmp->getBits();
   int dbmpptr=bmp->getRowSpan();
   unsigned int i;
-  for(i=0;i<height;i++)
+  for(i=0; i<height; i++)
   {
     row_pointers[i]=(unsigned char *)bmpptr;
     bmpptr+=dbmpptr;
@@ -289,8 +289,8 @@ LICE_IBitmap *LICE_LoadPNGFromMemory(const void *data_in, int buflen, LICE_IBitm
   png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
 
   //put shit in correct order
-  #if !(LICE_PIXEL_A == 0 && LICE_PIXEL_R == 1 && LICE_PIXEL_G == 2 && LICE_PIXEL_B == 3)
-  for(i=0;i<height;i++)
+#if !(LICE_PIXEL_A == 0 && LICE_PIXEL_R == 1 && LICE_PIXEL_G == 2 && LICE_PIXEL_B == 3)
+  for(i=0; i<height; i++)
   {
     unsigned char *bmpptr = row_pointers[i];
     int j=width;
@@ -304,9 +304,9 @@ LICE_IBitmap *LICE_LoadPNGFromMemory(const void *data_in, int buflen, LICE_IBitm
       bmpptr+=4;
     }
   }
-  #endif
+#endif
   free(row_pointers);
-  return bmp;  
+  return bmp;
 }
 LICE_IBitmap *LICE_LoadPNGFromResource(HINSTANCE hInst, int resid, LICE_IBitmap *bmp)
 {
@@ -336,7 +336,7 @@ class LICE_PNGLoader
 {
 public:
   _LICE_ImageLoader_rec rec;
-  LICE_PNGLoader() 
+  LICE_PNGLoader()
   {
     rec.loadfunc = loadfunc;
     rec.get_extlist = get_extlist;

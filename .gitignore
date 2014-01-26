@@ -53,3 +53,11 @@ PT9_SDK/*
 VST_SDK/*
 VST3_SDK/*
 
+
+*.makeDebug
+
+*.makeMinSizeRel
+
+*.makeRelWithDebInfo
+
+*.makeRelease

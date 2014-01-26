@@ -33,11 +33,11 @@ class ProjectStateContext_Mem : public ProjectStateContext
 {
 public:
 
-  ProjectStateContext_Mem(WDL_HeapBuf *hb, int rwflags) 
-  { 
+  ProjectStateContext_Mem(WDL_HeapBuf *hb, int rwflags)
+  {
     m_rwflags=rwflags;
-    m_heapbuf=hb; 
-    m_pos=0; 
+    m_heapbuf=hb;
+    m_pos=0;
     m_tmpflag=0;
 #ifdef WDL_MEMPROJECTCONTEXT_USE_ZLIB
     memset(&m_compstream,0,sizeof(m_compstream));
@@ -45,29 +45,29 @@ public:
 #endif
   }
 
-  virtual ~ProjectStateContext_Mem() 
-  { 
-    #ifdef WDL_MEMPROJECTCONTEXT_USE_ZLIB
-      if (m_usecomp==1)
-      {
-        FlushComp(true);
-        deflateEnd(&m_compstream);
-      }
-      else if (m_usecomp==2)
-      {
-        inflateEnd(&m_compstream);
-      }
-    #endif
+  virtual ~ProjectStateContext_Mem()
+  {
+#ifdef WDL_MEMPROJECTCONTEXT_USE_ZLIB
+    if (m_usecomp==1)
+    {
+      FlushComp(true);
+      deflateEnd(&m_compstream);
+    }
+    else if (m_usecomp==2)
+    {
+      inflateEnd(&m_compstream);
+    }
+#endif
   };
 
   virtual void WDL_VARARG_WARN(printf,2,3) AddLine(const char *fmt, ...);
-  virtual int GetLine(char *buf, int buflen); // returns -1 on eof  
+  virtual int GetLine(char *buf, int buflen); // returns -1 on eof
 
   virtual WDL_INT64 GetOutputSize() { return m_heapbuf ? m_heapbuf->GetSize() : 0; }
 
   virtual int GetTempFlag() { return m_tmpflag; }
   virtual void SetTempFlag(int flag) { m_tmpflag=flag; }
-  
+
   int m_pos;
   WDL_HeapBuf *m_heapbuf;
   int m_tmpflag;
@@ -81,7 +81,7 @@ public:
     m_compstream.next_in = (unsigned char *)m_heapbuf->Get() + m_pos;
     m_compstream.avail_in = m_heapbuf->GetSize()-m_pos;
     m_compstream.total_in = 0;
-    
+
     int outchunk = 65536;
     m_compstream.next_out = (unsigned char *)m_compdatabuf.Add(NULL,outchunk);
     m_compstream.avail_out = outchunk;
@@ -103,7 +103,7 @@ public:
       m_compstream.next_in = (unsigned char *)m_compdatabuf.Get();
       m_compstream.avail_in = m_compdatabuf.Available();
       m_compstream.total_in = 0;
-     
+
       int osz = m_heapbuf->GetSize();
 
       int newsz=osz + max(m_compstream.avail_in,8192) + 256;
@@ -150,18 +150,18 @@ void ProjectStateContext_Mem::AddLine(const char *fmt, ...)
   else
   {
     tmp[0]=0;
-    #if defined(_WIN32) && defined(_MSC_VER)
-      l = _vsnprintf(tmp,sizeof(tmp),fmt,va); // _vsnprintf() does not always null terminate
-      if (l < 0 || l >= sizeof(tmp)) 
-      {
-        tmp[sizeof(tmp)-1]=0;
-        l = strlen(tmp);
-      }
-    #else
-      // vsnprintf() on non-win32, always null terminates
-      l = vsnprintf(tmp,sizeof(tmp),fmt,va);
-      if (l>((int)sizeof(tmp))-1) l=sizeof(tmp)-1;
-    #endif
+#if defined(_WIN32) && defined(_MSC_VER)
+    l = _vsnprintf(tmp,sizeof(tmp),fmt,va); // _vsnprintf() does not always null terminate
+    if (l < 0 || l >= sizeof(tmp))
+    {
+      tmp[sizeof(tmp)-1]=0;
+      l = strlen(tmp);
+    }
+#else
+    // vsnprintf() on non-win32, always null terminates
+    l = vsnprintf(tmp,sizeof(tmp),fmt,va);
+    if (l>((int)sizeof(tmp))-1) l=sizeof(tmp)-1;
+#endif
     use_buf = tmp;
     l++; // include NULL term
   }
@@ -197,7 +197,7 @@ void ProjectStateContext_Mem::AddLine(const char *fmt, ...)
     // ERROR, resize to 0 and return
     m_heapbuf->Resize(0);
     m_heapbuf=0;
-    return; 
+    return;
   }
   memcpy(p+sz,use_buf,l);
 }
@@ -212,7 +212,7 @@ int ProjectStateContext_Mem::GetLine(char *buf, int buflen) // returns -1 on eof
 #ifdef WDL_MEMPROJECTCONTEXT_USE_ZLIB
   if (!m_usecomp)
   {
-    unsigned char hdr[]={0x78,0x01};
+    unsigned char hdr[]= {0x78,0x01};
     if (m_heapbuf->GetSize()>2 && !memcmp(hdr,m_heapbuf->Get(),4) && inflateInit(&m_compstream)==Z_OK) m_usecomp=2;
     else m_usecomp=-1;
   }
@@ -251,7 +251,7 @@ int ProjectStateContext_Mem::GetLine(char *buf, int buflen) // returns -1 on eof
     return 0;
   }
 #endif
-  
+
 
   int avail = m_heapbuf->GetSize() - m_pos;
   const char *p=(const char *)m_heapbuf->Get() + m_pos;
@@ -262,7 +262,7 @@ int ProjectStateContext_Mem::GetLine(char *buf, int buflen) // returns -1 on eof
     avail--;
   }
   if (avail <= 0) return -1;
-  
+
   int x;
   for (x = 0; x < avail && p[x] && p[x] != '\r' && p[x] != '\n'; x ++);
   m_pos += x+1;
@@ -281,16 +281,16 @@ class ProjectStateContext_File : public ProjectStateContext
 {
 public:
 
-  ProjectStateContext_File(WDL_FileRead *rd, WDL_FileWrite *wr) 
-  { 
-    m_rd=rd; 
-    m_wr=wr; 
-    m_indent=0; 
+  ProjectStateContext_File(WDL_FileRead *rd, WDL_FileWrite *wr)
+  {
+    m_rd=rd;
+    m_wr=wr;
+    m_indent=0;
     m_bytesOut=0;
-    m_errcnt=false; 
+    m_errcnt=false;
     m_tmpflag=0;
   }
-  virtual ~ProjectStateContext_File(){ delete m_rd; delete m_wr; };
+  virtual ~ProjectStateContext_File() { delete m_rd; delete m_wr; };
 
   virtual void WDL_VARARG_WARN(printf,2,3) AddLine(const char *fmt, ...);
   virtual int GetLine(char *buf, int buflen); // returns -1 on eof
@@ -298,7 +298,7 @@ public:
   virtual WDL_INT64 GetOutputSize() { return m_bytesOut; }
 
   virtual int GetTempFlag() { return m_tmpflag; }
-  virtual void SetTempFlag(int flag) { m_tmpflag=flag; }    
+  virtual void SetTempFlag(int flag) { m_tmpflag=flag; }
 
   bool HasError() { return m_errcnt; }
 
@@ -324,7 +324,7 @@ int ProjectStateContext_File::GetLine(char *buf, int buflen)
     {
       if (!m_rd->Read(buf+i,1)) { if (!i) return -1; break; }
 
-      if (buf[i] == '\r' || buf[i] == '\n')  
+      if (buf[i] == '\r' || buf[i] == '\n')
       {
         if (!i) continue; // skip over leading newlines
         break;
@@ -365,20 +365,20 @@ void ProjectStateContext_File::AddLine(const char *fmt, ...)
     else
     {
       tmp[0]=0;
-      #if defined(_WIN32) && defined(_MSC_VER)
-        l = _vsnprintf(tmp,sizeof(tmp),fmt,va); // _vsnprintf() does not always null terminate
-        if (l < 0 || l >= sizeof(tmp)) 
-        {
-          tmp[sizeof(tmp)-1] = 0;
-          l = strlen(tmp);
-        }
-     #else
-       // vsnprintf() on non-win32, always null terminates
-       l = vsnprintf(tmp,sizeof(tmp),fmt,va);
-       if (l>((int)sizeof(tmp))-1) l=sizeof(tmp)-1;
-     #endif
+#if defined(_WIN32) && defined(_MSC_VER)
+      l = _vsnprintf(tmp,sizeof(tmp),fmt,va); // _vsnprintf() does not always null terminate
+      if (l < 0 || l >= sizeof(tmp))
+      {
+        tmp[sizeof(tmp)-1] = 0;
+        l = strlen(tmp);
+      }
+#else
+      // vsnprintf() on non-win32, always null terminates
+      l = vsnprintf(tmp,sizeof(tmp),fmt,va);
+      if (l>((int)sizeof(tmp))-1) l=sizeof(tmp)-1;
+#endif
 
-       use_buf = tmp;
+      use_buf = tmp;
     }
 
     va_end(va);
@@ -386,22 +386,22 @@ void ProjectStateContext_File::AddLine(const char *fmt, ...)
     int a=m_indent;
     if (use_buf[0] == '<') m_indent+=2;
     else if (use_buf[0] == '>') a=(m_indent-=2);
-    
-    if (a>0) 
+
+    if (a>0)
     {
       m_bytesOut+=a;
       char tb[128];
       memset(tb,' ',(a < (int) sizeof(tb) ? (size_t) a : sizeof(tb)) );
-      while (a>0) 
+      while (a>0)
       {
         const int tl = a < (int) sizeof(tb) ? a : (int) sizeof(tb);
-        a-=tl;     
+        a-=tl;
         m_wr->Write(tb,tl);
       }
     }
 
 
-    
+
     err |= m_wr->Write(use_buf,l) != l;
     err |= m_wr->Write("\r\n",2) != 2;
     m_bytesOut += 2 + l;
@@ -455,14 +455,14 @@ class ProjectStateContext_FastQueue : public ProjectStateContext
 {
 public:
 
-  ProjectStateContext_FastQueue(WDL_FastQueue *fq) 
-  { 
+  ProjectStateContext_FastQueue(WDL_FastQueue *fq)
+  {
     m_fq = fq;
     m_tmpflag=0;
   }
 
-  virtual ~ProjectStateContext_FastQueue() 
-  { 
+  virtual ~ProjectStateContext_FastQueue()
+  {
   };
 
   virtual void WDL_VARARG_WARN(printf,2,3) AddLine(const char *fmt, ...);
@@ -472,7 +472,7 @@ public:
 
   virtual int GetTempFlag() { return m_tmpflag; }
   virtual void SetTempFlag(int flag) { m_tmpflag=flag; }
-  
+
   WDL_FastQueue *m_fq;
   int m_tmpflag;
 
@@ -499,18 +499,18 @@ void ProjectStateContext_FastQueue::AddLine(const char *fmt, ...)
   else
   {
     tmp[0]=0;
-    #if defined(_WIN32) && defined(_MSC_VER)
-      l = _vsnprintf(tmp,sizeof(tmp),fmt,va); // _vsnprintf() does not always null terminate
-      if (l < 0 || l >= sizeof(tmp)) 
-      {
-        tmp[sizeof(tmp)-1]=0;
-        l = strlen(tmp);
-      }
-    #else
-      // vsnprintf() on non-win32, always null terminates
-      l = vsnprintf(tmp,sizeof(tmp),fmt,va);
-      if (l>((int)sizeof(tmp))-1) l=sizeof(tmp)-1;
-    #endif
+#if defined(_WIN32) && defined(_MSC_VER)
+    l = _vsnprintf(tmp,sizeof(tmp),fmt,va); // _vsnprintf() does not always null terminate
+    if (l < 0 || l >= sizeof(tmp))
+    {
+      tmp[sizeof(tmp)-1]=0;
+      l = strlen(tmp);
+    }
+#else
+    // vsnprintf() on non-win32, always null terminates
+    l = vsnprintf(tmp,sizeof(tmp),fmt,va);
+    if (l>((int)sizeof(tmp))-1) l=sizeof(tmp)-1;
+#endif
     use_buf = tmp;
     l++; // include NULL term
   }
@@ -535,14 +535,14 @@ bool ProjectContext_GetNextLine(ProjectStateContext *ctx, LineParser *lpOut)
   for (;;)
   {
     char linebuf[4096];
-    if (ctx->GetLine(linebuf,sizeof(linebuf))) 
+    if (ctx->GetLine(linebuf,sizeof(linebuf)))
     {
       lpOut->parse("");
       return false;
     }
 
     if (lpOut->parse(linebuf)||lpOut->getnumtokens()<=0) continue;
-    
+
     return true; // success!
 
   }
@@ -553,16 +553,16 @@ bool ProjectContext_EatCurrentBlock(ProjectStateContext *ctx)
 {
   int child_count=1;
   if (ctx) for (;;)
-  {
-    char linebuf[4096];
-    if (ctx->GetLine(linebuf,sizeof(linebuf))) break;
+    {
+      char linebuf[4096];
+      if (ctx->GetLine(linebuf,sizeof(linebuf))) break;
 
-    bool comment_state=false;
-    LineParser lp(comment_state);
-    if (lp.parse(linebuf)||lp.getnumtokens()<=0) continue;
-    if (lp.gettoken_str(0)[0] == '>')  if (--child_count < 1) return true;
-    if (lp.gettoken_str(0)[0] == '<') child_count++;
-  }
+      bool comment_state=false;
+      LineParser lp(comment_state);
+      if (lp.parse(linebuf)||lp.getnumtokens()<=0) continue;
+      if (lp.gettoken_str(0)[0] == '>')  if (--child_count < 1) return true;
+      if (lp.gettoken_str(0)[0] == '<') child_count++;
+    }
 
   return false;
 }
@@ -589,13 +589,13 @@ static void pc_base64encode(const unsigned char *in, char *out, int len)
   if (shift == 4)
   {
     *out++ = alphabet[(accum & 0xF)<<2];
-    *out++='=';  
+    *out++='=';
   }
   else if (shift == 2)
   {
     *out++ = alphabet[(accum & 0x3)<<4];
-    *out++='=';  
-    *out++='=';  
+    *out++='=';
+    *out++='=';
   }
 
   *out++=0;
@@ -620,7 +620,7 @@ static int pc_base64decode(const char *src, unsigned char *dest, int destsize)
 
     accum <<= 6;
     accum |= x;
-    nbits += 6;   
+    nbits += 6;
 
     while (nbits >= 8)
     {
@@ -649,7 +649,7 @@ int cfg_decode_binary(ProjectStateContext *ctx, WDL_HeapBuf *hb) // 0 on success
     if (lp.gettoken_str(0)[0] == '<') child_count++;
     else if (lp.gettoken_str(0)[0] == '>') { if (child_count-- == 1) return 0; }
     else if (child_count == 1)
-    {     
+    {
       unsigned char buf[8192];
       int buf_l=pc_base64decode(lp.gettoken_str(0),buf,sizeof(buf));
       int os=hb->GetSize();
@@ -657,7 +657,7 @@ int cfg_decode_binary(ProjectStateContext *ctx, WDL_HeapBuf *hb) // 0 on success
       memcpy((char *)hb->Get()+os,buf,buf_l);
     }
   }
-  return -1;  
+  return -1;
 }
 
 void cfg_encode_binary(ProjectStateContext *ctx, const void *ptr, int len)
@@ -688,13 +688,13 @@ int cfg_decode_textblock(ProjectStateContext *ctx, WDL_String *str) // 0 on succ
 
     if (!linebuf[0]) continue;
     LineParser lp(comment_state);
-    if (!lp.parse(linebuf)&&lp.getnumtokens()>0) 
+    if (!lp.parse(linebuf)&&lp.getnumtokens()>0)
     {
       if (lp.gettoken_str(0)[0] == '<') { child_count++; continue; }
       else if (lp.gettoken_str(0)[0] == '>') { if (child_count-- == 1) return 0; continue; }
     }
     if (child_count == 1)
-    {     
+    {
       char *p=linebuf;
       while (*p == ' ' || *p == '\t') p++;
       if (*p == '|')
@@ -704,7 +704,7 @@ int cfg_decode_textblock(ProjectStateContext *ctx, WDL_String *str) // 0 on succ
       }
     }
   }
-  return -1;  
+  return -1;
 }
 
 int cfg_decode_textblock(ProjectStateContext *ctx, WDL_FastString *str) // 0 on success, appends to str
@@ -718,13 +718,13 @@ int cfg_decode_textblock(ProjectStateContext *ctx, WDL_FastString *str) // 0 on 
 
     if (!linebuf[0]) continue;
     LineParser lp(comment_state);
-    if (!lp.parse(linebuf)&&lp.getnumtokens()>0) 
+    if (!lp.parse(linebuf)&&lp.getnumtokens()>0)
     {
       if (lp.gettoken_str(0)[0] == '<') { child_count++; continue; }
       else if (lp.gettoken_str(0)[0] == '>') { if (child_count-- == 1) return 0; continue; }
     }
     if (child_count == 1)
-    {     
+    {
       char *p=linebuf;
       while (*p == ' ' || *p == '\t') p++;
       if (*p == '|')
@@ -734,7 +734,7 @@ int cfg_decode_textblock(ProjectStateContext *ctx, WDL_FastString *str) // 0 on 
       }
     }
   }
-  return -1;  
+  return -1;
 }
 
 

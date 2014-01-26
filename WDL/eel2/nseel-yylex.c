@@ -2,7 +2,7 @@
   Expression Evaluator Library (NS-EEL)
   Copyright (C) 2004-2013 Cockos Incorporated
   Copyright (C) 1999-2003 Nullsoft, Inc.
-  
+
   nseel-yylex.c
 
   This software is provided 'as-is', without any express or implied
@@ -98,78 +98,78 @@ int nseel_yylex(compileContext *ctx, char **exp)
     lp = &nseel_lextab;
 
     do {
-            if (lp->lllook && (l = lp->lllook[st])) {
-                    for (c=0; c<NBPW; c++)
-                            if (l&(1<<c))
-                                    ctx->llsave[c] = ctx->llp1;
-                    llk++;
-            }
-            if ((i = lp->llfinal[st]) != -1) {
-                    final = i;
-                    ctx->llend = ctx->llp1;
-            }
-            if ((c = llinp(ctx,exp)) < 0)
-                    break;
-            if ((cp = lp->llbrk) && llk==0 && tst__b(c, cp)) {
-                    ctx->llp1--;
-                    break;
-            }
+      if (lp->lllook && (l = lp->lllook[st])) {
+        for (c=0; c<NBPW; c++)
+          if (l&(1<<c))
+            ctx->llsave[c] = ctx->llp1;
+        llk++;
+      }
+      if ((i = lp->llfinal[st]) != -1) {
+        final = i;
+        ctx->llend = ctx->llp1;
+      }
+      if ((c = llinp(ctx,exp)) < 0)
+        break;
+      if ((cp = lp->llbrk) && llk==0 && tst__b(c, cp)) {
+        ctx->llp1--;
+        break;
+      }
     } while ((st = (*lp->llmove)(lp, c, st)) != -1);
 
 
     if (ctx->llp2 < ctx->llp1)
-            ctx->llp2 = ctx->llp1;
+      ctx->llp2 = ctx->llp1;
     if (final == -1) {
-            ctx->llend = ctx->llp1;
-            if (st == 0 && c < 0)
-                    return(0);
-            if ((cp = lp->llill) && tst__b(c, cp)) {
-                    continue;
-            }
-            return(YYERRORVAL);
+      ctx->llend = ctx->llp1;
+      if (st == 0 && c < 0)
+        return(0);
+      if ((cp = lp->llill) && tst__b(c, cp)) {
+        continue;
+      }
+      return(YYERRORVAL);
     }
     if ((c = (final >> 11) & 037))
-            ctx->llend = ctx->llsave[c-1];
+      ctx->llend = ctx->llsave[c-1];
     if ((c = (*lp->llactr)(ctx,final&03777)) >= 0)
-            return(c);
+      return(c);
   }
 }
 
 void nseel_llinit(compileContext *ctx)
 {
-   ctx->llp1 = ctx->llp2 = ctx->llend = ctx->llbuf;
-   ctx->llebuf = ctx->llbuf + sizeof(ctx->llbuf);
-   ctx->lleof = 0;
+  ctx->llp1 = ctx->llp2 = ctx->llend = ctx->llbuf;
+  ctx->llebuf = ctx->llbuf + sizeof(ctx->llbuf);
+  ctx->lleof = 0;
 }
 
 
 static int llinp(compileContext *ctx, char **exp)
 {
-        register int c;
-        register struct lextab *lp;
-        register char *cp;
+  register int c;
+  register struct lextab *lp;
+  register char *cp;
 
-        lp = &nseel_lextab;
-        cp = lp->llign;                         /* Ignore class         */
-        for (;;) {
-                /*
-                 * Get the next character from the save buffer (if possible)
-                 * If the save buffer's empty, then return EOF or the next
-                 * input character.  Ignore the character if it's in the
-                 * ignore class.
-                 */
-                c = (ctx->llp1 < ctx->llp2) ? *ctx->llp1 & 0377 : (ctx->lleof) ? EOF : lexgetc(exp);
-                if (c >= 0) {                   /* Got a character?     */
-                        if (cp && tst__b(c, cp))
-                                continue;       /* Ignore it            */
-                        if (ctx->llp1 >= ctx->llebuf) {   /* No, is there room?   */
-                                return -1;
-                        }
-                        *ctx->llp1++ = c;            /* Store in token buff  */
-                } else
-                        ctx->lleof = 1;              /* Set EOF signal       */
-                return(c);
-        }
+  lp = &nseel_lextab;
+  cp = lp->llign;                         /* Ignore class         */
+  for (;;) {
+    /*
+     * Get the next character from the save buffer (if possible)
+     * If the save buffer's empty, then return EOF or the next
+     * input character.  Ignore the character if it's in the
+     * ignore class.
+     */
+    c = (ctx->llp1 < ctx->llp2) ? *ctx->llp1 & 0377 : (ctx->lleof) ? EOF : lexgetc(exp);
+    if (c >= 0) {                   /* Got a character?     */
+      if (cp && tst__b(c, cp))
+        continue;       /* Ignore it            */
+      if (ctx->llp1 >= ctx->llebuf) {   /* No, is there room?   */
+        return -1;
+      }
+      *ctx->llp1++ = c;            /* Store in token buff  */
+    } else
+      ctx->lleof = 1;              /* Set EOF signal       */
+    return(c);
+  }
 }
 
 static int llset(compileContext *ctx)
@@ -177,13 +177,13 @@ static int llset(compileContext *ctx)
  * Return TRUE if EOF and nothing was moved in the look-ahead buffer
  */
 {
-        register char *lp1, *lp2;
+  register char *lp1, *lp2;
 
-        for (lp1 = ctx->llbuf, lp2 = ctx->llend; lp2 < ctx->llp2;)
-                *lp1++ = *lp2++;
-        ctx->llend = ctx->llp1 = ctx->llbuf;
-        ctx->llp2 = lp1;
-        return(ctx->lleof && lp1 == ctx->llbuf);
+  for (lp1 = ctx->llbuf, lp2 = ctx->llend; lp2 < ctx->llp2;)
+    *lp1++ = *lp2++;
+  ctx->llend = ctx->llp1 = ctx->llbuf;
+  ctx->llp2 = lp1;
+  return(ctx->lleof && lp1 == ctx->llbuf);
 }
 
 #endif

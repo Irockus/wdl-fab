@@ -21,7 +21,7 @@ public:
   IControl(IPlugBase* pPlug, IRECT pR, int paramIdx = -1, IChannelBlend blendMethod = IChannelBlend::kBlendNone)
     : mPlug(pPlug), mRECT(pR), mTargetRECT(pR), mParamIdx(paramIdx), mValue(0.0), mDefaultValue(-1.0),
       mBlend(blendMethod), mDirty(true), mHide(false), mGrayed(false), mDisablePrompt(true), mDblAsSingleClick(false),
-      mClampLo(0.0), mClampHi(1.0), mMOWhenGreyed(false), mTextEntryLength(DEFAULT_TEXT_ENTRY_LEN), 
+      mClampLo(0.0), mClampHi(1.0), mMOWhenGreyed(false), mTextEntryLength(DEFAULT_TEXT_ENTRY_LEN),
       mValDisplayControl(0), mNameDisplayControl(0), mTooltip(NULL) {}
 
   virtual ~IControl() {}
@@ -47,7 +47,7 @@ public:
   // Ask the IGraphics object to open an edit box so the user can enter a value for this control.
   void PromptUserInput();
   void PromptUserInput(IRECT* pTextRect);
-  
+
   inline void SetTooltip(const char* tooltip) { mTooltip = tooltip; }
   inline const char* GetTooltip() const { return mTooltip; }
 
@@ -77,7 +77,7 @@ public:
   virtual bool IsHit(int x, int y) { return mTargetRECT.Contains(x, y); }
 
   void SetBlendMethod(IChannelBlend::EBlendMethod blendMethod) { mBlend = IChannelBlend(blendMethod); }
-  
+
   void SetValDisplayControl(IControl* pValDisplayControl) { mValDisplayControl = pValDisplayControl; }
   void SetNameDisplayControl(IControl* pNameDisplayControl) { mNameDisplayControl = pNameDisplayControl; }
 
@@ -95,19 +95,19 @@ public:
   // IPlugBase::OnIdle which is called from the audio processing thread.
   // Only active if USE_IDLE_CALLS is defined.
   virtual void OnGUIIdle() {}
-  
+
   // a struct that contain a parameter index and normalized value
-  struct AuxParam 
+  struct AuxParam
   {
     double mValue;
     int mParamIdx;
-    
+
     AuxParam(int idx) : mParamIdx(idx)
     {
       assert(idx > -1); // no negative params please
     }
   };
-  
+
   // return a pointer to the AuxParam instance at idx in the mAuxParams array
   AuxParam* GetAuxParam(int idx);
   // return the index of the auxillary parameter that holds the paramIdx
@@ -117,14 +117,14 @@ public:
   virtual void SetAuxParamValueFromPlug(int auxParamIdx, double value); // can override if nessecary
   void SetAllAuxParamsFromGUI();
   int NAuxParams() { return mAuxParams.GetSize(); }
-  
+
 protected:
   int mTextEntryLength;
   IText mText;
   IPlugBase* mPlug;
   IRECT mRECT, mTargetRECT;
   int mParamIdx;
-  
+
   WDL_TypedBuf<AuxParam> mAuxParams;
   double mValue, mDefaultValue, mClampLo, mClampHi;
   bool mDirty, mHide, mGrayed, mRedraw, mDisablePrompt, mClamped, mDblAsSingleClick, mMOWhenGreyed;
@@ -188,14 +188,14 @@ class ISwitchPopUpControl : public ISwitchControl
 {
 public:
   ISwitchPopUpControl(IPlugBase* pPlug, int x, int y, int paramIdx, IBitmap* pBitmap,
-                 IChannelBlend::EBlendMethod blendMethod = IChannelBlend::kBlendNone)
-  : ISwitchControl(pPlug, x, y, paramIdx, pBitmap, blendMethod)
+                      IChannelBlend::EBlendMethod blendMethod = IChannelBlend::kBlendNone)
+    : ISwitchControl(pPlug, x, y, paramIdx, pBitmap, blendMethod)
   {
     mDisablePrompt = false;
   }
-  
+
   ~ISwitchPopUpControl() {}
-  
+
   void OnMouseDown(int x, int y, IMouseMod* pMod);
 };
 
@@ -205,11 +205,11 @@ class ISwitchFramesControl : public ISwitchControl
 public:
   ISwitchFramesControl(IPlugBase* pPlug, int x, int y, int paramIdx, IBitmap* pBitmap, bool imagesAreHorizontal = false,
                        IChannelBlend::EBlendMethod blendMethod = IChannelBlend::kBlendNone);
-  
+
   ~ISwitchFramesControl() {}
-  
+
   void OnMouseDown(int x, int y, IMouseMod* pMod);
-  
+
 protected:
   WDL_TypedBuf<IRECT> mRECTs;
 };
@@ -273,7 +273,7 @@ public:
   virtual void OnMouseDrag(int x, int y, int dX, int dY, IMouseMod* pMod);
 
   virtual bool Draw(IGraphics* pGraphics);
-  
+
   virtual bool IsHit(int x, int y);
 
 protected:

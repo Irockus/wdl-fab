@@ -21,8 +21,8 @@ using namespace Vst;
 class IPlugVST3View;
 
 class IPlugVST3 : public IPlugBase
-                , public IUnitInfo
-                , public SingleComponentEffect
+  , public IUnitInfo
+  , public SingleComponentEffect
 {
 public:
   IPlugVST3(IPlugInstanceInfo instanceInfo,
@@ -55,7 +55,7 @@ public:
 //  tresult PLUGIN_API setComponentState(IBStream *state);
   tresult PLUGIN_API canProcessSampleSize(int32 symbolicSampleSize);
   Steinberg::uint32 PLUGIN_API getLatencySamples ();
-  
+
   // IEditController
   IPlugView* PLUGIN_API createView (const char* name);
   tresult PLUGIN_API setEditorState (IBStream* state);
@@ -80,13 +80,13 @@ public:
   virtual tresult PLUGIN_API selectUnit(UnitID unitId) {return kNotImplemented;}
   virtual tresult PLUGIN_API getUnitByBus(MediaType type, BusDirection dir, int32 busIndex, int32 channel, UnitID& unitId) {return kNotImplemented;}
   virtual tresult PLUGIN_API setUnitProgramData(int32 listOrUnitId, int32 programIndex, IBStream* data) {return kNotImplemented;}
-  
+
   //IPlugBase
   virtual void BeginInformHostOfParamChange(int idx);
   virtual void InformHostOfParamChange(int idx, double normalizedValue);
   virtual void EndInformHostOfParamChange(int idx);
   virtual void InformHostOfProgramChange() {};
-  
+
   virtual bool IsRenderingOffline() { return (processSetup.processMode == kOffline); }
 
   virtual int GetSamplePos();

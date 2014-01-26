@@ -40,7 +40,7 @@ static boolean LICEJPEG_fill_input_buffer(j_decompress_ptr cinfo)
 }
 static void LICEJPEG_skip_input_data(j_decompress_ptr cinfo, long num_bytes)
 {
-  if (num_bytes > 0) 
+  if (num_bytes > 0)
   {
     if (num_bytes > (long) cinfo->src->bytes_in_buffer)
     {
@@ -69,7 +69,7 @@ LICE_IBitmap *LICE_LoadJPGFromResource(HINSTANCE hInst, int resid, LICE_IBitmap 
   unsigned char *data = (unsigned char *)pResourceData;
 
   struct jpeg_decompress_struct cinfo;
-  struct my_error_mgr jerr={0,};
+  struct my_error_mgr jerr= {0,};
   JSAMPARRAY buffer;
   int row_stride;
 
@@ -81,7 +81,7 @@ LICE_IBitmap *LICE_LoadJPGFromResource(HINSTANCE hInst, int resid, LICE_IBitmap 
 
   cinfo.err = &jerr.pub;
 
-  if (setjmp(jerr.setjmp_buffer)) 
+  if (setjmp(jerr.setjmp_buffer))
   {
     jpeg_destroy_decompress(&cinfo);
     return 0;
@@ -89,11 +89,11 @@ LICE_IBitmap *LICE_LoadJPGFromResource(HINSTANCE hInst, int resid, LICE_IBitmap 
   jpeg_create_decompress(&cinfo);
 
   cinfo.src = (struct jpeg_source_mgr *) (*cinfo.mem->alloc_small) ((j_common_ptr) &cinfo, JPOOL_PERMANENT, sizeof (struct jpeg_source_mgr));
-  
+
   cinfo.src->init_source = LICEJPEG_init_source;
   cinfo.src->fill_input_buffer = LICEJPEG_fill_input_buffer;
   cinfo.src->skip_input_data = LICEJPEG_skip_input_data;
-  cinfo.src->resync_to_restart = jpeg_resync_to_restart;	
+  cinfo.src->resync_to_restart = jpeg_resync_to_restart;
   cinfo.src->term_source = LICEJPEG_term_source;
 
   cinfo.src->next_input_byte = data;
@@ -109,7 +109,7 @@ LICE_IBitmap *LICE_LoadJPGFromResource(HINSTANCE hInst, int resid, LICE_IBitmap 
   if (bmp)
   {
     bmp->resize(cinfo.output_width,cinfo.output_height);
-    if (bmp->getWidth() != (int)cinfo.output_width || bmp->getHeight() != (int)cinfo.output_height) 
+    if (bmp->getWidth() != (int)cinfo.output_width || bmp->getHeight() != (int)cinfo.output_height)
     {
       jpeg_finish_decompress(&cinfo);
       jpeg_destroy_decompress(&cinfo);
@@ -173,7 +173,7 @@ LICE_IBitmap *LICE_LoadJPGFromResource(HINSTANCE hInst, int resid, LICE_IBitmap 
 LICE_IBitmap *LICE_LoadJPG(const char *filename, LICE_IBitmap *bmp)
 {
   struct jpeg_decompress_struct cinfo;
-  struct my_error_mgr jerr={{0},};
+  struct my_error_mgr jerr= {{0},};
   JSAMPARRAY buffer;
   int row_stride;
 
@@ -198,7 +198,7 @@ LICE_IBitmap *LICE_LoadJPG(const char *filename, LICE_IBitmap *bmp)
 
   cinfo.err = &jerr.pub;
 
-  if (setjmp(jerr.setjmp_buffer)) 
+  if (setjmp(jerr.setjmp_buffer))
   {
     jpeg_destroy_decompress(&cinfo);
     fclose(fp);
@@ -213,12 +213,12 @@ LICE_IBitmap *LICE_LoadJPG(const char *filename, LICE_IBitmap *bmp)
   row_stride = cinfo.output_width * cinfo.output_components;
 
   buffer = (*cinfo.mem->alloc_sarray)
-		((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
+           ((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
 
   if (bmp)
   {
     bmp->resize(cinfo.output_width,cinfo.output_height);
-    if (bmp->getWidth() != (int)cinfo.output_width || bmp->getHeight() != (int)cinfo.output_height) 
+    if (bmp->getWidth() != (int)cinfo.output_width || bmp->getHeight() != (int)cinfo.output_height)
     {
       jpeg_finish_decompress(&cinfo);
       jpeg_destroy_decompress(&cinfo);
@@ -278,7 +278,7 @@ class LICE_JPGLoader
 {
 public:
   _LICE_ImageLoader_rec rec;
-  LICE_JPGLoader() 
+  LICE_JPGLoader()
   {
     rec.loadfunc = loadfunc;
     rec.get_extlist = get_extlist;

@@ -2,7 +2,7 @@
   Expression Evaluator Library (NS-EEL) v2
   Copyright (C) 2004-2013 Cockos Incorporated
   Copyright (C) 1999-2003 Nullsoft, Inc.
-  
+
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -40,10 +40,10 @@ int NSEEL_RAM_memused_errors=0;
 
 int NSEEL_VM_wantfreeRAM(NSEEL_VMCTX ctx)
 {
-	if (ctx)
+  if (ctx)
   {
     compileContext *c=(compileContext*)ctx;
-    if (c->ram_state.needfree) 
+    if (c->ram_state.needfree)
       return 1;
   }
   return 0;
@@ -51,38 +51,38 @@ int NSEEL_VM_wantfreeRAM(NSEEL_VMCTX ctx)
 
 void NSEEL_VM_freeRAMIfCodeRequested(NSEEL_VMCTX ctx) // check to see if our free flag was set
 {
-	if (ctx)
-	{
-  	compileContext *c=(compileContext*)ctx;
-  	if (c->ram_state.needfree) 
-		{
+  if (ctx)
+  {
+    compileContext *c=(compileContext*)ctx;
+    if (c->ram_state.needfree)
+    {
       NSEEL_HOSTSTUB_EnterMutex();
       {
-			  INT_PTR startpos=((INT_PTR)c->ram_state.needfree)-1;
-	 		  EEL_F **blocks = c->ram_state.blocks;
-			  INT_PTR pos=0;
-			  int x;
-  		  for (x = 0; x < NSEEL_RAM_BLOCKS; x ++)
-  		  {
-				  if (pos >= startpos)
-				  {
-					  if (blocks[x])
-					  {
-						  if (NSEEL_RAM_memused >= sizeof(EEL_F) * NSEEL_RAM_ITEMSPERBLOCK) 
-							  NSEEL_RAM_memused -= sizeof(EEL_F) * NSEEL_RAM_ITEMSPERBLOCK;
-						  else NSEEL_RAM_memused_errors++;
-       	 	    free(blocks[x]);
-       	 	    blocks[x]=0;
-					  }
-				  }
-				  pos+=NSEEL_RAM_ITEMSPERBLOCK;
- 			  }
-			  c->ram_state.needfree=0;
+        INT_PTR startpos=((INT_PTR)c->ram_state.needfree)-1;
+        EEL_F **blocks = c->ram_state.blocks;
+        INT_PTR pos=0;
+        int x;
+        for (x = 0; x < NSEEL_RAM_BLOCKS; x ++)
+        {
+          if (pos >= startpos)
+          {
+            if (blocks[x])
+            {
+              if (NSEEL_RAM_memused >= sizeof(EEL_F) * NSEEL_RAM_ITEMSPERBLOCK)
+                NSEEL_RAM_memused -= sizeof(EEL_F) * NSEEL_RAM_ITEMSPERBLOCK;
+              else NSEEL_RAM_memused_errors++;
+              free(blocks[x]);
+              blocks[x]=0;
+            }
+          }
+          pos+=NSEEL_RAM_ITEMSPERBLOCK;
+        }
+        c->ram_state.needfree=0;
       }
       NSEEL_HOSTSTUB_LeaveMutex();
-		}
+    }
 
-	}
+  }
 }
 
 
@@ -93,7 +93,7 @@ EEL_F * NSEEL_CGEN_CALL __NSEEL_RAMAllocGMEM(EEL_F ***blocks, unsigned int w)
 {
   static EEL_F * volatile  gmembuf;
   static EEL_F fail;
-  if (blocks) 
+  if (blocks)
   {
     EEL_F **pblocks=*blocks;
 
@@ -123,15 +123,15 @@ EEL_F * NSEEL_CGEN_CALL __NSEEL_RAMAllocGMEM(EEL_F ***blocks, unsigned int w)
 
         if (!(p=pblocks[whichblock]))
         {
-      	  const int msize=sizeof(EEL_F) * NSEEL_RAM_ITEMSPERBLOCK;
-      	  if (!NSEEL_RAM_limitmem || NSEEL_RAM_memused+msize < NSEEL_RAM_limitmem) 
-      	  {
-	      	  p=pblocks[whichblock]=(EEL_F *)calloc(sizeof(EEL_F),NSEEL_RAM_ITEMSPERBLOCK);
-      		  if (p) NSEEL_RAM_memused+=msize;
-      	  }
+          const int msize=sizeof(EEL_F) * NSEEL_RAM_ITEMSPERBLOCK;
+          if (!NSEEL_RAM_limitmem || NSEEL_RAM_memused+msize < NSEEL_RAM_limitmem)
+          {
+            p=pblocks[whichblock]=(EEL_F *)calloc(sizeof(EEL_F),NSEEL_RAM_ITEMSPERBLOCK);
+            if (p) NSEEL_RAM_memused+=msize;
+          }
         }
-      }	  
-      if (p) 
+      }
+      if (p)
       {
         if (is_locked) NSEEL_HOSTSTUB_LeaveMutex();
         return p + (w&(NSEEL_RAM_ITEMSPERBLOCK-1));
@@ -143,7 +143,7 @@ EEL_F * NSEEL_CGEN_CALL __NSEEL_RAMAllocGMEM(EEL_F ***blocks, unsigned int w)
 
   if (!gmembuf)
   {
-    NSEEL_HOSTSTUB_EnterMutex(); 
+    NSEEL_HOSTSTUB_EnterMutex();
     if (!gmembuf) gmembuf=(EEL_F*)calloc(sizeof(EEL_F),NSEEL_SHARED_GRAM_SIZE);
     NSEEL_HOSTSTUB_LeaveMutex();
     if (!gmembuf) return &fail;
@@ -168,15 +168,15 @@ EEL_F * NSEEL_CGEN_CALL  __NSEEL_RAMAlloc(EEL_F **pblocks, unsigned int w)
       if (!(p=pblocks[whichblock]))
       {
 
-      	const int msize=sizeof(EEL_F) * NSEEL_RAM_ITEMSPERBLOCK;
-      	if (!NSEEL_RAM_limitmem || NSEEL_RAM_memused+msize < NSEEL_RAM_limitmem) 
-      	{
-	      	p=pblocks[whichblock]=(EEL_F *)calloc(sizeof(EEL_F),NSEEL_RAM_ITEMSPERBLOCK);
-      		if (p) NSEEL_RAM_memused+=msize;
-      	}
+        const int msize=sizeof(EEL_F) * NSEEL_RAM_ITEMSPERBLOCK;
+        if (!NSEEL_RAM_limitmem || NSEEL_RAM_memused+msize < NSEEL_RAM_limitmem)
+        {
+          p=pblocks[whichblock]=(EEL_F *)calloc(sizeof(EEL_F),NSEEL_RAM_ITEMSPERBLOCK);
+          if (p) NSEEL_RAM_memused+=msize;
+        }
       }
       NSEEL_HOSTSTUB_LeaveMutex();
-    }	  
+    }
     if (p) return p + (w&(NSEEL_RAM_ITEMSPERBLOCK-1));
   }
 //  fprintf(stderr,"ret 0\n");
@@ -188,10 +188,10 @@ EEL_F * NSEEL_CGEN_CALL __NSEEL_RAM_MemFree(void *blocks, EEL_F *which)
 {
   // blocks points to ram_state.blocks, so back it up past closefact and pad to needfree
   int *flag = (int *)((char *)blocks - sizeof(double) - 2*sizeof(int));
-	int d=(int)(*which);
-	if (d < 0) d=0;
-	if (d < NSEEL_RAM_BLOCKS*NSEEL_RAM_ITEMSPERBLOCK) flag[0]=1+d;
-	return which;
+  int d=(int)(*which);
+  if (d < 0) d=0;
+  if (d < NSEEL_RAM_BLOCKS*NSEEL_RAM_ITEMSPERBLOCK) flag[0]=1+d;
+  return which;
 }
 
 
@@ -226,7 +226,7 @@ EEL_F * NSEEL_CGEN_CALL __NSEEL_RAM_MemCpy(EEL_F **blocks,EEL_F *dest, EEL_F *sr
     int maxdlen=NSEEL_RAM_ITEMSPERBLOCK - (dest_offs&(NSEEL_RAM_ITEMSPERBLOCK-1));
     int maxslen=NSEEL_RAM_ITEMSPERBLOCK -  (src_offs&(NSEEL_RAM_ITEMSPERBLOCK-1));
 
-    if (dest_offs >= NSEEL_RAM_BLOCKS*NSEEL_RAM_ITEMSPERBLOCK || 
+    if (dest_offs >= NSEEL_RAM_BLOCKS*NSEEL_RAM_ITEMSPERBLOCK ||
         src_offs >= NSEEL_RAM_BLOCKS*NSEEL_RAM_ITEMSPERBLOCK) break;
 
     if (copy_len > maxdlen) copy_len=maxdlen;
@@ -247,11 +247,11 @@ EEL_F * NSEEL_CGEN_CALL __NSEEL_RAM_MemCpy(EEL_F **blocks,EEL_F *dest, EEL_F *sr
 }
 
 EEL_F * NSEEL_CGEN_CALL __NSEEL_RAM_MemSet(EEL_F **blocks,EEL_F *dest, EEL_F *v, EEL_F *lenptr)
-{  
+{
   int offs = (int)(*dest + 0.0001);
   int len = (int)(*lenptr + 0.0001);
   EEL_F t;
-  if (offs<0) 
+  if (offs<0)
   {
     len += offs;
     offs=0;
@@ -261,7 +261,7 @@ EEL_F * NSEEL_CGEN_CALL __NSEEL_RAM_MemSet(EEL_F **blocks,EEL_F *dest, EEL_F *v,
   if (offs+len > NSEEL_RAM_BLOCKS*NSEEL_RAM_ITEMSPERBLOCK) len = NSEEL_RAM_BLOCKS*NSEEL_RAM_ITEMSPERBLOCK - offs;
 
   if (len < 1) return dest;
-  
+
 
   t=*v; // set value
 
@@ -281,7 +281,7 @@ EEL_F * NSEEL_CGEN_CALL __NSEEL_RAM_MemSet(EEL_F **blocks,EEL_F *dest, EEL_F *v,
     while (lcnt--)
     {
       *ptr++=t;
-    }       
+    }
   }
   return dest;
 }
@@ -306,14 +306,14 @@ void NSEEL_VM_freeRAM(NSEEL_VMCTX ctx)
     EEL_F **blocks = c->ram_state.blocks;
     for (x = 0; x < NSEEL_RAM_BLOCKS; x ++)
     {
-	    if (blocks[x])
-	    {
-		    if (NSEEL_RAM_memused >= sizeof(EEL_F) * NSEEL_RAM_ITEMSPERBLOCK) 
-			    NSEEL_RAM_memused -= sizeof(EEL_F) * NSEEL_RAM_ITEMSPERBLOCK;
-		    else NSEEL_RAM_memused_errors++;
+      if (blocks[x])
+      {
+        if (NSEEL_RAM_memused >= sizeof(EEL_F) * NSEEL_RAM_ITEMSPERBLOCK)
+          NSEEL_RAM_memused -= sizeof(EEL_F) * NSEEL_RAM_ITEMSPERBLOCK;
+        else NSEEL_RAM_memused_errors++;
         free(blocks[x]);
         blocks[x]=0;
-	    }
+      }
     }
     c->ram_state.needfree=0; // no need to free anymore
   }
@@ -327,12 +327,12 @@ void NSEEL_VM_FreeGRAM(void **ufd)
     int x;
     for (x = 0; x < NSEEL_RAM_BLOCKS; x ++)
     {
-	    if (blocks[x])
-	    {
-		    if (NSEEL_RAM_memused >= sizeof(EEL_F) * NSEEL_RAM_ITEMSPERBLOCK) 
-			  NSEEL_RAM_memused -= sizeof(EEL_F) * NSEEL_RAM_ITEMSPERBLOCK;
-		    else NSEEL_RAM_memused_errors++;
-	    }
+      if (blocks[x])
+      {
+        if (NSEEL_RAM_memused >= sizeof(EEL_F) * NSEEL_RAM_ITEMSPERBLOCK)
+          NSEEL_RAM_memused -= sizeof(EEL_F) * NSEEL_RAM_ITEMSPERBLOCK;
+        else NSEEL_RAM_memused_errors++;
+      }
       free(blocks[x]);
       blocks[x]=0;
     }

@@ -13,7 +13,7 @@ void pl_Obj::Scale(pl_Float s) {
   while (i--) {
     v->x *= s; v->y *= s; v->z *= s; v++;
   }
-  for (i = 0; i < Children.GetSize(); i ++) 
+  for (i = 0; i < Children.GetSize(); i ++)
     if (Children.Get(i)) Children.Get(i)->Scale(s);
 }
 
@@ -23,7 +23,7 @@ void pl_Obj::Stretch(pl_Float x, pl_Float y, pl_Float z) {
   while (i--) {
     v->x *= x; v->y *= y; v->z *= z; v++;
   }
-  for (i = 0; i < Children.GetSize(); i ++) 
+  for (i = 0; i < Children.GetSize(); i ++)
     if (Children.Get(i)) Children.Get(i)->Stretch(x,y,z);
 }
 
@@ -33,7 +33,7 @@ void pl_Obj::Translate(pl_Float x, pl_Float y, pl_Float z) {
   while (i--) {
     v->x += x; v->y += y; v->z += z; v++;
   }
-  for (i = 0; i < Children.GetSize(); i ++) 
+  for (i = 0; i < Children.GetSize(); i ++)
     if (Children.Get(i)) Children.Get(i)->Translate(x,y,z);
 }
 
@@ -43,13 +43,13 @@ void pl_Obj::FlipNormals() {
   pl_Face *f = Faces.Get();
   while (i--) {
     v->nx = - v->nx; v->ny = - v->ny; v->nz = - v->nz; v++;
-  } 
+  }
   i = Faces.GetSize();
   while (i--) {
     f->nx = - f->nx; f->ny = - f->ny; f->nz = - f->nz;
     f++;
   }
-  for (i = 0; i < Children.GetSize(); i ++) 
+  for (i = 0; i < Children.GetSize(); i ++)
     if (Children.Get(i)) Children.Get(i)->FlipNormals();
 }
 
@@ -58,7 +58,7 @@ pl_Obj *pl_Obj::Clone() {
   int i;
   pl_Obj *out;
   if (!(out = new pl_Obj(Vertices.GetSize(),Faces.GetSize()))) return 0;
-  for (i = 0; i < Children.GetSize(); i ++) 
+  for (i = 0; i < Children.GetSize(); i ++)
     out->Children.Add(Children.Get(i) ? Children.Get(i)->Clone() : NULL);
 
   out->Xa = Xa; out->Ya = Ya; out->Za = Za;
@@ -72,9 +72,9 @@ pl_Obj *pl_Obj::Clone() {
 void pl_Obj::SetMaterial(pl_Mat *m, pl_Bool th) {
   pl_sInt32 i = Faces.GetSize();
   pl_Face *f = Faces.Get();
-  while (i--) (f++)->Material = m; 
-  if (th) for (i = 0; i < Children.GetSize(); i++) 
-    if (Children.Get(i)) Children.Get(i)->SetMaterial(m,true);
+  while (i--) (f++)->Material = m;
+  if (th) for (i = 0; i < Children.GetSize(); i++)
+      if (Children.Get(i)) Children.Get(i)->SetMaterial(m,true);
 }
 
 void pl_Obj::CalculateNormals() {
@@ -88,7 +88,7 @@ void pl_Obj::CalculateNormals() {
     v++;
   }
   i = Faces.GetSize();
-  while (i--) { 
+  while (i--) {
     pl_Vertex *vp=Vertices.Get();
     pl_Vertex *fVertices[3] = {
       vp+f->VertexIndices[0],
@@ -123,6 +123,6 @@ void pl_Obj::CalculateNormals() {
     v++;
   } while (--i);
 
-  for (i = 0; i < Children.GetSize(); i ++) 
+  for (i = 0; i < Children.GetSize(); i ++)
     if (Children.Get(i)) Children.Get(i)->CalculateNormals();
 }

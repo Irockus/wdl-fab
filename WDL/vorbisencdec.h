@@ -17,7 +17,7 @@
     2. Altered source versions must be plainly marked as such, and must not be
        misrepresented as being the original software.
     3. This notice may not be removed or altered from any source distribution.
-    
+
 
 */
 
@@ -30,7 +30,7 @@
 
   For full control you probably want to #define VORBISENC_WANT_FULLCONFIG
   but for compatibility with some older code, it's left disabled here.
- 
+
 */
 
 #ifndef _VORBISENCDEC_H_
@@ -45,7 +45,7 @@
 class VorbisDecoderInterface
 {
 public:
-  virtual ~VorbisDecoderInterface(){}
+  virtual ~VorbisDecoderInterface() {}
   virtual int GetSampleRate()=0;
   virtual int GetNumChannels()=0;
   virtual void *DecodeGetSrcBuffer(int srclen)=0;
@@ -59,7 +59,7 @@ public:
 class VorbisEncoderInterface
 {
 public:
-  virtual ~VorbisEncoderInterface(){}
+  virtual ~VorbisEncoderInterface() {}
   virtual void Encode(float *in, int inlen, int advance=1, int spacing=1)=0; // length in sample (PAIRS)
   virtual int isError()=0;
   virtual int Available()=0;
@@ -76,158 +76,158 @@ public:
 
 class VorbisDecoder : public VorbisDecoderInterface
 {
-  public:
-    VorbisDecoder()
+public:
+  VorbisDecoder()
+  {
+    m_samples_used=0;
+    packets=0;
+    memset(&oy,0,sizeof(oy));
+    memset(&os,0,sizeof(os));
+    memset(&og,0,sizeof(og));
+    memset(&op,0,sizeof(op));
+    memset(&vi,0,sizeof(vi));
+    memset(&vc,0,sizeof(vc));
+    memset(&vd,0,sizeof(vd));
+    memset(&vb,0,sizeof(vb));
+
+
+    ogg_sync_init(&oy); /* Now we can read pages */
+    m_err=0;
+  }
+  ~VorbisDecoder()
+  {
+    ogg_stream_clear(&os);
+    vorbis_block_clear(&vb);
+    vorbis_dsp_clear(&vd);
+    vorbis_comment_clear(&vc);
+    vorbis_info_clear(&vi);
+
+    ogg_sync_clear(&oy);
+  }
+
+  int GetSampleRate() { return vi.rate; }
+  int GetNumChannels() { return vi.channels?vi.channels:1; }
+
+  void *DecodeGetSrcBuffer(int srclen)
+  {
+    return ogg_sync_buffer(&oy,srclen);
+  }
+
+  void DecodeWrote(int srclen)
+  {
+    ogg_sync_wrote(&oy,srclen);
+
+    while(ogg_sync_pageout(&oy,&og)>0)
     {
-      m_samples_used=0;
-    	packets=0;
-	    memset(&oy,0,sizeof(oy));
-	    memset(&os,0,sizeof(os));
-	    memset(&og,0,sizeof(og));
-	    memset(&op,0,sizeof(op));
-	    memset(&vi,0,sizeof(vi));
-	    memset(&vc,0,sizeof(vc));
-	    memset(&vd,0,sizeof(vd));
-	    memset(&vb,0,sizeof(vb));
+      int serial=ogg_page_serialno(&og);
+      if (!packets) ogg_stream_init(&os,serial);
+      else if (serial!=os.serialno)
+      {
+        vorbis_block_clear(&vb);
+        vorbis_dsp_clear(&vd);
+        vorbis_comment_clear(&vc);
+        vorbis_info_clear(&vi);
 
+        ogg_stream_clear(&os);
+        ogg_stream_init(&os,serial);
+        packets=0;
+      }
+      if (!packets)
+      {
+        vorbis_info_init(&vi);
+        vorbis_comment_init(&vc);
+      }
+      ogg_stream_pagein(&os,&og);
+      while(ogg_stream_packetout(&os,&op)>0)
+      {
+        if (packets<3)
+        {
+          if(vorbis_synthesis_headerin(&vi,&vc,&op)<0) return;
+        }
+        else
+        {
+          float ** pcm;
+          int samples;
+          if(vorbis_synthesis(&vb,&op)==0) vorbis_synthesis_blockin(&vd,&vb);
+          while((samples=vorbis_synthesis_pcmout(&vd,&pcm))>0)
+          {
+            int n,c;
 
-      ogg_sync_init(&oy); /* Now we can read pages */
-      m_err=0;
+            int newsize=(m_samples_used+(samples+4096)*vi.channels)*sizeof(float);
+
+            if (m_samples.GetSize() < newsize) m_samples.Resize(newsize+32768);
+
+            float *bufmem = (float *)m_samples.Get();
+
+            for(n=0; n<samples; n++)
+            {
+              for(c=0; c<vi.channels; c++)
+              {
+                bufmem[m_samples_used++]=pcm[c][n];
+              }
+            }
+            vorbis_synthesis_read(&vd,samples);
+          }
+        }
+        packets++;
+        if (packets==3)
+        {
+          vorbis_synthesis_init(&vd,&vi);
+          vorbis_block_init(&vd,&vb);
+        }
+      }
     }
-    ~VorbisDecoder()
-    {
-      ogg_stream_clear(&os);
-      vorbis_block_clear(&vb);
-      vorbis_dsp_clear(&vd);
-	    vorbis_comment_clear(&vc);
-      vorbis_info_clear(&vi);
+  }
+  int Available()
+  {
+    return m_samples_used;
+  }
+  float *Get()
+  {
+    return (float *)m_samples.Get();
+  }
+  void Skip(int amt)
+  {
+    float *sptr=(float *)m_samples.Get();
+    m_samples_used-=amt;
+    if (m_samples_used>0)
+      memcpy(sptr,sptr+amt,m_samples_used*sizeof(float));
+    else m_samples_used=0;
+  }
 
-  	  ogg_sync_clear(&oy);
-    }
+  void Reset()
+  {
+    m_samples_used=0;
 
-    int GetSampleRate() { return vi.rate; }
-    int GetNumChannels() { return vi.channels?vi.channels:1; }
+    vorbis_block_clear(&vb);
+    vorbis_dsp_clear(&vd);
+    vorbis_comment_clear(&vc);
+    vorbis_info_clear(&vi);
 
-    void *DecodeGetSrcBuffer(int srclen)
-    {
-		  return ogg_sync_buffer(&oy,srclen);
-    }
-
-    void DecodeWrote(int srclen)
-    {
-      ogg_sync_wrote(&oy,srclen);
-  
-		  while(ogg_sync_pageout(&oy,&og)>0)
-		  {
-			  int serial=ogg_page_serialno(&og);
-			  if (!packets) ogg_stream_init(&os,serial);
-			  else if (serial!=os.serialno)
-			  {
-				  vorbis_block_clear(&vb);
-				  vorbis_dsp_clear(&vd);
-				  vorbis_comment_clear(&vc);
-				  vorbis_info_clear(&vi);
-
-				  ogg_stream_clear(&os);
-				  ogg_stream_init(&os,serial);
-				  packets=0;
-			  }
-			  if (!packets)
-			  {
-				  vorbis_info_init(&vi);
-				  vorbis_comment_init(&vc);
-			  }
-			  ogg_stream_pagein(&os,&og);
-			  while(ogg_stream_packetout(&os,&op)>0)
-			  {
-				  if (packets<3)
-				  {
-					  if(vorbis_synthesis_headerin(&vi,&vc,&op)<0) return;
-				  }
-				  else
-				  {
-					  float ** pcm;
-					  int samples;
-					  if(vorbis_synthesis(&vb,&op)==0) vorbis_synthesis_blockin(&vd,&vb);
-					  while((samples=vorbis_synthesis_pcmout(&vd,&pcm))>0)
-					  {
-						  int n,c;
-
-              int newsize=(m_samples_used+(samples+4096)*vi.channels)*sizeof(float);
-
-              if (m_samples.GetSize() < newsize) m_samples.Resize(newsize+32768);
-
-              float *bufmem = (float *)m_samples.Get();
-
-						  for(n=0;n<samples;n++)
-						  {
-							  for(c=0;c<vi.channels;c++)
-							  {
-								  bufmem[m_samples_used++]=pcm[c][n];
-							  }							
-						  }
-						  vorbis_synthesis_read(&vd,samples);
-					  }
-				  }
-				  packets++;
-				  if (packets==3)
-				  {
-					  vorbis_synthesis_init(&vd,&vi);
-					  vorbis_block_init(&vd,&vb);
-				  }
-			  }
-		  }
-    }
-    int Available()
-    {
-      return m_samples_used;
-    }
-    float *Get()
-    {
-      return (float *)m_samples.Get();
-    }
-    void Skip(int amt)
-    {
-      float *sptr=(float *)m_samples.Get();
-      m_samples_used-=amt;
-      if (m_samples_used>0)
-        memcpy(sptr,sptr+amt,m_samples_used*sizeof(float));
-      else m_samples_used=0;
-    }
-
-    void Reset()
-    {
-      m_samples_used=0;
-
-			vorbis_block_clear(&vb);
-			vorbis_dsp_clear(&vd);
-			vorbis_comment_clear(&vc);
-			vorbis_info_clear(&vi);
-
-			ogg_stream_clear(&os);
-			packets=0;
-    }
+    ogg_stream_clear(&os);
+    packets=0;
+  }
 
 public:
-    int m_samples_used;
+  int m_samples_used;
 private:
-    WDL_HeapBuf m_samples; // we let the size get as big as it needs to, so we don't worry about tons of mallocs/etc
+  WDL_HeapBuf m_samples; // we let the size get as big as it needs to, so we don't worry about tons of mallocs/etc
 
 
-    int m_err;
-    int packets;
+  int m_err;
+  int packets;
 
-    ogg_sync_state   oy; /* sync and verify incoming physical bitstream */
-    ogg_stream_state os; /* take physical pages, weld into a logical
+  ogg_sync_state   oy; /* sync and verify incoming physical bitstream */
+  ogg_stream_state os; /* take physical pages, weld into a logical
 			    stream of packets */
-    ogg_page         og; /* one Ogg bitstream page.  Vorbis packets are inside */
-    ogg_packet       op; /* one raw packet of data for decode */
-  
-    vorbis_info      vi; /* struct that stores all the static vorbis bitstream
+  ogg_page         og; /* one Ogg bitstream page.  Vorbis packets are inside */
+  ogg_packet       op; /* one raw packet of data for decode */
+
+  vorbis_info      vi; /* struct that stores all the static vorbis bitstream
 			    settings */
-    vorbis_comment   vc; /* struct that stores all the bitstream user comments */
-    vorbis_dsp_state vd; /* central working state for the packet->PCM decoder */
-    vorbis_block     vb; /* local working space for packet->PCM decode */
+  vorbis_comment   vc; /* struct that stores all the bitstream user comments */
+  vorbis_dsp_state vd; /* central working state for the packet->PCM decoder */
+  vorbis_block     vb; /* local working space for packet->PCM decode */
 
 
 } WDL_FIXALIGN;
@@ -266,36 +266,36 @@ public:
 
 #else
 
-  #ifndef VORBISENC_WANT_QVAL
-      float qv=0.0;
-      if (nch == 2) bitrate=  (bitrate*5)/8;
-      // at least for mono 44khz
-      //-0.1 = ~40kbps
-      //0.0 == ~64kbps
-      //0.1 == 75
-      //0.3 == 95
-      //0.5 == 110
-      //0.75== 140
-      //1.0 == 240
-      if (bitrate <= 32)
-      {
-        m_ds=1;
-        bitrate*=2;
-      }
-   
-      if (bitrate < 40) qv=-0.1f;
-      else if (bitrate < 64) qv=-0.10f + (bitrate-40)*(0.10f/24.0f);
-      else if (bitrate < 75) qv=(bitrate-64)*(0.1f/9.0f);
-      else if (bitrate < 95) qv=0.1f+(bitrate-75)*(0.2f/20.0f);
-      else if (bitrate < 110) qv=0.3f+(bitrate-95)*(0.2f/15.0f);
-      else if (bitrate < 140) qv=0.5f+(bitrate-110)*(0.25f/30.0f);
-      else qv=0.75f+(bitrate-140)*(0.25f/100.0f);
+#ifndef VORBISENC_WANT_QVAL
+    float qv=0.0;
+    if (nch == 2) bitrate=  (bitrate*5)/8;
+    // at least for mono 44khz
+    //-0.1 = ~40kbps
+    //0.0 == ~64kbps
+    //0.1 == 75
+    //0.3 == 95
+    //0.5 == 110
+    //0.75== 140
+    //1.0 == 240
+    if (bitrate <= 32)
+    {
+      m_ds=1;
+      bitrate*=2;
+    }
 
-      if (qv<-0.10f)qv=-0.10f;
-      if (qv>1.0f)qv=1.0f;
-  #endif
+    if (bitrate < 40) qv=-0.1f;
+    else if (bitrate < 64) qv=-0.10f + (bitrate-40)*(0.10f/24.0f);
+    else if (bitrate < 75) qv=(bitrate-64)*(0.1f/9.0f);
+    else if (bitrate < 95) qv=0.1f+(bitrate-75)*(0.2f/20.0f);
+    else if (bitrate < 110) qv=0.3f+(bitrate-95)*(0.2f/15.0f);
+    else if (bitrate < 140) qv=0.5f+(bitrate-110)*(0.25f/30.0f);
+    else qv=0.75f+(bitrate-140)*(0.25f/100.0f);
 
-      m_err=vorbis_encode_init_vbr(&vi,nch,srate>>m_ds,qv);
+    if (qv<-0.10f)qv=-0.10f;
+    if (qv>1.0f)qv=1.0f;
+#endif
+
+    m_err=vorbis_encode_init_vbr(&vi,nch,srate>>m_ds,qv);
 #endif
 
     vorbis_comment_init(&vc);
@@ -321,7 +321,7 @@ public:
       vorbis_analysis_init(&vd,&vi);
       vorbis_block_init(&vd,&vb);
       ogg_stream_init(&os,m_ser++); //++?
- 
+
       outqueue.Advance(outqueue.Available());
       outqueue.Compact();
     }
@@ -335,14 +335,14 @@ public:
     ogg_stream_packetin(&os,&header_comm);
     ogg_stream_packetin(&os,&header_code);
 
-	  for (;;)
+    for (;;)
     {
       ogg_page og;
-		  int result=ogg_stream_flush(&os,&og);
-		  if(result==0)break;
+      int result=ogg_stream_flush(&os,&og);
+      if(result==0)break;
       outqueue.Add(og.header,og.header_len);
-		  outqueue.Add(og.body,og.body_len);
-	  }
+      outqueue.Add(og.body,og.body_len);
+    }
   }
 
   void Encode(float *in, int inlen, int advance=1, int spacing=1) // length in sample (PAIRS)
@@ -353,14 +353,14 @@ public:
     {
       // disable this for now, it fucks us sometimes
       // maybe we should throw some silence in instead?
-        vorbis_analysis_wrote(&vd,0);
+      vorbis_analysis_wrote(&vd,0);
     }
     else
     {
       inlen >>= m_ds;
       float **buffer=vorbis_analysis_buffer(&vd,inlen);
       int i,i2=0;
-      
+
       if (m_nch==1)
       {
         for (i = 0; i < inlen; i ++)
@@ -385,7 +385,7 @@ public:
         {
           int a;
           int i3=i2;
-          for(a=0;a<n;a++,i3+=spacing)
+          for(a=0; a<n; a++,i3+=spacing)
             buffer[a][i]=in[i3];
           i2+=advance<<m_ds;
         }
@@ -402,18 +402,18 @@ public:
 
       while(vorbis_bitrate_flushpacket(&vd,&op))
       {
-	
-      	ogg_stream_packetin(&os,&op);
 
-	      while (!eos)
+        ogg_stream_packetin(&os,&op);
+
+        while (!eos)
         {
           ogg_page og;
           int result=m_flushmode ? ogg_stream_flush(&os,&og) : ogg_stream_pageout(&os,&og);
-		      if(result==0)break;
+          if(result==0)break;
           outqueue.Add(og.header,og.header_len);
-		      outqueue.Add(og.body,og.body_len);
+          outqueue.Add(og.body,og.body_len);
           if(ogg_page_eos(&og)) eos=1;
-	      }
+        }
       }
     }
   }

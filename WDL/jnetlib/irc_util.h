@@ -6,16 +6,16 @@
 static void FormatIRCMessage(char *bufout, const char *fmt, ...) // bufout should be 1024 bytes to be safe
 {
   va_list arglist;
-	va_start(arglist, fmt);
-  #ifdef _WIN32
-	int written = _vsnprintf(bufout, 1024-16, fmt, arglist);
-  #else
-	int written = vsnprintf(bufout, 1024-16, fmt, arglist);
-  #endif
+  va_start(arglist, fmt);
+#ifdef _WIN32
+  int written = _vsnprintf(bufout, 1024-16, fmt, arglist);
+#else
+  int written = vsnprintf(bufout, 1024-16, fmt, arglist);
+#endif
   if (written < 0) written = 0;
   else if (written > 510) written=510;
   bufout[written]=0;
-	va_end(arglist);
+  va_end(arglist);
 
   strcat(bufout,"\r\n");
 }
@@ -40,7 +40,7 @@ static void ParseIRCMessage(char *buf, char **prefix, char *tokens[16], int *tok
   while (*buf && *tokensvalid < 16)
   {
     tokens[(*tokensvalid)++] = buf[0] == ':' ? buf+1 : buf;
-    if (buf[0] == ':' || *tokensvalid == 16) 
+    if (buf[0] == ':' || *tokensvalid == 16)
     {
       if (buf[0] == ':' && lastHadColon) *lastHadColon=true;
       break;

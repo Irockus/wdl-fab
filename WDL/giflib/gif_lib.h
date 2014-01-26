@@ -1,16 +1,16 @@
 /******************************************************************************
- * In order to make life a little bit easier when using the GIF file format,   
- * this library was written, and which does all the dirty work...              
- *                                                                             
- *                                        Written by Gershon Elber,  Jun. 1989 
- *                                        Hacks by Eric S. Raymond,  Sep. 1992 
+ * In order to make life a little bit easier when using the GIF file format,
+ * this library was written, and which does all the dirty work...
+ *
+ *                                        Written by Gershon Elber,  Jun. 1989
+ *                                        Hacks by Eric S. Raymond,  Sep. 1992
  ******************************************************************************
- * History:                                                                    
- * 14 Jun 89 - Version 1.0 by Gershon Elber.                                   
- *  3 Sep 90 - Version 1.1 by Gershon Elber (Support for Gif89, Unique names)  
- * 15 Sep 90 - Version 2.0 by Eric S. Raymond (Changes to suoport GIF slurp)   
+ * History:
+ * 14 Jun 89 - Version 1.0 by Gershon Elber.
+ *  3 Sep 90 - Version 1.1 by Gershon Elber (Support for Gif89, Unique names)
+ * 15 Sep 90 - Version 2.0 by Eric S. Raymond (Changes to suoport GIF slurp)
  * 26 Jun 96 - Version 3.0 by Eric S. Raymond (Full GIF89 support)
- * 17 Dec 98 - Version 4.0 by Toshio Kuratomi (Fix extension writing code)     
+ * 17 Dec 98 - Version 4.0 by Toshio Kuratomi (Fix extension writing code)
  *****************************************************************************/
 
 #ifndef _GIF_LIB_H_
@@ -49,14 +49,14 @@ typedef unsigned char GifPixelType;
 typedef unsigned char *GifRowType;
 typedef unsigned char GifByteType;
 #ifdef _GBA_OPTMEM
-    typedef unsigned short GifPrefixType;
-    typedef short GifWord;
+typedef unsigned short GifPrefixType;
+typedef short GifWord;
 #else
-    typedef unsigned int GifPrefixType;
-    typedef int GifWord;
+typedef unsigned int GifPrefixType;
+typedef int GifWord;
 #endif
 
-#define GIF_MESSAGE(Msg) 
+#define GIF_MESSAGE(Msg)
 #define GIF_EXIT(Msg)
 
 #ifdef SYSV
@@ -66,39 +66,39 @@ typedef unsigned char GifByteType;
 #endif /* SYSV */
 
 typedef struct GifColorType {
-    GifByteType Red, Green, Blue;
+  GifByteType Red, Green, Blue;
 } GifColorType;
 
 typedef struct ColorMapObject {
-    int ColorCount;
-    int BitsPerPixel;
-    GifColorType *Colors;    /* on malloc(3) heap */
+  int ColorCount;
+  int BitsPerPixel;
+  GifColorType *Colors;    /* on malloc(3) heap */
 } ColorMapObject;
 
 typedef struct GifImageDesc {
-    GifWord Left, Top, Width, Height,   /* Current image dimensions. */
-      Interlace;                    /* Sequential/Interlaced lines. */
-    ColorMapObject *ColorMap;       /* The local color map */
+  GifWord Left, Top, Width, Height,   /* Current image dimensions. */
+          Interlace;                    /* Sequential/Interlaced lines. */
+  ColorMapObject *ColorMap;       /* The local color map */
 } GifImageDesc;
 
 typedef struct GifFileType {
-    GifWord SWidth, SHeight,        /* Screen dimensions. */
-      SColorResolution,         /* How many colors can we generate? */
-      SBackGroundColor;         /* I hope you understand this one... */
-    ColorMapObject *SColorMap;  /* NULL if not exists. */
-    int ImageCount;             /* Number of current image */
-    GifImageDesc Image;         /* Block describing current image */
-    struct SavedImage *SavedImages; /* Use this to accumulate file state */
-    VoidPtr UserData;           /* hook to attach user data (TVT) */
-    VoidPtr Private;            /* Don't mess with this! */
+  GifWord SWidth, SHeight,        /* Screen dimensions. */
+          SColorResolution,         /* How many colors can we generate? */
+          SBackGroundColor;         /* I hope you understand this one... */
+  ColorMapObject *SColorMap;  /* NULL if not exists. */
+  int ImageCount;             /* Number of current image */
+  GifImageDesc Image;         /* Block describing current image */
+  struct SavedImage *SavedImages; /* Use this to accumulate file state */
+  VoidPtr UserData;           /* hook to attach user data (TVT) */
+  VoidPtr Private;            /* Don't mess with this! */
 } GifFileType;
 
 typedef enum {
-    UNDEFINED_RECORD_TYPE,
-    SCREEN_DESC_RECORD_TYPE,
-    IMAGE_DESC_RECORD_TYPE, /* Begin with ',' */
-    EXTENSION_RECORD_TYPE,  /* Begin with '!' */
-    TERMINATE_RECORD_TYPE   /* Begin with ';' */
+  UNDEFINED_RECORD_TYPE,
+  SCREEN_DESC_RECORD_TYPE,
+  IMAGE_DESC_RECORD_TYPE, /* Begin with ',' */
+  EXTENSION_RECORD_TYPE,  /* Begin with '!' */
+  TERMINATE_RECORD_TYPE   /* Begin with ';' */
 } GifRecordType;
 
 /* DumpScreen2Gif routine constants identify type of window/screen to dump.
@@ -107,8 +107,8 @@ typedef enum {
  * (Turbo C 2.0 compiler for IBM PC) gives to these devices.
  */
 typedef enum {
-    GIF_DUMP_SGI_WINDOW = 1000,
-    GIF_DUMP_X_WINDOW = 1001
+  GIF_DUMP_SGI_WINDOW = 1000,
+  GIF_DUMP_X_WINDOW = 1001
 } GifScreenDumpType;
 
 /* func type to read gif data from arbitrary sources (TVT) */
@@ -120,7 +120,7 @@ typedef int (*InputFunc) (GifFileType *, GifByteType *, int);
 typedef int (*OutputFunc) (GifFileType *, const GifByteType *, int);
 
 /******************************************************************************
- *  GIF89 extension function codes                                             
+ *  GIF89 extension function codes
 ******************************************************************************/
 
 #define COMMENT_EXT_FUNC_CODE     0xfe    /* comment */
@@ -129,8 +129,8 @@ typedef int (*OutputFunc) (GifFileType *, const GifByteType *, int);
 #define APPLICATION_EXT_FUNC_CODE 0xff    /* application block */
 
 /******************************************************************************
- * O.K., here are the routines one can access in order to encode GIF file:     
- * (GIF_LIB file EGIF_LIB.C).                              
+ * O.K., here are the routines one can access in order to encode GIF file:
+ * (GIF_LIB file EGIF_LIB.C).
 ******************************************************************************/
 
 GifFileType *EGifOpenFileName(const char *GifFileName,
@@ -177,8 +177,8 @@ int EGifCloseFile(GifFileType * GifFile);
 #define E_GIF_ERR_NOT_WRITEABLE  10
 
 /******************************************************************************
- * O.K., here are the routines one can access in order to decode GIF file:     
- * (GIF_LIB file DGIF_LIB.C).                              
+ * O.K., here are the routines one can access in order to decode GIF file:
+ * (GIF_LIB file DGIF_LIB.C).
  *****************************************************************************/
 #ifndef _GBA_NO_FILEIO
 GifFileType *DGifOpenFileName(const char *GifFileName);
@@ -217,7 +217,7 @@ int DGifCloseFile(GifFileType * GifFile);
 #define D_GIF_ERR_EOF_TOO_SOON   113
 
 /******************************************************************************
- * O.K., here are the routines from GIF_LIB file QUANTIZE.C.              
+ * O.K., here are the routines from GIF_LIB file QUANTIZE.C.
 ******************************************************************************/
 int QuantizeBuffer(unsigned int Width, unsigned int Height,
                    int *ColorMapSize, GifByteType * RedInput,
@@ -226,18 +226,18 @@ int QuantizeBuffer(unsigned int Width, unsigned int Height,
                    GifColorType * OutputColorMap);
 
 /******************************************************************************
- * O.K., here are the routines from GIF_LIB file QPRINTF.C.              
+ * O.K., here are the routines from GIF_LIB file QPRINTF.C.
 ******************************************************************************/
 extern int GifQuietPrint;
 
 #ifdef HAVE_STDARG_H
-    extern void GifQprintf(char *Format, ...);
+extern void GifQprintf(char *Format, ...);
 #elif defined (HAVE_VARARGS_H)
-    extern void GifQprintf();
+extern void GifQprintf();
 #endif /* HAVE_STDARG_H */
 
 /******************************************************************************
- * O.K., here are the routines from GIF_LIB file GIF_ERR.C.              
+ * O.K., here are the routines from GIF_LIB file GIF_ERR.C.
 ******************************************************************************/
 #ifndef _GBA_NO_FILEIO
 extern void PrintGifError(void);
@@ -245,7 +245,7 @@ extern void PrintGifError(void);
 extern int GifLastError(void);
 
 /******************************************************************************
- * O.K., here are the routines from GIF_LIB file DEV2GIF.C.              
+ * O.K., here are the routines from GIF_LIB file DEV2GIF.C.
 ******************************************************************************/
 extern int DumpScreen2Gif(const char *FileName,
                           int ReqGraphDriver,
@@ -261,7 +261,7 @@ extern int DumpScreen2Gif(const char *FileName,
  *****************************************************************************/
 
 /******************************************************************************
- * Color Map handling from ALLOCGIF.C                          
+ * Color Map handling from ALLOCGIF.C
  *****************************************************************************/
 
 extern ColorMapObject *MakeMapObject(int ColorCount,
@@ -273,23 +273,23 @@ extern ColorMapObject *UnionColorMap(const ColorMapObject * ColorIn1,
 extern int BitSize(int n);
 
 /******************************************************************************
- * Support for the in-core structures allocation (slurp mode).              
+ * Support for the in-core structures allocation (slurp mode).
  *****************************************************************************/
 
 /* This is the in-core version of an extension record */
 typedef struct {
-    int ByteCount;
-    char *Bytes;    /* on malloc(3) heap */
-    int Function;   /* Holds the type of the Extension block. */
+  int ByteCount;
+  char *Bytes;    /* on malloc(3) heap */
+  int Function;   /* Holds the type of the Extension block. */
 } ExtensionBlock;
 
 /* This holds an image header, its unpacked raster bits, and extensions */
 typedef struct SavedImage {
-    GifImageDesc ImageDesc;
-    unsigned char *RasterBits;  /* on malloc(3) heap */
-    int Function;   /* DEPRECATED: Use ExtensionBlocks[x].Function instead */
-    int ExtensionBlockCount;
-    ExtensionBlock *ExtensionBlocks;    /* on malloc(3) heap */
+  GifImageDesc ImageDesc;
+  unsigned char *RasterBits;  /* on malloc(3) heap */
+  int Function;   /* DEPRECATED: Use ExtensionBlocks[x].Function instead */
+  int ExtensionBlockCount;
+  ExtensionBlock *ExtensionBlocks;    /* on malloc(3) heap */
 } SavedImage;
 
 extern void ApplyTranslation(SavedImage * Image, GifPixelType Translation[]);
@@ -302,7 +302,7 @@ extern SavedImage *MakeSavedImage(GifFileType * GifFile,
 extern void FreeSavedImages(GifFileType * GifFile);
 
 /******************************************************************************
- * The library's internal utility font                          
+ * The library's internal utility font
  *****************************************************************************/
 
 #define GIF_FONT_WIDTH  8
@@ -310,12 +310,12 @@ extern void FreeSavedImages(GifFileType * GifFile);
 extern unsigned char AsciiTable[][GIF_FONT_WIDTH];
 
 #ifdef _WIN32
-    extern void DrawGifText(SavedImage * Image,
+extern void DrawGifText(SavedImage * Image,
 #else
-    extern void DrawText(SavedImage * Image,
+extern void DrawText(SavedImage * Image,
 #endif
-                     const int x, const int y,
-                     const char *legend, const int color);
+                        const int x, const int y,
+                        const char *legend, const int color);
 
 extern void DrawBox(SavedImage * Image,
                     const int x, const int y,

@@ -77,7 +77,7 @@ char *LICE_GetImageExtensionList(bool wantAllSup, bool wantAllFiles)
       hdr=hdr->_next;
     }
 
-    if (!cnt) 
+    if (!cnt)
     {
       wrpos=0; // reset if nothing meaningful added
       buf[0]=buf[1]=buf[2]=0;
@@ -95,7 +95,7 @@ char *LICE_GetImageExtensionList(bool wantAllSup, bool wantAllFiles)
       const char *p=rd;
       while (p[0] || p[1]) p++; // doublenull terminated list
 
-      int len = p + 2 - rd; 
+      int len = p + 2 - rd;
       if (len>2)
       {
         if (grow_buf(&buf,&bufsz,&wrpos,rd,len)) return buf; // fail

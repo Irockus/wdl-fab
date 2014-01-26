@@ -7,7 +7,7 @@
 
 #  if 0
 // at some point we should enable this and use it in most SWELL APIs that call Cocoa code...
-#   define SWELL_BEGIN_TRY @try { 
+#   define SWELL_BEGIN_TRY @try {
 #   define SWELL_END_TRY(x) } @catch (NSException *ex) { NSLog(@"SWELL exception in %s:%d :: %@:%@\n",__FILE__,__LINE__,[ex name], [ex reason]); x }
 #  else
 #   define SWELL_BEGIN_TRY
@@ -45,7 +45,7 @@ public:
   WDL_PtrList<char> m_vals;
   LPARAM m_param;
   int m_imageidx;
-  
+
   int m_tmp;
 };
 
@@ -54,9 +54,9 @@ struct HTREEITEM__
   HTREEITEM__();
   ~HTREEITEM__();
   bool FindItem(HTREEITEM it, HTREEITEM__ **parOut, int *idxOut);
-  
+
   void *m_dh;
-  
+
   bool m_haschildren;
   char *m_value;
   WDL_PtrList<HTREEITEM__> m_children; // only used in tree mode
@@ -83,12 +83,12 @@ struct HGDIOBJ__
   int type;
 
   int additional_refcnt; // refcnt of 0 means one owner (if >0, additional owners)
-  
+
   // used by pen/brush
   CGColorRef color;
   int wid;
-  NSImage *bitmapptr;  
-  
+  NSImage *bitmapptr;
+
   NSMutableDictionary *__old_fontdict; // unused, for ABI compat
   //
   // if ATSUI used, meaning IsCoreTextSupported() returned false
@@ -98,26 +98,26 @@ struct HGDIOBJ__
 
   bool _infreelist;
   struct HGDIOBJ__ *_next;
- 
+
   // if using CoreText to draw text
   void *ct_FontRef;
   char font_quality;
 };
 
 struct HDC__ {
-  CGContextRef ctx; 
+  CGContextRef ctx;
   void *ownedData; // always use via SWELL_GetContextFrameBuffer() (which performs necessary alignment)
   HGDIOBJ__ *curpen;
   HGDIOBJ__ *curbrush;
   HGDIOBJ__ *curfont;
-  
+
   NSColor *__old_nstextcol; // provided for ABI compat, but unused
   int cur_text_color_int; // text color as int
-  
+
   int curbkcol;
   int curbkmode;
   float lastpos_x,lastpos_y;
-  
+
   void *GLgfxctx; // optionally set
   bool _infreelist;
   struct HDC__ *_next;
@@ -129,11 +129,11 @@ struct HDC__ {
 
 // 10.4 sdk just uses "float"
 #  if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
-  # ifdef __LP64__
-    typedef double CGFloat;
-  # else
-    typedef float CGFloat;
-  # endif
+# ifdef __LP64__
+typedef double CGFloat;
+# else
+typedef float CGFloat;
+# endif
 #  endif
 
 
@@ -143,11 +143,11 @@ struct HDC__ {
 #  include <gdk/gdkkeysyms.h>
 
 # else
-// generic 
+// generic
 
 # endif // ifdef SWELL_TARGET_OSX
 
-# ifndef SWELL_TARGET_OSX 
+# ifndef SWELL_TARGET_OSX
 
 #  ifdef SWELL_LICE_GDI
 #   include "../lice/lice.h"
@@ -159,18 +159,18 @@ LRESULT SwellDialogDefaultWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 struct HWND__
 {
   HWND__(HWND par, int wID=0, RECT *wndr=NULL, const char *label=NULL, bool visible=false, WNDPROC wndproc=NULL, DLGPROC dlgproc=NULL);
-  ~HWND__(); // DO NOT USE!!! We would make this private but it breaks PtrList using it on gcc. 
+  ~HWND__(); // DO NOT USE!!! We would make this private but it breaks PtrList using it on gcc.
 
   // using this API prevents the HWND from being valid -- it'll still get its resources destroyed via DestroyWindow() though.
   // DestroyWindow() does cleanup, then the final Release().
   void Retain() { m_refcnt++; }
   void Release() { if (!--m_refcnt) delete this; }
- 
 
 
- 
+
+
   const char *m_classname;
-  
+
 
 #  ifdef SWELL_TARGET_GDK
   GdkWindow *m_oswindow;
@@ -193,7 +193,7 @@ struct HWND__
   bool m_enabled;
   bool m_wantfocus;
 
-  int m_refcnt; 
+  int m_refcnt;
 
   HMENU m_menu;
 
@@ -248,19 +248,19 @@ struct HDC__ {
   RECT dirty_rect; // in surface coordinates, used for GetWindowDC()/GetDC()/etc
   bool dirty_rect_valid;
 #  else
-  void *ownedData; // for mem contexts, support a null rendering 
+  void *ownedData; // for mem contexts, support a null rendering
 #  endif
 
   HGDIOBJ__ *curpen;
   HGDIOBJ__ *curbrush;
   HGDIOBJ__ *curfont;
-  
+
   int cur_text_color_int; // text color as int
-  
+
   int curbkcol;
   int curbkmode;
   float lastpos_x,lastpos_y;
-  
+
   struct HDC__ *_next;
   bool _infreelist;
 };
@@ -277,7 +277,7 @@ HDC SWELL_CreateGfxContext(void *);
 
 typedef struct
 {
-  void *instptr; 
+  void *instptr;
   void *bundleinstptr;
   int refcnt;
 
@@ -295,14 +295,14 @@ enum
   INTERNAL_OBJECT_FILE,
   INTERNAL_OBJECT_EXTERNALSOCKET, // socket not owned by us
   INTERNAL_OBJECT_SOCKETEVENT,
-  INTERNAL_OBJECT_NSTASK, 
+  INTERNAL_OBJECT_NSTASK,
   INTERNAL_OBJECT_END
 };
 
 typedef struct
 {
-   int type; // INTERNAL_OBJECT_*
-   int count; // reference count
+  int type; // INTERNAL_OBJECT_*
+  int count; // reference count
 } SWELL_InternalObjectHeader;
 
 typedef struct
@@ -318,36 +318,36 @@ typedef struct
 typedef struct
 {
   SWELL_InternalObjectHeader hdr;
-  
+
   pthread_mutex_t mutex;
   pthread_cond_t cond;
 
   bool isSignal;
   bool isManualReset;
-  
+
 } SWELL_InternalObjectHeader_Event;
 
 
-// used for both INTERNAL_OBJECT_EXTERNALSOCKET and INTERNAL_OBJECT_SOCKETEVENT. 
+// used for both INTERNAL_OBJECT_EXTERNALSOCKET and INTERNAL_OBJECT_SOCKETEVENT.
 // if EXTERNALSOCKET, socket[1] ignored and autoReset ignored.
 typedef struct
 {
   SWELL_InternalObjectHeader hdr;
-  int socket[2]; 
+  int socket[2];
   bool autoReset;
 } SWELL_InternalObjectHeader_SocketEvent;
- 
+
 typedef struct
 {
   SWELL_InternalObjectHeader hdr;
-  
+
   FILE *fp;
 } SWELL_InternalObjectHeader_File;
 
 typedef struct
 {
   SWELL_InternalObjectHeader hdr;
-  void *task; 
+  void *task;
 } SWELL_InternalObjectHeader_NSTask;
 
 

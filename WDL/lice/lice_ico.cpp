@@ -18,13 +18,13 @@ static LICE_IBitmap *icoToBitmap(HICON icon, LICE_IBitmap *bmpOut)
   int icon_w = 16, icon_h=16;
 
 #ifdef _WIN32
-  ICONINFO ii={0,};
+  ICONINFO ii= {0,};
   if (GetIconInfo(icon,&ii))
   {
     bool blah=false;
     if (ii.hbmColor)
     {
-      BITMAP bm={0,};
+      BITMAP bm= {0,};
       if (GetObject(ii.hbmColor,sizeof(bm),&bm) && bm.bmWidth && bm.bmHeight)
       {
         icon_w=bm.bmWidth;
@@ -35,7 +35,7 @@ static LICE_IBitmap *icoToBitmap(HICON icon, LICE_IBitmap *bmpOut)
     }
     if (ii.hbmMask)
     {
-      BITMAP bm={0,};
+      BITMAP bm= {0,};
       if (!blah && GetObject(ii.hbmMask,sizeof(bm),&bm) && bm.bmWidth && bm.bmHeight)
       {
         icon_w=bm.bmWidth;
@@ -45,7 +45,7 @@ static LICE_IBitmap *icoToBitmap(HICON icon, LICE_IBitmap *bmpOut)
     }
   }
 #else
-  BITMAP bm={0,};
+  BITMAP bm= {0,};
   if (GetObject(icon,sizeof(bm),&bm) && bm.bmWidth && bm.bmHeight) // SWELL's GetObject() works on icons
   {
     icon_w=bm.bmWidth;
@@ -60,7 +60,7 @@ static LICE_IBitmap *icoToBitmap(HICON icon, LICE_IBitmap *bmpOut)
   DrawIconEx(tempbm.getDC(),0,0,icon,icon_w,icon_h,0,NULL,DI_NORMAL);
 #else
   {
-    RECT r={0,0,icon_w,icon_h};
+    RECT r= {0,0,icon_w,icon_h};
     DrawImageInRect(tempbm.getDC(),icon,&r);
   }
 #endif
@@ -70,7 +70,7 @@ static LICE_IBitmap *icoToBitmap(HICON icon, LICE_IBitmap *bmpOut)
   DrawIconEx(tempbm.getDC(),icon_w,0,icon,icon_w,icon_h,0,NULL,DI_NORMAL);
 #else
   {
-    RECT r={icon_w,0,icon_w+icon_w,icon_h};
+    RECT r= {icon_w,0,icon_w+icon_w,icon_h};
     DrawImageInRect(tempbm.getDC(),icon,&r);
   }
 #endif
@@ -79,10 +79,10 @@ static LICE_IBitmap *icoToBitmap(HICON icon, LICE_IBitmap *bmpOut)
   else bmpOut->resize(icon_w,icon_h);
 
   int y; // since we have the image drawn on white and on black, we can calculate the alpha channel...
-  for(y=0;y<icon_h;y++)
+  for(y=0; y<icon_h; y++)
   {
     int x;
-    for(x=0;x<icon_w;x++)
+    for(x=0; x<icon_w; x++)
     {
       LICE_pixel p = LICE_GetPixel(&tempbm,x,y);
       LICE_pixel p2 = LICE_GetPixel(&tempbm,x+icon_w,y);
@@ -115,7 +115,7 @@ LICE_IBitmap *LICE_LoadIcon(const char *filename, int reqiconsz, LICE_IBitmap *b
   if (reqiconsz<1) reqiconsz=16;
   HICON icon = NULL;
 #ifdef _WIN32
-  
+
   if (GetVersion()<0x80000000)
   {
     WCHAR wf[2048];
@@ -157,7 +157,7 @@ class LICE_ICOLoader
 {
 public:
   _LICE_ImageLoader_rec rec;
-  LICE_ICOLoader() 
+  LICE_ICOLoader()
   {
     rec.loadfunc = loadfunc;
     rec.get_extlist = get_extlist;

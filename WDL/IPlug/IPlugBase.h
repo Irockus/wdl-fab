@@ -80,13 +80,13 @@ public:
   virtual bool SerializeState(ByteChunk* pChunk) { TRACE; return SerializeParams(pChunk); }
   // Return the new chunk position (endPos). Implementations should set a mutex lock and call UnserializeParams() after custom data is unserialized
   virtual int UnserializeState(ByteChunk* pChunk, int startPos) { TRACE; return UnserializeParams(pChunk, startPos); }
-  
+
   // Only used by RTAS & AAX, override in plugins that do chunks
   virtual bool CompareState(const unsigned char* incomingState, int startPos);
-  
-  #ifndef OS_IOS
+
+#ifndef OS_IOS
   virtual void OnWindowResize() {}
-  #endif
+#endif
   // implement this and return true to trigger your custom about box, when someone clicks about in the menu of a standalone
   virtual bool HostRequestingAboutBox() { return false; }
 
@@ -120,7 +120,7 @@ public:
   virtual void EndInformHostOfParamChange(int idx) = 0;
 
   virtual void InformHostOfProgramChange() = 0;
-  
+
   // ----------------------------------------
   // Useful stuff for your plugin class or an outsider to call,
   // most of which is implemented by the API class.
@@ -151,7 +151,7 @@ public:
   int GetHostVersion(bool decimal); // Decimal = VVVVRRMM, otherwise 0xVVVVRRMM.
   void GetHostVersionStr(char* str, size_t len);
   const char* GetArchString();
-  
+
   // Tell the host that the graphics resized.
   // Should be called only by the graphics object when it resizes itself.
   virtual void ResizeGraphics(int w, int h) = 0;
@@ -191,9 +191,9 @@ protected:
 
   void SetHost(const char* host, int version);   // Version = 0xVVVVRRMM.
   virtual void HostSpecificInit() { return; };
-  #ifndef OS_IOS
+#ifndef OS_IOS
   virtual void AttachGraphics(IGraphics* pGraphics);
-  #endif
+#endif
 
   // If latency changes after initialization (often not supported by the host).
   virtual void SetLatency(int samples);
@@ -221,9 +221,9 @@ protected:
   bool SerializeParams(ByteChunk* pChunk);
   int UnserializeParams(ByteChunk* pChunk, int startPos); // Returns the new chunk position (endPos)
 
-  #ifndef OS_IOS
+#ifndef OS_IOS
   virtual void RedrawParamControls();  // Called after restoring state.
-  #endif
+#endif
 
   // ----------------------------------------
   // Internal IPlug stuff (but API classes need to get at it).
@@ -252,7 +252,7 @@ protected:
   void ProcessBuffers(double sampleType, int nFrames);
   void ProcessBuffersAccumulating(float sampleType, int nFrames);
   void ZeroScratchBuffers();
-  
+
 public:
   void ModifyCurrentPreset(const char* name = 0);     // Sets the currently active preset to whatever current params are.
   int NPresets() { return mPresets.GetSize(); }
@@ -260,7 +260,7 @@ public:
   bool RestorePreset(int idx);
   bool RestorePreset(const char* name);
   const char* GetPresetName(int idx);
-  
+
   virtual void DirtyPTCompareState() {}; // needed in chunks based plugins to tell PT a non-indexed param changed and to turn on the compare light
 
   // Dump the current state as source code for a call to MakePresetFromNamedParams / MakePresetFromBlob
@@ -269,16 +269,16 @@ public:
 
   virtual void PresetsChangedByHost() {} // does nothing by default
   void DirtyParameters(); // hack to tell the host to dirty file state, when a preset is recalled
-  #ifndef OS_IOS
+#ifndef OS_IOS
   bool SaveProgramAsFXP(const char* defaultFileName = "");
   bool SaveBankAsFXB(const char* defaultFileName = "");
   bool LoadProgramFromFXP();
   bool LoadBankFromFXB();
-  #endif
-  
+#endif
+
   void SetSampleRate(double sampleRate);
   virtual void SetBlockSize(int blockSize); // overridden in IPlugAU
-  
+
   WDL_Mutex mMutex;
 
   struct IMutexLock

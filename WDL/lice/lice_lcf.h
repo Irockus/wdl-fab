@@ -72,8 +72,8 @@ public:
   LICE_IBitmap *GetCurrentFrame(); // can return NULL if error
   int GetTimeToNextFrame(); // delta in ms
 
-  int GetWidth(){ return m_curhdr[m_rd_which].w; }
-  int GetHeight(){ return m_curhdr[m_rd_which].h; }
+  int GetWidth() { return m_curhdr[m_rd_which].w; }
+  int GetHeight() { return m_curhdr[m_rd_which].h; }
 
 private:
   LICE_MemBitmap m_workbm;
@@ -94,7 +94,7 @@ private:
 
   z_stream m_compstream;
   WDL_Queue m_tmp;
-  
+
   WDL_FileRead *m_file;
 
   unsigned int m_file_length_ms;

@@ -1,8 +1,8 @@
 /*
     WDL - ffmpeg.h
     Copyright (C) 2005 Cockos Incorporated
-    Copyright (C) 1999-2004 Nullsoft, Inc. 
-  
+    Copyright (C) 1999-2004 Nullsoft, Inc.
+
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
     arising from the use of this software.
@@ -18,7 +18,7 @@
     2. Altered source versions must be plainly marked as such, and must not be
        misrepresented as being the original software.
     3. This notice may not be removed or altered from any source distribution.
-      
+
 */
 
 #ifndef _WDL_FFMPEG_H
@@ -67,7 +67,7 @@ public:
     m_audio_enc = NULL;
     m_bit_buffer = NULL;
     avcodec_get_frame_defaults(&m_cvtpic);
-    
+
     //initialize FFMpeg
     {
       static int init = 0;
@@ -80,8 +80,8 @@ public:
     if(!m_ctx || !fmt) return;
 
     m_ctx->oformat = fmt;
-    
-    m_stream = av_new_stream(m_ctx, m_ctx->nb_streams); 
+
+    m_stream = av_new_stream(m_ctx, m_ctx->nb_streams);
     if(!m_stream) return;
 
     //init video
@@ -99,17 +99,17 @@ public:
     m_video_enc->height = height;
     m_video_enc->time_base.den = fps * 10000;
     m_video_enc->time_base.num = 10000;
-    
+
     m_video_enc->pix_fmt = PIX_FMT_BGRA;
-    if (codec && codec->pix_fmts) 
+    if (codec && codec->pix_fmts)
     {
-        const enum PixelFormat *p= codec->pix_fmts;
-        for (; *p!=-1; p++) {
-            if (*p == m_video_enc->pix_fmt)
-                break;
-        }
-        if (*p == -1)
-            m_video_enc->pix_fmt = codec->pix_fmts[0];
+      const enum PixelFormat *p= codec->pix_fmts;
+      for (; *p!=-1; p++) {
+        if (*p == m_video_enc->pix_fmt)
+          break;
+      }
+      if (*p == -1)
+        m_video_enc->pix_fmt = codec->pix_fmts[0];
     }
 
     if(m_video_enc->pix_fmt != PIX_FMT_BGRA)
@@ -117,32 +117,32 @@ public:
       //this codec needs colorplane conversion
       int sws_flags = SWS_BICUBIC;
       m_img_resample_ctx = sws_getContext(
-                                     width,
-                                     height,
-                                     PIX_FMT_BGRA,
-                                     width,
-                                     height,
-                                     m_video_enc->pix_fmt,
-                                     sws_flags, NULL, NULL, NULL);
+                             width,
+                             height,
+                             PIX_FMT_BGRA,
+                             width,
+                             height,
+                             m_video_enc->pix_fmt,
+                             sws_flags, NULL, NULL, NULL);
 
       if ( avpicture_alloc( (AVPicture*)&m_cvtpic, m_video_enc->pix_fmt,
-                          m_video_enc->width, m_video_enc->height) )
+                            m_video_enc->width, m_video_enc->height) )
         return;
     }
 
     m_video_enc->bit_rate = bitrate*1024;
     m_video_enc->gop_size = 12; /* emit one intra frame every twelve frames at most */
 
-    // some formats want stream headers to be separate 
+    // some formats want stream headers to be separate
     if(m_ctx->oformat->flags & AVFMT_GLOBALHEADER)
-        m_video_enc->flags |= CODEC_FLAG_GLOBAL_HEADER; 
+      m_video_enc->flags |= CODEC_FLAG_GLOBAL_HEADER;
 
     m_video_enc->max_qdiff = 3; // set the default maximum quantizer difference between frames
     m_video_enc->thread_count = 1; // set how many thread need be used in encoding
     m_video_enc->rc_override_count = 0; // set ratecontrol override to 0
-    if (!m_video_enc->rc_initial_buffer_occupancy) 
+    if (!m_video_enc->rc_initial_buffer_occupancy)
     {
-        m_video_enc->rc_initial_buffer_occupancy = m_video_enc->rc_buffer_size*3/4; // set decoder buffer size
+      m_video_enc->rc_initial_buffer_occupancy = m_video_enc->rc_buffer_size*3/4; // set decoder buffer size
     }
     m_video_enc->me_threshold = 0; // set motion estimation threshold value to 0
     m_video_enc->intra_dc_precision = 0;
@@ -150,13 +150,13 @@ public:
     m_ctx->preload = (int)(0.5 * AV_TIME_BASE);
     m_ctx->max_delay = (int)(0.7 * AV_TIME_BASE);
     m_ctx->loop_output = -1;
-    
+
     m_ctx->timestamp = 0;
 
     av_log_set_callback(ffmpeg_avcodec_log);
     av_log_set_level(AV_LOG_ERROR);
 
-    if (avcodec_open(m_video_enc, codec) < 0) 
+    if (avcodec_open(m_video_enc, codec) < 0)
     {
       return;
     }
@@ -164,7 +164,7 @@ public:
     //init audio
     if(abitrate)
     {
-      m_astream = av_new_stream(m_ctx, m_ctx->nb_streams); 
+      m_astream = av_new_stream(m_ctx, m_ctx->nb_streams);
       if(!m_astream) return;
 
       avcodec_get_context_defaults2(m_astream->codec, CODEC_TYPE_AUDIO);
@@ -188,10 +188,10 @@ public:
     AVFormatParameters params, *ap = &params;
     memset(ap, 0, sizeof(*ap));
     if (av_set_parameters(m_ctx, ap) < 0) return;
-  
+
     url_open_dyn_buf(&m_ctx->pb);
     av_write_header(m_ctx);
-    
+
     int size = width * height;
     m_bit_buffer_size = 1024 * 256;
     m_bit_buffer_size= FFMAX(m_bit_buffer_size, 4*size);
@@ -202,13 +202,13 @@ public:
   }
   ~WDL_VideoEncode()
   {
-    if(m_stream && m_stream->codec) avcodec_close(m_stream->codec);     
-    if(m_astream && m_astream->codec) avcodec_close(m_astream->codec);     
+    if(m_stream && m_stream->codec) avcodec_close(m_stream->codec);
+    if(m_astream && m_astream->codec) avcodec_close(m_astream->codec);
     av_free(m_bit_buffer);
     av_free(m_cvtpic.data[0]);
     av_free(m_ctx);
   }
-  
+
   int isInited() { return m_init; }
 
   void encodeVideo(const LICE_pixel *buf)
@@ -216,10 +216,10 @@ public:
     if(m_img_resample_ctx)
     {
       //convert to output format
-      uint8_t *p[1]={(uint8_t*)buf};
-      int w[1]={m_video_enc->width*4};
+      uint8_t *p[1]= {(uint8_t*)buf};
+      int w[1]= {m_video_enc->width*4};
       sws_scale(m_img_resample_ctx, p, w,
-              0, m_video_enc->height, m_cvtpic.data, m_cvtpic.linesize);
+                0, m_video_enc->height, m_cvtpic.data, m_cvtpic.linesize);
     }
     int ret = avcodec_encode_video(m_video_enc, m_bit_buffer, m_bit_buffer_size, &m_cvtpic);
     if(ret>0)
@@ -230,9 +230,9 @@ public:
       pkt.data = m_bit_buffer;
       pkt.size = ret;
       if (m_video_enc->coded_frame->pts != AV_NOPTS_VALUE)
-            pkt.pts= av_rescale_q(m_video_enc->coded_frame->pts, m_video_enc->time_base, m_stream->time_base);
+        pkt.pts= av_rescale_q(m_video_enc->coded_frame->pts, m_video_enc->time_base, m_stream->time_base);
       if(m_video_enc->coded_frame->key_frame)
-        pkt.flags |= PKT_FLAG_KEY; 
+        pkt.flags |= PKT_FLAG_KEY;
       av_interleaved_write_frame(m_ctx, &pkt);
     }
   }
@@ -245,7 +245,7 @@ public:
     while(l>=fs)
     {
       av_init_packet(&pkt);
-      pkt.size= avcodec_encode_audio(m_audio_enc, m_bit_buffer, m_bit_buffer_size, data); 
+      pkt.size= avcodec_encode_audio(m_audio_enc, m_bit_buffer, m_bit_buffer_size, data);
       if (m_audio_enc->coded_frame->pts != AV_NOPTS_VALUE)
         pkt.pts= av_rescale_q(m_audio_enc->coded_frame->pts, m_audio_enc->time_base, m_astream->time_base);
       pkt.flags |= PKT_FLAG_KEY;
@@ -337,13 +337,13 @@ public:
       if(!init) av_register_all();
       init = 1;
     }
-    
+
     int ret = av_open_input_file(&m_ic, fn, NULL, 0, NULL);
     if (ret < 0) return;
 
     ret = av_find_stream_info(m_ic);
     if (ret < 0) return;
-    
+
     // find the stream that corresponds to the stream type
     int i, stream = -1;
     for(i=0; i < (int)m_ic->nb_streams; i++)
@@ -363,20 +363,20 @@ public:
     if(pCodec == NULL) return; // codec not found
 
     if(avcodec_open(m_ctx, pCodec)<0) return; // Could not open codec
-    
+
     AVStream *st = m_ic->streams[stream];
     if(st->r_frame_rate.den && st->r_frame_rate.num)
       m_fps = av_q2d(st->r_frame_rate);
     else
       m_fps = 1/av_q2d(st->codec->time_base);
-    
+
     m_frame = avcodec_alloc_frame();
-    
+
     m_w = m_ctx->width;
     m_h = m_ctx->height;
 
     m_pixfmt=st->codec->pix_fmt;
-        
+
     if(m_ic->duration == AV_NOPTS_VALUE)
     {
       //FFmpeg can't get the duration
@@ -396,7 +396,7 @@ public:
     else
       m_len = (double)m_ic->duration/AV_TIME_BASE;
     m_stream = stream;
-   
+
     m_inited = 1;
   }
   ~WDL_VideoDecode()
@@ -453,7 +453,7 @@ public:
             //convert decoded image to correct format
             int w = m_w;
             int h = m_h;
-            if(resizeToBuf) 
+            if(resizeToBuf)
             {
               w = dst->getWidth();
               h = dst->getHeight();
@@ -463,23 +463,23 @@ public:
               dst->resize(w, h);
             }
             unsigned int *bits = dst->getBits();
-/*#ifdef _WIN32
-            uint8_t *dstd[4]= {(uint8_t *)bits+(dst->getRowSpan()*4*(h-1)),};
-            int dst_stride[4]={-dst->getRowSpan()*4,};
-#else*/
+            /*#ifdef _WIN32
+                        uint8_t *dstd[4]= {(uint8_t *)bits+(dst->getRowSpan()*4*(h-1)),};
+                        int dst_stride[4]={-dst->getRowSpan()*4,};
+            #else*/
             uint8_t *dstd[4]= {(uint8_t *)bits,};
-            int dst_stride[4]={dst->getRowSpan()*4,};
+            int dst_stride[4]= {dst->getRowSpan()*4,};
 //#endif
 
             if (!m_sws || m_sws_desth != h || m_sws_destw != w)
             {
               int sws_flags = SWS_BICUBIC;
-              PixelFormat pfout = 
-          #ifdef _WIN32
+              PixelFormat pfout =
+#ifdef _WIN32
                 PIX_FMT_RGB32;
-          #else
-              PIX_FMT_BGR32_1;
-          #endif
+#else
+                PIX_FMT_BGR32_1;
+#endif
               if(m_sws) sws_freeContext(m_sws);
               m_sws = sws_getContext(m_w, m_h, m_pixfmt, w, h, pfout, sws_flags, NULL, NULL, NULL);
               m_sws_desth = h;
@@ -488,12 +488,12 @@ public:
 
             if (m_sws)
               sws_scale(m_sws, m_frame->data, m_frame->linesize, 0, m_h, dstd, dst_stride);
-              
+
             av_free_packet(&packet);
             return 1;
           }
         }
-        
+
         av_free_packet(&packet);
       }
     }
@@ -513,14 +513,14 @@ protected:
   }
 
   int m_inited;
-  
+
   AVFormatContext *m_ic;
   AVCodecContext *m_ctx;
 
   AVFrame *m_frame;
-  
+
   int m_stream;
-  
+
   int m_w, m_h, m_format;
   double m_fps, m_len;
   struct SwsContext *m_sws;

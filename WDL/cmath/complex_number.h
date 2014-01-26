@@ -30,20 +30,20 @@
 
 /* settings */
 #ifndef _CNUM_NO_INLINE
-  #define _CNUM_INLINE _CMATH_INLINE
+#define _CNUM_INLINE _CMATH_INLINE
 #else
-  #define _CNUM_INLINE
+#define _CNUM_INLINE
 #endif
 
 #ifndef _CNUM_NO_ALIAS
-  #define _CNUM_ALIAS _CMATH_MAY_ALIAS
+#define _CNUM_ALIAS _CMATH_MAY_ALIAS
 #else
-  #define _CNUM_ALIAS
+#define _CNUM_ALIAS
 #endif
 
 /* types & constants */
 #ifndef cnum_t
-  #define cnum_t cmath_t
+#define cnum_t cmath_t
 #endif
 
 typedef struct
@@ -177,7 +177,7 @@ _CNUM_INLINE
 cnum_s cnum_div(const cnum_s x, const cnum_s y)
 {
   return  cnum_div_r(cnum_mul(x, cnum_conjugate(y)),
-                    (y.r*y.r + cmath_abs(y.i*y.i)));
+                     (y.r*y.r + cmath_abs(y.i*y.i)));
 }
 
 #define cnum_inv(x) \
@@ -193,21 +193,21 @@ cnum_s cnum_exp(const cnum_s x)
   cnum_t cos_i = cmath_cos(x.i);
   const cnum_t exp_r = cmath_exp(x.r);
 
-  #ifndef _CNUM_NO_CHECK_EXP_
-    register cnum_t deg;
+#ifndef _CNUM_NO_CHECK_EXP_
+  register cnum_t deg;
 
-    if (x.r == 0)
-      return cnum_zero;
-    deg = x.i / cmath_pi;
-    if (_CNUM_CHECK_EXP_D_)
-      sin_i = 0;
-    deg += 0.5;
-    if (_CNUM_CHECK_EXP_D_)
-      cos_i = 0;
-    deg = x.i / cmath_pi2;
-    if (_CNUM_CHECK_EXP_D_)
-      cos_i = 1;
-  #endif
+  if (x.r == 0)
+    return cnum_zero;
+  deg = x.i / cmath_pi;
+  if (_CNUM_CHECK_EXP_D_)
+    sin_i = 0;
+  deg += 0.5;
+  if (_CNUM_CHECK_EXP_D_)
+    cos_i = 0;
+  deg = x.i / cmath_pi2;
+  if (_CNUM_CHECK_EXP_D_)
+    cos_i = 1;
+#endif
 
   return cnum_new(exp_r*cos_i, exp_r*sin_i);
 }
@@ -216,7 +216,7 @@ _CNUM_INLINE
 cnum_s cnum_log_k(const cnum_s x, const cmath_int32_t k)
 {
   return  cnum_new(cmath_log(cmath_cabs(x.r, x.i)),
-                  (cmath_carg(x.r, x.i) + (cmath_pi2*k)));
+                   (cmath_carg(x.r, x.i) + (cmath_pi2*k)));
 }
 
 #define cnum_log(x) \
@@ -245,7 +245,7 @@ cnum_s cnum_log_k(const cnum_s x, const cmath_int32_t k)
     return cnum_zero;           \
   if (y.r == 0 && y.i == 0)     \
     return cnum_r1              \
-
+ 
 _CNUM_INLINE
 cnum_s cnum_pow_c_k(const cnum_s x, const cnum_s y, const cmath_int32_t k)
 {

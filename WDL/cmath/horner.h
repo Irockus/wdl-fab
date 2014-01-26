@@ -31,9 +31,9 @@
 
 /* settings */
 #ifndef _HORNER_INLINE
-  #define _HORNER_INLINE _CMATH_INLINE
+#define _HORNER_INLINE _CMATH_INLINE
 #else
-  #define _HORNER_INLINE
+#define _HORNER_INLINE
 #endif
 
 /* real */

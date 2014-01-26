@@ -16,7 +16,7 @@
 
 - (id) init
 {
-  TRACE;  
+  TRACE;
   mPlug = 0;
   return [super init];
 }
@@ -26,13 +26,13 @@
   TRACE;
   mPlug = (IPlugBase*) GetComponentInstanceStorage(audioUnit);
   if (mPlug) {
-    IGraphics* pGraphics = mPlug->GetGUI();   
+    IGraphics* pGraphics = mPlug->GetGUI();
     if (pGraphics) {
       IGRAPHICS_COCOA* pView = (IGRAPHICS_COCOA*) pGraphics->OpenWindow(0);
       return pView;
     }
   }
-  return 0; 
+  return 0;
 }
 
 - (unsigned) interfaceVersion

@@ -2,7 +2,7 @@
 #define _IPLUGCUSTOMUI_H_
 
 #if WINDOWS_VERSION
-  #define VC_EXTRALEAN // Exclude rarely-used stuff from Windows headers
+#define VC_EXTRALEAN // Exclude rarely-used stuff from Windows headers
 #endif
 
 #include "EditorInterface.h"

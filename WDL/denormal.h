@@ -1,15 +1,15 @@
 #ifndef _WDL_DENORMAL_H_
 #define _WDL_DENORMAL_H_
 
-typedef struct 
-{ 
-  #ifdef __ppc__ // todo: other big endian platforms...
-    unsigned int hw; 
-    unsigned int lw;
-  #else
-    unsigned int lw; 
-    unsigned int hw;
-  #endif
+typedef struct
+{
+#ifdef __ppc__ // todo: other big endian platforms...
+  unsigned int hw;
+  unsigned int lw;
+#else
+  unsigned int lw;
+  unsigned int hw;
+#endif
 } WDL_DenormalTwoInts;
 
 typedef union { double fl; WDL_DenormalTwoInts w; } WDL_DenormalDoubleAccess;
@@ -68,13 +68,13 @@ static float WDL_DENORMAL_INLINE denormal_filter_float(float a)
 
 static float WDL_DENORMAL_INLINE denormal_filter_float2(float a)
 {
-  return ((WDL_DENORMAL_FLOAT_W(&a)+0x800000)&0x7f800000) > 0x800000 ? a : 0.0f; 
+  return ((WDL_DENORMAL_FLOAT_W(&a)+0x800000)&0x7f800000) > 0x800000 ? a : 0.0f;
 }
 
 
 static float WDL_DENORMAL_INLINE denormal_filter_float_aggressive(float a)
 {
-  return ((WDL_DENORMAL_FLOAT_W(&a)+0x800000)&0x7f800000) >= WDL_DENORMAL_FLOAT_AGGRESSIVE_CUTOFF ? a : 0.0f; 
+  return ((WDL_DENORMAL_FLOAT_W(&a)+0x800000)&0x7f800000) >= WDL_DENORMAL_FLOAT_AGGRESSIVE_CUTOFF ? a : 0.0f;
 }
 static void WDL_DENORMAL_INLINE denormal_fix_double(double *a)
 {
@@ -159,7 +159,7 @@ static bool WDL_DENORMAL_INLINE WDL_DENORMAL_OR_ZERO_AGGRESSIVE(float *a)
 
 
 #endif // cplusplus versions
- 
+
 
 
 

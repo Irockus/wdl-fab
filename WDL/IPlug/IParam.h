@@ -39,7 +39,7 @@ public:
   void SetCanAutomate(bool canAutomate) { mCanAutomate = canAutomate; }
   // The higher the shape, the more resolution around host value zero.
   void SetShape(double shape);
-  
+
   void SetToDefault() { mValue = mDefault; }
 
   // Call this if your param is (x, y) but you want to always display (-x, -y).
@@ -65,7 +65,7 @@ public:
   const char* GetNameForHost();
   const char* GetLabelForHost();
   const char* GetParamGroupForHost();
-  
+
   int GetNDisplayTexts();
   const char* GetDisplayText(int value);
   const char* GetDisplayTextAtIdx(int idx, int* value = 0);
@@ -100,7 +100,7 @@ private:
     int mValue;
     char mText[MAX_PARAM_DISPLAY_LEN];
   };
-  
+
   WDL_TypedBuf<DisplayText> mDisplayTexts;
 };
 

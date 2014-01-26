@@ -64,15 +64,15 @@ public:
   void FlushSamples() {}
 
   static char *enumQual(int q);
- static bool GetSizes(int qv, int *ws, int *os);
+  static bool GetSizes(int qv, int *ws, int *os);
 
   int GetSamples(int requested_output, WDL_SIMPLEPITCHSHIFT_SAMPLETYPE *buffer);
 
 
- void SetQualityParameter(int parm)
- {
-   m_qual=parm;
- }
+  void SetQualityParameter(int parm)
+  {
+    m_qual=parm;
+  }
 
 
   int Stretch(WDL_SIMPLEPITCHSHIFT_SAMPLETYPE *inputs, WDL_SIMPLEPITCHSHIFT_SAMPLETYPE *outputs, int nch, int length, int maxoutlen, double stretch, double srate, int ws_ms, int os_ms);
@@ -112,7 +112,7 @@ void WDL_SimplePitchShifter2::BufferDone(int input_filled)
     if (fabs(m_last_shift-1.0)<0.0000000001)
     {
       int valid_amt = Stretch(m_inbuf.Get(),(WDL_SIMPLEPITCHSHIFT_SAMPLETYPE *)m_queue.Add(NULL,max_outputlen*m_last_nch*sizeof(WDL_SIMPLEPITCHSHIFT_SAMPLETYPE)),m_last_nch,
-        input_filled,max_outputlen,1.0/m_last_tempo,m_srate,ws,os);
+                              input_filled,max_outputlen,1.0/m_last_tempo,m_srate,ws,os);
 
       if (valid_amt < max_outputlen)
         m_queue.Add(NULL,(valid_amt-max_outputlen)*m_last_nch*sizeof(WDL_SIMPLEPITCHSHIFT_SAMPLETYPE));
@@ -139,7 +139,7 @@ void WDL_SimplePitchShifter2::BufferDone(int input_filled)
       {
         double rdpos=floor(fp);
         int idx=((int)rdpos);
-        if (idx>=valid_amt) 
+        if (idx>=valid_amt)
         {
           // un-add any missing samples
           m_queue.Add(NULL,(i-out_max)*m_last_nch*sizeof(WDL_SIMPLEPITCHSHIFT_SAMPLETYPE));
@@ -154,12 +154,12 @@ void WDL_SimplePitchShifter2::BufferDone(int input_filled)
         }
         fp += adv;
       }
-        
+
       memcpy(bufi,bufi+m_last_nch*valid_amt,m_last_nch*sizeof(WDL_SIMPLEPITCHSHIFT_SAMPLETYPE)); // save last sample for interpolation later
       //
       m_tempo_fracpos=fp-floor(fp);
     }
-  }    
+  }
 }
 
 char *WDL_SimplePitchShifter2::enumQual(int q)
@@ -173,8 +173,8 @@ char *WDL_SimplePitchShifter2::enumQual(int q)
 
 bool WDL_SimplePitchShifter2::GetSizes(int qv, int *ws, int *os)
 {
-  int windows[]={50,75,100,150,225,300,40,30,20,10,5,3};
-  int divs[]={2,3,5,7};
+  int windows[]= {50,75,100,150,225,300,40,30,20,10,5,3};
+  int divs[]= {2,3,5,7};
 
   int wd=qv/(sizeof(divs)/sizeof(divs[0]));
   if (wd >= sizeof(windows)/sizeof(windows[0])) wd=-1;
@@ -257,9 +257,9 @@ int WDL_SimplePitchShifter2::StretchBlock(WDL_SIMPLEPITCHSHIFT_SAMPLETYPE *input
           if (tmp>=bsizench) tmp-=bsizench;
 
           int a;
-          for(a=0;a<nch;a++) outputs[a]= outputs[a]*tfrac + (1-tfrac)*psbuf[tmp+a];
+          for(a=0; a<nch; a++) outputs[a]= outputs[a]*tfrac + (1-tfrac)*psbuf[tmp+a];
 
-          if (tv+stretch >= writepos) 
+          if (tv+stretch >= writepos)
           {
             pspos+=olsize;
           }
@@ -276,12 +276,12 @@ int WDL_SimplePitchShifter2::StretchBlock(WDL_SIMPLEPITCHSHIFT_SAMPLETYPE *input
           int tmp=ipos1+olsizench;
           if (tmp>=bsizench) tmp -= bsizench;
           int a;
-          for(a=0;a<nch;a++) outputs[a] = outputs[a]*tfrac + (1-tfrac)*psbuf[tmp+a];
-        
+          for(a=0; a<nch; a++) outputs[a] = outputs[a]*tfrac + (1-tfrac)*psbuf[tmp+a];
+
           // this is wrong, but blehhh?
-          if (tv+stretch < writepos+1) 
+          if (tv+stretch < writepos+1)
           {
-  //          pspos += olsize;
+            //          pspos += olsize;
           }
           if (tv+stretch >= writepos+olsize) pspos += olsize;
         }

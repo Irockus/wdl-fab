@@ -1,20 +1,20 @@
 // used for HDC/HGDIOBJ pooling (to avoid excess heap use), used by swell-gdi.mm and swell-gdi-generic.cpp
 
 #if defined(_DEBUG)
-  #define SWELL_GDI_DEBUG
+#define SWELL_GDI_DEBUG
 #endif
 
 static WDL_Mutex *m_ctxpool_mutex;
 #ifdef SWELL_GDI_DEBUG
-  #include <assert.h>
-  #include "../ptrlist.h"
-  static WDL_PtrList<HDC__> *m_ctxpool_debug;
-  static WDL_PtrList<HGDIOBJ__> *m_objpool_debug;
+#include <assert.h>
+#include "../ptrlist.h"
+static WDL_PtrList<HDC__> *m_ctxpool_debug;
+static WDL_PtrList<HGDIOBJ__> *m_objpool_debug;
 #else
-  static HDC__ *m_ctxpool;
-  static int m_ctxpool_size;
-  static HGDIOBJ__ *m_objpool;
-  static int m_objpool_size;
+static HDC__ *m_ctxpool;
+static int m_ctxpool_size;
+static HGDIOBJ__ *m_objpool;
+static int m_objpool_size;
 #endif
 
 
@@ -22,7 +22,7 @@ static WDL_Mutex *m_ctxpool_mutex;
 HDC__ *SWELL_GDP_CTX_NEW()
 {
   if (!m_ctxpool_mutex) m_ctxpool_mutex=new WDL_Mutex;
-  
+
   HDC__ *p=NULL;
 #ifdef SWELL_GDI_DEBUG
   m_ctxpool_mutex->Enter();
@@ -39,7 +39,7 @@ HDC__ *SWELL_GDP_CTX_NEW()
   {
     m_ctxpool_mutex->Enter();
     if ((p=m_ctxpool))
-    { 
+    {
       m_ctxpool=p->_next;
       m_ctxpool_size--;
       memset(p,0,sizeof(*p));
@@ -47,7 +47,7 @@ HDC__ *SWELL_GDP_CTX_NEW()
     m_ctxpool_mutex->Leave();
   }
 #endif
-  if (!p) 
+  if (!p)
   {
 //    printf("alloc ctx\n");
     p=(HDC__ *)calloc(sizeof(HDC__)+128,1); // extra space in case things want to use it (i.e. swell-gdi-lice does)
@@ -60,7 +60,7 @@ static void SWELL_GDP_CTX_DELETE(HDC__ *p)
 
   if (!p) return;
 
-  if (p->_infreelist) 
+  if (p->_infreelist)
   {
 #ifdef SWELL_GDI_DEBUG
     assert(!p->_infreelist);
@@ -86,9 +86,9 @@ static void SWELL_GDP_CTX_DELETE(HDC__ *p)
     m_ctxpool_size++;
     m_ctxpool_mutex->Leave();
   }
-  else 
+  else
   {
-  //  printf("free ctx\n");
+    //  printf("free ctx\n");
     free(p);
   }
 #endif
@@ -120,10 +120,10 @@ static HGDIOBJ__ *GDP_OBJECT_NEW()
     m_ctxpool_mutex->Leave();
   }
 #endif
-  if (!p) 
+  if (!p)
   {
     //   printf("alloc obj\n");
-    p=(HGDIOBJ__ *)calloc(sizeof(HGDIOBJ__),1);    
+    p=(HGDIOBJ__ *)calloc(sizeof(HGDIOBJ__),1);
   }
   return p;
 }
@@ -132,7 +132,7 @@ static void GDP_OBJECT_DELETE(HGDIOBJ__ *p)
   if (!m_ctxpool_mutex) m_ctxpool_mutex=new WDL_Mutex;
   if (!p) return;
 
-  if (p->_infreelist) 
+  if (p->_infreelist)
   {
 #ifdef SWELL_GDI_DEBUG
     assert(!p->_infreelist);
@@ -197,33 +197,33 @@ static bool HDC_VALID(HDC__ *ct)
 
 class _swellGdiUnloader
 {
-  public:
+public:
   _swellGdiUnloader() { }
-  ~_swellGdiUnloader() 
+  ~_swellGdiUnloader()
   {
-     {
-       HDC__ *p = m_ctxpool;
-       m_ctxpool = NULL;
-       while (p)
-       {
-         HDC__ *t = p;
-         p = p->_next;
-         free(t);
-       }
-     }
-     {
-       HGDIOBJ__ *p = m_objpool;
-       m_objpool = NULL;
-       while (p)
-       {
-         HGDIOBJ__ *t = p;
-         p = p->_next;
-         free(t);
-       }
-     }
+    {
+      HDC__ *p = m_ctxpool;
+      m_ctxpool = NULL;
+      while (p)
+      {
+        HDC__ *t = p;
+        p = p->_next;
+        free(t);
+      }
+    }
+    {
+      HGDIOBJ__ *p = m_objpool;
+      m_objpool = NULL;
+      while (p)
+      {
+        HGDIOBJ__ *t = p;
+        p = p->_next;
+        free(t);
+      }
+    }
 
-     delete m_ctxpool_mutex;
-     m_ctxpool_mutex=NULL;
+    delete m_ctxpool_mutex;
+    m_ctxpool_mutex=NULL;
   }
 };
 

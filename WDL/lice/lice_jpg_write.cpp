@@ -48,7 +48,7 @@ bool LICE_WriteJPG(const char *filename, LICE_IBitmap *bmp, int quality, bool fo
   if (!fp) return false;
 
   struct jpeg_compress_struct cinfo;
-  struct my_error_mgr jerr={0,};
+  struct my_error_mgr jerr= {0,};
   jerr.pub.error_exit = LICEJPEG_Error;
   jerr.pub.emit_message = LICEJPEG_EmitMsg;
   jerr.pub.output_message = LICEJPEG_OutMsg;
@@ -58,7 +58,7 @@ bool LICE_WriteJPG(const char *filename, LICE_IBitmap *bmp, int quality, bool fo
   cinfo.err = &jerr.pub;
   unsigned char *buf = NULL;
 
-  if (setjmp(jerr.setjmp_buffer)) 
+  if (setjmp(jerr.setjmp_buffer))
   {
     jpeg_destroy_compress(&cinfo);
     if (fp) fclose(fp);
@@ -86,7 +86,7 @@ bool LICE_WriteJPG(const char *filename, LICE_IBitmap *bmp, int quality, bool fo
     rd += rowspan*(bmp->getHeight()-1);
     rowspan=-rowspan;
   }
-  while (cinfo.next_scanline < cinfo.image_height) 
+  while (cinfo.next_scanline < cinfo.image_height)
   {
     unsigned char *outp=buf;
     LICE_pixel_chan *rdp = rd;
@@ -103,7 +103,7 @@ bool LICE_WriteJPG(const char *filename, LICE_IBitmap *bmp, int quality, bool fo
 
     rd+=rowspan;
   }
-  free(buf); 
+  free(buf);
   buf=0;
 
   jpeg_finish_compress(&cinfo);

@@ -11,11 +11,11 @@ xmlAttr* MakeAttrList(const TiXmlAttribute* attr)
 
     xattr->name = attr->Name();
     xattr->content = attr->Value();
-    
+
     // svgtiny expect xattr->children to be a pointer back to the attribute,
     // though in libxml it is supposed to always be NULL
     xattr->children = xattr;
-    
+
     xattr->next = MakeAttrList(attr->Next());
   }
   return xattr;
@@ -30,14 +30,14 @@ xmlNode* MakeNodeTree(TiXmlNode* node)
     memset(xnode, 0, sizeof(xmlNode));
 
     int type = node->Type();
-    if (type == TiXmlNode::ELEMENT) 
+    if (type == TiXmlNode::ELEMENT)
     {
       xnode->type = XML_ELEMENT_NODE;
       xnode->name = node->Value();
       const TiXmlElement* elem = node->ToElement();
-      if (elem) xnode->properties = MakeAttrList(elem->FirstAttribute());     
+      if (elem) xnode->properties = MakeAttrList(elem->FirstAttribute());
     }
-    else if (type == TiXmlNode::TEXT) 
+    else if (type == TiXmlNode::TEXT)
     {
       xnode->type = XML_TEXT_NODE;
       xnode->content = node->Value();

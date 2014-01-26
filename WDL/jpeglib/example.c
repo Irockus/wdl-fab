@@ -6,7 +6,7 @@
  * conjunction with the documentation file libjpeg.doc.
  *
  * This code will not do anything useful as-is, but it may be helpful as a
- * skeleton for constructing routines that call the JPEG library.  
+ * skeleton for constructing routines that call the JPEG library.
  *
  * We present these routines in the same coding style used in the JPEG code
  * (ANSI function definitions, etc); but you are of course free to code your
@@ -356,12 +356,12 @@ read_JPEG_file (char * filename)
    * output image dimensions available, as well as the output colormap
    * if we asked for color quantization.
    * In this example, we need to make an output work buffer of the right size.
-   */ 
+   */
   /* JSAMPLEs per row in output buffer */
   row_stride = cinfo.output_width * cinfo.output_components;
   /* Make a one-row-high sample array that will go away when done with image */
   buffer = (*cinfo.mem->alloc_sarray)
-		((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
+           ((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
 
   /* Step 6: while (scan lines remain to be read) */
   /*           jpeg_read_scanlines(...); */

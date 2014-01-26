@@ -68,7 +68,7 @@ IPlugVST::IPlugVST(IPlugInstanceInfo instanceInfo,
   mAEffect.processDoubleReplacing = VSTProcessDoubleReplacing;
   mAEffect.initialDelay = latency;
   mAEffect.flags = effFlagsCanReplacing | effFlagsCanDoubleReplacing;
-  
+
   if (plugDoesChunks) { mAEffect.flags |= effFlagsProgramChunks; }
   if (LegalIO(1, -1)) { mAEffect.flags |= __effFlagsCanMonoDeprecated; }
   if (plugIsInst) { mAEffect.flags |= effFlagsIsSynth; }
@@ -278,7 +278,7 @@ bool IPlugVST::SendMidiMsg(IMidiMsg* pMsg)
 }
 
 bool IPlugVST::SendSysEx(ISysEx* pSysEx)
-{ 
+{
   VstMidiSysexEvent sysexEvent;
   memset(&sysexEvent, 0, sizeof(VstMidiSysexEvent));
 
@@ -340,10 +340,10 @@ VstIntPtr VSTCALLBACK IPlugVST::VSTDispatcher(AEffect *pEffect, VstInt32 opCode,
   {
     case effEditIdle:
     case __effIdleDeprecated:
-    #ifdef USE_IDLE_CALLS
-    _this->OnIdle();
-    #endif
-    return 0;
+#ifdef USE_IDLE_CALLS
+      _this->OnIdle();
+#endif
+      return 0;
   }
 
   Trace(TRACELOC, "%d(%s):%d:%d", opCode, VSTOpcodeStr(opCode), idx, (int) value);
@@ -386,13 +386,13 @@ VstIntPtr VSTCALLBACK IPlugVST::VSTDispatcher(AEffect *pEffect, VstInt32 opCode,
       }
       return 0;
     }
-      //could implement effGetParameterProperties to group parameters, but can't find a host that supports it
+    //could implement effGetParameterProperties to group parameters, but can't find a host that supports it
 //    case effGetParameterProperties:
 //    {
 //      if (idx >= 0 && idx < _this->NParams())
 //      {
 //        VstParameterProperties* props = (VstParameterProperties*) ptr;
-//        
+//
 //        props->flags = kVstParameterSupportsDisplayCategory;
 //        props->category = idx+1;
 //        props->numParametersInCategory = 1;
@@ -465,20 +465,20 @@ VstIntPtr VSTCALLBACK IPlugVST::VSTDispatcher(AEffect *pEffect, VstInt32 opCode,
     case effEditOpen:
     {
       IGraphics* pGraphics = _this->GetGUI();
-      
+
       if (pGraphics)
       {
-        #ifdef _WIN32
-          if (!pGraphics->OpenWindow(ptr)) pGraphics=0;
-        #else   // OSX, check if we are in a Cocoa VST host
-          #if defined(__LP64__)
-          if (!pGraphics->OpenWindow(ptr)) pGraphics=0;
-          #else
-          bool iscocoa = (_this->mHasVSTExtensions&VSTEXT_COCOA);
-          if (iscocoa && !pGraphics->OpenWindow(ptr)) pGraphics=0;
-          if (!iscocoa && !pGraphics->OpenWindow(ptr, 0)) pGraphics=0;
-          #endif
-        #endif
+#ifdef _WIN32
+        if (!pGraphics->OpenWindow(ptr)) pGraphics=0;
+#else   // OSX, check if we are in a Cocoa VST host
+#if defined(__LP64__)
+        if (!pGraphics->OpenWindow(ptr)) pGraphics=0;
+#else
+        bool iscocoa = (_this->mHasVSTExtensions&VSTEXT_COCOA);
+        if (iscocoa && !pGraphics->OpenWindow(ptr)) pGraphics=0;
+        if (!iscocoa && !pGraphics->OpenWindow(ptr, 0)) pGraphics=0;
+#endif
+#endif
         if (pGraphics)
         {
           _this->OnGUIOpen();
@@ -510,7 +510,7 @@ VstIntPtr VSTCALLBACK IPlugVST::VSTDispatcher(AEffect *pEffect, VstInt32 opCode,
         ByteChunk* pChunk = (isBank ? &(_this->mBankState) : &(_this->mState));
         _this->InitChunkWithIPlugVer(pChunk);
         bool savedOK = true;
-        
+
         if (isBank)
         {
           _this->ModifyCurrentPreset();
@@ -520,7 +520,7 @@ VstIntPtr VSTCALLBACK IPlugVST::VSTDispatcher(AEffect *pEffect, VstInt32 opCode,
         {
           savedOK = _this->SerializeState(pChunk);
         }
-        
+
         if (savedOK && pChunk->Size())
         {
           *ppData = pChunk->GetBytes();
@@ -540,7 +540,7 @@ VstIntPtr VSTCALLBACK IPlugVST::VSTDispatcher(AEffect *pEffect, VstInt32 opCode,
         int pos = 0;
         int iplugVer = _this->GetIPlugVerFromChunk(pChunk, &pos);
         isBank &= (iplugVer >= 0x010000);
-        
+
         if (isBank)
         {
           pos = _this->UnserializePresets(pChunk, pos);
@@ -550,7 +550,7 @@ VstIntPtr VSTCALLBACK IPlugVST::VSTDispatcher(AEffect *pEffect, VstInt32 opCode,
           pos = _this->UnserializeState(pChunk, pos);
           _this->ModifyCurrentPreset();
         }
-        
+
         if (pos >= 0)
         {
           _this->RedrawParamControls();
@@ -578,7 +578,7 @@ VstIntPtr VSTCALLBACK IPlugVST::VSTDispatcher(AEffect *pEffect, VstInt32 opCode,
               //  msg.LogMsg();
               //#endif
             }
-            else if (pEvent->type == kVstSysExType) 
+            else if (pEvent->type == kVstSysExType)
             {
               VstMidiSysexEvent* pSE = (VstMidiSysexEvent*) pEvent;
               ISysEx sysex(pSE->deltaFrames, (const BYTE*)pSE->sysexDump, pSE->dumpBytes);

@@ -60,12 +60,12 @@
 
 static const cmath_std_uint_t _factorials[] =
 {
-  #ifdef _CMATH_ANSI
-    FACTORIAL_LOWER
-  #else
-    FACTORIAL_LOWER,
-    FACTORIAL_HIGHER
-  #endif
+#ifdef _CMATH_ANSI
+  FACTORIAL_LOWER
+#else
+  FACTORIAL_LOWER,
+  FACTORIAL_HIGHER
+#endif
 };
 
 static const cmath_t _inv_factorials[] =

@@ -8,7 +8,7 @@
 
 @end
 
-@interface SWELLAppController : NSObject { 
+@interface SWELLAppController : NSObject {
 }
 -(IBAction)onSysMenuCommand:(id)sender;
 @end

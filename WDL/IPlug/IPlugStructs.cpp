@@ -155,9 +155,9 @@ const char* StatusMsgStr(IMidiMsg::EStatusMsg msg)
 
 void IMidiMsg::LogMsg()
 {
-  #ifdef TRACER_BUILD
+#ifdef TRACER_BUILD
   Trace(TRACELOC, "midi:(%s:%d:%d:%d)", StatusMsgStr(StatusMsg()), Channel(), mData1, mData2);
-  #endif
+#endif
 }
 
 void ISysEx::Clear()

@@ -104,9 +104,9 @@ start_pass_huff_decoder (j_decompress_ptr cinfo)
     /* Compute derived values for Huffman tables */
     /* We may do this more than once for a table, but it's not expensive */
     jpeg_make_d_derived_tbl(cinfo, TRUE, dctbl,
-			    & entropy->dc_derived_tbls[dctbl]);
+                            & entropy->dc_derived_tbls[dctbl]);
     jpeg_make_d_derived_tbl(cinfo, FALSE, actbl,
-			    & entropy->ac_derived_tbls[actbl]);
+                            & entropy->ac_derived_tbls[actbl]);
     /* Initialize DC predictions to 0 */
     entropy->saved.last_dc_val[ci] = 0;
   }
@@ -147,7 +147,7 @@ start_pass_huff_decoder (j_decompress_ptr cinfo)
 
 GLOBAL(void)
 jpeg_make_d_derived_tbl (j_decompress_ptr cinfo, boolean isDC, int tblno,
-			 d_derived_tbl ** pdtbl)
+                         d_derived_tbl ** pdtbl)
 {
   JHUFF_TBL *htbl;
   d_derived_tbl *dtbl;
@@ -172,11 +172,11 @@ jpeg_make_d_derived_tbl (j_decompress_ptr cinfo, boolean isDC, int tblno,
   /* Allocate a workspace if we haven't already done so. */
   if (*pdtbl == NULL)
     *pdtbl = (d_derived_tbl *)
-      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
-				  SIZEOF(d_derived_tbl));
+             (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
+                                         SIZEOF(d_derived_tbl));
   dtbl = *pdtbl;
   dtbl->pub = htbl;		/* fill in back link */
-  
+
   /* Figure C.1: make table of Huffman code length for each symbol */
 
   p = 0;
@@ -189,10 +189,10 @@ jpeg_make_d_derived_tbl (j_decompress_ptr cinfo, boolean isDC, int tblno,
   }
   huffsize[p] = 0;
   numsymbols = p;
-  
+
   /* Figure C.2: generate the codes themselves */
   /* We also validate that the counts represent a legal Huffman code tree. */
-  
+
   code = 0;
   si = huffsize[0];
   p = 0;
@@ -243,9 +243,9 @@ jpeg_make_d_derived_tbl (j_decompress_ptr cinfo, boolean isDC, int tblno,
       /* Generate left-justified code followed by all possible bit sequences */
       lookbits = huffcode[p] << (HUFF_LOOKAHEAD-l);
       for (ctr = 1 << (HUFF_LOOKAHEAD-l); ctr > 0; ctr--) {
-	dtbl->look_nbits[lookbits] = l;
-	dtbl->look_sym[lookbits] = htbl->huffval[p];
-	lookbits++;
+        dtbl->look_nbits[lookbits] = l;
+        dtbl->look_sym[lookbits] = htbl->huffval[p];
+        lookbits++;
       }
     }
   }
@@ -260,7 +260,7 @@ jpeg_make_d_derived_tbl (j_decompress_ptr cinfo, boolean isDC, int tblno,
     for (i = 0; i < numsymbols; i++) {
       int sym = htbl->huffval[i];
       if (sym < 0 || sym > 15)
-	ERREXIT(cinfo, JERR_BAD_HUFF_TABLE);
+        ERREXIT(cinfo, JERR_BAD_HUFF_TABLE);
     }
   }
 }
@@ -290,8 +290,8 @@ jpeg_make_d_derived_tbl (j_decompress_ptr cinfo, boolean isDC, int tblno,
 
 GLOBAL(boolean)
 jpeg_fill_bit_buffer (bitread_working_state * state,
-		      register bit_buf_type get_buffer, register int bits_left,
-		      int nbits)
+                      register bit_buf_type get_buffer, register int bits_left,
+                      int nbits)
 /* Load up the bit buffer to a depth of at least nbits */
 {
   /* Copy heavily used state fields into locals (hopefully registers) */
@@ -309,48 +309,48 @@ jpeg_fill_bit_buffer (bitread_working_state * state,
 
       /* Attempt to read a byte */
       if (bytes_in_buffer == 0) {
-	if (! (*cinfo->src->fill_input_buffer) (cinfo))
-	  return FALSE;
-	next_input_byte = cinfo->src->next_input_byte;
-	bytes_in_buffer = cinfo->src->bytes_in_buffer;
+        if (! (*cinfo->src->fill_input_buffer) (cinfo))
+          return FALSE;
+        next_input_byte = cinfo->src->next_input_byte;
+        bytes_in_buffer = cinfo->src->bytes_in_buffer;
       }
       bytes_in_buffer--;
       c = GETJOCTET(*next_input_byte++);
 
       /* If it's 0xFF, check and discard stuffed zero byte */
       if (c == 0xFF) {
-	/* Loop here to discard any padding FF's on terminating marker,
-	 * so that we can save a valid unread_marker value.  NOTE: we will
-	 * accept multiple FF's followed by a 0 as meaning a single FF data
-	 * byte.  This data pattern is not valid according to the standard.
-	 */
-	do {
-	  if (bytes_in_buffer == 0) {
-	    if (! (*cinfo->src->fill_input_buffer) (cinfo))
-	      return FALSE;
-	    next_input_byte = cinfo->src->next_input_byte;
-	    bytes_in_buffer = cinfo->src->bytes_in_buffer;
-	  }
-	  bytes_in_buffer--;
-	  c = GETJOCTET(*next_input_byte++);
-	} while (c == 0xFF);
+        /* Loop here to discard any padding FF's on terminating marker,
+         * so that we can save a valid unread_marker value.  NOTE: we will
+         * accept multiple FF's followed by a 0 as meaning a single FF data
+         * byte.  This data pattern is not valid according to the standard.
+         */
+        do {
+          if (bytes_in_buffer == 0) {
+            if (! (*cinfo->src->fill_input_buffer) (cinfo))
+              return FALSE;
+            next_input_byte = cinfo->src->next_input_byte;
+            bytes_in_buffer = cinfo->src->bytes_in_buffer;
+          }
+          bytes_in_buffer--;
+          c = GETJOCTET(*next_input_byte++);
+        } while (c == 0xFF);
 
-	if (c == 0) {
-	  /* Found FF/00, which represents an FF data byte */
-	  c = 0xFF;
-	} else {
-	  /* Oops, it's actually a marker indicating end of compressed data.
-	   * Save the marker code for later use.
-	   * Fine point: it might appear that we should save the marker into
-	   * bitread working state, not straight into permanent state.  But
-	   * once we have hit a marker, we cannot need to suspend within the
-	   * current MCU, because we will read no more bytes from the data
-	   * source.  So it is OK to update permanent state right away.
-	   */
-	  cinfo->unread_marker = c;
-	  /* See if we need to insert some fake zero bits. */
-	  goto no_more_bytes;
-	}
+        if (c == 0) {
+          /* Found FF/00, which represents an FF data byte */
+          c = 0xFF;
+        } else {
+          /* Oops, it's actually a marker indicating end of compressed data.
+           * Save the marker code for later use.
+           * Fine point: it might appear that we should save the marker into
+           * bitread working state, not straight into permanent state.  But
+           * once we have hit a marker, we cannot need to suspend within the
+           * current MCU, because we will read no more bytes from the data
+           * source.  So it is OK to update permanent state right away.
+           */
+          cinfo->unread_marker = c;
+          /* See if we need to insert some fake zero bits. */
+          goto no_more_bytes;
+        }
       }
 
       /* OK, load c into get_buffer */
@@ -358,7 +358,7 @@ jpeg_fill_bit_buffer (bitread_working_state * state,
       bits_left += 8;
     } /* end while */
   } else {
-  no_more_bytes:
+no_more_bytes:
     /* We get here if we've read the marker that terminates the compressed
      * data segment.  There should be enough bits in the buffer register
      * to satisfy the request; if so, no problem.
@@ -370,8 +370,8 @@ jpeg_fill_bit_buffer (bitread_working_state * state,
        * appears per data segment.
        */
       if (! cinfo->entropy->insufficient_data) {
-	WARNMS(cinfo, JWRN_HIT_MARKER);
-	cinfo->entropy->insufficient_data = TRUE;
+        WARNMS(cinfo, JWRN_HIT_MARKER);
+        cinfo->entropy->insufficient_data = TRUE;
       }
       /* Fill the buffer with zero bits */
       get_buffer <<= MIN_GET_BITS - bits_left;
@@ -396,8 +396,8 @@ jpeg_fill_bit_buffer (bitread_working_state * state,
 
 GLOBAL(int)
 jpeg_huff_decode (bitread_working_state * state,
-		  register bit_buf_type get_buffer, register int bits_left,
-		  d_derived_tbl * htbl, int min_bits)
+                  register bit_buf_type get_buffer, register int bits_left,
+                  d_derived_tbl * htbl, int min_bits)
 {
   register int l = min_bits;
   register INT32 code;
@@ -447,14 +447,16 @@ jpeg_huff_decode (bitread_working_state * state,
 #define HUFF_EXTEND(x,s)  ((x) < extend_test[s] ? (x) + extend_offset[s] : (x))
 
 static const int extend_test[16] =   /* entry n is 2**(n-1) */
-  { 0, 0x0001, 0x0002, 0x0004, 0x0008, 0x0010, 0x0020, 0x0040, 0x0080,
-    0x0100, 0x0200, 0x0400, 0x0800, 0x1000, 0x2000, 0x4000 };
+{ 0, 0x0001, 0x0002, 0x0004, 0x0008, 0x0010, 0x0020, 0x0040, 0x0080,
+  0x0100, 0x0200, 0x0400, 0x0800, 0x1000, 0x2000, 0x4000
+};
 
 static const int extend_offset[16] = /* entry n is (-1 << n) + 1 */
-  { 0, ((-1)<<1) + 1, ((-1)<<2) + 1, ((-1)<<3) + 1, ((-1)<<4) + 1,
-    ((-1)<<5) + 1, ((-1)<<6) + 1, ((-1)<<7) + 1, ((-1)<<8) + 1,
-    ((-1)<<9) + 1, ((-1)<<10) + 1, ((-1)<<11) + 1, ((-1)<<12) + 1,
-    ((-1)<<13) + 1, ((-1)<<14) + 1, ((-1)<<15) + 1 };
+{ 0, ((-1)<<1) + 1, ((-1)<<2) + 1, ((-1)<<3) + 1, ((-1)<<4) + 1,
+  ((-1)<<5) + 1, ((-1)<<6) + 1, ((-1)<<7) + 1, ((-1)<<8) + 1,
+  ((-1)<<9) + 1, ((-1)<<10) + 1, ((-1)<<11) + 1, ((-1)<<12) + 1,
+  ((-1)<<13) + 1, ((-1)<<14) + 1, ((-1)<<15) + 1
+};
 
 #endif /* AVOID_TABLES */
 
@@ -525,7 +527,7 @@ decode_mcu (j_decompress_ptr cinfo, JBLOCKROW *MCU_data)
   if (cinfo->restart_interval) {
     if (entropy->restarts_to_go == 0)
       if (! process_restart(cinfo))
-	return FALSE;
+        return FALSE;
   }
 
   /* If we've run out of data, just leave the MCU set to zeroes.
@@ -550,67 +552,67 @@ decode_mcu (j_decompress_ptr cinfo, JBLOCKROW *MCU_data)
       /* Section F.2.2.1: decode the DC coefficient difference */
       HUFF_DECODE(s, br_state, dctbl, return FALSE, label1);
       if (s) {
-	CHECK_BIT_BUFFER(br_state, s, return FALSE);
-	r = GET_BITS(s);
-	s = HUFF_EXTEND(r, s);
+        CHECK_BIT_BUFFER(br_state, s, return FALSE);
+        r = GET_BITS(s);
+        s = HUFF_EXTEND(r, s);
       }
 
       if (entropy->dc_needed[blkn]) {
-	/* Convert DC difference to actual value, update last_dc_val */
-	int ci = cinfo->MCU_membership[blkn];
-	s += state.last_dc_val[ci];
-	state.last_dc_val[ci] = s;
-	/* Output the DC coefficient (assumes jpeg_natural_order[0] = 0) */
-	(*block)[0] = (JCOEF) s;
+        /* Convert DC difference to actual value, update last_dc_val */
+        int ci = cinfo->MCU_membership[blkn];
+        s += state.last_dc_val[ci];
+        state.last_dc_val[ci] = s;
+        /* Output the DC coefficient (assumes jpeg_natural_order[0] = 0) */
+        (*block)[0] = (JCOEF) s;
       }
 
       if (entropy->ac_needed[blkn]) {
 
-	/* Section F.2.2.2: decode the AC coefficients */
-	/* Since zeroes are skipped, output area must be cleared beforehand */
-	for (k = 1; k < DCTSIZE2; k++) {
-	  HUFF_DECODE(s, br_state, actbl, return FALSE, label2);
-      
-	  r = s >> 4;
-	  s &= 15;
-      
-	  if (s) {
-	    k += r;
-	    CHECK_BIT_BUFFER(br_state, s, return FALSE);
-	    r = GET_BITS(s);
-	    s = HUFF_EXTEND(r, s);
-	    /* Output coefficient in natural (dezigzagged) order.
-	     * Note: the extra entries in jpeg_natural_order[] will save us
-	     * if k >= DCTSIZE2, which could happen if the data is corrupted.
-	     */
-	    (*block)[jpeg_natural_order[k]] = (JCOEF) s;
-	  } else {
-	    if (r != 15)
-	      break;
-	    k += 15;
-	  }
-	}
+        /* Section F.2.2.2: decode the AC coefficients */
+        /* Since zeroes are skipped, output area must be cleared beforehand */
+        for (k = 1; k < DCTSIZE2; k++) {
+          HUFF_DECODE(s, br_state, actbl, return FALSE, label2);
+
+          r = s >> 4;
+          s &= 15;
+
+          if (s) {
+            k += r;
+            CHECK_BIT_BUFFER(br_state, s, return FALSE);
+            r = GET_BITS(s);
+            s = HUFF_EXTEND(r, s);
+            /* Output coefficient in natural (dezigzagged) order.
+             * Note: the extra entries in jpeg_natural_order[] will save us
+             * if k >= DCTSIZE2, which could happen if the data is corrupted.
+             */
+            (*block)[jpeg_natural_order[k]] = (JCOEF) s;
+          } else {
+            if (r != 15)
+              break;
+            k += 15;
+          }
+        }
 
       } else {
 
-	/* Section F.2.2.2: decode the AC coefficients */
-	/* In this path we just discard the values */
-	for (k = 1; k < DCTSIZE2; k++) {
-	  HUFF_DECODE(s, br_state, actbl, return FALSE, label3);
-      
-	  r = s >> 4;
-	  s &= 15;
-      
-	  if (s) {
-	    k += r;
-	    CHECK_BIT_BUFFER(br_state, s, return FALSE);
-	    DROP_BITS(s);
-	  } else {
-	    if (r != 15)
-	      break;
-	    k += 15;
-	  }
-	}
+        /* Section F.2.2.2: decode the AC coefficients */
+        /* In this path we just discard the values */
+        for (k = 1; k < DCTSIZE2; k++) {
+          HUFF_DECODE(s, br_state, actbl, return FALSE, label3);
+
+          r = s >> 4;
+          s &= 15;
+
+          if (s) {
+            k += r;
+            CHECK_BIT_BUFFER(br_state, s, return FALSE);
+            DROP_BITS(s);
+          } else {
+            if (r != 15)
+              break;
+            k += 15;
+          }
+        }
 
       }
     }
@@ -638,8 +640,8 @@ jinit_huff_decoder (j_decompress_ptr cinfo)
   int i;
 
   entropy = (huff_entropy_ptr)
-    (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
-				SIZEOF(huff_entropy_decoder));
+            (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
+                                        SIZEOF(huff_entropy_decoder));
   cinfo->entropy = (struct jpeg_entropy_decoder *) entropy;
   entropy->pub.start_pass = start_pass_huff_decoder;
   entropy->pub.decode_mcu = decode_mcu;

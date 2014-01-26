@@ -32,28 +32,28 @@
 
 class MemPageGenerator : public IPageGenerator
 {
-  public:
-    virtual ~MemPageGenerator() { free(m_buf); }
-    MemPageGenerator(char *buf, int buf_len=-1) { m_buf=buf; if (buf_len >= 0) m_buf_size=buf_len; else m_buf_size=strlen(buf); m_buf_pos=0; }
-    virtual int GetData(char *buf, int size) // return 0 when done
-    {
-      int a=m_buf_size-m_buf_pos;
-      if (a < size) size=a;
-      memcpy(buf,m_buf+m_buf_pos,size);
-      m_buf_pos+=size;
-      return size;
-    }
+public:
+  virtual ~MemPageGenerator() { free(m_buf); }
+  MemPageGenerator(char *buf, int buf_len=-1) { m_buf=buf; if (buf_len >= 0) m_buf_size=buf_len; else m_buf_size=strlen(buf); m_buf_pos=0; }
+  virtual int GetData(char *buf, int size) // return 0 when done
+  {
+    int a=m_buf_size-m_buf_pos;
+    if (a < size) size=a;
+    memcpy(buf,m_buf+m_buf_pos,size);
+    m_buf_pos+=size;
+    return size;
+  }
 
-  private:
-    char *m_buf;
-    int m_buf_size;
-    int m_buf_pos;
+private:
+  char *m_buf;
+  int m_buf_size;
+  int m_buf_pos;
 };
 
 class wwwServer : public WebServerBaseClass
 {
 public:
-  wwwServer() { } 
+  wwwServer() { }
   virtual IPageGenerator *onConnection(JNL_HTTPServ *serv, int port)
   {
     serv->set_reply_header("Server:jnetlib_test/0.0");
@@ -171,12 +171,12 @@ int main(int argc, char **argv)
 
 int main()
 {
-  JNL_Connection *cons[32]={0,};
-  JNL_Connection *outcons[32]={0,};
+  JNL_Connection *cons[32]= {0,};
+  JNL_Connection *outcons[32]= {0,};
   char textpos[32][256];
   int n_cons=0;
-  int states[32]={0,};
-  
+  int states[32]= {0,};
+
   JNL::open_socketlib();
   JNL_AsyncDNS dns;
   JNL_Listen l(23);
@@ -258,7 +258,7 @@ int main()
                 {
                   char *p=strstr(textpos[x],":");
                   int port=23;
-                  if (p) 
+                  if (p)
                   {
                     *p++=0;
                     if (atoi(p)) port=atoi(p);
@@ -273,13 +273,13 @@ int main()
                 }
                 else states[x]=0;
               }
-              else if (b == '\b') 
+              else if (b == '\b')
               {
                 if (textpos[x][0])
                 {
                   textpos[x][strlen(textpos[x])-1]=0;
                   cons[x]->send_string("\b \b");
-              }
+                }
               }
               else
               {
@@ -294,9 +294,9 @@ int main()
             char buf[1024];
             outcons[x]->run();
             int l=cons[x]->recv_bytes(buf,1024);
-            if (l) outcons[x]->send(buf,l);           
+            if (l) outcons[x]->send(buf,l);
             l=outcons[x]->recv_bytes(buf,1024);
-            if (l) cons[x]->send(buf,l);                     
+            if (l) cons[x]->send(buf,l);
           }
         }
       }
@@ -313,10 +313,10 @@ int main()
 
 int main()
 {
-  JNL_HTTPServ *cons[32]={0,};
-  char *contents[32]={0,};
+  JNL_HTTPServ *cons[32]= {0,};
+  char *contents[32]= {0,};
   int n_cons=0;
-  
+
   JNL::open_socketlib();
   JNL_AsyncDNS dns;
   JNL_Listen l(8000);
@@ -420,11 +420,11 @@ int main()
 #endif
 
 #if (TEST_ASYNCDNS)
-int main() 
+int main()
 {
   JNL_AsyncDNS dns;
   char *hosts[]=
-  { 
+  {
     "www.firehose.net",
     "gnutella.com",
     "207.48.52.200",
@@ -453,14 +453,14 @@ int main()
       printf("%-30s",hosts[x]);
       switch (dns.resolve(hosts[x],&addr))
       {
-        case 0: 
-          {
-            char str[256];
-            JNL::addr_to_ipstr(addr,str,256);
-            printf("%s\n",str); 
-            n++; 
-          }
-          break;
+        case 0:
+        {
+          char str[256];
+          JNL::addr_to_ipstr(addr,str,256);
+          printf("%s\n",str);
+          n++;
+        }
+        break;
         case 1: printf("looking up\n"); break;
         case -1: printf("error\n"); n++; break;
       }
@@ -497,7 +497,7 @@ int main(int argc, char **argv)
 
   switch(mode)
   {
-  case 0:   // client mode
+    case 0:   // client mode
     {
       JNL_AsyncDNS dns;
       JNL_UDPConnection con(0,&dns); // 0 chooses a random port
@@ -521,7 +521,7 @@ int main(int argc, char **argv)
       }
     }
     break;
-  case 1:   // server (listening) mode
+    case 1:   // server (listening) mode
     {
       JNL_UDPConnection con(80);
       printf("Waiting for messages...\n");

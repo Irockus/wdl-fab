@@ -12,7 +12,7 @@
 #define __SWELL_PREFIX_CLASSNAME(cname) __SWELL_PREFIX_CLASSNAME2(SWELL_APP_PREFIX,cname)
 
 // this defines interfaces to internal swell classes
-#define SWELL_hwndChild __SWELL_PREFIX_CLASSNAME(_hwnd) 
+#define SWELL_hwndChild __SWELL_PREFIX_CLASSNAME(_hwnd)
 #define SWELL_hwndCarbonHost __SWELL_PREFIX_CLASSNAME(_hwndcarbonhost)
 
 #define SWELL_ModelessWindow __SWELL_PREFIX_CLASSNAME(_modelesswindow)
@@ -103,7 +103,7 @@
 
 @interface SWELL_TreeView : NSOutlineView
 {
-  @public
+@public
   bool m_fakerightmouse;
   LONG style;
   WDL_PtrList<HTREEITEM__> *m_items;
@@ -116,7 +116,7 @@
 {
   int m_leftmousemovecnt;
   bool m_fakerightmouse;
-  @public
+@public
   LONG style;
   int ownermode_cnt;
   int m_start_item;
@@ -127,7 +127,7 @@
   WDL_PtrList<NSTableColumn> *m_cols;
   WDL_PtrList<HGDIOBJ__> *m_status_imagelist;
   int m_status_imagelist_type;
-  int m_fastClickMask;	
+  int m_fastClickMask;
   NSColor *m_fgColor;
   NSMutableArray *m_selColors;
 }
@@ -314,7 +314,7 @@
   NSSize lastFrameSize;
   id m_owner;
   OwnedWindowListRec *m_ownedwnds;
-  
+
   int m_rv;
   bool m_hasrv;
   BOOL m_enabled;
@@ -334,7 +334,7 @@
 
 @interface SWELL_hwndCarbonHost : SWELL_hwndChild
 #ifdef MAC_OS_X_VERSION_10_7
-<NSWindowDelegate>
+  <NSWindowDelegate>
 #endif
 {
 @public
@@ -342,7 +342,7 @@
 
   bool m_whileresizing;
   void* m_wndhandler;   // won't compile if declared EventHandlerRef, wtf
-  void* m_ctlhandler;   // not sure if these need to be separate but cant hurt  
+  void* m_ctlhandler;   // not sure if these need to be separate but cant hurt
   bool m_wantallkeys;
 }
 -(BOOL)swellIsCarbonHostingView;

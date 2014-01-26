@@ -67,11 +67,11 @@ const IColor DEFAULT_TEXT_ENTRY_BGCOLOR = COLOR_WHITE;
 const IColor DEFAULT_TEXT_ENTRY_FGCOLOR = COLOR_BLACK;
 
 #ifdef OS_WIN
-  const char* const DEFAULT_FONT = "Verdana";
-  const int DEFAULT_TEXT_SIZE = 12;
+const char* const DEFAULT_FONT = "Verdana";
+const int DEFAULT_TEXT_SIZE = 12;
 #elif defined OS_OSX
-  const char* const DEFAULT_FONT = "Monaco";
-  const int DEFAULT_TEXT_SIZE = 10;
+const char* const DEFAULT_FONT = "Monaco";
+const int DEFAULT_TEXT_SIZE = 10;
 #endif
 
 const int FONT_LEN = 32;
@@ -233,17 +233,17 @@ struct IRECT
 
     return IRECT(L + l, T, L + l + widthOfSubRect, B);
   }
-  
+
   inline IRECT GetPadded(int padding)
   {
     return IRECT(L-padding, T-padding, R+padding, B+padding);
   }
-  
+
   inline IRECT GetPadded(int padL, int padT, int padR, int padB)
   {
     return IRECT(L+padL, T+padT, R+padR, B+padB);
   }
-  
+
   inline IRECT GetHPadded(int padding)
   {
     return IRECT(L-padding, T, R+padding, B);
@@ -253,7 +253,7 @@ struct IRECT
   {
     return IRECT(L, T-padding, R, B+padding);
   }
-  
+
   void Clank(IRECT* pRHS)
   {
     if (L < pRHS->L)

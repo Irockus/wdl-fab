@@ -17,7 +17,7 @@
     2. Altered source versions must be plainly marked as such, and must not be
        misrepresented as being the original software.
     3. This notice may not be removed or altered from any source distribution.
-    
+
 
 */
 
@@ -38,7 +38,7 @@ WDL_GPU::~WDL_GPU()
 
 void WDL_GPU::release()
 {
-  if(m_glDll) 
+  if(m_glDll)
   {
     if(m_rc)
     {
@@ -88,16 +88,16 @@ int WDL_GPU::init(HWND hwnd)
   HDC pdc = GetDC(m_hwnd);
 
   PIXELFORMATDESCRIPTOR pfd;
-	ZeroMemory( &pfd, sizeof( pfd ) );
-	pfd.nSize = sizeof( pfd );
-	pfd.nVersion = 1;
-	pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-	pfd.iPixelType = PFD_TYPE_RGBA;
-	pfd.cColorBits = 24;
-	pfd.cDepthBits = 16;
-	pfd.iLayerType = PFD_MAIN_PLANE;
-	int format = ChoosePixelFormat( pdc, &pfd );
-	SetPixelFormat( pdc, format, &pfd );
+  ZeroMemory( &pfd, sizeof( pfd ) );
+  pfd.nSize = sizeof( pfd );
+  pfd.nVersion = 1;
+  pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+  pfd.iPixelType = PFD_TYPE_RGBA;
+  pfd.cColorBits = 24;
+  pfd.cDepthBits = 16;
+  pfd.iLayerType = PFD_MAIN_PLANE;
+  int format = ChoosePixelFormat( pdc, &pfd );
+  SetPixelFormat( pdc, format, &pfd );
 
   m_rc = wglCreateContext(pdc);
 
@@ -114,7 +114,7 @@ int WDL_GPU::init(HWND hwnd)
   if(!rend || (rend && strstr(rend, "GDI"))) goto ret; //opengl software rendering is slooooow
 
   wglGetExtensionsStringARB = (PFNWGLGETEXTENSIONSSTRINGARBPROC)wglGetProcAddress("wglGetExtensionsStringARB");
-  
+
   if(!wglGetExtensionsStringARB)
   {
 ret:
@@ -125,23 +125,23 @@ ret:
     m_glDll = NULL;
     return 0;
   }
-  
+
   char *ext = NULL;
   ext = (char*)wglGetExtensionsStringARB( pdc );
   if(!strstr( ext, "WGL_ARB_pbuffer" )) goto ret;
 
   wglCreatePbufferARB    = (PFNWGLCREATEPBUFFERARBPROC)wglGetProcAddress("wglCreatePbufferARB");
-	wglGetPbufferDCARB     = (PFNWGLGETPBUFFERDCARBPROC)wglGetProcAddress("wglGetPbufferDCARB");
-	wglReleasePbufferDCARB = (PFNWGLRELEASEPBUFFERDCARBPROC)wglGetProcAddress("wglReleasePbufferDCARB");
-	wglDestroyPbufferARB   = (PFNWGLDESTROYPBUFFERARBPROC)wglGetProcAddress("wglDestroyPbufferARB");
-	wglQueryPbufferARB     = (PFNWGLQUERYPBUFFERARBPROC)wglGetProcAddress("wglQueryPbufferARB");
+  wglGetPbufferDCARB     = (PFNWGLGETPBUFFERDCARBPROC)wglGetProcAddress("wglGetPbufferDCARB");
+  wglReleasePbufferDCARB = (PFNWGLRELEASEPBUFFERDCARBPROC)wglGetProcAddress("wglReleasePbufferDCARB");
+  wglDestroyPbufferARB   = (PFNWGLDESTROYPBUFFERARBPROC)wglGetProcAddress("wglDestroyPbufferARB");
+  wglQueryPbufferARB     = (PFNWGLQUERYPBUFFERARBPROC)wglGetProcAddress("wglQueryPbufferARB");
   if( !wglCreatePbufferARB || !wglGetPbufferDCARB || !wglReleasePbufferDCARB || !wglDestroyPbufferARB || !wglQueryPbufferARB ) goto ret;
-  
-  wglGetPixelFormatAttribivARB = (PFNWGLGETPIXELFORMATATTRIBIVARBPROC)wglGetProcAddress("wglGetPixelFormatAttribivARB");
-	wglGetPixelFormatAttribfvARB = (PFNWGLGETPIXELFORMATATTRIBFVARBPROC)wglGetProcAddress("wglGetPixelFormatAttribfvARB");
-	wglChoosePixelFormatARB      = (PFNWGLCHOOSEPIXELFORMATARBPROC)wglGetProcAddress("wglChoosePixelFormatARB");
 
-	if( !wglGetExtensionsStringARB || !wglCreatePbufferARB || !wglGetPbufferDCARB ) goto ret;
+  wglGetPixelFormatAttribivARB = (PFNWGLGETPIXELFORMATATTRIBIVARBPROC)wglGetProcAddress("wglGetPixelFormatAttribivARB");
+  wglGetPixelFormatAttribfvARB = (PFNWGLGETPIXELFORMATATTRIBFVARBPROC)wglGetProcAddress("wglGetPixelFormatAttribfvARB");
+  wglChoosePixelFormatARB      = (PFNWGLCHOOSEPIXELFORMATARBPROC)wglGetProcAddress("wglChoosePixelFormatARB");
+
+  if( !wglGetExtensionsStringARB || !wglCreatePbufferARB || !wglGetPbufferDCARB ) goto ret;
 
   ReleaseDC(m_hwnd, pdc);
 
@@ -174,7 +174,7 @@ WDL_GPU_Surface::WDL_GPU_Surface(WDL_GPU *parent, WDL_WinMemBitmap *bm, int w, i
 
   //m_w = ((w+15)/16)*16; m_h = ((h+15)/16)*16;
   m_w = w; m_h = h;
-  
+
   BITMAPINFO m_bmi;
   memset(&m_bmi, 0, sizeof(BITMAPINFO));
   m_bmi.bmiHeader.biSize		= sizeof(BITMAPINFOHEADER);
@@ -189,22 +189,22 @@ WDL_GPU_Surface::WDL_GPU_Surface(WDL_GPU *parent, WDL_WinMemBitmap *bm, int w, i
 
   //create pbuffer for offscreen rendering
   int pf_attr[] =
-	{
-		WGL_SUPPORT_OPENGL_ARB, TRUE,       // P-buffer will be used with OpenGL
-		WGL_DRAW_TO_PBUFFER_ARB, TRUE,      // Enable render to p-buffer
+  {
+    WGL_SUPPORT_OPENGL_ARB, TRUE,       // P-buffer will be used with OpenGL
+    WGL_DRAW_TO_PBUFFER_ARB, TRUE,      // Enable render to p-buffer
     WGL_BIND_TO_TEXTURE_RGBA_ARB, TRUE, // some cards need that in order not to crash in wglCreatePbufferARB
-		WGL_RED_BITS_ARB, 8,                // At least 8 bits for RED channel
-		WGL_GREEN_BITS_ARB, 8,              // At least 8 bits for GREEN channel
-		WGL_BLUE_BITS_ARB, 8,               // At least 8 bits for BLUE channel
-		WGL_ALPHA_BITS_ARB, 8,              // At least 8 bits for ALPHA channel
-		WGL_DEPTH_BITS_ARB, 16,             // At least 16 bits for depth buffer
-		WGL_DOUBLE_BUFFER_ARB, FALSE,       // We don't require double buffering
-		0                                   // Zero terminates the list
-	};
+    WGL_RED_BITS_ARB, 8,                // At least 8 bits for RED channel
+    WGL_GREEN_BITS_ARB, 8,              // At least 8 bits for GREEN channel
+    WGL_BLUE_BITS_ARB, 8,               // At least 8 bits for BLUE channel
+    WGL_ALPHA_BITS_ARB, 8,              // At least 8 bits for ALPHA channel
+    WGL_DEPTH_BITS_ARB, 16,             // At least 16 bits for depth buffer
+    WGL_DOUBLE_BUFFER_ARB, FALSE,       // We don't require double buffering
+    0                                   // Zero terminates the list
+  };
 
   HDC pdc = GetDC(m_parent->m_hwnd);
 
-  try 
+  try
   {
     unsigned int count = 0;
     int pixelFormat;
@@ -215,7 +215,7 @@ WDL_GPU_Surface::WDL_GPU_Surface(WDL_GPU *parent, WDL_WinMemBitmap *bm, int w, i
       m_parent->release();
       return;
     }
-    
+
     m_hPBuffer = m_parent->wglCreatePbufferARB( pdc, pixelFormat, m_w, m_h, NULL );
     if(!m_hPBuffer)
     {
@@ -234,19 +234,19 @@ WDL_GPU_Surface::WDL_GPU_Surface(WDL_GPU *parent, WDL_WinMemBitmap *bm, int w, i
   }
 
   m_hDC = m_parent->wglGetPbufferDCARB( m_hPBuffer );
-  m_hRC = m_parent->wglCreateContext( m_hDC ); 
+  m_hRC = m_parent->wglCreateContext( m_hDC );
 
   ReleaseDC(m_parent->m_hwnd, pdc);
 }
 
 WDL_GPU_Surface::~WDL_GPU_Surface()
 {
-  if(m_hRC) 
+  if(m_hRC)
   {
     m_parent->wglMakeCurrent(m_hDC, m_hRC);
     m_parent->wglDeleteContext(m_hRC);
     m_parent->wglReleasePbufferDCARB( m_hPBuffer, m_hDC );
-		m_parent->wglDestroyPbufferARB( m_hPBuffer );
+    m_parent->wglDestroyPbufferARB( m_hPBuffer );
     ReleaseDC( m_parent->m_hwnd, m_hDC );
   }
   if(m_parent->isInited()) m_parent->wglMakeCurrent(NULL, NULL);
@@ -313,5 +313,5 @@ void WDL_GPU_Surface::flush()
 void WDL_GPU_Surface::blit()
 {
   if(!m_hRC) return;
-	m_parent->glReadPixels( 0, 0, m_w, m_h, GL_RGBA, GL_UNSIGNED_BYTE, m_bits);
+  m_parent->glReadPixels( 0, 0, m_w, m_h, GL_RGBA, GL_UNSIGNED_BYTE, m_bits);
 }

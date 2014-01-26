@@ -18,10 +18,10 @@
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
-  
 
 
-  This file implements the WDL FFT library. These routines are based on the 
+
+  This file implements the WDL FFT library. These routines are based on the
   DJBFFT library, which are   Copyright 1999 D. J. Bernstein, djb@pobox.com
 
   The DJB FFT web page is:  http://cr.yp.to/djbfft.html
@@ -208,7 +208,7 @@ static WDL_FFT_COMPLEX d32768[4095];
   a3.re = t8; \
   a2.im = t2; \
   }
- 
+
 
 #define UNTRANSFORMHALF(a0,a1,a2,a3) { \
   t6 = sqrthalf; \
@@ -1110,12 +1110,12 @@ static int _idxperm[2<<FFT_MAXBITLEN];
 
 static void idx_perm_calc(int offs, int n)
 {
-	int i, j;
-	_idxperm[offs] = 0;
-	for (i = 1; i < n; ++i) {
-		j = fftfreq_c(i, n);
-		_idxperm[offs+n-j] = i;
-	}
+  int i, j;
+  _idxperm[offs] = 0;
+  for (i = 1; i < n; ++i) {
+    j = fftfreq_c(i, n);
+    _idxperm[offs+n-j] = i;
+  }
 }
 
 int WDL_fft_permute(int fftsize, int idx)
@@ -1131,7 +1131,7 @@ void WDL_fft_init()
   if (!ffttabinit)
   {
     int i, offs;
-  	ffttabinit=1;
+    ffttabinit=1;
 
 #define fft_gen(x,y) __fft_gen(x,sizeof(x)/sizeof(x[0]),y)
     fft_gen(d16,1);
@@ -1149,12 +1149,12 @@ void WDL_fft_init()
 #undef fft_gen
 
 #ifndef WDL_FFT_NO_PERMUTE
-	  offs = 0;
-	  for (i = 16; i <= 32768; i *= 2) 
+    offs = 0;
+    for (i = 16; i <= 32768; i *= 2)
     {
-		  idx_perm_calc(offs, i);
-		  offs += i;
-	  }
+      idx_perm_calc(offs, i);
+      offs += i;
+    }
 #endif
 
   }
@@ -1166,20 +1166,20 @@ void WDL_fft(WDL_FFT_COMPLEX *buf, int len, int isInverse)
   {
     case 2: c2(buf); break;
 #define TMP(x) case x: if (!isInverse) c##x(buf); else u##x(buf); break;
-    TMP(4)
-    TMP(8)
-    TMP(16)
-    TMP(32)
-    TMP(64)
-    TMP(128)
-    TMP(256)
-    TMP(512)
-    TMP(1024)
-    TMP(2048)
-    TMP(4096)
-    TMP(8192)
-    TMP(16384)
-    TMP(32768)
+      TMP(4)
+      TMP(8)
+      TMP(16)
+      TMP(32)
+      TMP(64)
+      TMP(128)
+      TMP(256)
+      TMP(512)
+      TMP(1024)
+      TMP(2048)
+      TMP(4096)
+      TMP(8192)
+      TMP(16384)
+      TMP(32768)
 #undef TMP
   }
 }
@@ -1383,7 +1383,7 @@ static void r2048(register WDL_FFT_REAL *a)
   r1024(a);
   c512((WDL_FFT_COMPLEX *)(a + 1024));
 }
- 
+
 
 static void r4096(register WDL_FFT_REAL *a)
 {
@@ -1628,20 +1628,20 @@ void WDL_real_fft(WDL_FFT_REAL *buf, int len, int isInverse)
   {
     case 2: r2(buf); break;
 #define TMP(x) case x: if (!isInverse) r##x(buf); else v##x(buf); break;
-    TMP(4)
-    TMP(8)
-    TMP(16)
-    TMP(32)
-    TMP(64)
-    TMP(128)
-    TMP(256)
-    TMP(512)
-    TMP(1024)
-    TMP(2048)
-    TMP(4096)
-    TMP(8192)
-    TMP(16384)
-    TMP(32768)
+      TMP(4)
+      TMP(8)
+      TMP(16)
+      TMP(32)
+      TMP(64)
+      TMP(128)
+      TMP(256)
+      TMP(512)
+      TMP(1024)
+      TMP(2048)
+      TMP(4096)
+      TMP(8192)
+      TMP(16384)
+      TMP(32768)
 #undef TMP
   }
 }

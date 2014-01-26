@@ -48,7 +48,7 @@
 
 #ifdef	DEBUG_HIT_RATE
 static long NumberOfTests = 0,
-	    NumberOfMisses = 0;
+            NumberOfMisses = 0;
 #endif	/* DEBUG_HIT_RATE */
 
 static int KeyItem(UINT32 Item);
@@ -58,15 +58,15 @@ static int KeyItem(UINT32 Item);
 ******************************************************************************/
 GifHashTableType *_InitHashTable(void)
 {
-    GifHashTableType *HashTable;
+  GifHashTableType *HashTable;
 
-    if ((HashTable = (GifHashTableType *) malloc(sizeof(GifHashTableType)))
-	== NULL)
-	return NULL;
+  if ((HashTable = (GifHashTableType *) malloc(sizeof(GifHashTableType)))
+      == NULL)
+    return NULL;
 
-    _ClearHashTable(HashTable);
+  _ClearHashTable(HashTable);
 
-    return HashTable;
+  return HashTable;
 }
 
 /******************************************************************************
@@ -75,7 +75,7 @@ GifHashTableType *_InitHashTable(void)
 ******************************************************************************/
 void _ClearHashTable(GifHashTableType *HashTable)
 {
-    memset(HashTable -> HTable, 0xFF, HT_SIZE * sizeof(UINT32));
+  memset(HashTable -> HTable, 0xFF, HT_SIZE * sizeof(UINT32));
 }
 
 /******************************************************************************
@@ -84,21 +84,21 @@ void _ClearHashTable(GifHashTableType *HashTable)
 ******************************************************************************/
 void _InsertHashTable(GifHashTableType *HashTable, UINT32 Key, int Code)
 {
-    int HKey = KeyItem(Key);
-    UINT32 *HTable = HashTable -> HTable;
+  int HKey = KeyItem(Key);
+  UINT32 *HTable = HashTable -> HTable;
 
 #ifdef DEBUG_HIT_RATE
-	NumberOfTests++;
-	NumberOfMisses++;
+  NumberOfTests++;
+  NumberOfMisses++;
 #endif /* DEBUG_HIT_RATE */
 
-    while (HT_GET_KEY(HTable[HKey]) != 0xFFFFFL) {
+  while (HT_GET_KEY(HTable[HKey]) != 0xFFFFFL) {
 #ifdef DEBUG_HIT_RATE
-	    NumberOfMisses++;
+    NumberOfMisses++;
 #endif /* DEBUG_HIT_RATE */
-	HKey = (HKey + 1) & HT_KEY_MASK;
-    }
-    HTable[HKey] = HT_PUT_KEY(Key) | HT_PUT_CODE(Code);
+    HKey = (HKey + 1) & HT_KEY_MASK;
+  }
+  HTable[HKey] = HT_PUT_KEY(Key) | HT_PUT_CODE(Code);
 }
 
 /******************************************************************************
@@ -107,23 +107,23 @@ void _InsertHashTable(GifHashTableType *HashTable, UINT32 Key, int Code)
 ******************************************************************************/
 int _ExistsHashTable(GifHashTableType *HashTable, UINT32 Key)
 {
-    int HKey = KeyItem(Key);
-    UINT32 *HTable = HashTable -> HTable, HTKey;
+  int HKey = KeyItem(Key);
+  UINT32 *HTable = HashTable -> HTable, HTKey;
 
 #ifdef DEBUG_HIT_RATE
-	NumberOfTests++;
-	NumberOfMisses++;
+  NumberOfTests++;
+  NumberOfMisses++;
 #endif /* DEBUG_HIT_RATE */
 
-    while ((HTKey = HT_GET_KEY(HTable[HKey])) != 0xFFFFFL) {
+  while ((HTKey = HT_GET_KEY(HTable[HKey])) != 0xFFFFFL) {
 #ifdef DEBUG_HIT_RATE
-	    NumberOfMisses++;
+    NumberOfMisses++;
 #endif /* DEBUG_HIT_RATE */
-	if (Key == HTKey) return HT_GET_CODE(HTable[HKey]);
-	HKey = (HKey + 1) & HT_KEY_MASK;
-    }
+    if (Key == HTKey) return HT_GET_CODE(HTable[HKey]);
+    HKey = (HKey + 1) & HT_KEY_MASK;
+  }
 
-    return -1;
+  return -1;
 }
 
 /******************************************************************************
@@ -135,7 +135,7 @@ int _ExistsHashTable(GifHashTableType *HashTable, UINT32 Key)
 ******************************************************************************/
 static int KeyItem(UINT32 Item)
 {
-    return ((Item >> 12) ^ Item) & HT_KEY_MASK;
+  return ((Item >> 12) ^ Item) & HT_KEY_MASK;
 }
 
 #ifdef	DEBUG_HIT_RATE
@@ -145,8 +145,8 @@ static int KeyItem(UINT32 Item)
 ******************************************************************************/
 void HashTablePrintHitRatio(void)
 {
-    printf("Hash Table Hit Ratio is %ld/%ld = %ld%%.\n",
-	NumberOfMisses, NumberOfTests,
-	NumberOfMisses * 100 / NumberOfTests);
+  printf("Hash Table Hit Ratio is %ld/%ld = %ld%%.\n",
+         NumberOfMisses, NumberOfTests,
+         NumberOfMisses * 100 / NumberOfTests);
 }
 #endif	/* DEBUG_HIT_RATE */

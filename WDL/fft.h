@@ -17,10 +17,10 @@
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
-  
 
 
-  This file defines the interface to the WDL FFT library. These routines are based on the 
+
+  This file defines the interface to the WDL FFT library. These routines are based on the
   DJBFFT library, which are   Copyright 1999 D. J. Bernstein, djb@pobox.com
 
   The DJB FFT web page is:  http://cr.yp.to/djbfft.html

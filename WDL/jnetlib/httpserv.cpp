@@ -6,7 +6,7 @@
 ** File: httpserv.cpp - JNL HTTP GET/POST serving implementation
 ** License: see jnetlib.h
 **
-** This class just manages the http reply/sending, not where the data 
+** This class just manages the http reply/sending, not where the data
 ** comes from, etc.
 */
 
@@ -98,7 +98,7 @@ run_again:
           *buf++=0; // change &'s into 0s now.
           char *t=buf;
           int stat=1;
-          while (*t) 
+          while (*t)
           {
             if (*t == '&' && !stat) { stat=1; *t=0; }
             else stat=0;
@@ -118,14 +118,14 @@ run_again:
       buf[0]=0;
       m_con->recv_line(buf,4096);
       if (!buf[0]) { m_state=2; break; }
-      
+
       if (!strnicmp(buf,"Connection:",11))
       {
         const char *p=buf+11;
         while (*p && strnicmp(p,"close",5)) p++;
         if (*p) m_keepalive=false;
       }
-      
+
       if (!m_recvheaders)
       {
         m_recvheaders_size=strlen(buf)+1;

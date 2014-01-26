@@ -17,7 +17,7 @@
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
-  
+
 
   This file defines a template for a class that stores a list of objects, and allows the caller
   to periodically get an object, do something with it, and add it back into the pool.
@@ -44,7 +44,7 @@
 class WDL_ResourcePool_ResInfo // include in class RTYPE as WDL_ResourcePool_ResInfo m_rpoolinfo;
 {
 public:
-  WDL_ResourcePool_ResInfo(){ m_owneduntil=0; m_ownerptr=0; next=0; }
+  WDL_ResourcePool_ResInfo() { m_owneduntil=0; m_ownerptr=0; next=0; }
   ~WDL_ResourcePool_ResInfo() {}
 
   unsigned int m_owneduntil;
@@ -56,123 +56,123 @@ public:
 
 template<class RTYPE, class EXTRAINFOTYPE> class WDL_ResourcePool
 {
-  public:
-    WDL_ResourcePool(char *identstr)
+public:
+  WDL_ResourcePool(char *identstr)
+  {
+    WDL_POOLLIST_refcnt=0;
+    WDL_POOLLIST_identstr=identstr;
+    m_rlist=NULL;
+    extraInfo=0;
+    m_hadres=false;
+  }
+  ~WDL_ResourcePool()
+  {
+    while (m_rlist)
     {
-      WDL_POOLLIST_refcnt=0;
-      WDL_POOLLIST_identstr=identstr;
-      m_rlist=NULL;
-      extraInfo=0;
-      m_hadres=false;
+      RTYPE *tp=m_rlist;
+      m_rlist=(RTYPE *)m_rlist->m_rpoolinfo.next;
+      delete tp;
     }
-    ~WDL_ResourcePool()
+    delete extraInfo;
+  }
+  void Clear()
+  {
+    m_mutex.Enter();
+    while (m_rlist)
     {
-      while (m_rlist)
+      RTYPE *tp=m_rlist;
+      m_rlist=(RTYPE *)m_rlist->m_rpoolinfo.next;
+      delete tp;
+    }
+    m_hadres=false;
+    m_mutex.Leave();
+  }
+  bool HasResources()
+  {
+    return m_hadres;
+  }
+
+  void AddResource(RTYPE *item, void *own, unsigned int until)
+  {
+    item->m_rpoolinfo.m_ownerptr = own;
+    item->m_rpoolinfo.m_owneduntil = until;
+
+    m_mutex.Enter();
+    item->m_rpoolinfo.next = m_rlist;
+    m_rlist = item;
+    m_hadres=true;
+    m_mutex.Leave();
+  }
+
+  void ReleaseResources(void *own)
+  {
+    m_mutex.Enter();
+    RTYPE *ent=m_rlist;
+    while (ent)
+    {
+      if (ent->m_rpoolinfo.m_ownerptr == own)
       {
-        RTYPE *tp=m_rlist;
-        m_rlist=(RTYPE *)m_rlist->m_rpoolinfo.next;
-        delete tp;
+        ent->m_rpoolinfo.m_ownerptr = 0;
+        ent->m_rpoolinfo.m_owneduntil=0;
       }
-      delete extraInfo;
+      ent=(RTYPE *)ent->m_rpoolinfo.next;
     }
-    void Clear()
+    m_mutex.Leave();
+  }
+
+  RTYPE *GetResource(void *own, unsigned int now)
+  {
+    m_mutex.Enter();
+    RTYPE *ent=m_rlist, *lastent=NULL, *bestent=NULL, *bestlastent=NULL;
+    bool bestnoown=false;
+    while (ent)
     {
-      m_mutex.Enter();
-      while (m_rlist)
+      if (ent->m_rpoolinfo.m_ownerptr == own)
       {
-        RTYPE *tp=m_rlist;
-        m_rlist=(RTYPE *)m_rlist->m_rpoolinfo.next;
-        delete tp;
-      }
-      m_hadres=false;
-      m_mutex.Leave();
-    }
-    bool HasResources()
-    {
-      return m_hadres;
-    }
-
-    void AddResource(RTYPE *item, void *own, unsigned int until)
-    {
-      item->m_rpoolinfo.m_ownerptr = own;
-      item->m_rpoolinfo.m_owneduntil = until;
-
-      m_mutex.Enter();
-      item->m_rpoolinfo.next = m_rlist;
-      m_rlist = item;
-      m_hadres=true;
-      m_mutex.Leave();
-    }
-
-    void ReleaseResources(void *own)
-    {
-      m_mutex.Enter();
-      RTYPE *ent=m_rlist;
-      while (ent)
-      {
-        if (ent->m_rpoolinfo.m_ownerptr == own)
-        {
-          ent->m_rpoolinfo.m_ownerptr = 0;
-          ent->m_rpoolinfo.m_owneduntil=0;
-        }
-        ent=(RTYPE *)ent->m_rpoolinfo.next;
-      }
-      m_mutex.Leave();
-    }
-
-    RTYPE *GetResource(void *own, unsigned int now)
-    {
-      m_mutex.Enter();
-      RTYPE *ent=m_rlist, *lastent=NULL, *bestent=NULL, *bestlastent=NULL;
-      bool bestnoown=false;
-      while (ent)
-      {
-        if (ent->m_rpoolinfo.m_ownerptr == own)
-        {
-          if (lastent) lastent->m_rpoolinfo.next = ent->m_rpoolinfo.next;
-          else m_rlist = (RTYPE *)ent->m_rpoolinfo.next;
-          m_mutex.Leave();
-          return ent;
-        }
-
-        if (!bestnoown && (!ent->m_rpoolinfo.m_ownerptr || ent->m_rpoolinfo.m_owneduntil < now))
-        {
-          bestent=ent;
-          bestlastent=lastent;
-          if (!ent->m_rpoolinfo.m_ownerptr || !ent->m_rpoolinfo.m_owneduntil) bestnoown=true;
-        }
-        lastent=ent;
-        ent=(RTYPE *)ent->m_rpoolinfo.next;
+        if (lastent) lastent->m_rpoolinfo.next = ent->m_rpoolinfo.next;
+        else m_rlist = (RTYPE *)ent->m_rpoolinfo.next;
+        m_mutex.Leave();
+        return ent;
       }
 
-      if (bestent)
+      if (!bestnoown && (!ent->m_rpoolinfo.m_ownerptr || ent->m_rpoolinfo.m_owneduntil < now))
       {
-        if (bestlastent) bestlastent->m_rpoolinfo.next = bestent->m_rpoolinfo.next;
-        else m_rlist = (RTYPE *)bestent->m_rpoolinfo.next;
+        bestent=ent;
+        bestlastent=lastent;
+        if (!ent->m_rpoolinfo.m_ownerptr || !ent->m_rpoolinfo.m_owneduntil) bestnoown=true;
       }
-
-      m_mutex.Leave();
-      return bestent;
+      lastent=ent;
+      ent=(RTYPE *)ent->m_rpoolinfo.next;
     }
 
-    int WDL_POOLLIST_refcnt;
-    char *WDL_POOLLIST_identstr;
-    bool m_hadres;
-
-    EXTRAINFOTYPE *extraInfo;
-
-    RTYPE *PeekList()
+    if (bestent)
     {
-      return m_rlist;
+      if (bestlastent) bestlastent->m_rpoolinfo.next = bestent->m_rpoolinfo.next;
+      else m_rlist = (RTYPE *)bestent->m_rpoolinfo.next;
     }
-    void LockList()
-    {
-      m_mutex.Enter();
-    }
-    void UnlockList()
-    {
-      m_mutex.Leave();
-    }
+
+    m_mutex.Leave();
+    return bestent;
+  }
+
+  int WDL_POOLLIST_refcnt;
+  char *WDL_POOLLIST_identstr;
+  bool m_hadres;
+
+  EXTRAINFOTYPE *extraInfo;
+
+  RTYPE *PeekList()
+  {
+    return m_rlist;
+  }
+  void LockList()
+  {
+    m_mutex.Enter();
+  }
+  void UnlockList()
+  {
+    m_mutex.Leave();
+  }
 
 private:
 

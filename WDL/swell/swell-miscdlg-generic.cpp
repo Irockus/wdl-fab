@@ -16,7 +16,7 @@
     2. Altered source versions must be plainly marked as such, and must not be
        misrepresented as being the original software.
     3. This notice may not be removed or altered from any source distribution.
-  
+
 
     This file provides basic APIs for browsing for files, directories, and messageboxes.
 
@@ -54,7 +54,7 @@ bool BrowseForDirectory(const char *text, const char *initialdir, char *fn, int 
 }
 
 
-char *BrowseForFiles(const char *text, const char *initialdir, 
+char *BrowseForFiles(const char *text, const char *initialdir,
                      const char *initialfile, bool allowmul, const char *extlist)
 {
   return NULL;
@@ -87,7 +87,7 @@ static LRESULT WINAPI swellMessageBoxProc(HWND hwnd, UINT uMsg, WPARAM wParam, L
         SWELL_MakeSetCurParms(1,1,0,0,hwnd,false,false);
         RECT labsize = {0,0,300,20};
         HWND lab = SWELL_MakeLabel(-1,parms[0] ? (const char *)parms[0] : "", 0, 0,0,10,10,SS_CENTER); //we'll resize this manually
-        HDC dc=GetDC(lab); 
+        HDC dc=GetDC(lab);
         if (lab && parms[0])
         {
           DrawText(dc,(const char *)parms[0],-1,&labsize,DT_CALCRECT);// if dc isnt valid yet, try anyway
@@ -100,7 +100,7 @@ static LRESULT WINAPI swellMessageBoxProc(HWND hwnd, UINT uMsg, WPARAM wParam, L
         int button_height=0, button_total_w=0;;
         for (x = 0; x < nbuttons; x ++)
         {
-          RECT r={0,0,35,12};
+          RECT r= {0,0,35,12};
           DrawText(dc,buttons[x],-1,&r,DT_CALCRECT|DT_SINGLELINE);
           button_sizes[x] = r.right-r.left + 8;
           button_total_w += button_sizes[x] + (x ? button_spacing : 0);
@@ -121,16 +121,16 @@ static LRESULT WINAPI swellMessageBoxProc(HWND hwnd, UINT uMsg, WPARAM wParam, L
         if (lab) SetWindowPos(lab,NULL,0,0,labsize.right,labsize.bottom,SWP_NOACTIVATE|SWP_NOZORDER);
         SetWindowPos(hwnd,NULL,0,0,labsize.right,labsize.bottom + button_height + 8,SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOMOVE);
       }
-    break;
+      break;
     case WM_COMMAND:
       if (LOWORD(wParam) && HIWORD(wParam) == BN_CLICKED ) EndDialog(hwnd,LOWORD(wParam));
-    break;
+      break;
     case WM_CLOSE:
       if (GetDlgItem(hwnd,IDCANCEL)) EndDialog(hwnd,IDCANCEL);
       else if (GetDlgItem(hwnd,IDNO)) EndDialog(hwnd,IDNO);
       else if (GetDlgItem(hwnd,IDYES)) EndDialog(hwnd,IDYES);
       else EndDialog(hwnd,IDOK);
-    break;
+      break;
   }
   return 0;
 }
@@ -143,12 +143,12 @@ int MessageBox(HWND hwndParent, const char *text, const char *caption, int type)
 
 #if 0
   int ret=0;
-  
+
   if (type == MB_OK)
   {
     // todo
     ret=IDOK;
-  }	
+  }
   else if (type == MB_OKCANCEL)
   {
     ret = 1; // todo
@@ -176,8 +176,8 @@ int MessageBox(HWND hwndParent, const char *text, const char *caption, int type)
     else if (ret==-1) ret=IDNO;
     else ret=IDCANCEL;
   }
-  
-  return ret; 
+
+  return ret;
 #endif
 }
 

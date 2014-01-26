@@ -17,8 +17,8 @@
 
 int main(int argc, char *argv[])
 {
-  JNL_Connection *cons[32]={0,};
-  JNL_Connection *outcons[32]={0,};
+  JNL_Connection *cons[32]= {0,};
+  JNL_Connection *outcons[32]= {0,};
   int n_cons=0;
 
   if (argc != 4 || !atoi(argv[1]) || !atoi(argv[3]) || !argv[2][0])
@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     printf("usage: redir localport host remoteport\n");
     exit(1);
   }
-  
+
   JNL::open_socketlib();
   JNL_AsyncDNS dns;
   JNL_Listen l((short)atoi(argv[1]));
@@ -87,12 +87,12 @@ int main(int argc, char *argv[])
           l=outcons[x]->send_bytes_available();
           if (l > 4096) l=4096;
           if (l) l=cons[x]->recv_bytes(buf,l);
-          if (l) outcons[x]->send(buf,l);           
+          if (l) outcons[x]->send(buf,l);
 
           l=cons[x]->send_bytes_available();
           if (l > 4096) l=4096;
           if (l) l=outcons[x]->recv_bytes(buf,l);
-          if (l) cons[x]->send(buf,l);                     
+          if (l) cons[x]->send(buf,l);
         }
       }
     }

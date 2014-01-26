@@ -1,7 +1,7 @@
 /*
   Nullsoft Expression Evaluator Library (NS-EEL)
   Copyright (C) 1999-2003 Nullsoft, Inc.
-  
+
   ns-eel-int.h: internal code definition header.
 
   This software is provided 'as-is', without any express or implied
@@ -38,7 +38,7 @@ extern "C" {
 #endif
 
 
-enum { 
+enum {
 
   // these ignore fn in opcodes, just use fntype to determine function
   FN_MULTIPLY=0,
@@ -65,14 +65,14 @@ enum {
 
 typedef struct
 {
-	int srcByteCount;
-	int destByteCount;
+  int srcByteCount;
+  int destByteCount;
 } lineRecItem;
-  
-  
+
+
 typedef struct opcodeRec opcodeRec;
 
-typedef struct _codeHandleFunctionRec 
+typedef struct _codeHandleFunctionRec
 {
   struct _codeHandleFunctionRec *next; // main linked list (only used for high level functions)
   struct _codeHandleFunctionRec *derivedCopies; // separate linked list, head being the main function, other copies being derived versions
@@ -80,30 +80,30 @@ typedef struct _codeHandleFunctionRec
   void *startptr; // compiled code (may be cleared + recompiled when shraed)
   opcodeRec *opcodes;
 
-  int startptr_size; 
+  int startptr_size;
   int tmpspace_req;
-    
+
   int num_params;
 
   int rvMode; // RETURNVALUE_*
   int fpStackUsage; // 0-8, usually
   int canHaveDenormalOutput;
 
-  // local storage's first items are the parameters, then locals. Note that the opcodes will reference localstorage[] via VARPTRPTR, but 
+  // local storage's first items are the parameters, then locals. Note that the opcodes will reference localstorage[] via VARPTRPTR, but
   // the values localstorage[x] points are reallocated from context-to-context, if it is a common function.
 
   // separately allocated list of pointers, the contents of the list should be zeroed on context changes if a common function
   // note that when making variations on a function (context), it is shared, but since it is zeroed on context changes, it is context-local
   int localstorage_size;
-  EEL_F **localstorage; 
+  EEL_F **localstorage;
 
   int isCommonFunction;
   int usesNamespaces;
   unsigned int parameterAsNamespaceMask;
 
   char fname[NSEEL_MAX_FUNCSIG_NAME+1];
-} _codeHandleFunctionRec;  
-  
+} _codeHandleFunctionRec;
+
 #define LLB_DSIZE (65536-64)
 typedef struct _llBlock {
   struct _llBlock *next;
@@ -112,7 +112,7 @@ typedef struct _llBlock {
 } llBlock;
 
 typedef struct {
-  llBlock *blocks, 
+  llBlock *blocks,
           *blocks_data;
   void *workTable; // references a chunk in blocks_data
 
@@ -155,12 +155,12 @@ typedef struct _compileContext
   int     lleof;
 #else
   void *scanner;
-  #ifdef NSEEL_SUPER_MINIMAL_LEXER
-    char *rdbuf, *rdbuf_start;
-  #else
-    const char *inputbufferptr;
-    int errVar_l;
-  #endif
+#ifdef NSEEL_SUPER_MINIMAL_LEXER
+  char *rdbuf, *rdbuf_start;
+#else
+  const char *inputbufferptr;
+  int errVar_l;
+#endif
 #endif
 
   llBlock *tmpblocks_head, // used while compiling, and freed after compiling
@@ -193,7 +193,7 @@ typedef struct _compileContext
   const char *function_curName; // name of current function
 
   codeHandleType *tmpCodeHandle;
-  
+
   struct
   {
     int needfree;
@@ -202,9 +202,9 @@ typedef struct _compileContext
     EEL_F *blocks[NSEEL_RAM_BLOCKS];
   } ram_state
 #ifdef __GNUC__
-    __attribute__ ((aligned (8)))
+  __attribute__ ((aligned (8)))
 #endif
-   ;
+  ;
 
   void *gram_blocks;
 
@@ -216,12 +216,12 @@ compileContext;
 
 #define NSEEL_NPARAMS_FLAG_CONST 0x80000
 typedef struct {
-      const char *name;
-      void *afunc;
-      void *func_e;
-      int nParams;
-      void *replptrs[4];
-      NSEEL_PPPROC pProc;
+  const char *name;
+  void *afunc;
+  void *func_e;
+  int nParams;
+  void *replptrs[4];
+  NSEEL_PPPROC pProc;
 } functionType;
 
 
@@ -257,21 +257,21 @@ typedef struct nseel_globalVarItem
 extern nseel_globalVarItem *nseel_globalreg_list; // if NSEEL_EEL1_COMPAT_MODE, must use NSEEL_getglobalregs() for regxx values
 
 #ifdef NSEEL_USE_OLD_PARSER
-  #define	VALUE	258
-  #define	IDENTIFIER	259
-  #define	FUNCTION1	260
-  #define	FUNCTION2	261
-  #define	FUNCTION3	262
-  #define UMINUS  263
-  #define UPLUS   264
+#define	VALUE	258
+#define	IDENTIFIER	259
+#define	FUNCTION1	260
+#define	FUNCTION2	261
+#define	FUNCTION3	262
+#define UMINUS  263
+#define UPLUS   264
 
-  #define INTCONST 1
-  #define DBLCONST 2
-  #define HEXCONST 3
-  #define VARIABLE 4
-  #define OTHER    5
+#define INTCONST 1
+#define DBLCONST 2
+#define HEXCONST 3
+#define VARIABLE 4
+#define OTHER    5
 #else
-  #include "y.tab.h"
+#include "y.tab.h"
 #endif
 
 opcodeRec *nseel_translate(compileContext *ctx, const char *tmp);
@@ -284,19 +284,19 @@ void nseel_llinit(compileContext *ctx);
 int nseel_gettoken(compileContext *ctx, char *lltb, int lltbsiz);
 
 struct  lextab {
-        int     llendst;                /* Last state number            */
-        char    *lldefault;             /* Default state table          */
-        char    *llnext;                /* Next state table             */
-        char    *llcheck;               /* Check table                  */
-        int     *llbase;                /* Base table                   */
-        int     llnxtmax;               /* Last in next table           */
-        int     (*llmove)();            /* Move between states          */
-        char     *llfinal;               /* Final state descriptions     */
-        int     (*llactr)();            /* Action routine               */
-        int     *lllook;                /* Look ahead vector if != NULL */
-        char    *llign;                 /* Ignore char vec if != NULL   */
-        char    *llbrk;                 /* Break char vec if != NULL    */
-        char    *llill;                 /* Illegal char vec if != NULL  */
+  int     llendst;                /* Last state number            */
+  char    *lldefault;             /* Default state table          */
+  char    *llnext;                /* Next state table             */
+  char    *llcheck;               /* Check table                  */
+  int     *llbase;                /* Base table                   */
+  int     llnxtmax;               /* Last in next table           */
+  int     (*llmove)();            /* Move between states          */
+  char     *llfinal;               /* Final state descriptions     */
+  int     (*llactr)();            /* Action routine               */
+  int     *lllook;                /* Look ahead vector if != NULL */
+  char    *llign;                 /* Ignore char vec if != NULL   */
+  char    *llbrk;                 /* Break char vec if != NULL    */
+  char    *llill;                 /* Illegal char vec if != NULL  */
 };
 extern struct lextab nseel_lextab;
 

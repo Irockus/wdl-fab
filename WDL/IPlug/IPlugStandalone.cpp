@@ -1,7 +1,7 @@
 #include "IPlugStandalone.h"
 #ifndef OS_IOS
-  #include "IGraphics.h"
-  extern HWND gHWND;
+#include "IGraphics.h"
+extern HWND gHWND;
 #endif
 
 IPlugStandalone::IPlugStandalone(IPlugInstanceInfo instanceInfo,
@@ -42,36 +42,36 @@ IPlugStandalone::IPlugStandalone(IPlugInstanceInfo instanceInfo,
   SetBlockSize(DEFAULT_BLOCK_SIZE);
   SetHost("standalone", vendorVersion);
 
-  #ifdef OS_IOS
+#ifdef OS_IOS
   mIOSLink = instanceInfo.mIOSLink;
-  #else
+#else
   mMidiOutChan = instanceInfo.mMidiOutChan;
   mMidiOut = instanceInfo.mRTMidiOut;
-  #endif
+#endif
 }
 
 void IPlugStandalone::ResizeGraphics(int w, int h)
 {
-  #ifndef OS_IOS
+#ifndef OS_IOS
   IGraphics* pGraphics = GetGUI();
   if (pGraphics)
   {
-    #ifdef OS_OSX
-    #define TITLEBAR_BODGE 22
+#ifdef OS_OSX
+#define TITLEBAR_BODGE 22
     RECT r;
     GetWindowRect(gHWND, &r);
     SetWindowPos(gHWND, 0, r.left, r.bottom - pGraphics->Height() - TITLEBAR_BODGE, pGraphics->Width(), pGraphics->Height() + TITLEBAR_BODGE, 0);
-    #endif
+#endif
     OnWindowResize();
   }
-  #endif
+#endif
 }
 
 bool IPlugStandalone::SendMidiMsg(IMidiMsg* pMsg)
 {
-  #ifdef OS_IOS
+#ifdef OS_IOS
   mIOSLink->SendMidiMsg(pMsg);
-  #else
+#else
   if (DoesMIDI())
   {
     IMidiMsg newMsg = *pMsg;
@@ -90,7 +90,7 @@ bool IPlugStandalone::SendMidiMsg(IMidiMsg* pMsg)
     mMidiOut->sendMessage( &message );
     return true;
   }
-  #endif
+#endif
   return false;
 }
 
@@ -98,13 +98,13 @@ bool IPlugStandalone::SendSysEx(ISysEx* pSysEx)
 {
 #ifndef OS_IOS
   if (mMidiOut)
-  {  
+  {
     std::vector<unsigned char> message;
-    
+
     for (int i = 0; i < pSysEx->mSize; i++) {
       message.push_back(pSysEx->mData[i]);
     }
-    
+
     mMidiOut->sendMessage( &message );
     return true;
   }

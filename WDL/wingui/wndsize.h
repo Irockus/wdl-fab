@@ -17,16 +17,16 @@
     2. Altered source versions must be plainly marked as such, and must not be
        misrepresented as being the original software.
     3. This notice may not be removed or altered from any source distribution.
-      
+
 */
 
 /*
 
-  This file provides the interface for a simple class that allows one to easily 
-  make resizeable dialogs and have controls that move according to ratios of the 
+  This file provides the interface for a simple class that allows one to easily
+  make resizeable dialogs and have controls that move according to ratios of the
   new size.
 
-  Usually, one does a 
+  Usually, one does a
 
   static WDL_WndSizer resize;
 
@@ -44,7 +44,7 @@
 
 
   then, in WM_SIZE,
-      if (wParam != SIZE_MINIMIZED) 
+      if (wParam != SIZE_MINIMIZED)
       {
         resize.onResize(); // don't actually resize, just compute the rects
       }
@@ -52,7 +52,7 @@
 
   is about all that's needed.
 
-   
+
 */
 
 #ifndef _WNDSIZE_H_
@@ -77,9 +77,9 @@ struct WDL_WndSizer__rec
 class WDL_WndSizer
 {
 public:
-  WDL_WndSizer() 
-  { 
-    m_hwnd=NULL; 
+  WDL_WndSizer()
+  {
+    m_hwnd=NULL;
     memset(&m_min_size,0,sizeof(m_min_size));
     memset(&m_orig_size,0,sizeof(m_orig_size));
     memset(&m_margins,0,sizeof(m_margins));
@@ -102,11 +102,11 @@ public:
   WDL_WndSizer__rec *get_itembyindex(int id);
   WDL_WndSizer__rec *get_itembywnd(HWND h);
   WDL_WndSizer__rec *get_itembyvirt(WDL_VWnd *vwnd);
-  
-  RECT get_orig_rect() { RECT r={0,0,m_orig_size.x,m_orig_size.y}; return r; }
-  void set_orig_rect(const RECT *r, const POINT *minSize=NULL) 
+
+  RECT get_orig_rect() { RECT r= {0,0,m_orig_size.x,m_orig_size.y}; return r; }
+  void set_orig_rect(const RECT *r, const POINT *minSize=NULL)
   {
-    if (r) { m_orig_size.x = r->right; m_orig_size.y = r->bottom; } 
+    if (r) { m_orig_size.x = r->right; m_orig_size.y = r->bottom; }
     if (minSize) m_min_size = *minSize;
     else m_min_size.x=m_min_size.y=0;
   }
@@ -116,7 +116,7 @@ public:
 
 
   void set_margins(int left, int top, int right, int bottom) { m_margins.left=left; m_margins.top=top; m_margins.right=right; m_margins.bottom=bottom; }
-  void get_margins(int *left, int *top, int *right, int *bottom) 
+  void get_margins(int *left, int *top, int *right, int *bottom)
   {
     if (left) *left=m_margins.left;
     if (top) *top=m_margins.top;

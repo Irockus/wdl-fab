@@ -6,7 +6,7 @@
 ** License: see jnetlib.h
 **
 ** routines you may be interested in:
-**   JNL::open_socketlib(); 
+**   JNL::open_socketlib();
 **    opens the socket library. Call this once before using any network
 **    code. If you create a new thread, call this again. Only really an
 **    issue for Win32 support, but use it anyway for portability/
@@ -15,8 +15,8 @@
 **    closes the socketlib. Call this when you're done with the network,
 **    after all your JNetLib objects have been destroyed.
 **
-**   unsigned int JNL::ipstr_to_addr(const char *cp); 
-**    gives you the integer representation of a ip address in dotted 
+**   unsigned int JNL::ipstr_to_addr(const char *cp);
+**    gives you the integer representation of a ip address in dotted
 **    decimal form.
 **
 **  JNL::addr_to_ipstr(unsigned int addr, char *host, int maxhostlen);
@@ -29,11 +29,11 @@
 
 class JNL
 {
-  public:
-    static int open_socketlib();
-    static void close_socketlib();
-    static unsigned int ipstr_to_addr(const char *cp);
-    static void addr_to_ipstr(unsigned int addr, char *host, int maxhostlen);
+public:
+  static int open_socketlib();
+  static void close_socketlib();
+  static unsigned int ipstr_to_addr(const char *cp);
+  static void addr_to_ipstr(unsigned int addr, char *host, int maxhostlen);
 };
 
 #endif //_UTIL_H_

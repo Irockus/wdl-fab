@@ -10,16 +10,16 @@ enum { XML_ELEMENT_NODE=1, XML_TEXT_NODE=2 };
 
 #ifdef __cplusplus
 extern "C" {
-#endif 
+#endif
 
 typedef struct _xmlNode
 {
   void* tinyxml_obj;
   unsigned short line;
   int type;
-  const char* name; 
-  const char* content; 
-  struct _xmlNode* properties; 
+  const char* name;
+  const char* content;
+  struct _xmlNode* properties;
   struct _xmlNode* children;
   struct _xmlNode* next;
 } xmlNode;
@@ -47,6 +47,6 @@ char* strndup(const char* s, size_t size);  // argh
 
 #ifdef __cplusplus
 }
-#endif 
+#endif
 
 #endif

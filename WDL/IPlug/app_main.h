@@ -9,7 +9,7 @@
  Oli Larkin 2012
 
  Fabien : Refactored as a reusable class wrapper to make it reusable in the IPlug framework
- 
+
  Notes:
 
  App settings are stored in a .ini file. The location is as follows:
@@ -21,22 +21,22 @@
 */
 
 #ifdef OS_WIN
-  #include <windows.h>
-  #include <commctrl.h>
+#include <windows.h>
+#include <commctrl.h>
 
-  #define DEFAULT_INPUT_DEV "Default Device"
-  #define DEFAULT_OUTPUT_DEV "Default Device"
+#define DEFAULT_INPUT_DEV "Default Device"
+#define DEFAULT_OUTPUT_DEV "Default Device"
 
-  #define DAC_DS 0
-  #define DAC_ASIO 1
+#define DAC_DS 0
+#define DAC_ASIO 1
 #else if defined OS_OSX
-  #include "swell.h"
-  #define SLEEP( milliseconds ) usleep( (unsigned long) (milliseconds * 1000.0) )
+#include "swell.h"
+#define SLEEP( milliseconds ) usleep( (unsigned long) (milliseconds * 1000.0) )
 
-  #define DEFAULT_INPUT_DEV "Built-in Input"
-  #define DEFAULT_OUTPUT_DEV "Built-in Output"
+#define DEFAULT_INPUT_DEV "Built-in Input"
+#define DEFAULT_OUTPUT_DEV "Built-in Output"
 
-  #define DAC_COREAUDIO 0
+#define DAC_COREAUDIO 0
 //  #define DAC_JACK 1
 #endif
 
@@ -99,105 +99,105 @@ struct AppState
 };
 
 /**
- * AppWrapper encapsulate all the wrapping the API needed to be called by 
+ * AppWrapper encapsulate all the wrapping the API needed to be called by
  * the WinMain entry point and also of the various windows and audio/midi procs
  */
 class AppWrapper
 {
-	static AppWrapper* _instance;
+  static AppWrapper* _instance;
 
 #ifdef WIN32
-	friend int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nShowCmd);
+  friend int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nShowCmd);
 #else
-    friend INT_PTR SWELLAppMain(int msg, INT_PTR parm1, INT_PTR parm2);
+  friend INT_PTR SWELLAppMain(int msg, INT_PTR parm1, INT_PTR parm2);
 #endif
-    
-	static  WDL_DLGRET MainDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	static  WDL_DLGRET PreferencesDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	static void MIDICallback(double deltatime, std::vector< unsigned char > *message, void *userData);
-	static int AudioCallback(void *outputBuffer,
-		void *inputBuffer,
-		unsigned int nFrames,
-		double streamTime,
-		RtAudioStreamStatus status,
-		void *userData);
+
+  static  WDL_DLGRET MainDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+  static  WDL_DLGRET PreferencesDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+  static void MIDICallback(double deltatime, std::vector< unsigned char > *message, void *userData);
+  static int AudioCallback(void *outputBuffer,
+                           void *inputBuffer,
+                           unsigned int nFrames,
+                           double streamTime,
+                           RtAudioStreamStatus status,
+                           void *userData);
 
 protected:
-	HINSTANCE gHINST;
-	IPlugStandalone* gPluginInstance; // The iplug plugin instance
-	UINT gScrollMessage;
+  HINSTANCE gHINST;
+  IPlugStandalone* gPluginInstance; // The iplug plugin instance
+  UINT gScrollMessage;
 
-	RtAudio* gDAC;
-	RtMidiIn *gMidiIn;
-	RtMidiOut *gMidiOut;
+  RtAudio* gDAC;
+  RtMidiIn *gMidiIn;
+  RtMidiOut *gMidiOut;
 
-	AppState *gState;
-	AppState *gTempState; // The state is copied here when the pref dialog is opened, and restored if cancel is pressed
-	AppState *gActiveState; // When the audio driver is started the current state is copied here so that if OK is pressed after APPLY nothing is changed
+  AppState *gState;
+  AppState *gTempState; // The state is copied here when the pref dialog is opened, and restored if cancel is pressed
+  AppState *gActiveState; // When the audio driver is started the current state is copied here so that if OK is pressed after APPLY nothing is changed
 
-	unsigned int gSigVS;
-	unsigned int gBufIndex; // index for signal vector, loops from 0 to gSigVS
-	char *gINIPath; // path of ini file
+  unsigned int gSigVS;
+  unsigned int gBufIndex; // index for signal vector, loops from 0 to gSigVS
+  char *gINIPath; // path of ini file
 
-	std::vector<unsigned int> gAudioInputDevs;
-	std::vector<unsigned int> gAudioOutputDevs;
-	std::vector<std::string> gMIDIInputDevNames;
-	std::vector<std::string> gMIDIOutputDevNames;
-	std::vector<std::string> gAudioIDDevNames;
+  std::vector<unsigned int> gAudioInputDevs;
+  std::vector<unsigned int> gAudioOutputDevs;
+  std::vector<std::string> gMIDIInputDevNames;
+  std::vector<std::string> gMIDIOutputDevNames;
+  std::vector<std::string> gAudioIDDevNames;
 
 public:
-	/// Singleton Design Pattern Impl for the App Wrapper
-	static AppWrapper& Instance()	{ return *(_instance ? _instance : (_instance = new AppWrapper())); }
+  /// Singleton Design Pattern Impl for the App Wrapper
+  static AppWrapper& Instance()	{ return *(_instance ? _instance : (_instance = new AppWrapper())); }
 
-	~AppWrapper();
+  ~AppWrapper();
 
-	void ProbeAudioIO();
-	void ProbeMidiIO();
+  void ProbeAudioIO();
+  void ProbeMidiIO();
 
-	static bool AudioSettingsInStateAreEqual(AppState* os, AppState* ns);
-	bool TryToChangeAudioDriverType();
-	bool TryToChangeAudio();
-	std::string GetAudioDeviceName(int idx);
-	int GetAudioDeviceID(char* deviceNameToTest);
+  static bool AudioSettingsInStateAreEqual(AppState* os, AppState* ns);
+  bool TryToChangeAudioDriverType();
+  bool TryToChangeAudio();
+  std::string GetAudioDeviceName(int idx);
+  int GetAudioDeviceID(char* deviceNameToTest);
 
-	bool ChooseMidiInput(const char* pPortName);
-	bool ChooseMidiOutput(const char* pPortName);
-	static bool MIDISettingsInStateAreEqual(AppState* os, AppState* ns);
-	unsigned int GetMIDIInPortNumber(const char* nameToTest);
-	unsigned int GetMIDIOutPortNumber(const char* nameToTest);
+  bool ChooseMidiInput(const char* pPortName);
+  bool ChooseMidiOutput(const char* pPortName);
+  static bool MIDISettingsInStateAreEqual(AppState* os, AppState* ns);
+  unsigned int GetMIDIInPortNumber(const char* nameToTest);
+  unsigned int GetMIDIOutPortNumber(const char* nameToTest);
 
-	static void Error(const char *msg);
+  static void Error(const char *msg);
 
-	void Init();
-	void Cleanup();
-	void UpdateINI();
-    
+  void Init();
+  void Cleanup();
+  void UpdateINI();
+
 protected:
-	AppWrapper();
+  AppWrapper();
 
-	void PopulateSampleRateList(HWND hwndDlg, RtAudio::DeviceInfo* inputDevInfo, RtAudio::DeviceInfo* outputDevInfo);
-	void PopulateAudioInputList(HWND hwndDlg, RtAudio::DeviceInfo* info);
-	void PopulateAudioOutputList(HWND hwndDlg, RtAudio::DeviceInfo* info);
-	void PopulateDriverSpecificControls(HWND hwndDlg);
-	void PopulateAudioDialogs(HWND hwndDlg);
-	bool PopulateMidiDialogs(HWND hwndDlg);
-	void PopulatePreferencesDialog(HWND hwndDlg);
+  void PopulateSampleRateList(HWND hwndDlg, RtAudio::DeviceInfo* inputDevInfo, RtAudio::DeviceInfo* outputDevInfo);
+  void PopulateAudioInputList(HWND hwndDlg, RtAudio::DeviceInfo* info);
+  void PopulateAudioOutputList(HWND hwndDlg, RtAudio::DeviceInfo* info);
+  void PopulateDriverSpecificControls(HWND hwndDlg);
+  void PopulateAudioDialogs(HWND hwndDlg);
+  bool PopulateMidiDialogs(HWND hwndDlg);
+  void PopulatePreferencesDialog(HWND hwndDlg);
 
-	void ClientResize(HWND hWnd, int nWidth, int nHeight);
+  void ClientResize(HWND hWnd, int nWidth, int nHeight);
 
-	bool InitialiseAudio(unsigned int inId,
-		unsigned int outId,
-		unsigned int sr,
-		unsigned int iovs,
-		unsigned int chnls,
-		unsigned int inChanL,
-		unsigned int outChanL
-		);
+  bool InitialiseAudio(unsigned int inId,
+                       unsigned int outId,
+                       unsigned int sr,
+                       unsigned int iovs,
+                       unsigned int chnls,
+                       unsigned int inChanL,
+                       unsigned int outChanL
+                      );
 
 
 private:
-	bool InitialiseMidi();
-	bool AttachGUI();
+  bool InitialiseMidi();
+  bool AttachGUI();
 };
 
 

@@ -1,7 +1,7 @@
 /*
   Nullsoft Expression Evaluator Library (NS-EEL)
   Copyright (C) 1999-2003 Nullsoft, Inc.
-  
+
   ns-eel.h: main application interface header
 
   This software is provided 'as-is', without any express or implied
@@ -53,12 +53,12 @@ extern "C" {
 
 // host should implement these (can be empty stub functions if no VM will execute code in multiple threads at once)
 
-  // implement if you will be running the code in same VM from multiple threads, 
-  // or VMs that have the same GRAM pointer from different threads, or multiple
-  // VMs that have a NULL GRAM pointer from multiple threads.
-  // if you give each VM it's own unique GRAM and only run each VM in one thread, then you can leave it blank.
+// implement if you will be running the code in same VM from multiple threads,
+// or VMs that have the same GRAM pointer from different threads, or multiple
+// VMs that have a NULL GRAM pointer from multiple threads.
+// if you give each VM it's own unique GRAM and only run each VM in one thread, then you can leave it blank.
 
-  // or if you're daring....
+// or if you're daring....
 
 void NSEEL_HOSTSTUB_EnterMutex();
 void NSEEL_HOSTSTUB_LeaveMutex();
@@ -111,13 +111,13 @@ void NSEEL_VM_freeRAM(NSEEL_VMCTX ctx); // clears and frees all (VM) RAM used
 void NSEEL_VM_freeRAMIfCodeRequested(NSEEL_VMCTX); // call after code to free the script-requested memory
 int NSEEL_VM_wantfreeRAM(NSEEL_VMCTX ctx); // want NSEEL_VM_freeRAMIfCodeRequested?
 
-// if you set this, it uses a local GMEM context. 
-// Must be set before compilation. 
-// void *p=NULL; 
+// if you set this, it uses a local GMEM context.
+// Must be set before compilation.
+// void *p=NULL;
 // NSEEL_VM_SetGRAM(ctx,&p);
 // .. do stuff
 // NSEEL_VM_FreeGRAM(&p);
-void NSEEL_VM_SetGRAM(NSEEL_VMCTX ctx, void **gram); 
+void NSEEL_VM_SetGRAM(NSEEL_VMCTX ctx, void **gram);
 void NSEEL_VM_FreeGRAM(void **ufd); // frees a gmem context.
 void NSEEL_VM_SetCustomFuncThis(NSEEL_VMCTX ctx, void *thisptr);
 
@@ -133,7 +133,7 @@ int NSEEL_code_geterror_flag(NSEEL_VMCTX ctx);
 void NSEEL_code_execute(NSEEL_CODEHANDLE code);
 void NSEEL_code_free(NSEEL_CODEHANDLE code);
 int *NSEEL_code_getstats(NSEEL_CODEHANDLE code); // 4 ints...source bytes, static code bytes, call code bytes, data bytes
-  
+
 
 // global memory control/view
 extern unsigned int NSEEL_RAM_limitmem; // if nonzero, memory limit for user data, in bytes
@@ -144,17 +144,17 @@ extern int NSEEL_RAM_memused_errors;
 
 // configuration:
 
-  // the old parser may have more quirks. 
-  // Changes in the new parser:
-  //   1) expressions such as a = (1+5;3); now work as expected (a is set to 3, rather than 4).
-  //   2) 0xHEXNUMBER is now allowed (old parser required $xHEXNUMBER
-  //   3) error notices (unsure which is more accurate)
-  //   4) new parser allows more than 3 parameter eel-functions (up to NSEEL_MAX_EELFUNC_PARAMETERS)
+// the old parser may have more quirks.
+// Changes in the new parser:
+//   1) expressions such as a = (1+5;3); now work as expected (a is set to 3, rather than 4).
+//   2) 0xHEXNUMBER is now allowed (old parser required $xHEXNUMBER
+//   3) error notices (unsure which is more accurate)
+//   4) new parser allows more than 3 parameter eel-functions (up to NSEEL_MAX_EELFUNC_PARAMETERS)
 
-  //#define NSEEL_USE_OLD_PARSER
+//#define NSEEL_USE_OLD_PARSER
 #define NSEEL_SUPER_MINIMAL_LEXER // smaller code that uses far less ram, but the flex version we'll keep around too in case we want to do fancier things someday
 
- // #define NSEEL_EEL1_COMPAT_MODE // supports old behaviors (continue after failed compile), old functions _bnot etc.
+// #define NSEEL_EEL1_COMPAT_MODE // supports old behaviors (continue after failed compile), old functions _bnot etc.
 
 #define NSEEL_MAX_VARIABLE_NAMELEN 128  // define this to override the max variable length
 #define NSEEL_MAX_EELFUNC_PARAMETERS 40

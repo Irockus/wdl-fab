@@ -9,7 +9,7 @@
 
 
 // WDL_AssocArrayImpl can be used on its own, and can contain structs for keys or values
-template <class KEY, class VAL> class WDL_AssocArrayImpl 
+template <class KEY, class VAL> class WDL_AssocArrayImpl
 {
   WDL_AssocArrayImpl(const WDL_AssocArrayImpl &cp) { CopyContents(cp); }
 
@@ -25,7 +25,7 @@ public:
     m_valdispose = valdispose;
   }
 
-  ~WDL_AssocArrayImpl() 
+  ~WDL_AssocArrayImpl()
   {
     DeleteAll();
   }
@@ -50,7 +50,7 @@ public:
     return ismatch;
   }
 
-  void Insert(KEY key, VAL val, KEY *keyPtrOut=NULL) 
+  void Insert(KEY key, VAL val, KEY *keyPtrOut=NULL)
   {
     bool ismatch = false;
     int i = LowerBound(key, &ismatch);
@@ -72,7 +72,7 @@ public:
     }
   }
 
-  void Delete(KEY key) 
+  void Delete(KEY key)
   {
     bool ismatch = false;
     int i = LowerBound(key, &ismatch);
@@ -120,7 +120,7 @@ public:
 
   VAL* EnumeratePtr(int i, KEY* key=0) const
   {
-    if (i >= 0 && i < m_data.GetSize()) 
+    if (i >= 0 && i < m_data.GetSize())
     {
       KeyVal* kv = m_data.Get()+i;
       if (key) *key = kv->key;
@@ -128,7 +128,7 @@ public:
     }
     return 0;
   }
-  
+
   KEY* ReverseLookupPtr(VAL val) const
   {
     int i;
@@ -137,7 +137,7 @@ public:
       KeyVal* kv = m_data.Get()+i;
       if (kv->val == val) return &kv->key;
     }
-    return 0;    
+    return 0;
   }
 
   void ChangeKey(KEY oldkey, KEY newkey)
@@ -224,14 +224,14 @@ public:
   {
     m_data=cp.m_data;
     m_keycmp = cp.m_keycmp;
-    m_keydup = cp.m_keydup; 
+    m_keydup = cp.m_keydup;
     m_keydispose = m_keydup ? cp.m_keydispose : NULL;
     m_valdispose = NULL; // avoid disposing of values twice, since we don't have a valdup, we can't have a fully valid copy
     if (m_keydup)
     {
       int x;
       const int n=m_data.GetSize();
-      for (x=0;x<n;x++)
+      for (x=0; x<n; x++)
       {
         KeyVal *kv=m_data.Get()+x;
         if (kv->key) kv->key = m_keydup(kv->key);
@@ -263,8 +263,8 @@ template <class KEY, class VAL> class WDL_AssocArray : public WDL_AssocArrayImpl
 public:
 
   explicit WDL_AssocArray(int (*keycmp)(KEY *k1, KEY *k2), KEY (*keydup)(KEY)=0, void (*keydispose)(KEY)=0, void (*valdispose)(VAL)=0)
-  : WDL_AssocArrayImpl<KEY, VAL>(keycmp, keydup, keydispose, valdispose)
-  { 
+    : WDL_AssocArrayImpl<KEY, VAL>(keycmp, keydup, keydispose, valdispose)
+  {
   }
 
   VAL Get(KEY key, VAL notfound=0) const
@@ -278,7 +278,7 @@ public:
   {
     VAL* p = this->EnumeratePtr(i, key);
     if (p) return *p;
-    return notfound; 
+    return notfound;
   }
 
   KEY ReverseLookup(VAL val, KEY notfound=0) const
@@ -308,7 +308,7 @@ template <class VAL> class WDL_StringKeyedArray : public WDL_AssocArray<const ch
 public:
 
   explicit WDL_StringKeyedArray(bool caseSensitive=true, void (*valdispose)(VAL)=0) : WDL_AssocArray<const char*, VAL>(caseSensitive?cmpstr:cmpistr, dupstr, freestr, valdispose) {}
-  
+
   ~WDL_StringKeyedArray() { }
 
 private:
@@ -332,7 +332,7 @@ public:
   ~WDL_PtrKeyedArray() {}
 
 private:
-  
+
   static int cmpptr(INT_PTR* a, INT_PTR* b) { return *a-*b; }
 };
 

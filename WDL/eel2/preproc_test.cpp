@@ -18,26 +18,26 @@ typedef struct compileContext {
 
 int ppOut(char *input)
 {
-      if (input[0])
-      { 
- 	compileContext ctx = { 0,};
-        char *exp=preprocessCode(&ctx,input);
-        if (!exp)
-        {
-           return -1;
-        }
-        int cc=0;
-        while (*exp)
-        {
-          if (*exp != ' ' && *exp != '\t' && *exp != '\r' && *exp != '\n') {
- 
-            printf("%c",*exp);
-            if (cc++ >= 60) { cc=0; printf("\n"); }
-          }
-          exp++;
-        }
-        printf("\n");
+  if (input[0])
+  {
+    compileContext ctx = { 0,};
+    char *exp=preprocessCode(&ctx,input);
+    if (!exp)
+    {
+      return -1;
+    }
+    int cc=0;
+    while (*exp)
+    {
+      if (*exp != ' ' && *exp != '\t' && *exp != '\r' && *exp != '\n') {
+
+        printf("%c",*exp);
+        if (cc++ >= 60) { cc=0; printf("\n"); }
       }
+      exp++;
+    }
+    printf("\n");
+  }
   return 0;
 }
 int main(int argc, char **argv)
@@ -56,7 +56,7 @@ int main(int argc, char **argv)
     if (!buf[0]) break;
     char *p=buf;
     while (*p == ' ' || *p == '\t') p++;
-    if (p[0] == '@') 
+    if (p[0] == '@')
     {
       insec=1;
       if (ppOut((char*)cursec.Get())) { fprintf(stderr,"Error preprocessing %s!\n",argv[1]); return -1; }

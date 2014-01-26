@@ -7,7 +7,7 @@ extern "C" {
 
 #if defined(_WIN32) && !defined(WDL_NO_SUPPORT_UTF8)
 
-#ifndef WDL_WIN32_UTF8_IMPL 
+#ifndef WDL_WIN32_UTF8_IMPL
 #define WDL_WIN32_UTF8_IMPL
 #define WDL_WIN32_UTF8_IMPL_NOTSTATIC
 #endif
@@ -47,12 +47,12 @@ WDL_WIN32_UTF8_IMPL BOOL InsertMenuUTF8(HMENU hMenu, UINT uPosition, UINT uFlags
 WDL_WIN32_UTF8_IMPL BOOL InsertMenuItemUTF8( HMENU hMenu,UINT uItem, BOOL fByPosition, LPMENUITEMINFO lpmii);
 WDL_WIN32_UTF8_IMPL BOOL SetMenuItemInfoUTF8(HMENU hMenu, UINT uItem, BOOL fByPosition,LPMENUITEMINFO lpmii);
 WDL_WIN32_UTF8_IMPL BOOL GetMenuItemInfoUTF8(HMENU hMenu, UINT uItem,BOOL fByPosition,LPMENUITEMINFO lpmii);
-   
+
 WDL_WIN32_UTF8_IMPL int statUTF8(const char *filename, struct stat *buffer);
 WDL_WIN32_UTF8_IMPL FILE *fopenUTF8(const char *filename, const char *mode);
 
 
-WDL_WIN32_UTF8_IMPL WCHAR *WDL_UTF8ToWC(const char *buf, BOOL doublenull, int minsize, DWORD *sizeout); 
+WDL_WIN32_UTF8_IMPL WCHAR *WDL_UTF8ToWC(const char *buf, BOOL doublenull, int minsize, DWORD *sizeout);
 
 WDL_WIN32_UTF8_IMPL BOOL WDL_HasUTF8(const char *_str);
 
@@ -63,7 +63,7 @@ WDL_WIN32_UTF8_IMPL void WDL_UTF8_HookTreeView(HWND h);
 WDL_WIN32_UTF8_IMPL void WDL_UTF8_HookTabCtrl(HWND h);
 
 WDL_WIN32_UTF8_IMPL LPSTR GetCommandParametersUTF8();
-WDL_WIN32_UTF8_IMPL void WDL_UTF8_ListViewConvertDispInfoToW(void *di); //NMLVDISPINFO 
+WDL_WIN32_UTF8_IMPL void WDL_UTF8_ListViewConvertDispInfoToW(void *di); //NMLVDISPINFO
 
 #ifdef SetWindowText
 #undef SetWindowText

@@ -95,64 +95,64 @@ void AppWrapper::PopulateAudioOutputList(HWND hwndDlg, RtAudio::DeviceInfo* info
 // This has to get called after any change to audio driver/in dev/out dev
 void AppWrapper::PopulateDriverSpecificControls(HWND hwndDlg)
 {
-	size_t inDevSize = Instance().gAudioInputDevs.size(), outDevSize = Instance().gAudioOutputDevs.size();
+  size_t inDevSize = Instance().gAudioInputDevs.size(), outDevSize = Instance().gAudioOutputDevs.size();
 
 #ifdef OS_WIN
-	int driverType = (int)SendDlgItemMessage(hwndDlg, IDC_COMBO_AUDIO_DRIVER, CB_GETCURSEL, 0, 0);
-	if (driverType)   //ASIO
-	{
-		ComboBox_Enable(GetDlgItem(hwndDlg, IDC_COMBO_AUDIO_IN_DEV), FALSE);
-		Button_Enable(GetDlgItem(hwndDlg, IDC_BUTTON_ASIO), TRUE);
-	}
-	else
-	{
-		ComboBox_Enable(GetDlgItem(hwndDlg, IDC_COMBO_AUDIO_IN_DEV), TRUE);
-		Button_Enable(GetDlgItem(hwndDlg, IDC_BUTTON_ASIO), FALSE);
-	}
+  int driverType = (int)SendDlgItemMessage(hwndDlg, IDC_COMBO_AUDIO_DRIVER, CB_GETCURSEL, 0, 0);
+  if (driverType)   //ASIO
+  {
+    ComboBox_Enable(GetDlgItem(hwndDlg, IDC_COMBO_AUDIO_IN_DEV), FALSE);
+    Button_Enable(GetDlgItem(hwndDlg, IDC_BUTTON_ASIO), TRUE);
+  }
+  else
+  {
+    ComboBox_Enable(GetDlgItem(hwndDlg, IDC_COMBO_AUDIO_IN_DEV), TRUE);
+    Button_Enable(GetDlgItem(hwndDlg, IDC_BUTTON_ASIO), FALSE);
+  }
 #endif
 
-	int indevidx = 0;
-	int outdevidx = 0;
+  int indevidx = 0;
+  int outdevidx = 0;
 
-	SendDlgItemMessage(hwndDlg, IDC_COMBO_AUDIO_IN_DEV, CB_RESETCONTENT, 0, 0);
-	SendDlgItemMessage(hwndDlg, IDC_COMBO_AUDIO_OUT_DEV, CB_RESETCONTENT, 0, 0);
-	for (int i = 0; i < inDevSize; i++)
-	{
-		SendDlgItemMessage(hwndDlg, IDC_COMBO_AUDIO_IN_DEV, CB_ADDSTRING, 0, (LPARAM)GetAudioDeviceName(gAudioInputDevs[i]).c_str());
+  SendDlgItemMessage(hwndDlg, IDC_COMBO_AUDIO_IN_DEV, CB_RESETCONTENT, 0, 0);
+  SendDlgItemMessage(hwndDlg, IDC_COMBO_AUDIO_OUT_DEV, CB_RESETCONTENT, 0, 0);
+  for (int i = 0; i < inDevSize; i++)
+  {
+    SendDlgItemMessage(hwndDlg, IDC_COMBO_AUDIO_IN_DEV, CB_ADDSTRING, 0, (LPARAM)GetAudioDeviceName(gAudioInputDevs[i]).c_str());
 
-		if (!strcmp(GetAudioDeviceName(gAudioInputDevs[i]).c_str(), gState->mAudioInDev))
-			indevidx = i;
-	}
+    if (!strcmp(GetAudioDeviceName(gAudioInputDevs[i]).c_str(), gState->mAudioInDev))
+      indevidx = i;
+  }
 
-	for (int i = 0; i < outDevSize; i++)
-	{
-		SendDlgItemMessage(hwndDlg, IDC_COMBO_AUDIO_OUT_DEV, CB_ADDSTRING, 0, (LPARAM)GetAudioDeviceName(gAudioOutputDevs[i]).c_str());
+  for (int i = 0; i < outDevSize; i++)
+  {
+    SendDlgItemMessage(hwndDlg, IDC_COMBO_AUDIO_OUT_DEV, CB_ADDSTRING, 0, (LPARAM)GetAudioDeviceName(gAudioOutputDevs[i]).c_str());
 
-		if (!strcmp(GetAudioDeviceName(gAudioOutputDevs[i]).c_str(), gState->mAudioOutDev))
-			outdevidx = i;
-	}
+    if (!strcmp(GetAudioDeviceName(gAudioOutputDevs[i]).c_str(), gState->mAudioOutDev))
+      outdevidx = i;
+  }
 
 #ifdef OS_WIN
-	if (driverType)
-		SendDlgItemMessage(hwndDlg, IDC_COMBO_AUDIO_IN_DEV, CB_SETCURSEL, outdevidx, 0);
-	else
+  if (driverType)
+    SendDlgItemMessage(hwndDlg, IDC_COMBO_AUDIO_IN_DEV, CB_SETCURSEL, outdevidx, 0);
+  else
 #endif
-		SendDlgItemMessage(hwndDlg, IDC_COMBO_AUDIO_IN_DEV, CB_SETCURSEL, indevidx, 0);
+    SendDlgItemMessage(hwndDlg, IDC_COMBO_AUDIO_IN_DEV, CB_SETCURSEL, indevidx, 0);
 
-	SendDlgItemMessage(hwndDlg, IDC_COMBO_AUDIO_OUT_DEV, CB_SETCURSEL, outdevidx, 0);
+  SendDlgItemMessage(hwndDlg, IDC_COMBO_AUDIO_OUT_DEV, CB_SETCURSEL, outdevidx, 0);
 
-	RtAudio::DeviceInfo inputDevInfo;
-	if (inDevSize) {
-		inputDevInfo = gDAC->getDeviceInfo(gAudioInputDevs[indevidx]);
-		PopulateAudioInputList(hwndDlg, &inputDevInfo);
-	}
+  RtAudio::DeviceInfo inputDevInfo;
+  if (inDevSize) {
+    inputDevInfo = gDAC->getDeviceInfo(gAudioInputDevs[indevidx]);
+    PopulateAudioInputList(hwndDlg, &inputDevInfo);
+  }
 
-	RtAudio::DeviceInfo outputDevInfo;
-	if (gAudioOutputDevs.size()) {
-		outputDevInfo = gDAC->getDeviceInfo(gAudioOutputDevs[outdevidx]);
-		PopulateAudioOutputList(hwndDlg, &outputDevInfo);
-	}
-	if (inDevSize || outDevSize) PopulateSampleRateList(hwndDlg, &inputDevInfo, &outputDevInfo);
+  RtAudio::DeviceInfo outputDevInfo;
+  if (gAudioOutputDevs.size()) {
+    outputDevInfo = gDAC->getDeviceInfo(gAudioOutputDevs[outdevidx]);
+    PopulateAudioOutputList(hwndDlg, &outputDevInfo);
+  }
+  if (inDevSize || outDevSize) PopulateSampleRateList(hwndDlg, &inputDevInfo, &outputDevInfo);
 }
 
 void AppWrapper::PopulateAudioDialogs(HWND hwndDlg)
@@ -282,7 +282,7 @@ WDL_DLGRET AppWrapper::PreferencesDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam
     case WM_INITDIALOG:
 
       i.PopulatePreferencesDialog(hwndDlg);
-	  memcpy(i.gTempState, i.gState, sizeof(AppState)); // copy state to temp state
+      memcpy(i.gTempState, i.gState, sizeof(AppState)); // copy state to temp state
 
       return TRUE;
 
@@ -290,27 +290,27 @@ WDL_DLGRET AppWrapper::PreferencesDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam
       switch (LOWORD(wParam))
       {
         case IDOK:
-			if (memcmp(i.gActiveState, i.gState, sizeof(AppState)) != 0) // if state is different try to change audio
+          if (memcmp(i.gActiveState, i.gState, sizeof(AppState)) != 0) // if state is different try to change audio
           {
-				i.TryToChangeAudio();
+            i.TryToChangeAudio();
           }
           EndDialog(hwndDlg, IDOK); // INI file will be changed see MainDialogProc
           break;
         case IDAPPLY:
-			Instance().TryToChangeAudio();
+          Instance().TryToChangeAudio();
           break;
         case IDCANCEL:
           EndDialog(hwndDlg, IDCANCEL);
 
           // if state has been changed reset to previous state, INI file won't be changed
           if (!i.AudioSettingsInStateAreEqual(gState, gTempState)
-			  || !i.MIDISettingsInStateAreEqual(gState, gTempState))
+              || !i.MIDISettingsInStateAreEqual(gState, gTempState))
           {
             memcpy(gState, gTempState, sizeof(AppState));
 
-			i.TryToChangeAudioDriverType();
-			i.ProbeAudioIO();
-			i.TryToChangeAudio();
+            i.TryToChangeAudioDriverType();
+            i.ProbeAudioIO();
+            i.TryToChangeAudio();
           }
 
           break;
@@ -325,17 +325,17 @@ WDL_DLGRET AppWrapper::PreferencesDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam
             {
               gState->mAudioDriverType = v;
 
-			  i.TryToChangeAudioDriverType();
-			  i.ProbeAudioIO();
+              i.TryToChangeAudioDriverType();
+              i.ProbeAudioIO();
 
-			  strcpy(gState->mAudioInDev, i.GetAudioDeviceName(i.gAudioInputDevs[0]).c_str());
-			  strcpy(gState->mAudioOutDev, i.GetAudioDeviceName(i.gAudioOutputDevs[0]).c_str());
+              strcpy(gState->mAudioInDev, i.GetAudioDeviceName(i.gAudioInputDevs[0]).c_str());
+              strcpy(gState->mAudioOutDev, i.GetAudioDeviceName(i.gAudioOutputDevs[0]).c_str());
 
               // Reset IO
               gState->mAudioOutChanL = 1;
               gState->mAudioOutChanR = 2;
 
-			  i.PopulateAudioDialogs(hwndDlg);
+              i.PopulateAudioDialogs(hwndDlg);
             }
           }
           break;
@@ -350,7 +350,7 @@ WDL_DLGRET AppWrapper::PreferencesDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam
             gState->mAudioInChanL = 1;
             gState->mAudioInChanR = 2;
 
-			i.PopulateDriverSpecificControls(hwndDlg);
+            i.PopulateDriverSpecificControls(hwndDlg);
           }
           break;
 
@@ -364,7 +364,7 @@ WDL_DLGRET AppWrapper::PreferencesDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam
             gState->mAudioOutChanL = 1;
             gState->mAudioOutChanR = 2;
 
-			i.PopulateDriverSpecificControls(hwndDlg);
+            i.PopulateDriverSpecificControls(hwndDlg);
           }
           break;
 
@@ -442,12 +442,12 @@ WDL_DLGRET AppWrapper::PreferencesDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam
 
         case IDC_BUTTON_ASIO:
           if (HIWORD(wParam) == BN_CLICKED)
-            #ifdef OS_OSX
+#ifdef OS_OSX
             system("open \"/Applications/Utilities/Audio MIDI Setup.app\"");
-            #elif defined OS_WIN
-			  if (gState->mAudioDriverType == DAC_ASIO && i.gDAC->isStreamRunning()) // TODO: still not right
+#elif defined OS_WIN
+            if (gState->mAudioDriverType == DAC_ASIO && i.gDAC->isStreamRunning()) // TODO: still not right
               ASIOControlPanel();
-            #endif
+#endif
           break;
 
         case IDC_COMBO_MIDI_IN_DEV:
@@ -455,7 +455,7 @@ WDL_DLGRET AppWrapper::PreferencesDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam
           {
             int idx = (int) SendDlgItemMessage(hwndDlg, IDC_COMBO_MIDI_IN_DEV, CB_GETCURSEL, 0, 0);
             SendDlgItemMessage(hwndDlg, IDC_COMBO_MIDI_IN_DEV, CB_GETLBTEXT, idx, (LPARAM) gState->mMidiInDev);
-			i.ChooseMidiInput(gState->mMidiInDev);
+            i.ChooseMidiInput(gState->mMidiInDev);
           }
           break;
 
@@ -464,7 +464,7 @@ WDL_DLGRET AppWrapper::PreferencesDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam
           {
             int idx = (int) SendDlgItemMessage(hwndDlg, IDC_COMBO_MIDI_OUT_DEV, CB_GETCURSEL, 0, 0);
             SendDlgItemMessage(hwndDlg, IDC_COMBO_MIDI_OUT_DEV, CB_GETLBTEXT, idx, (LPARAM) gState->mMidiOutDev);
-			i.ChooseMidiOutput(gState->mMidiOutDev);
+            i.ChooseMidiOutput(gState->mMidiOutDev);
           }
           break;
 

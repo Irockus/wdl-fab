@@ -17,7 +17,7 @@
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
-  
+
 
   This file provides the WDL_FileRead object, which can be used to read files.
   On windows systems it supports reading synchronous, asynchronous, memory mapped, and asynchronous unbuffered.
@@ -38,26 +38,26 @@
 
 
 #if defined(_WIN32) && !defined(WDL_NO_WIN32_FILEREAD)
-  #ifndef WDL_WIN32_NATIVE_READ
-    #define WDL_WIN32_NATIVE_READ
-  #endif
+#ifndef WDL_WIN32_NATIVE_READ
+#define WDL_WIN32_NATIVE_READ
+#endif
 #else
-  #ifdef WDL_WIN32_NATIVE_READ
-    #undef WDL_WIN32_NATIVE_READ
-  #endif
-  
-  #if !defined(WDL_NO_POSIX_FILEREAD)
-  #define WDL_POSIX_NATIVE_READ 
-   #include <sys/fcntl.h>
-   #include <sys/file.h>
-   #include <sys/errno.h>
-   #include <sys/mman.h>
-   #ifdef __APPLE__
-      #include <sys/param.h>
-      #include <sys/mount.h>
-   #endif
-  #endif
-  
+#ifdef WDL_WIN32_NATIVE_READ
+#undef WDL_WIN32_NATIVE_READ
+#endif
+
+#if !defined(WDL_NO_POSIX_FILEREAD)
+#define WDL_POSIX_NATIVE_READ
+#include <sys/fcntl.h>
+#include <sys/file.h>
+#include <sys/errno.h>
+#include <sys/mman.h>
+#ifdef __APPLE__
+#include <sys/param.h>
+#include <sys/mount.h>
+#endif
+#endif
+
 #endif
 
 
@@ -73,25 +73,25 @@ class WDL_FileRead
 #ifdef WDL_WIN32_NATIVE_READ
 
 
-class WDL_FileRead__ReadEnt
-{
-public:
-  WDL_FileRead__ReadEnt(int sz, char *buf)
+  class WDL_FileRead__ReadEnt
   {
-    m_size=0;
-    memset(&m_ol,0,sizeof(m_ol));
-    m_ol.hEvent=CreateEvent(NULL,TRUE,TRUE,NULL);
-    m_buf=buf;
-  }
-  ~WDL_FileRead__ReadEnt()
-  {
-    CloseHandle(m_ol.hEvent);
-  }
+  public:
+    WDL_FileRead__ReadEnt(int sz, char *buf)
+    {
+      m_size=0;
+      memset(&m_ol,0,sizeof(m_ol));
+      m_ol.hEvent=CreateEvent(NULL,TRUE,TRUE,NULL);
+      m_buf=buf;
+    }
+    ~WDL_FileRead__ReadEnt()
+    {
+      CloseHandle(m_ol.hEvent);
+    }
 
-  OVERLAPPED m_ol;
-  DWORD m_size;
-  LPVOID m_buf;
-};
+    OVERLAPPED m_ol;
+    DWORD m_size;
+    LPVOID m_buf;
+  };
 
 #endif
 
@@ -100,7 +100,7 @@ public:
   {
     const unsigned char *str = (const unsigned char *)_str;
     if (!str) return FALSE;
-    while (*str) 
+    while (*str)
     {
       unsigned char c = *str;
       if (c >= 0xC2)
@@ -131,7 +131,7 @@ public:
 
 #define WDL_UNBUF_ALIGN 8192
     if (bufsize&(WDL_UNBUF_ALIGN-1)) bufsize=(bufsize&~(WDL_UNBUF_ALIGN-1))+WDL_UNBUF_ALIGN; // ensure bufsize is multiple of 4kb
-    
+
 #ifdef WDL_WIN32_NATIVE_READ
 
     m_mmap_fmap=0;
@@ -144,7 +144,7 @@ public:
       flags|=FILE_FLAG_OVERLAPPED;
       if (m_async==1) flags|=FILE_FLAG_NO_BUFFERING;
     }
-    else if (nbufs*bufsize>=WDL_UNBUF_ALIGN && !mmap_maxsize && m_async==-1) 
+    else if (nbufs*bufsize>=WDL_UNBUF_ALIGN && !mmap_maxsize && m_async==-1)
       flags|=FILE_FLAG_NO_BUFFERING; // non-async mode unbuffered if we do our own buffering
 
 #ifndef WDL_NO_SUPPORT_UTF8
@@ -204,10 +204,10 @@ public:
         if (l >= mmap_minsize)
         {
           m_mmap_fmap=CreateFileMapping(m_fh,NULL,PAGE_READONLY,NULL,0,NULL);
-          if (m_mmap_fmap) 
+          if (m_mmap_fmap)
           {
             m_mmap_view=MapViewOfFile(m_mmap_fmap,FILE_MAP_READ,0,0,(int)m_fsize);
-            if (!m_mmap_view) 
+            if (!m_mmap_view)
             {
               CloseHandle(m_mmap_fmap);
               m_mmap_fmap=0;
@@ -256,7 +256,7 @@ public:
         m_fsize_maychange=true; // if couldnt get shared lock, then it may change
 
 #ifdef __APPLE__
-      if (allow_async==1 || allow_async==-1) 
+      if (allow_async==1 || allow_async==-1)
       {
         struct statfs sfs;
         if (fstatfs(m_filedes,&sfs)||(sfs.f_flags&MNT_LOCAL)) // don't use F_NOCACHE on nfs/smb/afp mounts, we need caching there!
@@ -306,11 +306,11 @@ public:
 
 #ifdef WDL_WIN32_NATIVE_READ
     int x;
-    for (x = 0; x < m_empties.GetSize();x ++) delete m_empties.Get(x);
+    for (x = 0; x < m_empties.GetSize(); x ++) delete m_empties.Get(x);
     m_empties.Empty();
-    for (x = 0; x < m_full.GetSize();x ++) delete m_full.Get(x);
+    for (x = 0; x < m_full.GetSize(); x ++) delete m_full.Get(x);
     m_full.Empty();
-    for (x = 0; x < m_pending.GetSize();x ++) 
+    for (x = 0; x < m_pending.GetSize(); x ++)
     {
       WaitForSingleObject(m_pending.Get(x)->m_ol.hEvent,INFINITE);
       delete m_pending.Get(x);
@@ -328,7 +328,7 @@ public:
 #elif defined(WDL_POSIX_NATIVE_READ)
     if (m_mmap_view) munmap(m_mmap_view,m_fsize);
     m_mmap_view=0;
-    if (m_filedes>=0) 
+    if (m_filedes>=0)
     {
       if (m_filedes_locked) flock(m_filedes,LOCK_UN); // release shared lock
       close(m_filedes);
@@ -435,9 +435,9 @@ public:
         {
           m_empties.Add(ti);
           m_full.Delete(0);
-        }  
+        }
       }
-      
+
       if (maxlen > 0 && m_async_readpos != m_file_position)
       {
         int x;
@@ -454,7 +454,7 @@ public:
       }
 
       errcnt+=RunReads();
-      
+
       if (maxlen > 0 && m_pending.GetSize() && !m_full.GetSize())
       {
         WDL_FileRead__ReadEnt *ent=m_pending.Get(0);
@@ -514,10 +514,10 @@ public:
           memcpy(buf,(char *)m_mmap_view + (int)m_file_position,maxl);
         else
           memcpy(buf,(char *)m_mmap_totalbufmode + (int)m_file_position,maxl);
-          
+
       }
       m_file_position+=maxl;
-      return maxl;     
+      return maxl;
     }
 
     if (m_fsize_maychange) GetSize(); // update m_fsize
@@ -559,7 +559,7 @@ public:
         {
           m_sync_bufmode_used=0;
           m_sync_bufmode_pos=0;
-          
+
           int thissz=sz;
           if (m_syncrd_firstbuf) // this is a scheduling mechanism to avoid having reads on various files always happening at the same time -- not needed in async modes, only in sync with large buffers
           {
@@ -572,34 +572,34 @@ public:
               else thissz>>= (rrs++)&1;
             }
           }
-          
-          #ifdef WDL_WIN32_NATIVE_READ
-            DWORD o;
-            if (m_async==-1)
+
+#ifdef WDL_WIN32_NATIVE_READ
+          DWORD o;
+          if (m_async==-1)
+          {
+            if (m_file_position&(WDL_UNBUF_ALIGN-1))
             {
-              if (m_file_position&(WDL_UNBUF_ALIGN-1))
-              {
-                int offs = (int)(m_file_position&(WDL_UNBUF_ALIGN-1));
-                LONG high=(LONG) ((m_file_position-offs)>>32);
-                SetFilePointer(m_fh,(LONG)((m_file_position-offs)&((WDL_FILEREAD_POSTYPE)0xFFFFFFFF)),&high,FILE_BEGIN);
-                m_sync_bufmode_pos=offs;
-              }
+              int offs = (int)(m_file_position&(WDL_UNBUF_ALIGN-1));
+              LONG high=(LONG) ((m_file_position-offs)>>32);
+              SetFilePointer(m_fh,(LONG)((m_file_position-offs)&((WDL_FILEREAD_POSTYPE)0xFFFFFFFF)),&high,FILE_BEGIN);
+              m_sync_bufmode_pos=offs;
             }
-            if (!ReadFile(m_fh,srcbuf,thissz,&o,NULL) || o<1 || m_sync_bufmode_pos>=(int)o) 
-            {
-              break;
-            }
-          #elif defined(WDL_POSIX_NATIVE_READ)
-            int o;
-            o=pread(m_filedes,srcbuf,thissz,m_filedes_rdpos);
-            if (o>0) m_filedes_rdpos+=o;
-            if (o<1 || m_sync_bufmode_pos>=o) break;                    
-          
-          #else
-            int o;
-            o=fread(srcbuf,1,thissz,m_fp);
-            if (o<1 || m_sync_bufmode_pos>=o) break;                    
-          #endif
+          }
+          if (!ReadFile(m_fh,srcbuf,thissz,&o,NULL) || o<1 || m_sync_bufmode_pos>=(int)o)
+          {
+            break;
+          }
+#elif defined(WDL_POSIX_NATIVE_READ)
+          int o;
+          o=pread(m_filedes,srcbuf,thissz,m_filedes_rdpos);
+          if (o>0) m_filedes_rdpos+=o;
+          if (o<1 || m_sync_bufmode_pos>=o) break;
+
+#else
+          int o;
+          o=fread(srcbuf,1,thissz,m_fp);
+          if (o<1 || m_sync_bufmode_pos>=o) break;
+#endif
           m_sync_bufmode_used=o;
         }
 
@@ -608,24 +608,24 @@ public:
     }
     else
     {
-    #ifdef WDL_WIN32_NATIVE_READ
+#ifdef WDL_WIN32_NATIVE_READ
       DWORD dw=0;
       ReadFile(m_fh,buf,len,&dw,NULL);
       m_file_position+=dw;
       return dw;
-    #elif defined(WDL_POSIX_NATIVE_READ)
-    
+#elif defined(WDL_POSIX_NATIVE_READ)
+
       int ret=pread(m_filedes,buf,len,m_filedes_rdpos);
       if (ret>0) m_filedes_rdpos+=ret;
       m_file_position+=ret;
       return ret;
-    #else
+#else
       int ret=fread(buf,1,len,m_fp);
       m_file_position+=ret;
       return ret;
-    #endif      
+#endif
     }
-    
+
   }
 
   WDL_FILEREAD_POSTYPE GetSize()
@@ -688,7 +688,7 @@ public:
     else return false;
 
     if (m_mmap_view||m_mmap_totalbufmode) return false;
-    
+
 #ifdef WDL_WIN32_NATIVE_READ
     if (m_async>0)
     {
@@ -727,13 +727,13 @@ public:
     return !!fseek(m_fp,m_file_position,SEEK_SET);
 #endif
   }
-  
+
   WDL_HeapBuf m_bufspace;
   int m_sync_bufmode_used, m_sync_bufmode_pos;
 
   WDL_FILEREAD_POSTYPE m_file_position,m_async_readpos;
   WDL_FILEREAD_POSTYPE m_fsize;
-  
+
   void *m_mmap_view;
   void *m_mmap_totalbufmode;
 
@@ -748,7 +748,7 @@ public:
   WDL_PtrList<WDL_FileRead__ReadEnt> m_empties;
   WDL_PtrList<WDL_FileRead__ReadEnt> m_pending;
   WDL_PtrList<WDL_FileRead__ReadEnt> m_full;
-  
+
 #elif defined(WDL_POSIX_NATIVE_READ)
   WDL_FILEREAD_POSTYPE m_filedes_rdpos;
   int m_filedes;
@@ -757,7 +757,7 @@ public:
   int GetHandle() { return m_filedes; }
 #else
   FILE *m_fp;
-  
+
   int GetHandle() { return fileno(m_fp); }
 #endif
 

@@ -50,10 +50,10 @@ void JNL_Connection::Error(const char* fmt, ...)
   va_start(args, fmt);
   vsnprintf (err, sizeof(err),fmt, args);
   va_end (args);
-    
+
 #ifdef _DEBUG
 #ifdef WIN32
-    OutputDebugString(err);
+  OutputDebugString(err);
 #else
   fputs(err,stderr);
   fflush(stderr);
@@ -74,7 +74,7 @@ void JNL_Connection::connect(int s, struct sockaddr_in *loc)
     SET_SOCK_BLOCK(m_socket,0);
     m_state=STATE_CONNECTED;
   }
-  else 
+  else
   {
     Error("Invalid socket <%d> passed to connect errno = ", m_socket, errno);
     m_state=STATE_ERROR;
@@ -88,14 +88,14 @@ void JNL_Connection::connect(const char *hostname, int port)
   m_socket=::socket(AF_INET,SOCK_STREAM,0);
   if (m_socket==-1)
   {
-	Error("Error Creating socket <%d> passed to connect errno = %d", m_socket, ERRNO);
+    Error("Error Creating socket <%d> passed to connect errno = %d", m_socket, ERRNO);
     m_state=STATE_ERROR;
   }
   else
   {
     if (m_localinterfacereq != INADDR_ANY)
     {
-      sockaddr_in sa={0,};
+      sockaddr_in sa= {0,};
       sa.sin_family=AF_INET;
       sa.sin_addr.s_addr=m_localinterfacereq;
       bind(m_socket,(struct sockaddr *)&sa,16);
@@ -106,7 +106,7 @@ void JNL_Connection::connect(const char *hostname, int port)
     memset(m_saddr,0,sizeof(struct sockaddr_in));
     if (!m_host[0])
     {
-	  Error("Empty hostname !");
+      Error("Empty hostname !");
       m_state=STATE_ERROR;
     }
     else
@@ -129,7 +129,7 @@ JNL_Connection::~JNL_Connection()
   }
   free(m_recv_buffer);
   free(m_send_buffer);
-  if (m_dns_owned) 
+  if (m_dns_owned)
   {
     delete m_dns;
   }
@@ -153,17 +153,17 @@ void JNL_Connection::run(int max_send_bytes, int max_recv_bytes, int *bytes_sent
         if (!a) { m_state=STATE_CONNECTING; }
         else if (a == 1)
         {
-          m_state=STATE_RESOLVING; 
+          m_state=STATE_RESOLVING;
           break;
         }
         else
         {
-          Error("Couldn't resolve hostname a = %x", a); 
-          m_state=STATE_ERROR; 
+          Error("Couldn't resolve hostname a = %x", a);
+          m_state=STATE_ERROR;
           return;
         }
       }
-      if (!::connect(m_socket,(struct sockaddr *)m_saddr,16)) 
+      if (!::connect(m_socket,(struct sockaddr *)m_saddr,16))
       {
         m_state=STATE_CONNECTED;
       }
@@ -173,33 +173,33 @@ void JNL_Connection::run(int max_send_bytes, int max_recv_bytes, int *bytes_sent
         m_state=STATE_ERROR;
       }
       else { m_state=STATE_CONNECTING; }
-    break;
+      break;
     case STATE_CONNECTING:
-      {        
-        fd_set f[3];
-        FD_ZERO(&f[0]);
-        FD_ZERO(&f[1]);
-        FD_ZERO(&f[2]);
-        FD_SET(m_socket,&f[0]);
-        FD_SET(m_socket,&f[1]);
-        FD_SET(m_socket,&f[2]);
-        struct timeval tv;
-        memset(&tv,0,sizeof(tv));
-        if (select(m_socket+1,&f[0],&f[1],&f[2],&tv)==-1)
-        {
-          Error("Error connecting to host (calling select() returned -1)");
-          m_state=STATE_ERROR;
-        }
-        else if (FD_ISSET(m_socket,&f[1])) 
-        {
-          m_state=STATE_CONNECTED;
-        }
-        else if (FD_ISSET(m_socket,&f[2]))
-        {
-          Error("Error connecting to host FD_ISSET(m_socket,&f[2]) errno = %d", ERRNO);
-          m_state=STATE_ERROR;
-        }
+    {
+      fd_set f[3];
+      FD_ZERO(&f[0]);
+      FD_ZERO(&f[1]);
+      FD_ZERO(&f[2]);
+      FD_SET(m_socket,&f[0]);
+      FD_SET(m_socket,&f[1]);
+      FD_SET(m_socket,&f[2]);
+      struct timeval tv;
+      memset(&tv,0,sizeof(tv));
+      if (select(m_socket+1,&f[0],&f[1],&f[2],&tv)==-1)
+      {
+        Error("Error connecting to host (calling select() returned -1)");
+        m_state=STATE_ERROR;
       }
+      else if (FD_ISSET(m_socket,&f[1]))
+      {
+        m_state=STATE_CONNECTED;
+      }
+      else if (FD_ISSET(m_socket,&f[2]))
+      {
+        Error("Error connecting to host FD_ISSET(m_socket,&f[2]) errno = %d", ERRNO);
+        m_state=STATE_ERROR;
+      }
+    }
     break;
     case STATE_CONNECTED:
     case STATE_CLOSING:
@@ -212,7 +212,7 @@ void JNL_Connection::run(int max_send_bytes, int max_recv_bytes, int *bytes_sent
         {
           int res=::send(m_socket,m_send_buffer+m_send_pos,len,0);
           if (res==-1 && ERRNO != EWOULDBLOCK)
-          {            
+          {
 //            m_state=STATE_CLOSED;
 //            return;
           }
@@ -224,7 +224,7 @@ void JNL_Connection::run(int max_send_bytes, int max_recv_bytes, int *bytes_sent
             m_send_len-=res;
           }
         }
-        if (m_send_pos>=m_send_buffer_len) 
+        if (m_send_pos>=m_send_buffer_len)
         {
           m_send_pos=0;
           if (m_send_len>0)
@@ -256,7 +256,7 @@ void JNL_Connection::run(int max_send_bytes, int max_recv_bytes, int *bytes_sent
         {
           int res=::recv(m_socket,m_recv_buffer+m_recv_pos,len,0);
           if (res == 0 || (res < 0 && ERRNO != EWOULDBLOCK))
-          {        
+          {
             m_state=STATE_CLOSED;
             break;
           }
@@ -279,7 +279,7 @@ void JNL_Connection::run(int max_send_bytes, int max_recv_bytes, int *bytes_sent
             {
               int res=::recv(m_socket,m_recv_buffer+m_recv_pos,len,0);
               if (res == 0 || (res < 0 && ERRNO != EWOULDBLOCK))
-              {        
+              {
                 m_state=STATE_CLOSED;
                 break;
               }
@@ -298,7 +298,7 @@ void JNL_Connection::run(int max_send_bytes, int max_recv_bytes, int *bytes_sent
       {
         if (m_send_len < 1) m_state = STATE_CLOSED;
       }
-    break;
+      break;
     default: break;
   }
 }
@@ -345,15 +345,15 @@ int JNL_Connection::send(const void *_data, int length)
   {
     return -1;
   }
-  
+
   int write_pos=m_send_pos+m_send_len;
-  if (write_pos >= m_send_buffer_len) 
+  if (write_pos >= m_send_buffer_len)
   {
     write_pos-=m_send_buffer_len;
   }
 
   int len=m_send_buffer_len-write_pos;
-  if (len > length) 
+  if (len > length)
   {
     len=length;
   }
@@ -385,7 +385,7 @@ int JNL_Connection::peek_bytes(void *_data, int maxlength)
     maxlength=m_recv_len;
   }
   int read_pos=m_recv_pos-m_recv_len;
-  if (read_pos < 0) 
+  if (read_pos < 0)
   {
     read_pos += m_recv_buffer_len;
   }
@@ -408,7 +408,7 @@ int JNL_Connection::peek_bytes(void *_data, int maxlength)
 int JNL_Connection::recv_bytes(void *_data, int maxlength)
 {
   char *data = static_cast<char *>(_data);
-  
+
   int ml=peek_bytes(data,maxlength);
   m_recv_len-=ml;
   return ml;
@@ -418,7 +418,7 @@ int JNL_Connection::getbfromrecv(int pos, int remove)
 {
   int read_pos=m_recv_pos-m_recv_len + pos;
   if (pos < 0 || pos > m_recv_len) return -1;
-  if (read_pos < 0) 
+  if (read_pos < 0)
   {
     read_pos += m_recv_buffer_len;
   }
@@ -441,7 +441,7 @@ int JNL_Connection::recv_lines_available(void)
     int t=getbfromrecv(pos,0);
     if (t == -1) return lcount;
     if ((t=='\r' || t=='\n') &&(
-         (lastch != '\r' && lastch != '\n') || lastch==t
+          (lastch != '\r' && lastch != '\n') || lastch==t
         )) lcount++;
     lastch=t;
   }
@@ -454,7 +454,7 @@ int JNL_Connection::recv_line(char *line, int maxlength)
   while (maxlength--)
   {
     int t=getbfromrecv(0,1);
-    if (t == -1) 
+    if (t == -1)
     {
       *line=0;
       return 0;

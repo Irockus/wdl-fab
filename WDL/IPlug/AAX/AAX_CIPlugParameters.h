@@ -20,23 +20,23 @@ struct AAX_SIPlugSetupInfo
   bool mNeedsGlobalMIDI;              // Does the IPlug use a global MIDI input node?
   const char* mGlobalMIDINodeName;    // Name of the global MIDI node, if used
   uint32_t mGlobalMIDIEventMask;      // Global MIDI node event mask, if used
-  
+
   bool mNeedsInputMIDI;               // Does the IPlug use a local MIDI input node?
   const char* mInputMIDINodeName;     // Name of the MIDI input node, if used
   uint32_t mInputMIDIChannelMask;     // MIDI input node channel mask, if used
-	//int32_t mNumAdditionalInputMIDINodes;// Number of additional input MIDI Nodes.  These will all share the same channelMask and base MIDINodeName, but the names will be appended with numbers 2,3,4,... 
-  
+  //int32_t mNumAdditionalInputMIDINodes;// Number of additional input MIDI Nodes.  These will all share the same channelMask and base MIDINodeName, but the names will be appended with numbers 2,3,4,...
+
   bool mNeedsTransport;               // Does the IPlug use the transport interface?
   const char* mTransportMIDINodeName; // Name of the MIDI transport node, if used
-  
+
   int32_t mNumMeters;                 // Number of meter taps used by the IPlug.  Must match the size of \ref mMeterIDs
   const AAX_CTypeID* mMeterIDs;       // Array of meter IDs
-  
+
   //Aux Output Stems Feature.
   int32_t mNumAuxOutputStems;         // Number of aux output stems for the plug-in.
   const char* mAuxOutputStemNames[kMaxAuxOutputStems];  // Names of the aux output stems.
   AAX_EStemFormat mAuxOutputStemFormats[kMaxAuxOutputStems]; // Stem formats for the output stems.
-  
+
   AAX_EStemFormat mInputStemFormat;   // Input stem format
   AAX_EStemFormat mOutputStemFormat;  // Output stem format
   bool mUseHostGeneratedGUI;
@@ -47,7 +47,7 @@ struct AAX_SIPlugSetupInfo
   AAX_CTypeID mAudioSuiteID;          // AudioSuite Plug-In (Type) ID
 
   int32_t mLatency;                   // Initial Latency
-  
+
   AAX_SIPlugSetupInfo()
   {
     mNeedsGlobalMIDI = false;
@@ -70,9 +70,9 @@ struct AAX_SIPlugSetupInfo
     mPluginID = 'none';
     mAudioSuiteID = 'none';
     mLatency = 0;
-    
+
     mNumAuxOutputStems = 0;
-    
+
     for (int32_t i=0; i<kMaxAuxOutputStems; i++)
     {
       mAuxOutputStemNames[i] = 0;
@@ -81,7 +81,7 @@ struct AAX_SIPlugSetupInfo
   }
 };
 
-class AAX_CIPlugParameters; 
+class AAX_CIPlugParameters;
 
 struct AAX_SIPlugPrivateData
 {
@@ -113,11 +113,11 @@ public:
   AAX_CIPlugParameters () {}
   virtual ~AAX_CIPlugParameters () {}
 
-  virtual void RenderAudio(AAX_SIPlugRenderInfo* ioRenderInfo) {}   
+  virtual void RenderAudio(AAX_SIPlugRenderInfo* ioRenderInfo) {}
 
-  virtual AAX_Result ResetFieldData (AAX_CFieldIndex iFieldIndex, void * oData, uint32_t iDataSize) const; 
+  virtual AAX_Result ResetFieldData (AAX_CFieldIndex iFieldIndex, void * oData, uint32_t iDataSize) const;
   static  AAX_Result  StaticDescribe (AAX_IEffectDescriptor * ioDescriptor, const AAX_SIPlugSetupInfo & setupInfo);
-  static  void  AAX_CALLBACK  StaticRenderAudio(AAX_SIPlugRenderInfo* const inInstancesBegin [], const void* inInstancesEnd); 
+  static  void  AAX_CALLBACK  StaticRenderAudio(AAX_SIPlugRenderInfo* const inInstancesBegin [], const void* inInstancesEnd);
 };
 
 #endif

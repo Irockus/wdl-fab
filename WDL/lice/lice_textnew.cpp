@@ -31,7 +31,7 @@ static int utf8char(const char *ptr, unsigned short *charOut) // returns char le
   const unsigned char *p = (const unsigned char *)ptr;
   unsigned char tc = *p;
 
-  if (tc < 128) 
+  if (tc < 128)
   {
     if (charOut) *charOut = (unsigned short) tc;
     return 1;
@@ -62,9 +62,9 @@ static int utf8char(const char *ptr, unsigned short *charOut) // returns char le
       if (charOut) *charOut = (unsigned short)' '; // dont support 4 byte sequences yet(ever?)
       return 4;
     }
-  }  
+  }
   if (charOut) *charOut = (unsigned short) tc;
-  return 1;  
+  return 1;
 }
 
 
@@ -83,7 +83,7 @@ int LICE_CachedFont::_charSortFunc(const void *a, const void *b)
 LICE_CachedFont::LICE_CachedFont() : m_cachestore(65536)
 {
   m_fg=0;
-  m_effectcol=m_bg=LICE_RGBA(255,255,255,255); 
+  m_effectcol=m_bg=LICE_RGBA(255,255,255,255);
   m_comb=0;
   m_alpha=1.0f;
   m_bgmode = TRANSPARENT;
@@ -135,7 +135,7 @@ void LICE_CachedFont::SetFromHFont(HFONT font, int flags)
   if (flags&LICE_FONT_FLAG_PRECALCALL)
   {
     int x;
-    for(x=0;x<128;x++)
+    for(x=0; x<128; x++)
       RenderGlyph(x);
   }
 }
@@ -179,13 +179,13 @@ bool LICE_CachedFont::RenderGlyph(unsigned short idx) // return TRUE if ok
 
   HGDIOBJ oldFont=0;
   if (m_font) oldFont = SelectObject(s_tempbitmap.getDC(),m_font);
-  RECT r={0,0,0,0,};
+  RECT r= {0,0,0,0,};
   int advance;
 
 #ifdef _WIN32
-  if (__1ifNT2if98==1) 
+  if (__1ifNT2if98==1)
   {
-    WCHAR tmpstr[2]={(WCHAR)idx,0};
+    WCHAR tmpstr[2]= {(WCHAR)idx,0};
     ::DrawTextW(s_tempbitmap.getDC(),tmpstr,1,&r,DT_CALCRECT|DT_SINGLELINE|DT_LEFT|DT_TOP|DT_NOPREFIX);
     advance=r.right;
     if (idx>='A' && idx<='Z') r.right+=2; // extra space for A-Z
@@ -194,8 +194,8 @@ bool LICE_CachedFont::RenderGlyph(unsigned short idx) // return TRUE if ok
   else
 #endif
   {
-    
-    char tmpstr[6]={(char)idx,0};
+
+    char tmpstr[6]= {(char)idx,0};
 #ifndef _WIN32
     if (idx>=128) utf8makechar(tmpstr,idx);
 #endif
@@ -211,7 +211,7 @@ bool LICE_CachedFont::RenderGlyph(unsigned short idx) // return TRUE if ok
 
   if (oldFont) SelectObject(s_tempbitmap.getDC(),oldFont);
 
-  if (r.right < 1 || r.bottom < 1) 
+  if (r.right < 1 || r.bottom < 1)
   {
     ent->base_offset=-1;
     ent->advance=ent->width=ent->height=0;
@@ -243,13 +243,13 @@ bool LICE_CachedFont::RenderGlyph(unsigned short idx) // return TRUE if ok
         span=-span;
       }
       int x,y;
-      for(y=0;y<r.bottom;y++)
+      for(y=0; y<r.bottom; y++)
       {
         if (flags&LICE_FONT_FLAG_FX_INVERT)
-          for (x=0;x<r.right;x++)
+          for (x=0; x<r.right; x++)
             *destbuf++ = 255-((unsigned char*)(srcbuf+x))[LICE_PIXEL_R];
         else
-          for (x=0;x<r.right;x++)
+          for (x=0; x<r.right; x++)
             *destbuf++ = ((unsigned char*)(srcbuf+x))[LICE_PIXEL_R];
 
         srcbuf += span;
@@ -259,10 +259,10 @@ bool LICE_CachedFont::RenderGlyph(unsigned short idx) // return TRUE if ok
       if (flags&LICE_FONT_FLAG_VERTICAL)
       {
         int a=r.bottom; r.bottom=r.right; r.right=a;
-  
+
         unsigned char *tmpbuf = (unsigned char *)s_tempbitmap.getBits();
         memcpy(tmpbuf,destbuf,r.right*r.bottom);
-  
+
         int dptr=r.bottom;
         int dtmpbuf=1;
         if (!(flags&LICE_FONT_FLAG_VERTICAL_BOTTOMUP))
@@ -275,12 +275,12 @@ bool LICE_CachedFont::RenderGlyph(unsigned short idx) // return TRUE if ok
           tmpbuf+=r.bottom-1;
           dtmpbuf=-1;
         }
-  
-        for(y=0;y<r.bottom;y++)
+
+        for(y=0; y<r.bottom; y++)
         {
           unsigned char *ptr=tmpbuf;
           tmpbuf+=dtmpbuf;
-          for(x=0;x<r.right;x++)
+          for(x=0; x<r.right; x++)
           {
             *destbuf++=*ptr;
             ptr+=dptr;
@@ -290,28 +290,28 @@ bool LICE_CachedFont::RenderGlyph(unsigned short idx) // return TRUE if ok
       }
       if (flags&LICE_FONT_FLAG_FX_MONO)
       {
-        for(y=0;y<r.bottom;y++) for (x=0;x<r.right;x++) 
-        {
-          *destbuf = *destbuf>130 ? 255:0;
-          destbuf++;
-        }
-  
-        destbuf -= r.right*r.bottom;
-      }
-      if (flags&(LICE_FONT_FLAG_FX_SHADOW|LICE_FONT_FLAG_FX_OUTLINE))
-      {
-        for(y=0;y<r.bottom;y++)
-          for (x=0;x<r.right;x++)
+        for(y=0; y<r.bottom; y++) for (x=0; x<r.right; x++)
           {
             *destbuf = *destbuf>130 ? 255:0;
             destbuf++;
           }
-  
+
+        destbuf -= r.right*r.bottom;
+      }
+      if (flags&(LICE_FONT_FLAG_FX_SHADOW|LICE_FONT_FLAG_FX_OUTLINE))
+      {
+        for(y=0; y<r.bottom; y++)
+          for (x=0; x<r.right; x++)
+          {
+            *destbuf = *destbuf>130 ? 255:0;
+            destbuf++;
+          }
+
         destbuf -= r.right*r.bottom;
         if (flags&LICE_FONT_FLAG_FX_SHADOW)
         {
-          for(y=0;y<r.bottom;y++)
-            for (x=0;x<r.right;x++)
+          for(y=0; y<r.bottom; y++)
+            for (x=0; x<r.right; x++)
             {
               if (!*destbuf)
               {
@@ -327,8 +327,8 @@ bool LICE_CachedFont::RenderGlyph(unsigned short idx) // return TRUE if ok
         }
         else
         {
-          for(y=0;y<r.bottom;y++)
-            for (x=0;x<r.right;x++)
+          for(y=0; y<r.bottom; y++)
+            for (x=0; x<r.right; x++)
             {
               if (!*destbuf)
               {
@@ -337,15 +337,15 @@ bool LICE_CachedFont::RenderGlyph(unsigned short idx) // return TRUE if ok
                 else if (x>0)
                 {
                   if (destbuf[-1]==255) *destbuf=128;
-      //          else if (y>0 && destbuf[-r.right-1]==255) *destbuf=128;
-    //            else if (y<r.bottom-1 && destbuf[r.right-1]==255) *destbuf=128;
+                  //          else if (y>0 && destbuf[-r.right-1]==255) *destbuf=128;
+                  //            else if (y<r.bottom-1 && destbuf[r.right-1]==255) *destbuf=128;
                 }
-  
+
                 if (x<r.right-1)
                 {
                   if (destbuf[1]==255) *destbuf=128;
 //                else if (y>0 && destbuf[-r.right+1]==255) *destbuf=128;
-  //              else if (y<r.bottom-1 && destbuf[r.right+1]==255) *destbuf=128;
+                  //              else if (y<r.bottom-1 && destbuf[r.right+1]==255) *destbuf=128;
                 }
               }
               destbuf++;
@@ -365,16 +365,16 @@ template<class T> class GlyphRenderer
 {
 public:
   static void Normal(unsigned char *gsrc, LICE_pixel *pout,
-              int src_span, int dest_span, int width, int height,
-              int red, int green, int blue, int a256)
+                     int src_span, int dest_span, int width, int height,
+                     int red, int green, int blue, int a256)
   {
     int y;
     if (a256==256)
     {
-      for(y=0;y<height;y++)
+      for(y=0; y<height; y++)
       {
         int x;
-        for(x=0;x<width;x++)
+        for(x=0; x<width; x++)
         {
           unsigned char v=gsrc[x];
           if (v) T::doPix((unsigned char *)(pout+x),red,green,blue,255,(int)v+1);
@@ -385,13 +385,13 @@ public:
     }
     else
     {
-      for(y=0;y<height;y++)
+      for(y=0; y<height; y++)
       {
         int x;
-        for(x=0;x<width;x++)
+        for(x=0; x<width; x++)
         {
           unsigned char v=gsrc[x];
-          if (v) 
+          if (v)
           {
             int a=(v*a256)/256;
             if (a>256)a=256;
@@ -404,31 +404,31 @@ public:
     }
   }
   static void Mono(unsigned char *gsrc, LICE_pixel *pout,
-              int src_span, int dest_span, int width, int height,
-              int red, int green, int blue, int alpha)
+                   int src_span, int dest_span, int width, int height,
+                   int red, int green, int blue, int alpha)
   {
     int y;
-    for(y=0;y<height;y++)
+    for(y=0; y<height; y++)
     {
       int x;
-      for(x=0;x<width;x++)
+      for(x=0; x<width; x++)
         if (gsrc[x]) T::doPix((unsigned char *)(pout+x),red,green,blue,255,alpha);
       gsrc += src_span;
       pout += dest_span;
     }
   }
   static void Effect(unsigned char *gsrc, LICE_pixel *pout,
-              int src_span, int dest_span, int width, int height,
-              int red, int green, int blue, int alpha, int r2, int g2, int b2)
+                     int src_span, int dest_span, int width, int height,
+                     int red, int green, int blue, int alpha, int r2, int g2, int b2)
   {
     int y;
-    for(y=0;y<height;y++)
+    for(y=0; y<height; y++)
     {
       int x;
-      for(x=0;x<width;x++)
+      for(x=0; x<width; x++)
       {
         unsigned char v=gsrc[x];
-        if (v) 
+        if (v)
         {
           if (v==255) T::doPix((unsigned char *)(pout+x),red,green,blue,255,alpha);
           else T::doPix((unsigned char *)(pout+x),r2,g2,b2,255,alpha);
@@ -444,17 +444,17 @@ LICE_CachedFont::charEnt *LICE_CachedFont::findChar(unsigned short c)
 {
   if (c<128) return m_lowchars+c;
   if (!m_extracharlist.GetSize()) return 0;
-  charEnt a={0,};
+  charEnt a= {0,};
   a.charid=c;
   return (charEnt *)bsearch(&a,m_extracharlist.Get(),m_extracharlist.GetSize(),sizeof(charEnt),_charSortFunc);
 }
 
-bool LICE_CachedFont::DrawGlyph(LICE_IBitmap *bm, unsigned short c, 
+bool LICE_CachedFont::DrawGlyph(LICE_IBitmap *bm, unsigned short c,
                                 int xpos, int ypos, RECT *clipR)
 {
   charEnt *ch = findChar(c);
 
-  if (!ch || xpos+ch->width <= clipR->left || xpos >= clipR->right || 
+  if (!ch || xpos+ch->width <= clipR->left || xpos >= clipR->right ||
       ypos+ch->height <= clipR->top || ypos >= clipR->bottom) return false;
 
   unsigned char *gsrc = m_cachestore.Get() + ch->base_offset-1;
@@ -470,17 +470,17 @@ bool LICE_CachedFont::DrawGlyph(LICE_IBitmap *bm, unsigned short c,
   }
 #endif
 
-  if (xpos < clipR->left) 
-  { 
-    width += (xpos-clipR->left); 
-    gsrc += clipR->left-xpos; 
-    xpos=clipR->left; 
+  if (xpos < clipR->left)
+  {
+    width += (xpos-clipR->left);
+    gsrc += clipR->left-xpos;
+    xpos=clipR->left;
   }
-  if (ypos < clipR->top) 
-  { 
+  if (ypos < clipR->top)
+  {
     gsrc += src_span*(clipR->top-ypos);
-    height += (ypos-clipR->top); 
-    ypos=clipR->top; 
+    height += (ypos-clipR->top);
+    ypos=clipR->top;
   }
   int dest_span = bm->getRowSpan();
   LICE_pixel *pout = bm->getBits();
@@ -490,7 +490,7 @@ bool LICE_CachedFont::DrawGlyph(LICE_IBitmap *bm, unsigned short c,
     pout += (bm->getHeight()-1)*dest_span;
     dest_span=-dest_span;
   }
-  
+
   pout += xpos + ypos * dest_span;
 
   if (xpos+width >= clipR->right) width = clipR->right-xpos;
@@ -499,7 +499,7 @@ bool LICE_CachedFont::DrawGlyph(LICE_IBitmap *bm, unsigned short c,
 
   int mode=m_comb&~LICE_BLIT_USE_ALPHA;
   float alpha=m_alpha;
-  
+
   if (m_bgmode==OPAQUE)
     LICE_FillRect(bm,xpos,ypos,width,height,m_bg,alpha,mode);
 
@@ -513,22 +513,22 @@ bool LICE_CachedFont::DrawGlyph(LICE_IBitmap *bm, unsigned short c,
     {
       LICE_pixel col=m_fg;
       int y;
-      for(y=0;y<height;y++)
+      for(y=0; y<height; y++)
       {
         int x;
-        for(x=0;x<width;x++) if (gsrc[x]) pout[x]=col;
+        for(x=0; x<width; x++) if (gsrc[x]) pout[x]=col;
         gsrc += src_span;
         pout += dest_span;
       }
     }
-    else 
+    else
     {
       int avalint = (int) (alpha*256.0);
       if (avalint>256)avalint=256;
 
-      #define __LICE__ACTION(comb) GlyphRenderer<comb>::Mono(gsrc,pout,src_span,dest_span,width,height,red,green,blue,avalint)
+#define __LICE__ACTION(comb) GlyphRenderer<comb>::Mono(gsrc,pout,src_span,dest_span,width,height,red,green,blue,avalint)
       __LICE_ACTION_NOSRCALPHA(mode,avalint, false);
-      #undef __LICE__ACTION
+#undef __LICE__ACTION
     }
   }
   else if (m_flags&(LICE_FONT_FLAG_FX_SHADOW|LICE_FONT_FLAG_FX_OUTLINE))
@@ -539,10 +539,10 @@ bool LICE_CachedFont::DrawGlyph(LICE_IBitmap *bm, unsigned short c,
     if (alpha==1.0 && (mode&LICE_BLIT_MODE_MASK)==LICE_BLIT_MODE_COPY)
     {
       int y;
-      for(y=0;y<height;y++)
+      for(y=0; y<height; y++)
       {
         int x;
-        for(x=0;x<width;x++) 
+        for(x=0; x<width; x++)
         {
           unsigned char c=gsrc[x];
           if (c) pout[x]=c==255? col : bkcol;
@@ -551,24 +551,24 @@ bool LICE_CachedFont::DrawGlyph(LICE_IBitmap *bm, unsigned short c,
         pout += dest_span;
       }
     }
-    else 
+    else
     {
       int avalint = (int) (alpha*256.0);
       if (avalint>256)avalint=256;
       int r2=LICE_GETR(bkcol);
       int g2=LICE_GETG(bkcol);
       int b2=LICE_GETB(bkcol);
-      #define __LICE__ACTION(comb) GlyphRenderer<comb>::Effect(gsrc,pout,src_span,dest_span,width,height,red,green,blue,avalint,r2,g2,b2)
+#define __LICE__ACTION(comb) GlyphRenderer<comb>::Effect(gsrc,pout,src_span,dest_span,width,height,red,green,blue,avalint,r2,g2,b2)
       __LICE_ACTION_NOSRCALPHA(mode,avalint, false);
-      #undef __LICE__ACTION
+#undef __LICE__ACTION
     }
   }
   else
   {
     int avalint = (int) (alpha*256.0);
-    #define __LICE__ACTION(comb) GlyphRenderer<comb>::Normal(gsrc,pout,src_span,dest_span,width,height,red,green,blue,avalint)
+#define __LICE__ACTION(comb) GlyphRenderer<comb>::Normal(gsrc,pout,src_span,dest_span,width,height,red,green,blue,avalint)
     __LICE_ACTION_NOSRCALPHA(mode,avalint, false);
-    #undef __LICE__ACTION
+#undef __LICE__ACTION
   }
 
   return true; // drew glyph at all (for updating max extents)
@@ -598,7 +598,7 @@ static BOOL LICE_Text_HasUTF8(const char *_str)
 {
   const unsigned char *str = (const unsigned char *)_str;
   if (!str) return FALSE;
-  while (*str) 
+  while (*str)
   {
     unsigned char c = *str;
     if (c >= 0xC2) // fuck overlongs
@@ -614,8 +614,8 @@ static BOOL LICE_Text_HasUTF8(const char *_str)
 #endif
 
 
-int LICE_CachedFont::DrawTextImpl(LICE_IBitmap *bm, const char *str, int strcnt, 
-                               RECT *rect, UINT dtFlags)
+int LICE_CachedFont::DrawTextImpl(LICE_IBitmap *bm, const char *str, int strcnt,
+                                  RECT *rect, UINT dtFlags)
 {
   if (!bm && !(dtFlags&DT_CALCRECT)) return 0;
 
@@ -628,7 +628,7 @@ int LICE_CachedFont::DrawTextImpl(LICE_IBitmap *bm, const char *str, int strcnt,
   }
 
 #if 0
-  if ((m_flags&LICE_FONT_FLAG_ALLOW_NATIVE) && 
+  if ((m_flags&LICE_FONT_FLAG_ALLOW_NATIVE) &&
       !(m_flags&LICE_FONT_FLAG_PRECALCALL))
   {
     HDC hdc = (bm ? bm->getDC() : 0);
@@ -644,12 +644,12 @@ int LICE_CachedFont::DrawTextImpl(LICE_IBitmap *bm, const char *str, int strcnt,
   }
 #endif
 
-  // if using line-spacing adjustments (m_lsadj), don't allow native rendering 
+  // if using line-spacing adjustments (m_lsadj), don't allow native rendering
   // todo: split rendering up into invidual lines and DrawText calls
-  if ((m_flags&LICE_FONT_FLAG_FORCE_NATIVE) && m_font && !forceWantAlpha &&!LICE_Text_IsWine() && 
+  if ((m_flags&LICE_FONT_FLAG_FORCE_NATIVE) && m_font && !forceWantAlpha &&!LICE_Text_IsWine() &&
       !(dtFlags & LICE_DT_USEFGALPHA) &&
       !(m_flags&LICE_FONT_FLAG_PRECALCALL) && !LICE_FONT_FLAGS_HAS_FX(m_flags) &&
-     (!m_lsadj || (dtFlags&DT_SINGLELINE))) 
+      (!m_lsadj || (dtFlags&DT_SINGLELINE)))
   {
 
     // on Win2000+, use wide versions if needed for UTF
@@ -661,7 +661,7 @@ int LICE_CachedFont::DrawTextImpl(LICE_IBitmap *bm, const char *str, int strcnt,
     if (win9x<0 && LICE_Text_HasUTF8(str))
     {
       int req = MultiByteToWideChar(CP_UTF8,MB_ERR_INVALID_CHARS,str,strcnt,NULL,0);
-      if (req < 1000) 
+      if (req < 1000)
       {
         int cnt=0;
         if ((cnt=MultiByteToWideChar(CP_UTF8,MB_ERR_INVALID_CHARS,str,strcnt,wtmpbuf,1024)))
@@ -685,11 +685,11 @@ int LICE_CachedFont::DrawTextImpl(LICE_IBitmap *bm, const char *str, int strcnt,
     int w = rect->right-rect->left;
     int h = rect->bottom-rect->top;
     HGDIOBJ oldfont = 0;
-    RECT srcr={0,};
+    RECT srcr= {0,};
     bool isTmp=false;
-    POINT blitPos={0,};
+    POINT blitPos= {0,};
 
-    static LICE_SysBitmap s_nativerender_tempbitmap; 
+    static LICE_SysBitmap s_nativerender_tempbitmap;
 
     if (!hdc)  // use temp buffer
     {
@@ -704,15 +704,15 @@ int LICE_CachedFont::DrawTextImpl(LICE_IBitmap *bm, const char *str, int strcnt,
       hdc = s_nativerender_tempbitmap.getDC();
 
       oldfont = SelectObject(hdc, m_font);
-  
+
       RECT blit_r = {0,0};
       int rv=
 #ifdef _WIN32
-        wtmp ? 
-          ::DrawTextW(hdc,wtmp,-1,&blit_r,(dtFlags&~(DT_CENTER|DT_VCENTER|DT_TOP|DT_BOTTOM|DT_LEFT|DT_RIGHT))|DT_CALCRECT|DT_NOPREFIX)
-          : 
+        wtmp ?
+        ::DrawTextW(hdc,wtmp,-1,&blit_r,(dtFlags&~(DT_CENTER|DT_VCENTER|DT_TOP|DT_BOTTOM|DT_LEFT|DT_RIGHT))|DT_CALCRECT|DT_NOPREFIX)
+        :
 #endif
-          ::DrawText(hdc,str,strcnt,&blit_r,(dtFlags&~(DT_CENTER|DT_VCENTER|DT_TOP|DT_BOTTOM|DT_LEFT|DT_RIGHT))|DT_CALCRECT|DT_NOPREFIX);
+        ::DrawText(hdc,str,strcnt,&blit_r,(dtFlags&~(DT_CENTER|DT_VCENTER|DT_TOP|DT_BOTTOM|DT_LEFT|DT_RIGHT))|DT_CALCRECT|DT_NOPREFIX);
       if (dtFlags & DT_CALCRECT)
       {
         SelectObject(hdc,oldfont);
@@ -735,14 +735,14 @@ int LICE_CachedFont::DrawTextImpl(LICE_IBitmap *bm, const char *str, int strcnt,
       }
 
       // set new width/height (if shrinking down)
-      if (blit_r.right-blit_r.left < w) 
+      if (blit_r.right-blit_r.left < w)
       {
         if (dtFlags & DT_RIGHT) blitPos.x =  w-(blit_r.right-blit_r.left);
         else if (dtFlags & DT_CENTER) blitPos.x=(w-(blit_r.right-blit_r.left))/2;
 
         w=blit_r.right-blit_r.left;
       }
-      if (blit_r.bottom-blit_r.top < h) 
+      if (blit_r.bottom-blit_r.top < h)
       {
         if (dtFlags & DT_BOTTOM) blitPos.y =  h-(blit_r.bottom-blit_r.top);
         else if (dtFlags & DT_VCENTER) blitPos.y=(h-(blit_r.bottom-blit_r.top))/2;
@@ -750,8 +750,8 @@ int LICE_CachedFont::DrawTextImpl(LICE_IBitmap *bm, const char *str, int strcnt,
         h=blit_r.bottom-blit_r.top;
       }
 
-      if (w > s_nativerender_tempbitmap.getWidth() || 
-         h > s_nativerender_tempbitmap.getHeight())
+      if (w > s_nativerender_tempbitmap.getWidth() ||
+          h > s_nativerender_tempbitmap.getHeight())
       {
         SelectObject(hdc,oldfont);
         s_nativerender_tempbitmap.resize(w, h);
@@ -777,11 +777,11 @@ int LICE_CachedFont::DrawTextImpl(LICE_IBitmap *bm, const char *str, int strcnt,
     ::SetBkMode(hdc,m_bgmode);
     if (m_bgmode==OPAQUE) ::SetBkColor(hdc,RGB(LICE_GETR(m_bg),LICE_GETG(m_bg),LICE_GETB(m_bg)));
 
-    int ret = 
+    int ret =
 #ifdef _WIN32
-      wtmp ? 
+      wtmp ?
       ::DrawTextW(hdc,wtmp,-1,&srcr,dtFlags|DT_NOPREFIX)
-      : 
+      :
 #endif
       ::DrawText(hdc,str,strcnt,&srcr,dtFlags|DT_NOPREFIX);
 
@@ -820,7 +820,7 @@ int LICE_CachedFont::DrawTextImpl(LICE_IBitmap *bm, const char *str, int strcnt,
         if (dtFlags & DT_SINGLELINE) c=' ';
         else
         {
-          if (m_flags&LICE_FONT_FLAG_VERTICAL) 
+          if (m_flags&LICE_FONT_FLAG_VERTICAL)
           {
             xpos+=m_line_height+m_lsadj;
             ypos=0;
@@ -835,7 +835,7 @@ int LICE_CachedFont::DrawTextImpl(LICE_IBitmap *bm, const char *str, int strcnt,
       }
 
       charEnt *ent = findChar(c);
-      if (!ent) 
+      if (!ent)
       {
         int os=m_extracharlist.GetSize();
         RenderGlyph(c);
@@ -845,11 +845,11 @@ int LICE_CachedFont::DrawTextImpl(LICE_IBitmap *bm, const char *str, int strcnt,
 
       if (ent && ent->base_offset>=0)
       {
-        if (ent->base_offset == 0) RenderGlyph(c);      
+        if (ent->base_offset == 0) RenderGlyph(c);
 
         if (ent->base_offset > 0)
         {
-          if (m_flags&LICE_FONT_FLAG_VERTICAL) 
+          if (m_flags&LICE_FONT_FLAG_VERTICAL)
           {
             ypos += ent->advance;
             if (xpos+ent->width>max_xpos) max_xpos=xpos+ent->width;
@@ -858,7 +858,7 @@ int LICE_CachedFont::DrawTextImpl(LICE_IBitmap *bm, const char *str, int strcnt,
           else
           {
             xpos += ent->advance;
-            if (ypos+ent->height>max_ypos) max_ypos=ypos+ent->height;         
+            if (ypos+ent->height>max_ypos) max_ypos=ypos+ent->height;
             if (xpos>max_xpos) max_xpos=xpos;
           }
         }
@@ -878,7 +878,7 @@ int LICE_CachedFont::DrawTextImpl(LICE_IBitmap *bm, const char *str, int strcnt,
     m_alpha *= LICE_GETA(m_fg)/255.0;
   }
 
-  if (m_alpha==0.0) 
+  if (m_alpha==0.0)
   {
     m_alpha=alphaSave;
     return 0;
@@ -895,7 +895,7 @@ int LICE_CachedFont::DrawTextImpl(LICE_IBitmap *bm, const char *str, int strcnt,
 
   if (dtFlags & (DT_CENTER|DT_VCENTER|DT_RIGHT|DT_BOTTOM))
   {
-    RECT tr={0,};
+    RECT tr= {0,};
     DrawTextImpl(bm,str,strcnt,&tr,DT_CALCRECT|(dtFlags & DT_SINGLELINE)|(forceWantAlpha?LICE_DT_NEEDALPHA:0));
     if (dtFlags & DT_CENTER)
     {
@@ -913,13 +913,13 @@ int LICE_CachedFont::DrawTextImpl(LICE_IBitmap *bm, const char *str, int strcnt,
     else if (dtFlags & DT_BOTTOM)
     {
       ypos = use_rect.bottom - tr.bottom;
-    }    
+    }
     if (isVertRev)
       ypos += tr.bottom;
   }
-  else if (isVertRev) 
+  else if (isVertRev)
   {
-    RECT tr={0,};
+    RECT tr= {0,};
     DrawTextImpl(bm,str,strcnt,&tr,DT_CALCRECT|(dtFlags & DT_SINGLELINE)|(forceWantAlpha?LICE_DT_NEEDALPHA:0));
     ypos += tr.bottom;
   }
@@ -950,7 +950,7 @@ int LICE_CachedFont::DrawTextImpl(LICE_IBitmap *bm, const char *str, int strcnt,
   }
 
 
-  // todo: handle DT_END_ELLIPSIS etc 
+  // todo: handle DT_END_ELLIPSIS etc
   // thought: calculate length of "...", then when pos+length+widthofnextchar >= right, switch
   // might need to precalc size to make sure it's needed, though
 
@@ -970,7 +970,7 @@ int LICE_CachedFont::DrawTextImpl(LICE_IBitmap *bm, const char *str, int strcnt,
       if (dtFlags & DT_SINGLELINE) c=' ';
       else
       {
-        if (m_flags&LICE_FONT_FLAG_VERTICAL) 
+        if (m_flags&LICE_FONT_FLAG_VERTICAL)
         {
           xpos+=m_line_height+m_lsadj;
           ypos=start_y;
@@ -985,7 +985,7 @@ int LICE_CachedFont::DrawTextImpl(LICE_IBitmap *bm, const char *str, int strcnt,
     }
 
     charEnt *ent = findChar(c);
-    if (!ent) 
+    if (!ent)
     {
       int os=m_extracharlist.GetSize();
       RenderGlyph(c);
@@ -1000,10 +1000,10 @@ int LICE_CachedFont::DrawTextImpl(LICE_IBitmap *bm, const char *str, int strcnt,
       if (ent->base_offset > 0 && ent->base_offset < m_cachestore.GetSize())
       {
         if (isVertRev) ypos -= ent->height;
-       
+
         bool drawn = DrawGlyph(bm,c,xpos,ypos,&use_rect);
 
-        if (m_flags&LICE_FONT_FLAG_VERTICAL) 
+        if (m_flags&LICE_FONT_FLAG_VERTICAL)
         {
           if (!isVertRev)
           {
@@ -1015,7 +1015,7 @@ int LICE_CachedFont::DrawTextImpl(LICE_IBitmap *bm, const char *str, int strcnt,
         else
         {
           xpos += ent->advance;
-          if (drawn && ypos+ent->height>max_ypos) max_ypos=ypos+ent->height;         
+          if (drawn && ypos+ent->height>max_ypos) max_ypos=ypos+ent->height;
         }
       }
     }

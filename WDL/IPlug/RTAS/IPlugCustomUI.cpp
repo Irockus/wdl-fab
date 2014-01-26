@@ -19,7 +19,7 @@
 // Carbon does not get key events at all
 
 #ifndef RTAS_COCOA_GUI
-  #define RTAS_COCOA_GUI 0
+#define RTAS_COCOA_GUI 0
 #endif
 
 IPlugCustomUI* CreateIPlugCustomUI(void *processPtr)
@@ -60,12 +60,12 @@ bool IPlugCustomUI::Open(void *winPtr, short leftOffset, short topOffset)
 
   if(mGraphics)
   {
-    #if RTAS_COCOA_GUI
+#if RTAS_COCOA_GUI
     mGraphics->AttachSubWindow(winPtr);
-    #else
+#else
     mGraphics->OpenWindow(winPtr, 0, leftOffset, topOffset);
     mGraphics->SetAllControlsDirty();
-    #endif
+#endif
     mPlug->OnGUIOpen();
   }
 
@@ -77,9 +77,9 @@ bool IPlugCustomUI::Close()
   if(mLocalWindow && mGraphics)
   {
     mGraphics->CloseWindow();
-    #if RTAS_COCOA_GUI
+#if RTAS_COCOA_GUI
     mGraphics->RemoveSubWindow();
-    #endif
+#endif
     mLocalWindow = 0;
   }
   return true;
@@ -225,15 +225,15 @@ bool IPlugCustomUI::Open(void *winPtr, short leftOffset, short topOffset)
     return false;
   }
 
-  #ifdef ShowWindow
-    #define tempShowWindow ShowWindow
-    #undef ShowWindow
-  #endif
+#ifdef ShowWindow
+#define tempShowWindow ShowWindow
+#undef ShowWindow
+#endif
   ShowWindow(mLocalPIWin, SW_SHOWNORMAL);
-  #ifdef tempShowWindow
-    #define ShowWindow tempShowWindow
-    #undef tempShowWindow
-  #endif
+#ifdef tempShowWindow
+#define ShowWindow tempShowWindow
+#undef tempShowWindow
+#endif
 
   InvalidateRect(mLocalPIWin, NULL, false);
   UpdateWindow(mLocalPIWin);
@@ -270,18 +270,18 @@ bool IPlugCustomUI::Close()
   if( mLocalPIWin )
   {
     // OL - This is nessecary to avoid a collision in the PTSDK
-    #ifdef CloseWindow
-      #define tempCloseWindow CloseWindow
-      #undef CloseWindow
-    #endif
+#ifdef CloseWindow
+#define tempCloseWindow CloseWindow
+#undef CloseWindow
+#endif
 
     if( mGraphics )
       mGraphics->CloseWindow();
 
-    #ifdef CloseWindow
-      #define CloseWindow tempCloseWindow
-      #undef CloseWindow
-    #endif
+#ifdef CloseWindow
+#define CloseWindow tempCloseWindow
+#undef CloseWindow
+#endif
 
     result = DestroyWindow(mLocalPIWin);
   }

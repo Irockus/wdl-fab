@@ -17,7 +17,7 @@
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
-  
+
 
 
 */
@@ -49,8 +49,8 @@ extern "C" {
 
 /* encoding formats */
 
-#define		BE_CONFIG_MP3			0										
-#define		BE_CONFIG_LAME			256		
+#define		BE_CONFIG_MP3			0
+#define		BE_CONFIG_LAME			256
 
 /* type definitions */
 
@@ -85,14 +85,14 @@ typedef		unsigned long			BE_ERR;
 
 #ifdef _BLADEDLL
 #undef FLOAT
-	#include <Windows.h>
+#include <Windows.h>
 #endif
 
 #define CURRENT_STRUCT_VERSION 1
 #define CURRENT_STRUCT_SIZE sizeof(BE_CONFIG)	// is currently 331 bytes
 
 /* OBSOLETE, VALUES STILL WORK
-typedef enum 
+typedef enum
 {
 	NORMAL_QUALITY=0,
 	LOW_QUALITY,
@@ -105,138 +105,138 @@ typedef enum
 
 typedef enum
 {
-	VBR_METHOD_NONE			= -1,
-	VBR_METHOD_DEFAULT		=  0,
-	VBR_METHOD_OLD			=  1,
-	VBR_METHOD_NEW			=  2,
-	VBR_METHOD_MTRH			=  3,
-	VBR_METHOD_ABR			=  4
+  VBR_METHOD_NONE			= -1,
+  VBR_METHOD_DEFAULT		=  0,
+  VBR_METHOD_OLD			=  1,
+  VBR_METHOD_NEW			=  2,
+  VBR_METHOD_MTRH			=  3,
+  VBR_METHOD_ABR			=  4
 } VBRMETHOD;
 
-typedef enum 
+typedef enum
 {
-	LQP_NOPRESET=-1,
+  LQP_NOPRESET=-1,
 
-	// QUALITY PRESETS
-	LQP_NORMAL_QUALITY=0,
-	LQP_LOW_QUALITY,
-	LQP_HIGH_QUALITY,
-	LQP_VOICE_QUALITY,
-	LQP_R3MIX_QUALITY,
-	LQP_VERYHIGH_QUALITY,
+  // QUALITY PRESETS
+  LQP_NORMAL_QUALITY=0,
+  LQP_LOW_QUALITY,
+  LQP_HIGH_QUALITY,
+  LQP_VOICE_QUALITY,
+  LQP_R3MIX_QUALITY,
+  LQP_VERYHIGH_QUALITY,
 
-	// NEW PRESET VALUES
-	LQP_PHONE	=1000,
-	LQP_SW		=2000,
-	LQP_AM		=3000,
-	LQP_FM		=4000,
-	LQP_VOICE	=5000,
-	LQP_RADIO	=6000,
-	LQP_TAPE	=7000,
-	LQP_HIFI	=8000,
-	LQP_CD		=9000,
-	LQP_STUDIO	=10000
+  // NEW PRESET VALUES
+  LQP_PHONE	=1000,
+  LQP_SW		=2000,
+  LQP_AM		=3000,
+  LQP_FM		=4000,
+  LQP_VOICE	=5000,
+  LQP_RADIO	=6000,
+  LQP_TAPE	=7000,
+  LQP_HIFI	=8000,
+  LQP_CD		=9000,
+  LQP_STUDIO	=10000
 
 } LAME_QUALTIY_PRESET;
 
 
 
 typedef struct	{
-	DWORD	dwConfig;			// BE_CONFIG_XXXXX
-								// Currently only BE_CONFIG_MP3 is supported
-	union	{
+  DWORD	dwConfig;			// BE_CONFIG_XXXXX
+  // Currently only BE_CONFIG_MP3 is supported
+  union	{
 
-		struct	{
+    struct	{
 
-			DWORD	dwSampleRate;	// 48000, 44100 and 32000 allowed.  RG note: also seems to support 16000, 22050, 24000.
-			BYTE	byMode;			// BE_MP3_MODE_STEREO, BE_MP3_MODE_DUALCHANNEL, BE_MP3_MODE_MONO
-			WORD	wBitrate;		// 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256 and 320 allowed.  RG note: also seems to support 8,16,24.
-			BOOL	bPrivate;		
-			BOOL	bCRC;
-			BOOL	bCopyright;
-			BOOL	bOriginal;
+      DWORD	dwSampleRate;	// 48000, 44100 and 32000 allowed.  RG note: also seems to support 16000, 22050, 24000.
+      BYTE	byMode;			// BE_MP3_MODE_STEREO, BE_MP3_MODE_DUALCHANNEL, BE_MP3_MODE_MONO
+      WORD	wBitrate;		// 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256 and 320 allowed.  RG note: also seems to support 8,16,24.
+      BOOL	bPrivate;
+      BOOL	bCRC;
+      BOOL	bCopyright;
+      BOOL	bOriginal;
 
-			} mp3;					// BE_CONFIG_MP3
+    } mp3;					// BE_CONFIG_MP3
 
-			struct
-			{
-			// STRUCTURE INFORMATION
-			DWORD			dwStructVersion;	
-			DWORD			dwStructSize;
+    struct
+    {
+      // STRUCTURE INFORMATION
+      DWORD			dwStructVersion;
+      DWORD			dwStructSize;
 
-			// BASIC ENCODER SETTINGS
-			DWORD			dwSampleRate;	// SAMPLERATE OF INPUT FILE
-			DWORD			dwReSampleRate;	// DOWNSAMPLERATE, 0=ENCODER DECIDES  
-			LONG			nMode;			// BE_MP3_MODE_STEREO, BE_MP3_MODE_DUALCHANNEL, BE_MP3_MODE_MONO
-			DWORD			dwBitrate;		// CBR bitrate, VBR min bitrate
-			DWORD			dwMaxBitrate;	// CBR ignored, VBR Max bitrate
-			LONG			nPreset;		// Quality preset, use one of the settings of the LAME_QUALITY_PRESET enum
-			DWORD			dwMpegVersion;	// FUTURE USE, MPEG-1 OR MPEG-2
-			DWORD			dwPsyModel;		// FUTURE USE, SET TO 0
-			DWORD			dwEmphasis;		// FUTURE USE, SET TO 0
+      // BASIC ENCODER SETTINGS
+      DWORD			dwSampleRate;	// SAMPLERATE OF INPUT FILE
+      DWORD			dwReSampleRate;	// DOWNSAMPLERATE, 0=ENCODER DECIDES
+      LONG			nMode;			// BE_MP3_MODE_STEREO, BE_MP3_MODE_DUALCHANNEL, BE_MP3_MODE_MONO
+      DWORD			dwBitrate;		// CBR bitrate, VBR min bitrate
+      DWORD			dwMaxBitrate;	// CBR ignored, VBR Max bitrate
+      LONG			nPreset;		// Quality preset, use one of the settings of the LAME_QUALITY_PRESET enum
+      DWORD			dwMpegVersion;	// FUTURE USE, MPEG-1 OR MPEG-2
+      DWORD			dwPsyModel;		// FUTURE USE, SET TO 0
+      DWORD			dwEmphasis;		// FUTURE USE, SET TO 0
 
-			// BIT STREAM SETTINGS
-			BOOL			bPrivate;		// Set Private Bit (TRUE/FALSE)
-			BOOL			bCRC;			// Insert CRC (TRUE/FALSE)
-			BOOL			bCopyright;		// Set Copyright Bit (TRUE/FALSE)
-			BOOL			bOriginal;		// Set Original Bit (TRUE/FALSE)
-			
-			// VBR STUFF
-			BOOL			bWriteVBRHeader;	// WRITE XING VBR HEADER (TRUE/FALSE)
-			BOOL			bEnableVBR;			// USE VBR ENCODING (TRUE/FALSE)
-			INT				nVBRQuality;		// VBR QUALITY 0..9
-			DWORD			dwVbrAbr_bps;		// Use ABR in stead of nVBRQuality
-			VBRMETHOD		nVbrMethod;
-			BOOL			bNoRes;				// Disable Bit resorvoir
+      // BIT STREAM SETTINGS
+      BOOL			bPrivate;		// Set Private Bit (TRUE/FALSE)
+      BOOL			bCRC;			// Insert CRC (TRUE/FALSE)
+      BOOL			bCopyright;		// Set Copyright Bit (TRUE/FALSE)
+      BOOL			bOriginal;		// Set Original Bit (TRUE/FALSE)
 
-			BYTE			btReserved[255-3*sizeof(DWORD)];	// FUTURE USE, SET TO 0
+      // VBR STUFF
+      BOOL			bWriteVBRHeader;	// WRITE XING VBR HEADER (TRUE/FALSE)
+      BOOL			bEnableVBR;			// USE VBR ENCODING (TRUE/FALSE)
+      INT				nVBRQuality;		// VBR QUALITY 0..9
+      DWORD			dwVbrAbr_bps;		// Use ABR in stead of nVBRQuality
+      VBRMETHOD		nVbrMethod;
+      BOOL			bNoRes;				// Disable Bit resorvoir
 
-			} LHV1;					// LAME header version 1
+      BYTE			btReserved[255-3*sizeof(DWORD)];	// FUTURE USE, SET TO 0
 
-		struct	{
+    } LHV1;					// LAME header version 1
 
-			DWORD	dwSampleRate;
-			BYTE	byMode;
-			WORD	wBitrate;
-			BYTE	byEncodingMethod;
+    struct	{
 
-		} aac;
+      DWORD	dwSampleRate;
+      BYTE	byMode;
+      WORD	wBitrate;
+      BYTE	byEncodingMethod;
 
-	} format;
-		
+    } aac;
+
+  } format;
+
 } BE_CONFIG, *PBE_CONFIG;
 
 
 typedef struct	{
 
-	// BladeEnc DLL Version number
+  // BladeEnc DLL Version number
 
-	BYTE	byDLLMajorVersion;
-	BYTE	byDLLMinorVersion;
+  BYTE	byDLLMajorVersion;
+  BYTE	byDLLMinorVersion;
 
-	// BladeEnc Engine Version Number
+  // BladeEnc Engine Version Number
 
-	BYTE	byMajorVersion;
-	BYTE	byMinorVersion;
+  BYTE	byMajorVersion;
+  BYTE	byMinorVersion;
 
-	// DLL Release date
+  // DLL Release date
 
-	BYTE	byDay;
-	BYTE	byMonth;
-	WORD	wYear;
+  BYTE	byDay;
+  BYTE	byMonth;
+  WORD	wYear;
 
-	// BladeEnc	Homepage URL
+  // BladeEnc	Homepage URL
 
-	CHAR	zHomepage[BE_MAX_HOMEPAGE + 1];	
+  CHAR	zHomepage[BE_MAX_HOMEPAGE + 1];
 
-	BYTE	byAlphaLevel;
-	BYTE	byBetaLevel;
-	BYTE	byMMXEnabled;
+  BYTE	byAlphaLevel;
+  BYTE	byBetaLevel;
+  BYTE	byMMXEnabled;
 
-	BYTE	btReserved[125];
+  BYTE	btReserved[125];
 
 
-} BE_VERSION, *PBE_VERSION;			
+} BE_VERSION, *PBE_VERSION;
 
 typedef BE_ERR	(*BEINITSTREAM)			(PBE_CONFIG, PDWORD, PDWORD, PHBE_STREAM);
 typedef BE_ERR	(*BEENCODECHUNK)		(HBE_STREAM, DWORD, PSHORT, PBYTE, PDWORD);
@@ -290,12 +290,12 @@ static void (*remove_buf)(void *);
 
 
 #ifdef DYNAMIC_LAME
-  #ifdef __APPLE__
-    #include <Carbon/Carbon.h>
-  #endif
-  #ifndef _WIN32
-    #include <dlfcn.h>
-  #endif
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+#ifndef _WIN32
+#include <dlfcn.h>
+#endif
 
 
 typedef enum MPEG_mode_e {
@@ -326,11 +326,11 @@ static int (*lame_set_VBR_max_bitrate_kbps)(lame_t, int);
 
 static size_t (*lame_get_lametag_frame)(lame_t, unsigned char *, size_t);
 static int (*lame_encode_buffer_float)(lame_t,
-        const float     buffer_l [],       /* PCM data for left channel     */
-        const float     buffer_r [],       /* PCM data for right channel    */
-        const int           nsamples,      /* number of samples per channel */
-        unsigned char*      mp3buf,        /* pointer to encoded MP3 stream */
-        const int           mp3buf_size ); 
+                                       const float     buffer_l [],       /* PCM data for left channel     */
+                                       const float     buffer_r [],       /* PCM data for right channel    */
+                                       const int           nsamples,      /* number of samples per channel */
+                                       unsigned char*      mp3buf,        /* pointer to encoded MP3 stream */
+                                       const int           mp3buf_size );
 static int (*lame_encode_flush)(lame_t,unsigned char*       mp3buf,  int                  size);
 
 #endif
@@ -339,7 +339,7 @@ static int (*lame_encode_flush)(lame_t,unsigned char*       mp3buf,  int        
 void LameEncoder::InitDLL(const char *extrapath)
 {
 #ifdef USE_LAME_BLADE_API
-  if (!hlamedll) 
+  if (!hlamedll)
   {
 #ifdef _WIN64
     const char *dllName = "lame_enc64.dll";
@@ -368,11 +368,11 @@ void LameEncoder::InitDLL(const char *extrapath)
 
     if (hlamedll)
     {
-		  *((void**)&beInitStream) = (void *) GetProcAddress(hlamedll, "beInitStream");
-		  *((void**)&beCloseStream) = (void *) GetProcAddress(hlamedll, "beCloseStream");
-		  *((void**)&beEncodeChunkFloatS16NI) = (void *) GetProcAddress(hlamedll, "beEncodeChunkFloatS16NI");
-		  *((void**)&beDeinitStream)	= (void *) GetProcAddress(hlamedll, "beDeinitStream");
-		  *((void**)&beVersion) = (void *) GetProcAddress(hlamedll, "beVersion");
+      *((void**)&beInitStream) = (void *) GetProcAddress(hlamedll, "beInitStream");
+      *((void**)&beCloseStream) = (void *) GetProcAddress(hlamedll, "beCloseStream");
+      *((void**)&beEncodeChunkFloatS16NI) = (void *) GetProcAddress(hlamedll, "beEncodeChunkFloatS16NI");
+      *((void**)&beDeinitStream)	= (void *) GetProcAddress(hlamedll, "beDeinitStream");
+      *((void**)&beVersion) = (void *) GetProcAddress(hlamedll, "beVersion");
       *((void**)&beWriteInfoTag) = (void*) GetProcAddress(hlamedll, "beWriteInfoTag");
       *((void**)&InitMP3_Create) = (void *) GetProcAddress(hlamedll,"InitMP3_Create");
       *((void**)&ExitMP3_Delete) = (void *) GetProcAddress(hlamedll,"ExitMP3_Delete");
@@ -390,11 +390,11 @@ void LameEncoder::InitDLL(const char *extrapath)
     a++;
 #ifdef _WIN32
     const char *dllname = "libmp3lame.dll";
-  #ifdef _WIN64
+#ifdef _WIN64
     const char *dllName2 = "lame_enc64.dll";
-  #else
+#else
     const char *dllName2 = "lame_enc.dll";
-  #endif
+#endif
     char me[1024];
 
     if (extrapath)
@@ -438,9 +438,9 @@ void LameEncoder::InitDLL(const char *extrapath)
       char me[1024];
       lstrcpyn_safe(me,extrapath,sizeof(me)-64);
       lstrcatn(me,"/libmp3lame.dylib",sizeof(me));
-      dll = dlopen(me, RTLD_NOW|RTLD_LOCAL);    
+      dll = dlopen(me, RTLD_NOW|RTLD_LOCAL);
     }
-    if (!dll) dll = dlopen("/Library/Application Support/libmp3lame.dylib", RTLD_NOW|RTLD_LOCAL);    
+    if (!dll) dll = dlopen("/Library/Application Support/libmp3lame.dylib", RTLD_NOW|RTLD_LOCAL);
     if (!dll) dll=dlopen("/usr/local/lib/libmp3lame.dylib",RTLD_NOW|RTLD_LOCAL);
     if (!dll) dll=dlopen("/usr/lib/libmp3lame.dylib",RTLD_NOW|RTLD_LOCAL);
 
@@ -449,7 +449,7 @@ void LameEncoder::InitDLL(const char *extrapath)
     if (!dll)
     {
       CFBundleRef bund=CFBundleGetMainBundle();
-      if (bund) 
+      if (bund)
       {
         CFURLRef url=CFBundleCopyBundleURL(bund);
         if (url)
@@ -475,7 +475,7 @@ void LameEncoder::InitDLL(const char *extrapath)
                 strcpy(p,"/Plugins/libmp3lame.dylib");
                 if (!dll) dll=dlopen(buf,RTLD_NOW|RTLD_LOCAL);
               }
-            }          
+            }
           }
           CFRelease(url);
         }
@@ -487,7 +487,7 @@ void LameEncoder::InitDLL(const char *extrapath)
       char me[1024];
       lstrcpyn_safe(me,extrapath,sizeof(me)-64);
       lstrcatn(me,"/libmp3lame.so",sizeof(me));
-      dll = dlopen(me, RTLD_NOW|RTLD_LOCAL);    
+      dll = dlopen(me, RTLD_NOW|RTLD_LOCAL);
     }
     if (!dll) dll=dlopen("/usr/local/lib/libmp3lame.so",RTLD_NOW|RTLD_LOCAL);
     if (!dll) dll=dlopen("/usr/lib/libmp3lame.so",RTLD_NOW|RTLD_LOCAL);
@@ -496,57 +496,57 @@ void LameEncoder::InitDLL(const char *extrapath)
     if (!dll) dll=dlopen("/usr/local/lib/libmp3lame.so.0",RTLD_NOW|RTLD_LOCAL);
     if (!dll) dll=dlopen("/usr/lib/libmp3lame.so.0",RTLD_NOW|RTLD_LOCAL);
     if (!dll) dll=dlopen("libmp3lame.so.0",RTLD_NOW|RTLD_LOCAL);
-    if (!dll) 
+    if (!dll)
     {
-       char tmp[64];
-       sprintf(tmp,"/proc/%d/exe",getpid());
-       char buf[1024];
-       buf[0]=0;
-       if (readlink(tmp,buf,sizeof(buf)-128)>0 && buf[0])
-       {
-         char *p = buf;
-         while (*p) p++;
-         while (p>buf && *p != '/') p--;
-         if (p>buf)
-         {
-           strcpy(p,"/Plugins/libmp3lame.so");
-           dll=dlopen(buf,RTLD_NOW|RTLD_LOCAL);
-           if (!dll)  
-           {
-             strcpy(p,"/libmp3lame.so");
-             dll=dlopen(buf,RTLD_NOW|RTLD_LOCAL);
-           }
-         }
-       }
+      char tmp[64];
+      sprintf(tmp,"/proc/%d/exe",getpid());
+      char buf[1024];
+      buf[0]=0;
+      if (readlink(tmp,buf,sizeof(buf)-128)>0 && buf[0])
+      {
+        char *p = buf;
+        while (*p) p++;
+        while (p>buf && *p != '/') p--;
+        if (p>buf)
+        {
+          strcpy(p,"/Plugins/libmp3lame.so");
+          dll=dlopen(buf,RTLD_NOW|RTLD_LOCAL);
+          if (!dll)
+          {
+            strcpy(p,"/libmp3lame.so");
+            dll=dlopen(buf,RTLD_NOW|RTLD_LOCAL);
+          }
+        }
+      }
     }
 #endif
-     
+
     if (dll)
     {
-  #ifdef _WIN32
-    #define TURD(x) *(void **)&x = GetProcAddress((HINSTANCE)dll,#x);
-  #else
-    #define TURD(x) *(void **)&x = dlsym(dll,#x);
-  #endif
-    TURD(lame_get_lametag_frame)
-    TURD(lame_close) 
-    TURD(lame_init) 
-    TURD(lame_set_in_samplerate) 
-    TURD(lame_set_num_channels) 
-    TURD(lame_set_out_samplerate) 
-    TURD(lame_set_quality) 
-    TURD(lame_set_mode)
-    TURD(lame_set_brate) 
-    TURD(lame_init_params)
-    TURD(lame_get_framesize) 
-    TURD(lame_encode_buffer_float) 
-    TURD(lame_encode_flush)      
-    TURD(lame_set_VBR)
-    TURD(lame_set_VBR_q)
-    TURD(lame_set_VBR_mean_bitrate_kbps)
-    TURD(lame_set_VBR_min_bitrate_kbps)
-    TURD(lame_set_VBR_max_bitrate_kbps)
-  #undef TURD   
+#ifdef _WIN32
+#define TURD(x) *(void **)&x = GetProcAddress((HINSTANCE)dll,#x);
+#else
+#define TURD(x) *(void **)&x = dlsym(dll,#x);
+#endif
+      TURD(lame_get_lametag_frame)
+      TURD(lame_close)
+      TURD(lame_init)
+      TURD(lame_set_in_samplerate)
+      TURD(lame_set_num_channels)
+      TURD(lame_set_out_samplerate)
+      TURD(lame_set_quality)
+      TURD(lame_set_mode)
+      TURD(lame_set_brate)
+      TURD(lame_init_params)
+      TURD(lame_get_framesize)
+      TURD(lame_encode_buffer_float)
+      TURD(lame_encode_flush)
+      TURD(lame_set_VBR)
+      TURD(lame_set_VBR_q)
+      TURD(lame_set_VBR_mean_bitrate_kbps)
+      TURD(lame_set_VBR_min_bitrate_kbps)
+      TURD(lame_set_VBR_max_bitrate_kbps)
+#undef TURD
     }
   }
 #endif
@@ -585,7 +585,7 @@ LameEncoder::LameEncoder(int srate, int nch, int bitrate, int stereomode, int qu
   m_lamestate=lame_init();
   if (!m_lamestate)
   {
-    errorstat=1; 
+    errorstat=1;
     return;
   }
 #endif
@@ -598,11 +598,11 @@ LameEncoder::LameEncoder(int srate, int nch, int bitrate, int stereomode, int qu
 
   BE_CONFIG beConfig;
   memset(&beConfig,0,sizeof(beConfig));
-	beConfig.dwConfig = BE_CONFIG_LAME;
+  beConfig.dwConfig = BE_CONFIG_LAME;
 
-	beConfig.format.LHV1.dwStructVersion	= 1;
-	beConfig.format.LHV1.dwStructSize		= sizeof(beConfig);		
-	beConfig.format.LHV1.dwSampleRate		= srate;
+  beConfig.format.LHV1.dwStructVersion	= 1;
+  beConfig.format.LHV1.dwStructSize		= sizeof(beConfig);
+  beConfig.format.LHV1.dwSampleRate		= srate;
   if (m_encoder_nch == 1) beConfig.format.LHV1.nMode = BE_MP3_MODE_MONO;
   else beConfig.format.LHV1.nMode = stereomode; //bitrate >= 192 ? BE_MP3_MODE_STEREO : BE_MP3_MODE_JSTEREO;
 
@@ -628,13 +628,13 @@ LameEncoder::LameEncoder(int srate, int nch, int bitrate, int stereomode, int qu
   beConfig.format.LHV1.nVbrMethod=(VBRMETHOD)vbrmethod;
 
 
-/* LAME sets unwise bit if:
-    if (gfp->short_blocks == short_block_forced || gfp->short_blocks == short_block_dispensed || ((gfp->lowpassfreq == -1) && (gfp->highpassfreq == -1)) || // "-k"
-        (gfp->scale_left < gfp->scale_right) ||
-        (gfp->scale_left > gfp->scale_right) ||
-        (gfp->disable_reservoir && gfp->brate < 320) ||
-        gfp->noATH || gfp->ATHonly || (nAthType == 0) || gfp->in_samplerate <= 32000)
-*/
+  /* LAME sets unwise bit if:
+      if (gfp->short_blocks == short_block_forced || gfp->short_blocks == short_block_dispensed || ((gfp->lowpassfreq == -1) && (gfp->highpassfreq == -1)) || // "-k"
+          (gfp->scale_left < gfp->scale_right) ||
+          (gfp->scale_left > gfp->scale_right) ||
+          (gfp->disable_reservoir && gfp->brate < 320) ||
+          gfp->noATH || gfp->ATHonly || (nAthType == 0) || gfp->in_samplerate <= 32000)
+  */
 
   int out_size_bytes=0;
   hbeStream=0;
@@ -659,16 +659,16 @@ LameEncoder::LameEncoder(int srate, int nch, int bitrate, int stereomode, int qu
   lame_set_quality(m_lamestate,(quality>9 ||quality<0) ? 0 : quality);
   lame_set_mode(m_lamestate,(MPEG_mode) (m_encoder_nch==1?3 :stereomode ));
   lame_set_brate(m_lamestate,bitrate);
-  
+
   //int vbrmethod (-1 no vbr), int vbrquality (nVBRQuality), int vbrmax, int abr
   if (vbrmethod != -1 && lame_set_VBR)
   {
     int vm=4; // mtrh
     if (vbrmethod == 4) vm = 3; //ABR
     lame_set_VBR(m_lamestate,vm);
-    
+
     if (lame_set_VBR_q) lame_set_VBR_q(m_lamestate,vbrquality);
-    
+
     if (vbrmethod == 4&&lame_set_VBR_mean_bitrate_kbps)
     {
       lame_set_VBR_mean_bitrate_kbps(m_lamestate,abr);
@@ -730,7 +730,7 @@ void LameEncoder::Encode(float *in, int in_spls, int spacing)
         pos+=adv;
       }
     }
-    else 
+    else
     {
       int x;
       int pos=0;
@@ -752,8 +752,8 @@ void LameEncoder::Encode(float *in, int in_spls, int spacing)
 
 #ifdef USE_LAME_BLADE_API
     DWORD dwo=0;
-    if (beEncodeChunkFloatS16NI(hbeStream, a, (float*)spltmp[0].Get(), (float*)spltmp[m_encoder_nch > 1].Get(), 
-                        (unsigned char*)outtmp.Get(), &dwo) != BE_ERR_SUCCESSFUL)
+    if (beEncodeChunkFloatS16NI(hbeStream, a, (float*)spltmp[0].Get(), (float*)spltmp[m_encoder_nch > 1].Get(),
+                                (unsigned char*)outtmp.Get(), &dwo) != BE_ERR_SUCCESSFUL)
     {
       errorstat=3;
       return;
@@ -761,7 +761,7 @@ void LameEncoder::Encode(float *in, int in_spls, int spacing)
 //      printf("encoded to %d bytes (%d) %d\n",dwo, outtmp.GetSize(),in_size_samples);
 #else
     int dwo=lame_encode_buffer_float(m_lamestate,(float *)spltmp[0].Get(),(float*)spltmp[m_encoder_nch>1].Get(),
-         a,(unsigned char *)outtmp.Get(),outtmp.GetSize());
+                                     a,(unsigned char *)outtmp.Get(),outtmp.GetSize());
     //printf("encoded %d to %d\n",in_size_samples,dwo);
 #endif
     outqueue.Add(outtmp.Get(),dwo);
@@ -795,7 +795,7 @@ static BOOL HasUTF8(const char *_str)
 {
   const unsigned char *str = (const unsigned char *)_str;
   if (!str) return FALSE;
-  while (*str) 
+  while (*str)
   {
     unsigned char c = *str;
     if (c >= 0xC2) // discard overlongs
@@ -813,7 +813,7 @@ static BOOL HasUTF8(const char *_str)
 LameEncoder::~LameEncoder()
 {
 #ifdef USE_LAME_BLADE_API
-  if (hbeStream) 
+  if (hbeStream)
   {
     if (m_vbrfile.Get()[0] && beWriteInfoTag)
     {
@@ -969,7 +969,7 @@ void LameDecoder::DecodeWrote(int srclen)
 
         for (x = 0; x < bout; x ++)
         {
-          fbuf[x]=(float)(bufptr[x] * (1.0/32767.0));        
+          fbuf[x]=(float)(bufptr[x] * (1.0/32767.0));
         }
       }
     }
@@ -981,17 +981,17 @@ void LameDecoder::DecodeWrote(int srclen)
 void LameDecoder::Reset()
 {
   m_samples_remove=1152*2;
-  m_samples_used=0; 
+  m_samples_used=0;
   m_samplesdec=0;
 
   //if (decinst) remove_buf(decinst);
-/*
-  if (decinst)
-  {
-    ExitMP3_Delete(decinst);
-  }
-  decinst=InitMP3_Create();
-  */
+  /*
+    if (decinst)
+    {
+      ExitMP3_Delete(decinst);
+    }
+    decinst=InitMP3_Create();
+    */
 }
 
 LameDecoder::~LameDecoder()

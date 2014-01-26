@@ -1,7 +1,7 @@
 /*
     WDL - gpu.h
     Copyright (C) 2007 Cockos Incorporated
-  
+
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
     arising from the use of this software.
@@ -17,7 +17,7 @@
     2. Altered source versions must be plainly marked as such, and must not be
        misrepresented as being the original software.
     3. This notice may not be removed or altered from any source distribution.
-    
+
 */
 
 #ifndef _WDL_GPU_H
@@ -67,14 +67,14 @@ public:
 
   // WGL_ARB_extensions_string
   PFNWGLGETEXTENSIONSSTRINGARBPROC wglGetExtensionsStringARB;
-  
+
   // WGL_ARB_pbuffer
   PFNWGLCREATEPBUFFERARBPROC    wglCreatePbufferARB;
   PFNWGLGETPBUFFERDCARBPROC     wglGetPbufferDCARB;
   PFNWGLRELEASEPBUFFERDCARBPROC wglReleasePbufferDCARB;
   PFNWGLDESTROYPBUFFERARBPROC   wglDestroyPbufferARB;
   PFNWGLQUERYPBUFFERARBPROC     wglQueryPbufferARB;
-  
+
   // WGL_ARB_pixel_format
   PFNWGLGETPIXELFORMATATTRIBIVARBPROC wglGetPixelFormatAttribivARB;
   PFNWGLGETPIXELFORMATATTRIBFVARBPROC wglGetPixelFormatAttribfvARB;
@@ -99,7 +99,7 @@ public:
   void drawLine(int x1, int y1, int x2, int y2);
   void flush();
   void blit();
-  
+
 private:
   WDL_GPU *m_parent;
   WDL_WinMemBitmap *m_bm;

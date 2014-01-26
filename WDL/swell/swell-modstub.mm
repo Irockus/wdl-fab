@@ -18,14 +18,14 @@ static struct
 {
   const char *name;
   void **func;
-} api_tab[]={
-  
+} api_tab[]= {
+
 #undef _WDL_SWELL_H_API_DEFINED_
 #undef SWELL_API_DEFINE
 #define SWELL_API_DEFINE(ret, func, parms) {#func, (void **)&func },
 
 #include "swell-functions.h"
-  
+
 };
 
 static int dummyFunc() { return 0; }
@@ -36,13 +36,13 @@ public:
   SwellAPPInitializer()
   {
     void *(*SWELLAPI_GetFunc)(const char *name)=NULL;
-    
+
     id del = [NSApp delegate];
     if (del && [del respondsToSelector:@selector(swellGetAPPAPIFunc)])
       *(void **)&SWELLAPI_GetFunc = (void *)objc_msgSend(del,@selector(swellGetAPPAPIFunc));
-      
+
     if (SWELLAPI_GetFunc && SWELLAPI_GetFunc(NULL)!=(void*)0x100) SWELLAPI_GetFunc=0;
-      
+
     int x;
     for (x = 0; x < sizeof(api_tab)/sizeof(api_tab[0]); x ++)
     {

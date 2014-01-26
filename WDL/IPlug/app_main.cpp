@@ -10,9 +10,9 @@
 
 
 #ifdef OS_WIN
-  #include <windows.h>
-  #include <shlobj.h>
-  #include <sys/stat.h>
+#include <windows.h>
+#include <shlobj.h>
+#include <sys/stat.h>
 #endif
 
 AppWrapper* AppWrapper::_instance = 0;
@@ -28,103 +28,103 @@ extern HWND gHWND;
 
 AppWrapper::AppWrapper()
 {
-	gHWND = 0;
+  gHWND = 0;
 
-	gHINST = 0;
-	gINIPath = new char[MAX_APP_INIPATH];
-	gScrollMessage = 0;
-	gPluginInstance = 0;
-	gDAC = 0;
-	gMidiIn = 0;
-	gMidiOut = 0;
+  gHINST = 0;
+  gINIPath = new char[MAX_APP_INIPATH];
+  gScrollMessage = 0;
+  gPluginInstance = 0;
+  gDAC = 0;
+  gMidiIn = 0;
+  gMidiOut = 0;
 
-	gState = new AppState();
-	gTempState = 0;
-	gActiveState = 0;
+  gState = new AppState();
+  gTempState = 0;
+  gActiveState = 0;
 
 }
 
 AppWrapper::~AppWrapper()
 {
-	SAFE_DEL_ARR(gINIPath);
+  SAFE_DEL_ARR(gINIPath);
 }
 
 void AppWrapper::Error(const char *msg)
 {
 #if WIN32
-	OutputDebugString(msg);
+  OutputDebugString(msg);
 #else
-	std::cerr << msg << std::endl;
+  std::cerr << msg << std::endl;
 #endif
 }
 
 
 bool AppWrapper::AttachGUI()
 {
-    IGraphics* pGraphics = gPluginInstance->GetGUI();
-    
+  IGraphics* pGraphics = gPluginInstance->GetGUI();
+
+  if (pGraphics)
+  {
+#ifdef OS_WIN
+    if (!pGraphics->OpenWindow(gHWND))
+      pGraphics=0;
+#else // Cocoa OSX
+    if (!pGraphics->OpenWindow(gHWND))
+      pGraphics=0;
+#endif
     if (pGraphics)
     {
-#ifdef OS_WIN
-        if (!pGraphics->OpenWindow(gHWND))
-            pGraphics=0;
-#else // Cocoa OSX
-        if (!pGraphics->OpenWindow(gHWND))
-            pGraphics=0;
-#endif
-        if (pGraphics)
-        {
-            gPluginInstance->OnGUIOpen();
-            return true;
-        }
+      gPluginInstance->OnGUIOpen();
+      return true;
     }
-    
-    return false;
+  }
+
+  return false;
 }
 
 void AppWrapper::Init()
 {
-    TryToChangeAudioDriverType(); // will init RTAudio with an API type based on gState->mAudioDriverType
-    ProbeAudioIO(); // find out what audio IO devs are available and put their IDs in the global variables gAudioInputDevs / gAudioOutputDevs
-    InitialiseMidi(); // creates RTMidiIn and RTMidiOut objects
-    ProbeMidiIO(); // find out what midi IO devs are available and put their names in the global variables gMidiInputDevs / gMidiOutputDevs
-    
-    // Initialise the plugin
-    gPluginInstance = MakePlug(gMidiOut, &gState->mMidiOutChan);
-    gPluginInstance->RestorePreset(0);
-    
-    ChooseMidiInput(gState->mMidiInDev);
-    ChooseMidiOutput(gState->mMidiOutDev);
-    
-    TryToChangeAudio();
+  TryToChangeAudioDriverType(); // will init RTAudio with an API type based on gState->mAudioDriverType
+  ProbeAudioIO(); // find out what audio IO devs are available and put their IDs in the global variables gAudioInputDevs / gAudioOutputDevs
+  InitialiseMidi(); // creates RTMidiIn and RTMidiOut objects
+  ProbeMidiIO(); // find out what midi IO devs are available and put their names in the global variables gMidiInputDevs / gMidiOutputDevs
+
+  // Initialise the plugin
+  gPluginInstance = MakePlug(gMidiOut, &gState->mMidiOutChan);
+  gPluginInstance->RestorePreset(0);
+
+  ChooseMidiInput(gState->mMidiInDev);
+  ChooseMidiOutput(gState->mMidiOutDev);
+
+  TryToChangeAudio();
 }
 
 void AppWrapper::Cleanup()
 {
-    try
-    {
-        // Stop the stream
-        gDAC->stopStream();
-    }
-    catch (RtError& e)
-    {
-        e.printMessage();
-    }
-    
-    gMidiIn->cancelCallback();
-    gMidiIn->closePort();
-    gMidiOut->closePort();
-    
-    if ( gDAC->isStreamOpen() ) gDAC->closeStream();
-    
-    SAFE_DEL(gPluginInstance);
-    SAFE_DEL(gState);
-    SAFE_DEL(gTempState);
-    SAFE_DEL(gActiveState);
-    SAFE_DEL(gMidiIn);
-    SAFE_DEL(gMidiOut);
-    SAFE_DEL(gDAC);
-    SAFE_DEL_ARR(gINIPath);
+  try
+  {
+    // Stop the stream
+    gDAC->stopStream();
+  }
+  catch (RtError& e)
+  {
+    e.printMessage();
+  }
+
+  gMidiIn->cancelCallback();
+  gMidiIn->closePort();
+  gMidiOut->closePort();
+
+  if ( gDAC->isStreamOpen() ) gDAC->closeStream();
+
+  SAFE_DEL(gPluginInstance);
+  SAFE_DEL(gState);
+  SAFE_DEL(gTempState);
+  SAFE_DEL(gActiveState);
+  SAFE_DEL(gMidiIn);
+  SAFE_DEL(gMidiOut);
+  SAFE_DEL(gDAC);
+  SAFE_DEL_ARR(gINIPath);
 }
 
 void AppWrapper::UpdateINI()
@@ -188,10 +188,10 @@ unsigned int AppWrapper::GetMIDIInPortNumber(const char* nameToTest)
 
   if(!strcmp(nameToTest, "off")) return 0;
 
-  #ifdef OS_OSX
+#ifdef OS_OSX
   start = 2;
   if(!strcmp(nameToTest, "virtual input")) return 1;
-  #endif
+#endif
 
   for (int i = 0; i < gMidiIn->getPortCount(); i++)
   {
@@ -208,10 +208,10 @@ unsigned int AppWrapper::GetMIDIOutPortNumber(const char* nameToTest)
 
   if(!strcmp(nameToTest, "off")) return 0;
 
-  #ifdef OS_OSX
+#ifdef OS_OSX
   start = 2;
   if(!strcmp(nameToTest, "virtual output")) return 1;
-  #endif
+#endif
 
   for (int i = 0; i < gMidiOut->getPortCount(); i++)
   {
@@ -240,13 +240,13 @@ void AppWrapper::ProbeAudioIO()
     info = gDAC->getDeviceInfo(i);
     std::string deviceName = info.name;
 
-    #ifdef OS_OSX
+#ifdef OS_OSX
     size_t colonIdx = deviceName.rfind(": ");
 
     if(colonIdx != std::string::npos && deviceName.length() >= 2)
       deviceName = deviceName.substr(colonIdx + 2, deviceName.length() - colonIdx - 2);
 
-    #endif
+#endif
 
     gAudioIDDevNames.push_back(deviceName);
 
@@ -275,9 +275,9 @@ void AppWrapper::ProbeMidiIO()
 
     gMIDIInputDevNames.push_back("off");
 
-    #ifndef OS_WIN
+#ifndef OS_WIN
     gMIDIInputDevNames.push_back("virtual input");
-    #endif
+#endif
 
     for (int i=0; i<nInputPorts; i++ )
     {
@@ -356,22 +356,22 @@ void AppWrapper::MIDICallback( double deltatime, std::vector< unsigned char > *m
     // filter midi messages based on channel, if Instance().gStatus.mMidiInChan != all (0)
     if (Instance().gState->mMidiInChan)
     {
-		if (Instance().gState->mMidiInChan == msg.Channel() + 1)
-			Instance().gPluginInstance->ProcessMidiMsg(&msg);
+      if (Instance().gState->mMidiInChan == msg.Channel() + 1)
+        Instance().gPluginInstance->ProcessMidiMsg(&msg);
     }
     else
     {
-		Instance().gPluginInstance->ProcessMidiMsg(&msg);
+      Instance().gPluginInstance->ProcessMidiMsg(&msg);
     }
   }
 }
 
 int AppWrapper::AudioCallback(void *outputBuffer,
-                  void *inputBuffer,
-                  unsigned int nFrames,
-                  double streamTime,
-                  RtAudioStreamStatus status,
-                  void *userData )
+                              void *inputBuffer,
+                              unsigned int nFrames,
+                              double streamTime,
+                              RtAudioStreamStatus status,
+                              void *userData )
 {
   if ( status )
     std::cout << "Stream underflow detected!" << std::endl;
@@ -388,14 +388,14 @@ int AppWrapper::AudioCallback(void *outputBuffer,
   {
     for (int i=0; i<nFrames; i++)
     {
-		Instance().gBufIndex %= Instance().gSigVS;
+      Instance().gBufIndex %= Instance().gSigVS;
 
-		if (Instance().gBufIndex == 0)
+      if (Instance().gBufIndex == 0)
       {
         double* inputs[2] = {inputBufferD + i, inputBufferD + inRightOffset + i};
         double* outputs[2] = {outputBufferD + i, outputBufferD + nFrames + i};
 
-		Instance().gPluginInstance->LockMutexAndProcessDoubleReplacing(inputs, outputs, Instance().gSigVS);
+        Instance().gPluginInstance->LockMutexAndProcessDoubleReplacing(inputs, outputs, Instance().gSigVS);
       }
 
       // fade in
@@ -410,7 +410,7 @@ int AppWrapper::AudioCallback(void *outputBuffer,
       outputBufferD[i] *= APP_MULT;
       outputBufferD[i + nFrames] *= APP_MULT;
 
-	  Instance().gBufIndex++;
+      Instance().gBufIndex++;
     }
   }
   else
@@ -485,13 +485,13 @@ bool AppWrapper::TryToChangeAudio()
 }
 
 bool AppWrapper::InitialiseAudio(unsigned int inId,
-                     unsigned int outId,
-                     unsigned int sr,
-                     unsigned int iovs,
-                     unsigned int chnls,
-                     unsigned int inChanL,
-                     unsigned int outChanL
-                    )
+                                 unsigned int outId,
+                                 unsigned int sr,
+                                 unsigned int iovs,
+                                 unsigned int chnls,
+                                 unsigned int inChanL,
+                                 unsigned int outChanL
+                                )
 {
   TRACE;
 
@@ -563,7 +563,7 @@ bool AppWrapper::InitialiseMidi()
   }
   catch ( RtError &error )
   {
-	DELETE_NULL(gMidiIn);
+    DELETE_NULL(gMidiIn);
     error.printMessage();
     return false;
   }
@@ -574,7 +574,7 @@ bool AppWrapper::InitialiseMidi()
   }
   catch ( RtError &error )
   {
-	DELETE_NULL(gMidiOut);
+    DELETE_NULL(gMidiOut);
     error.printMessage();
     return false;
   }
@@ -614,13 +614,13 @@ bool AppWrapper::ChooseMidiInput(const char* pPortName)
     {
       return true;
     }
-    #ifdef OS_WIN
+#ifdef OS_WIN
     else
     {
       gMidiIn->openPort(port-1);
       return true;
     }
-    #else
+#else
     else if(port == 1)
     {
       std::string virtualMidiInputName = "To ";
@@ -633,7 +633,7 @@ bool AppWrapper::ChooseMidiInput(const char* pPortName)
       gMidiIn->openPort(port-2);
       return true;
     }
-    #endif
+#endif
   }
 
   return false;
@@ -669,13 +669,13 @@ bool AppWrapper::ChooseMidiOutput(const char* pPortName)
     {
       return true;
     }
-    #ifdef OS_WIN
+#ifdef OS_WIN
     else
     {
       gMidiOut->openPort(port-1);
       return true;
     }
-    #else
+#else
     else if(port == 1)
     {
       std::string virtualMidiOutputName = "From ";
@@ -688,7 +688,7 @@ bool AppWrapper::ChooseMidiOutput(const char* pPortName)
       gMidiOut->openPort(port-2);
       return true;
     }
-    #endif
+#endif
   }
 
   return false;

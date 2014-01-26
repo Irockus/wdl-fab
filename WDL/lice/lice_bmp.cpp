@@ -16,7 +16,7 @@ static LICE_IBitmap *hbmToBit(HBITMAP hbm, LICE_IBitmap *bmp)
   GetObject(hbm, sizeof(BITMAP), (LPSTR)&bm);
 
   LICE_SysBitmap sysbitmap(bm.bmWidth,bm.bmHeight);
-  
+
 #ifdef _WIN32
   HDC hdc=CreateCompatibleDC(NULL);
   HGDIOBJ oldBM=SelectObject(hdc,hbm);
@@ -29,13 +29,13 @@ static LICE_IBitmap *hbmToBit(HBITMAP hbm, LICE_IBitmap *bmp)
 
   SelectObject(hdc,oldBM);
   DeleteDC(hdc);
-  #else
+#else
   LICE_Clear(&sysbitmap,0);
-  RECT r={0,0,bm.bmWidth,bm.bmHeight};
+  RECT r= {0,0,bm.bmWidth,bm.bmHeight};
   DrawImageInRect(sysbitmap.getDC(),hbm,&r);
   if (!bmp) bmp=new LICE_MemBitmap(bm.bmWidth,bm.bmHeight);
   LICE_Copy(bmp,&sysbitmap);
-  #endif
+#endif
 
   LICE_FillRect(bmp,0,0,bmp->getWidth(),bmp->getHeight(),LICE_RGBA(0,0,0,255),1.0f,LICE_BLIT_MODE_ADD);
 
@@ -85,7 +85,7 @@ class LICE_BMPLoader
 {
 public:
   _LICE_ImageLoader_rec rec;
-  LICE_BMPLoader() 
+  LICE_BMPLoader()
   {
     rec.loadfunc = loadfunc;
     rec.get_extlist = get_extlist;

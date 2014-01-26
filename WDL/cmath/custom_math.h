@@ -32,84 +32,84 @@
 /* check for "c89" mode */
 #if (defined _MSC_VER && defined __STDC__) || \
     (defined __GNUC__ && defined __STRICT_ANSI__)
-  #define _CMATH_ANSI
+#define _CMATH_ANSI
 #endif
 
 /* enable inline */
 #if defined __cplusplus || (!defined _CMATH_ANSI && defined _CMATH_USE_INLINE)
-  #ifdef _MSC_VER
-    #define _CMATH_INLINE __inline
-  #else
-    #define _CMATH_INLINE inline
-  #endif
+#ifdef _MSC_VER
+#define _CMATH_INLINE __inline
 #else
-  #define _CMATH_INLINE
+#define _CMATH_INLINE inline
+#endif
+#else
+#define _CMATH_INLINE
 #endif
 
 /* align type to size of type */
 #if defined __GNUC__ || defined __TINYC__
-  #define _CMATH_ALIGN(x)   __attribute__ ((aligned(x)))
-  #define _CMATH_ALIGN_T(x) __attribute__ ((aligned(sizeof(x))))
+#define _CMATH_ALIGN(x)   __attribute__ ((aligned(x)))
+#define _CMATH_ALIGN_T(x) __attribute__ ((aligned(sizeof(x))))
 #else
-  #define _CMATH_ALIGN(x)
-  #define _CMATH_ALIGN_T(x)
+#define _CMATH_ALIGN(x)
+#define _CMATH_ALIGN_T(x)
 #endif
 
 /* printf max integer */
 #ifndef _CMATH_ANSI
-  #ifdef _WIN32
-    #define _CMATH_PR_STD_UINT  "I64u"
-    #define _CMATH_PR_STD_INT   "I64i"
-    #define _CMATH_PR_STD_HEX   "I64x"
-  #else
-    #define _CMATH_PR_STD_UINT  "llu"
-    #define _CMATH_PR_STD_INT   "lli"
-    #define _CMATH_PR_STD_HEX   "llx"
-  #endif
+#ifdef _WIN32
+#define _CMATH_PR_STD_UINT  "I64u"
+#define _CMATH_PR_STD_INT   "I64i"
+#define _CMATH_PR_STD_HEX   "I64x"
 #else
-  #define _CMATH_PR_STD_UINT  "u"
-  #define _CMATH_PR_STD_INT   "d"
-  #define _CMATH_PR_STD_HEX   "x"
+#define _CMATH_PR_STD_UINT  "llu"
+#define _CMATH_PR_STD_INT   "lli"
+#define _CMATH_PR_STD_HEX   "llx"
+#endif
+#else
+#define _CMATH_PR_STD_UINT  "u"
+#define _CMATH_PR_STD_INT   "d"
+#define _CMATH_PR_STD_HEX   "x"
 #endif
 
 /* msvc specifics */
 #ifdef _MSC_VER
-  #pragma warning(disable : 4514)
+#pragma warning(disable : 4514)
 
-  #define MK_L(x)     (x)
-  #define MK_UL(x)    (x)
-  #define MK_LL(x)    (x)
-  #define MK_ULL(x)   (x)
+#define MK_L(x)     (x)
+#define MK_UL(x)    (x)
+#define MK_LL(x)    (x)
+#define MK_ULL(x)   (x)
 #else
-  #define MK_L(x)     (x##L)
-  #define MK_UL(x)    (x##UL)
-  #ifdef _CMATH_ANSI
-    #define MK_LL(x)  (x##L)
-    #define MK_ULL(x) (x##UL)
-  #else
-    #define MK_LL(x)  (x##LL)
-    #define MK_ULL(x) (x##ULL)
-  #endif
+#define MK_L(x)     (x##L)
+#define MK_UL(x)    (x##UL)
+#ifdef _CMATH_ANSI
+#define MK_LL(x)  (x##L)
+#define MK_ULL(x) (x##UL)
+#else
+#define MK_LL(x)  (x##LL)
+#define MK_ULL(x) (x##ULL)
+#endif
 #endif
 
 /* definitions depending on c standard */
 #ifdef _CMATH_ANSI
-  #define cmath_std_signbit  MK_UL(0x7fffffff)
-  #define cmath_std_float_t  float
-  #define cmath_std_int_t    int
+#define cmath_std_signbit  MK_UL(0x7fffffff)
+#define cmath_std_float_t  float
+#define cmath_std_int_t    int
 #else
-  #define cmath_std_signbit  MK_ULL(0x7fffffffffffffff)
-  #define cmath_std_float_t  double
-  #ifdef _MSC_VER
-    #define cmath_std_int_t  __int64
-  #else
-    #define cmath_std_int_t  long long
-  #endif
+#define cmath_std_signbit  MK_ULL(0x7fffffffffffffff)
+#define cmath_std_float_t  double
+#ifdef _MSC_VER
+#define cmath_std_int_t  __int64
+#else
+#define cmath_std_int_t  long long
+#endif
 #endif
 
 /* types and constants */
 #ifndef cmath_t
-  #define cmath_t   double
+#define cmath_t   double
 #endif
 
 #define cmath_std_uint_t  unsigned cmath_std_int_t
@@ -131,9 +131,9 @@
 
 /* aliased types */
 #ifdef __GNUC__
-  #define _CMATH_MAY_ALIAS __attribute__((__may_alias__))
+#define _CMATH_MAY_ALIAS __attribute__((__may_alias__))
 #else
-  #define _CMATH_MAY_ALIAS
+#define _CMATH_MAY_ALIAS
 #endif
 
 typedef cmath_t _CMATH_MAY_ALIAS cmath_t_a;
@@ -200,7 +200,7 @@ cmath_t cmath_abs(const cmath_t x)
 _CMATH_INLINE
 cmath_t cmath_round(const cmath_t x)
 {
-   if (x < 0.0)
+  if (x < 0.0)
     return (cmath_t)(cmath_std_int_t)(x - 0.5);
   else
     return (cmath_t)(cmath_std_int_t)(x + 0.5);
