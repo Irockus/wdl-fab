@@ -61,3 +61,15 @@ VST3_SDK/*
 *.makeRelWithDebInfo
 
 *.makeRelease
+*.vcxproj
+IPlugExamples/CMakeFiles/generate.stamp
+*.filters
+WDL/*/*.dir/
+IPlugExamples/*/*.dir/
+WDL/*/Debug/
+WDL0/
+WDL/CMakeFiles/
+WDL/IPlug/CMakeFiles/generate.stamp
+WDL/*/CMakeFiles/
+Win32/Debug/
+IPlugExamples/*/CMakeFiles/

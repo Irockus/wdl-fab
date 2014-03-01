@@ -10,7 +10,7 @@
 #include <shlobj.h>
 #include <sys/stat.h>
 
-#define snprintf _snprintf
+// #define snprintf _snprintf
 #endif
 
 const int kNumIOVSOptions = 11;

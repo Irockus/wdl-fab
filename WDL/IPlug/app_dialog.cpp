@@ -4,7 +4,7 @@
 #ifdef OS_WIN
 #include "asio.h"
 #include <WindowsX.h>
-#define snprintf _snprintf
+// #define snprintf _snprintf
 #endif
 
 const int kNumIOVSOptions = 11;

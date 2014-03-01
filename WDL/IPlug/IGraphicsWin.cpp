@@ -1036,7 +1036,7 @@ void IGraphicsWin::AppSupportPath(WDL_String* pPath)
 #endif
 }
 
-void IGraphicsWin::PromptForFile(WDL_String* pFilename, EFileAction action, WDL_String* pDir, char* extensions)
+void IGraphicsWin::PromptForFile(WDL_String* pFilename, EFileAction action, WDL_String* pDir, const char* extensions)
 {
   if (!WindowIsOpen())
   {
@@ -1161,7 +1161,7 @@ UINT_PTR CALLBACK CCHookProc(HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lParam
   return 0;
 }
 
-bool IGraphicsWin::PromptForColor(IColor* pColor, char* prompt)
+bool IGraphicsWin::PromptForColor(IColor* pColor, const char* prompt)
 {
   if (!mPlugWnd)
   {
