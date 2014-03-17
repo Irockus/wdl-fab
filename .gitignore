@@ -32,7 +32,7 @@
 */*/gui/*
 *xcuserdata*
 IPlugExamples/IPlugEEL/libEEL/build/
-/WDL/IPlug/doc/
+/WDL/IPlug/doc/html
 /WorkProjects/
 AAX_SDK/*
 ASIO_SDK/*
@@ -52,14 +52,9 @@ Projects/*
 PT9_SDK/*
 VST_SDK/*
 VST3_SDK/*
-
-
 *.makeDebug
-
 *.makeMinSizeRel
-
 *.makeRelWithDebInfo
-
 *.makeRelease
 *.vcxproj
 IPlugExamples/CMakeFiles/generate.stamp
