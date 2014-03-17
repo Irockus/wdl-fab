@@ -20,6 +20,9 @@ using namespace Vst;
 
 class IPlugVST3View;
 
+/**
+VST3 compliant plugin class.
+*/
 class IPlugVST3 : public IPlugBase
   , public IUnitInfo
   , public SingleComponentEffect
@@ -145,6 +148,9 @@ private:
 
 IPlugVST3* MakePlug();
 
+/**
+VST3 compliant plugin view class.
+*/
 class IPlugVST3View : public CPluginView
 {
 public:

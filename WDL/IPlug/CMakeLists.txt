@@ -1,3 +1,4 @@
+add_subdirectory(doc)
 
 SET(IPLUG_SRC
 	Hosts.cpp
@@ -57,5 +58,5 @@ SET (IPLUG_SRC
 )
 endif(WIN32)
 
-add_library(iplug ${IPLUG_SRC} ${IPLUG_HEADERS} )
+add_library(iplug ${IPLUG_SRC} ${IPLUG_HEADERS} ${IPLUG_DOC_HEADERS} )
 

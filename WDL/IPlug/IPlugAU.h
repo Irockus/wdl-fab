@@ -25,6 +25,10 @@ struct IPlugInstanceInfo
   WDL_String mOSXBundleID, mCocoaViewFactoryClassName;
 };
 
+/**
+    Audio Unit compliant plugin class.
+*/
+
 class IPlugAU : public IPlugBase
 {
 public:
@@ -55,7 +59,7 @@ public:
 
   void InformHostOfProgramChange();
 
-  int GetSamplePos();   // Samples since start of project.
+  int GetSamplePos();   //! Samples since start of project.
   double GetTempo();
   void GetTimeSig(int* pNum, int* pDenom);
   void GetTime(ITimeInfo* pTimeInfo);
@@ -90,16 +94,19 @@ private:
   double mRenderTimestamp, mTempo;
   HostCallbackInfo mHostCallbacks;
 
-// InScratchBuf is only needed if the upstream connection is a callback.
-// OutScratchBuf is only needed if the downstream connection fails to give us a buffer.
-  WDL_TypedBuf<AudioSampleType> mInScratchBuf, mOutScratchBuf;
+
+
+  WDL_TypedBuf<AudioSampleType> mInScratchBuf; //! InScratchBuf is only needed if the upstream connection is a callback.
+  WDL_TypedBuf<AudioSampleType> mOutScratchBuf; //! OutScratchBuf is only needed if the downstream connection fails to give us a buffer.
   WDL_PtrList<AURenderCallbackStruct> mRenderNotify;
   AUMIDIOutputCallbackStruct mMidiCallback;
 
-  // Every stereo pair of plugin input or output is a bus.
-  // Buses can have zero host channels if the host hasn't connected the bus at all,
-  // one host channel if the plugin supports mono and the host has supplied a mono stream,
-  // or two host channels if the host has supplied a stereo stream.
+  /** Bus Channels structure encapsulates the number of host, plug channels, plug channel start index and the connected state.
+     Every stereo pair of plugin input or output is a bus.<BR>
+     Buses can have zero host channels if the host hasn't connected the bus at all,
+     one host channel if the plugin supports mono and the host has supplied a mono stream,
+     or two host channels if the host has supplied a stereo stream.
+   */
   struct BusChannels
   {
     bool mConnected;
