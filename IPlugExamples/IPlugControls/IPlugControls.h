@@ -41,6 +41,7 @@ enum EParams
   kIKnobMultiControl_Horiz,
   kIKnobRotatingMaskControl,
   kICaptionControl,
+  kIFileSelectionControl,
   kNumParams,   // put any controls to be controlled from the plug but not
   kInvisibleSwitchIndicator   // the user after kNumParams so they get a param id
 };
@@ -135,7 +136,12 @@ enum ELayout
   //IURLControl
   kIUC_X = 824,
   kIUC_Y = 312,
-  kIUC_W = 48
+  kIUC_W = 48,
+
+  //IFileControl
+  kIFC_X = 824,
+  kIFC_Y = 432,
+  kIFC_W = 48
 
 };
 
