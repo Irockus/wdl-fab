@@ -75,7 +75,7 @@ void MyPlug::ProcessDoubleReplacing(double** inputs, double** outputs, int nFram
 
 */
 
-
+/// MIDI Message queue container class.
 class IMidiQueue
 {
 public:

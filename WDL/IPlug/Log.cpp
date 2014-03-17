@@ -9,6 +9,7 @@
 #ifdef OS_WIN
 #define LOGFILE "C:\\IPlugLog.txt" // TODO: what if no write permissions?
 
+/// Debug output txt msg for windows OutputDebugString wrapper function
 void DBGMSG(const char *format, ...)
 {
   char    buf[4096], *p = buf;
@@ -55,6 +56,7 @@ const int TXTLEN = 1024;
   strcat(str, "\r\n"); \
 }
 
+/// File information Logging class helper
 struct LogFile
 {
   FILE* mFP;

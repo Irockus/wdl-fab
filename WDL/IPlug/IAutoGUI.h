@@ -5,7 +5,7 @@
 #include <../wdlstring.h>
 
 #define SLIDER_HANDLE_WIDTH 5
-
+/// Automatic GUI Tab control
 struct AGTab
 {
   IRECT mRECT;
@@ -20,6 +20,7 @@ struct AGTab
 
 };
 
+/// Automatic GUI Tabs panel control
 class AGPanelTabs : public IControl
 {
 private:
@@ -112,6 +113,10 @@ public:
   }
 };
 
+/** 
+	Automatic  GUI horizontal slider control class.
+    Especially valuable for quick protoyping, it defines a lot of sliders cnnected to your params with minimum information.
+*/
 class AGHSliderControl: public IControl
 {
 public:
@@ -201,6 +206,10 @@ private:
   }
 };
 
+/** 
+	Automatic  knob slider control class.
+    Especially valuable for quick protoyping, it defines a lot of sliders cnnected to your params with minimum information.
+*/
 class AGKnobControl : public IKnobControl
 {
 public:
@@ -306,6 +315,7 @@ private:
   WDL_String mParamNameStr, mParamValueStr;
 };
 
+/// Automatic GUI Save Preset Button control
 class AGPresetSaveButtonControl : public IPanelControl
 {
 private:
@@ -346,6 +356,7 @@ public:
 #define HEIGHT 50
 #define GAP 2
 
+/// Generate a full knobs gui out of the plugin params. Great for quick prototyping.
 void GenerateKnobGUI(IGraphics* pGraphics,
                      IPlug* pPlug,
                      IText *pText,
@@ -427,6 +438,7 @@ void GenerateKnobGUI(IGraphics* pGraphics,
   }
 }
 
+/// Generate a full sliders gui out of the plugin params. Great for quick prototyping.
 void GenerateSliderGUI(IGraphics* pGraphics,
                        IPlug* pPlug,
                        IText *pText,

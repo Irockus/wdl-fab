@@ -1,6 +1,7 @@
 #ifndef _EDITOR_INTERFACE_H_
 #define _EDITOR_INTERFACE_H_
 
+/// RTAS Iplug base class editor ui
 class EditorInterface
 {
 public:

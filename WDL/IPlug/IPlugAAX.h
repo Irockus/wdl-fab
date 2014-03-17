@@ -35,6 +35,7 @@ private:
   IGraphics* mGraphics;
 };
 
+/// Protools AAX compliant plugin
 class IPlugAAX : public IPlugBase,
   public AAX_CIPlugParameters
 {

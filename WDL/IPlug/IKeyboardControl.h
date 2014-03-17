@@ -23,8 +23,9 @@ freely, subject to the following restrictions:
 2. Altered source versions must be plainly marked as such, and must not be
    misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
+*/
 
-
+/** MIDI Keyboard graphical control.
 IKeyboardControl is a (musical) keyboard for IPlug instruments. The keyboard
 starts and ends at C. Only depressed keys are drawn by this control, so the
 entire keyboard (with all its keys released) should already be visible (e.g.
@@ -41,7 +42,7 @@ are actually used, the coordinates for the "regular" keys are ignored.)
 
 Here is code snippet defining a 4-octave keyboard starting at MIDI note 48
 (C3):
-
+\code
 IBitmap regular = pGraphics->LoadIBitmap(REGULAR_KEYS_ID, REGULAR_KEYS_PNG, 6);
 IBitmap sharp   = pGraphics->LoadIBitmap(SHARP_KEY_ID,    SHARP_KEY_PNG);
 
@@ -52,11 +53,12 @@ int coords[12] = { 0, 13, 23, 39, 46, 69, 82, 92, 107, 115, 131, 138 };
 mKeyboard = new IKeyboardControl(this, x, y, 48, 4, &regular, &sharp, coords);
 
 pGraphics->AttachControl(mKeyboard);
+\endcode
 
 The plug-in should provide the following methods, so the keyboard control
 can pull status information from the plug-in, and send MIDI Note On/Off
 message to the plug-in:
-
+\code
 // Should return non-zero if one or more keys are playing.
 int MyPlug::GetNumKeys()
 {
@@ -70,6 +72,7 @@ bool MyPlug::GetKeyStatus(int key)
   IMutexLock lock(this);
   return mKeyStatus[key];
 }
+\endcode
 
 (Instead of int you can also use any other integer types for the
 GetNumKeys() and GetKeyStatus() methods, i.e. "char GetNumKeys()" or
@@ -82,11 +85,12 @@ You should include this header file after your plug-in class has already
 been declared, so it is propbably best to include it in your plug-in's main
 .cpp file, e.g.:
 
+\code
 #include "MyPlug.h"
 #include "WDL/IPlug/IKeyboardControl.h" // Include after MyPlug.h
+\endcode
 
 */
-
 class IKeyboardControl: public IControl
 {
 public:

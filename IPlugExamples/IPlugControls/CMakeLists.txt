@@ -1,57 +1,24 @@
 #
-# IPlugControls executable build
+# Example executable build
 #
 
+#Example plugin name
 set (PLUGNAME IPlugControls)
 
 # Source code to build
 set(IPC_SRCS
-   IPlugControls.cpp
+   ${PLUGNAME}.cpp
 )
-
-set(IPC_SA
-    app_wrapper/app_dlg_main.cpp
-	../../WDL/IPlug/IPlugStandalone.cpp
-)
-
-set(IPC_VST
-	../../WDL/IPlug/IPlugVST.cpp
-)
-
-set(IPC_VST3
-	../../WDL/IPlug/IPlugVST3.cpp
-)
-
 if(WIN32)
- set(IPC_SRCS ${IPC_SRCS} IPlugControls.rc)
- set (IPLUG_LIBS ${IPLUG_LIBS} asio)
-elseif(APPLE)
- 
- set(IPC_SRCS ${IPC_SRCS} ../../WDL/IPlug/IPlugCocoa.mm)
-
-
- find_library(AUDIO_UNIT AudioUnit)
- if (NOT AUDIO_UNIT)
-    message(FATAL_ERROR "AudioUnit not found")
- endif()
- 
- find_library(CARBON Carbon)
- find_library(COCOA Cocoa)
- find_library(CORE_FND CoreFoundation)
- find_library(CORE_SVCS CoreServices)
- find_library(CORE_MIDI CoreMidi)
- find_library(CORE_AUDIO CoreAudio)
- find_library(APPKIT AppKit)
-
-  set (OSX_FMWKS ${AUDIO_UNIT} ${COCOA} ${CARBON} ${CORE_FND} ${CORE_SVCS} ${CORE_MIDI} ${CORE_AUDIO} ${APPKIT} )
-
+ set(IPC_SRCS ${IPC_SRCS} ${PLUGNAME}.rc)
 endif(WIN32)
+
 
 # Source code headers
 set(IPC_HEADERS
    ${IPC_HEADERS}
    resource.h
-   IPlugControls.h
+   ${PLUGNAME}.h
    )
  
 set (PLUGNAMEVST  ${PLUGNAME}VST)
@@ -59,10 +26,6 @@ set (PLUGNAMEVST3 ${PLUGNAME}VST3)
 set (PLUGNAMEAU   ${PLUGNAME}AU)
 set (PLUGNAMEAAX  ${PLUGNAME}AAX)
 set (PLUGNAMERTAS  ${PLUGNAME}RTAS)
-
-#Linking against a custom library
-#target_link_libraries(${PLUGNAME} wdl lice)
-#set_target_properties(${PLUGNAME} PROPERTIES LINK_SEARCH_END_STATIC 1)
 
 #Build Executable 
 add_executable(${PLUGNAME} ${IPC_SRCS} ${IPC_SA} ${IPC_HEADERS} ) 

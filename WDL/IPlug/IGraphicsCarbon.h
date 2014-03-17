@@ -15,7 +15,7 @@
 #ifndef USE_MLTE
 #define USE_MLTE 0
 #endif
-
+///  IGraphics implementation for Mac OS X Carbon
 class IGraphicsCarbon
 {
 public:

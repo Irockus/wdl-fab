@@ -52,31 +52,30 @@ typedef unsigned short UInt16;
 
 #define MAX_APP_INIPATH 261
 
+/// Application state data structure used by the AppWrapper singleton instance.
 struct AppState
 {
-  // on osx core audio 0 or jack 1
-  // on windows DS 0 or ASIO 1
-  UInt16 mAudioDriverType;
+  UInt16 mAudioDriverType;   ///< on osx core audio 0 or jack 1, on windows DS 0 or ASIO 1
 
   // strings
-  char mAudioInDev[100];
-  char mAudioOutDev[100];
-  char mAudioSR[100];
-  char mAudioIOVS[100];
-  char mAudioSigVS[100];
+  char mAudioInDev[100];  ///< Audio input dev name
+  char mAudioOutDev[100]; ///< Audio output dev name
+  char mAudioSR[100]; ///< Audio Sample rate string (i.e. "44100")
+  char mAudioIOVS[100]; ///< IO buffer size in samples
+  char mAudioSigVS[100]; ///< Sig buffer size
 
-  UInt16 mAudioInChanL;
-  UInt16 mAudioInChanR;
-  UInt16 mAudioOutChanL;
-  UInt16 mAudioOutChanR;
-  UInt16 mAudioInIsMono;
+  UInt16 mAudioInChanL;  ///< Left Midi in channel number
+  UInt16 mAudioInChanR;  ///< Right Midi in channel number
+  UInt16 mAudioOutChanL; ///< Left Midi out channel number
+  UInt16 mAudioOutChanR; ///< Right Midi out channel number
+  UInt16 mAudioInIsMono; ///< Mono audio in flag
 
   // strings containing the names of the midi devices
-  char mMidiInDev[100];
-  char mMidiOutDev[100];
+  char mMidiInDev[100];		///< Midi input dev name
+  char mMidiOutDev[100];	///< Midi output dev name
 
-  UInt16 mMidiInChan;
-  UInt16 mMidiOutChan;
+  UInt16 mMidiInChan; ///< Midi input channel
+  UInt16 mMidiOutChan; ///< Midi output channel
 
   AppState():
     mAudioDriverType(0), // DS / CoreAudio by default
@@ -99,7 +98,7 @@ struct AppState
 };
 
 /**
- * AppWrapper encapsulate all the wrapping the API needed to be called by
+ * Encapsulate all the wrapping the API needed to be called by
  * the WinMain entry point and also of the various windows and audio/midi procs
  */
 class AppWrapper

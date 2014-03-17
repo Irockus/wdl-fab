@@ -21,7 +21,7 @@ using namespace Vst;
 class IPlugVST3View;
 
 /**
-VST3 compliant plugin class.
+  Steinberg VST3 compliant plugin class.
 */
 class IPlugVST3 : public IPlugBase
   , public IUnitInfo
@@ -149,7 +149,7 @@ private:
 IPlugVST3* MakePlug();
 
 /**
-VST3 compliant plugin view class.
+  Steinberg VST3 compliant plugin view class.
 */
 class IPlugVST3View : public CPluginView
 {

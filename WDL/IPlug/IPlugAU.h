@@ -26,7 +26,7 @@ struct IPlugInstanceInfo
 };
 
 /**
-    Audio Unit compliant plugin class.
+    Apple Audio Unit compliant plugin class.
 */
 
 class IPlugAU : public IPlugBase
@@ -59,7 +59,7 @@ public:
 
   void InformHostOfProgramChange();
 
-  int GetSamplePos();   //! Samples since start of project.
+  int GetSamplePos();///< Samples since start of project.
   double GetTempo();
   void GetTimeSig(int* pNum, int* pDenom);
   void GetTime(ITimeInfo* pTimeInfo);
@@ -96,8 +96,8 @@ private:
 
 
 
-  WDL_TypedBuf<AudioSampleType> mInScratchBuf; //! InScratchBuf is only needed if the upstream connection is a callback.
-  WDL_TypedBuf<AudioSampleType> mOutScratchBuf; //! OutScratchBuf is only needed if the downstream connection fails to give us a buffer.
+  WDL_TypedBuf<AudioSampleType> mInScratchBuf;///< InScratchBuf is only needed if the upstream connection is a callback.
+  WDL_TypedBuf<AudioSampleType> mOutScratchBuf;///< OutScratchBuf is only needed if the downstream connection fails to give us a buffer.
   WDL_PtrList<AURenderCallbackStruct> mRenderNotify;
   AUMIDIOutputCallbackStruct mMidiCallback;
 

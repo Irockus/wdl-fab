@@ -1,6 +1,7 @@
 #ifndef _PROCESS_INTERFACE_H_
 #define _PROCESS_INTERFACE_H_
 
+/// RTAS ProcessInterface base class
 class ProcessInterface
 {
 public:

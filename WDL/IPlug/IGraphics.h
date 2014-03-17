@@ -51,11 +51,11 @@ class IParam;
 class IGraphics
 {
 public:
-  void PrepDraw();    		//! Called once, when the IGraphics class is attached to the IPlug class.
+  void PrepDraw();///< Called once, when the IGraphics class is attached to the IPlug class.
 
-  bool IsDirty(IRECT* pR);  //! Ask the plug-in what needs to be redrawn.
-  bool Draw(IRECT* pR);     //! The system announces what needs to be redrawn.  Ordering and drawing logic.
-  virtual bool DrawScreen(IRECT* pR) = 0;  //! Tells the OS class to put the final bitmap on the screen.
+  bool IsDirty(IRECT* pR);///< Ask the plug-in what needs to be redrawn.
+  bool Draw(IRECT* pR);///< The system announces what needs to be redrawn.  Ordering and drawing logic.
+  virtual bool DrawScreen(IRECT* pR) = 0;///< Tells the OS class to put the final bitmap on the screen.
 
   /** @name Drawing primitives
 		API to draw Bitmaps, point, lines, triangles, rectangles, arcs, circles and texts
@@ -181,8 +181,8 @@ public:
   void GrayOutControl(int paramIdx, bool gray);
 
  
-  void ClampControl(int paramIdx, double lo, double hi, bool normalized); //! Normalized means the value is in [0, 1].
-  void SetParameterFromPlug(int paramIdx, double value, bool normalized); //! Normalized means the value is in [0, 1].
+  void ClampControl(int paramIdx, double lo, double hi, bool normalized);///< Normalized means the value is in [0, 1].
+  void SetParameterFromPlug(int paramIdx, double value, bool normalized);///< Normalized means the value is in [0, 1].
   /// For setting a control that does not have a parameter associated with it.
   void SetControlFromPlug(int controlIdx, double normalizedValue);
 
@@ -229,7 +229,7 @@ public:
 
   /// For efficiency, mouseovers/mouseouts are ignored unless you explicity say you can handle them.
   void HandleMouseOver(bool canHandle) { mHandleMouseOver = canHandle; }
-  bool OnMouseOver(int x, int y, IMouseMod* pMod);   //! Returns true if mouseovers are handled.
+  bool OnMouseOver(int x, int y, IMouseMod* pMod);///< Returns true if mouseovers are handled.
   void OnMouseOut();
   /// Some controls may not need to capture the mouse for dragging, they can call ReleaseMouseCapture when the mouse leaves.
   void ReleaseMouseCapture();
@@ -263,11 +263,12 @@ public:
 
   WDL_Mutex mMutex;
 
+  /// WDL_Mutex block scope wrapper class.
   struct IMutexLock
   {
     WDL_Mutex* mpMutex;
-    IMutexLock(IGraphics* pGraphics) : mpMutex(&(pGraphics->mMutex)) { mpMutex->Enter(); }
-    ~IMutexLock() { mpMutex->Leave(); }
+    IMutexLock(IGraphics* pGraphics) : mpMutex(&(pGraphics->mMutex)) { mpMutex->Enter(); } ///< Enter the wrapped wdl mutex
+    ~IMutexLock() { mpMutex->Leave(); } /// Release the wrapped wdl mutex
   };
 
 protected:

@@ -12,6 +12,7 @@ struct IPlugInstanceInfo
   // not used
 };
 
+/// Protools RTAS compliant plugin
 class IPlugRTAS : public IPlugBase
 {
 public:
@@ -53,7 +54,7 @@ public:
 
   void SetSideChainConnected(bool connected);
 
-  void SetParameter(int idx); // Locks mutex first
+  void SetParameter(int idx); //! Locks mutex first
 
   void DirtyPTCompareState();
 

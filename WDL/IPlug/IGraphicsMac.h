@@ -55,7 +55,7 @@ class IGraphicsCarbon;
 #define IGRAPHICS_MENU_RCVR CONCAT(IGraphicsMenuRcvr_)
 #define CUSTOM_COCOA_WINDOW CONCAT(CustomCocoaWindow_)
 #define COCOA_FORMATTER CONCAT(CocoaFormatter_)
-
+/// Concrete IGraphics implementation for Mac OS X
 class IGraphicsMac : public IGraphics
 {
 public:
@@ -138,6 +138,7 @@ inline CFStringRef MakeCFString(const char* cStr)
   return CFStringCreateWithCString(0, cStr, kCFStringEncodingUTF8);
 }
 
+/// UTF8 char* to CFStringRef string converter structure
 struct CFStrLocal
 {
   CFStringRef mCFStr;
@@ -151,7 +152,7 @@ struct CFStrLocal
   }
 };
 
-struct CStrLocal
+/// CFStringRef to UTF8 char* string converter structure
 {
   char* mCStr;
   CStrLocal(CFStringRef cfStr)

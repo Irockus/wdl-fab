@@ -34,6 +34,7 @@ struct IPlugInstanceInfo
 };
 #endif
 
+/// Standalone version class of your audio plugin
 class IPlugStandalone : public IPlugBase
 {
 public:

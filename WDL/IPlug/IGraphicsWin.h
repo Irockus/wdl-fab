@@ -7,6 +7,7 @@
 #include <windowsx.h>
 #include <winuser.h>
 
+/// Concrete IGraphics implementation for Windows
 class IGraphicsWin : public IGraphics
 {
 public:

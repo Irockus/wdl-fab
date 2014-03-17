@@ -46,12 +46,13 @@ const char* AUSelectStr(int select);
 const char* AUPropertyStr(int propID);
 const char* AUScopeStr(int scope);
 
-struct Timer
+/// Simple elapsed seconds polling class.
+struct Timer 
 {
   int mT;
   Timer();
 
-  // Returns true every sec seconds.
+  /// Returns true every sec seconds.
   bool Every(double sec);
 };
 

@@ -14,16 +14,17 @@
 
 class IPopupMenu;
 
+/// Popup Menu Item class. Used by PopupMenu class
 class IPopupMenuItem
 {
 public:
-  enum Flags
+  enum Flags ///< item flags
   {
     kNoFlags  = 0,
-    kDisabled = 1 << 0,     // item is gray and not selectable
-    kTitle    = 1 << 1,     // item indicates a title and is not selectable
-    kChecked  = 1 << 2,     // item has a checkmark
-    kSeparator  = 1 << 3    // item is a separator
+    kDisabled = 1 << 0,     ///< item is gray and not selectable
+    kTitle    = 1 << 1,     ///< item indicates a title and is not selectable
+    kChecked  = 1 << 2,     ///< item has a checkmark
+    kSeparator  = 1 << 3    ///< item is a separator
   };
 
   IPopupMenuItem(const char* text, int flags = kNoFlags)
@@ -63,6 +64,7 @@ protected:
   int mFlags;
 };
 
+/// Popup Menu Class. Allows to add popup menu items and then retrieve the user selection(s)
 class IPopupMenu
 {
 public:
@@ -101,9 +103,9 @@ public:
   bool IsItemChecked(int index);
 
 private:
-  int mPrefix; // 0 = no prefix, 1 = numbers no leading zeros, 2 = 1 lz, 3 = 2lz
+  int mPrefix; ///< 0 = no prefix, 1 = numbers no leading zeros, 2 = 1 lz, 3 = 2lz
   int mChosenItemIdx;
-  bool mCanMultiCheck; // multicheck = 0 doesn't actually prohibit multichecking, you should do that in your code, by calling CheckItemAlone instead of CheckItem
+  bool mCanMultiCheck; ///< multicheck = 0 doesn't actually prohibit multichecking, you should do that in your code, by calling CheckItemAlone instead of CheckItem
   WDL_PtrList<IPopupMenuItem> mMenuItems;
 };
 

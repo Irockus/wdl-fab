@@ -10,10 +10,11 @@
 #define CONTROL_BOUNDS_COLOR COLOR_GREEN
 #endif
 
+/// Cached bitmaps container class. Associates bitmaps with id and can store and retrieve them in an efficient way.
 class BitmapStorage
 {
 public:
-
+  /// (id, lice_bitmap) pair 
   struct BitmapKey
   {
     int id;
@@ -71,6 +72,7 @@ public:
 
 static BitmapStorage s_bitmapCache;
 
+/// Cached font data container
 class FontStorage
 {
 public:

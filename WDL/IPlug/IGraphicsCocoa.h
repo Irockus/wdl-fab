@@ -27,7 +27,7 @@ inline NSColor* ToNSColor(IColor* pColor)
 
 NSString* ToNSString(const char* cStr);
 
-// based on code by Scott Gruby http://blog.gruby.com/2008/03/30/filtering-nstextfield-take-2/
+/// Cocoa text filtering formatter. Based on code by Scott Gruby http://blog.gruby.com/2008/03/30/filtering-nstextfield-take-2/
 @interface COCOA_FORMATTER : NSFormatter
 {
   NSCharacterSet *filterCharacterSet;
@@ -58,6 +58,7 @@ NSString* ToNSString(const char* cStr);
 - (NSMenuItem*) MenuItem;
 @end
 
+/// IGraphics OSX interface for cocoa
 @interface IGRAPHICS_COCOA : NSView
 {
   NSTimer* mTimer;

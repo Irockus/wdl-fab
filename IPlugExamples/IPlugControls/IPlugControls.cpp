@@ -139,7 +139,7 @@ IPlugControls::IPlugControls(IPlugInstanceInfo instanceInfo)
 	  const char * baseDir = "~/Desktop";
 #endif
   pGraphics->AttachControl(new IFileSelectorControl(this, IRECT(kIFC_X, kIFC_Y, (kIFC_X + kIFC_W), (kIFC_Y + kIFC_W)), kIFileSelectionControl, &bitmap, 
-	  EFileAction::kFileOpen, baseDir) );
+	  kFileOpen, baseDir) );
 
   // Attach the graphics engine to the plugin.
 

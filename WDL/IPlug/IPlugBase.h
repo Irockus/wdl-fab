@@ -115,7 +115,7 @@ public:
   /// Implement this to do something specific when IPlug is aware of the host. May get called multiple times
   virtual void OnHostIdentified() { return; };
 
-  virtual void PopupHostContextMenuForParam(int param, int x, int y) { return; }; //! VST3 only, call it from the GUI
+  virtual void PopupHostContextMenuForParam(int param, int x, int y) { return; };///< VST3 only, call it from the GUI
 
   // ----------------------------------------
   // Your plugin class, or a control class, can call these functions.
@@ -126,9 +126,9 @@ public:
   /// Get the singleton IGraphics instance, main graphics container generally used to access or populate its graphical controls.
   IGraphics* GetGUI() { return mGraphics; }
 
-  const char* GetEffectName() { return mEffectName; } //! Return your effect name, as it will appear in the host popup menus
-  int GetEffectVersion(bool decimal);   //! when decimal is true format is VVVVRRMM, otherwise it is 0xVVVVRRMM.
-  void GetEffectVersionStr(char* str, size_t maxLen);//! Gets the effect version and returns it in the specified output str. \see GetEffectVersion
+  const char* GetEffectName() { return mEffectName; } ///< Return your effect name, as it will appear in the host popup menus
+  int GetEffectVersion(bool decimal);///< when decimal is true format is VVVVRRMM, otherwise it is 0xVVVVRRMM.
+  void GetEffectVersionStr(char* str, size_t maxLen);//< Gets the effect version and returns it in the specified output str. \see GetEffectVersion
   /// Return your manufacturer name
   const char* GetMfrName() { return mMfrName; }
   /// Return your plug-in or standalone product name
@@ -214,13 +214,13 @@ protected:
   };
 
   WDL_PtrList<ChannelIO> mChannelIO;
-  bool LegalIO(int nIn, int nOut);    //! -1 for either means check the other value only.
+  bool LegalIO(int nIn, int nOut);///< -1 for either means check the other value only.
   void LimitToStereoIO();
 
   void InitChunkWithIPlugVer(ByteChunk* pChunk);
   int GetIPlugVerFromChunk(ByteChunk* pChunk, int* pPos);
 
-  void SetHost(const char* host, int version);   //! Version = 0xVVVVRRMM.
+  void SetHost(const char* host, int version);///< Version = 0xVVVVRRMM.
   virtual void HostSpecificInit() { return; };
 #ifndef OS_IOS
   virtual void AttachGraphics(IGraphics* pGraphics);
@@ -258,7 +258,7 @@ protected:
   bool DoesStateChunks() { return mStateChunks; }
   /// Will append if the chunk is already started
   bool SerializeParams(ByteChunk* pChunk);
-  int UnserializeParams(ByteChunk* pChunk, int startPos); //! Returns the new chunk position (endPos)
+  int UnserializeParams(ByteChunk* pChunk, int startPos);///< Returns the new chunk position (endPos)
   /// @}
 
 #ifndef OS_IOS
@@ -268,7 +268,7 @@ protected:
   // ----------------------------------------
   // Internal IPlug stuff (but API classes need to get at it).
 
-  void OnParamReset();  //! Call OnParamChange(each param) + Reset().
+  void OnParamReset();///< Call OnParamChange(each param) + Reset().
 
   void PruneUninitializedPresets();
 
@@ -294,21 +294,21 @@ protected:
   void ZeroScratchBuffers();
 
 public:
-  void ModifyCurrentPreset(const char* name = 0);     //! Sets the currently active preset to whatever current params are.
+  void ModifyCurrentPreset(const char* name = 0);///< Sets the currently active preset to whatever current params are.
   int NPresets() { return mPresets.GetSize(); }
   int GetCurrentPresetIdx() { return mCurrentPresetIdx; }
   bool RestorePreset(int idx);
   bool RestorePreset(const char* name);
   const char* GetPresetName(int idx);
 
-  virtual void DirtyPTCompareState() {}; //! needed in chunks based plug-ins to tell PT a non-indexed param changed and to turn on the compare light
+  virtual void DirtyPTCompareState() {};///< needed in chunks based plug-ins to tell PT a non-indexed param changed and to turn on the compare light
 
   /// Dump the current state as source code for a call to MakePresetFromNamedParams / MakePresetFromBlob
   void DumpPresetSrcCode(const char* filename, const char* paramEnumNames[]);
   void DumpPresetBlob(const char* filename);
 
-  virtual void PresetsChangedByHost() {} //! Notifies if host changed presets, does nothing by default
-  void DirtyParameters(); //! hack to tell the host to dirty file state, when a preset is recalled
+  virtual void PresetsChangedByHost() {} ///< Notifies if host changed presets, does nothing by default
+  void DirtyParameters();///< hack to tell the host to dirty file state, when a preset is recalled
   
 #ifndef OS_IOS
   /** @name Program and Bank API
@@ -333,8 +333,8 @@ public:
   struct IMutexLock
   {
     WDL_Mutex* mpMutex;
-    IMutexLock(IPlugBase* pPlug) : mpMutex(&(pPlug->mMutex)) { mpMutex->Enter(); } //! Constructor Enters the mutex
-    ~IMutexLock() { if (mpMutex) { mpMutex->Leave(); } } //! Destructor Releases the mutex
+    IMutexLock(IPlugBase* pPlug) : mpMutex(&(pPlug->mMutex)) { mpMutex->Enter(); } ///< Constructor Enters the mutex
+    ~IMutexLock() { if (mpMutex) { mpMutex->Leave(); } } ///< Destructor Releases the mutex
     void Destroy() { mpMutex->Leave(); mpMutex = 0; }
   };
 

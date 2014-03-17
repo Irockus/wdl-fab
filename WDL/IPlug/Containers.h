@@ -69,6 +69,8 @@ template <class T> inline void SWAP(T& a, T& b)
 }
 
 typedef unsigned char BYTE;
+
+/// Generic Byte Chunk container data structure
 class ByteChunk
 {
 public:

@@ -44,7 +44,7 @@ public:
    */
   bool MouseDblAsSingleClick() { return mDblAsSingleClick; }
 
-  virtual bool Draw(IGraphics* pGraphics) = 0; //! All controls must define how they draw by overriding this pure method
+  virtual bool Draw(IGraphics* pGraphics) = 0;///< All controls must define how they draw by overriding this pure method
 
   /// Ask the IGraphics object to open an edit box so the user can enter a value for this control.
   void PromptUserInput();
@@ -62,10 +62,10 @@ public:
   IText* GetText() { return &mText; }
   int GetTextEntryLength() { return mTextEntryLength; }
   void SetText(IText* txt) { mText = *txt; }
-  IRECT* GetRECT() { return &mRECT; }       //! The draw area for this control.
-  IRECT* GetTargetRECT() { return &mTargetRECT; } //! The mouse target area (default = draw area).
+  IRECT* GetRECT() { return &mRECT; } ///< The draw area for this control.
+  IRECT* GetTargetRECT() { return &mTargetRECT; } ///< The mouse target area (default = draw area).
   void SetTargetArea(IRECT pR) { mTargetRECT = pR; }
-  virtual void TextFromTextEntry( const char* txt ) { return; } //! does nothing by default
+  virtual void TextFromTextEntry( const char* txt ) { return; } ///< does nothing by default
 
   virtual void Hide(bool hide);
   bool IsHidden() const { return mHide; }
@@ -87,7 +87,7 @@ public:
   virtual void SetClean();
   virtual bool IsDirty() { return mDirty; }
   void Clamp(double lo, double hi) { mClampLo = lo; mClampHi = hi; }
-  void DisablePrompt(bool disable) { mDisablePrompt = disable; }  //! Disables the right-click manual value entry.
+  void DisablePrompt(bool disable) { mDisablePrompt = disable; } ///< Disables the right-click manual value entry.
 
   /**
 	Sometimes a control changes its state as part of its Draw method.
@@ -119,7 +119,7 @@ public:
   int AuxParamIdx(int paramIdx);
   /// Add an auxiliary parameter linked to paramIdx
   void AddAuxParam(int paramIdx);
-  virtual void SetAuxParamValueFromPlug(int auxParamIdx, double value); //! Can override if necessary
+  virtual void SetAuxParamValueFromPlug(int auxParamIdx, double value);///< Can override if necessary
   void SetAllAuxParamsFromGUI();
   int NAuxParams() { return mAuxParams.GetSize(); }
 
@@ -286,7 +286,7 @@ protected:
   int mLen, mHandleHeadroom;
   IBitmap mBitmap;
   EDirection mDirection;
-  bool mOnlyHandle; //! if true only by clicking on the handle do you click the slider
+  bool mOnlyHandle;///< if true only by clicking on the handle do you click the slider
 };
 
 const double DEFAULT_GEARING = 4.0;
@@ -397,7 +397,7 @@ public:
   bool Draw(IGraphics* pGraphics);
 
 protected:
-  IRECT mTargetArea;  //! Keep this around to swap in & out.
+  IRECT mTargetArea;///< Keep this around to swap in & out.
 };
 
 /// Output text to the screen.
@@ -473,7 +473,7 @@ public:
   enum EFileSelectorState { kFSNone, kFSSelecting, kFSDone };
 
   IFileSelectorControl(IPlugBase* pPlug, IRECT pR, int paramIdx, IBitmap* pBitmap,
-                       EFileAction action, const char* dir = "", const char* extensions = "")     //! extensions = "txt wav" for example.
+                       EFileAction action, const char* dir = "", const char* extensions = "")///< extensions = "txt wav" for example.
     : IControl(pPlug, pR, paramIdx), mBitmap(*pBitmap),
       mFileAction(action), mDir(dir), mExtensions(extensions), mState(kFSNone) {}
   ~IFileSelectorControl() {}
