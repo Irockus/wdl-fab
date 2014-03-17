@@ -8,17 +8,17 @@ TBC
 <table summary="navigation bar" width="100%" border="0">
 <tr>
   <td width="45%" align="LEFT">
-    <a class="el" href="preface.html">
+    <a class="el" href="license.html">
     [Prev]
-    Preface
+    Software License
     </a>
   </td>
   <td width="10%" align="CENTER">
     <a class="el" href="index.html">[Index]</a>
   </td>
   <td width="45%" align="RIGHT">
-    <a class="el" href="basics.html">
-    FLTK Basics
+    <a class="el" href="issues.html">
+    Known Issues
     [Next]
     </a>
   </td>

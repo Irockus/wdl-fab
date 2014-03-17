@@ -477,17 +477,17 @@ DAMAGES.
 <table summary="navigation bar" width="100%" border="0">
 <tr>
   <td width="45%" align="LEFT">
-    <a class="el" href="development.html">
+    <a class="el" href="advanced.html">
     [Prev]
-    Developer Information
+    Advanced
     </a>
   </td>
   <td width="10%" align="CENTER">
     <a class="el" href="index.html">[Index]</a>
   </td>
   <td width="45%" align="RIGHT">
-    <a class="el" href="examples.html">
-    Example Source Code
+    <a class="el" href="enumerations.html">
+    Enumerations
     [Next]
     </a>
   </td>

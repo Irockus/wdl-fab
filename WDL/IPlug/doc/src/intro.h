@@ -88,9 +88,9 @@ http://forum.cockos.com/showthread.php?t=91811 [wdl-ol main discussion thread]<B
 <table summary="navigation bar" width="100%" border="0">
 <tr>
   <td width="45%" align="LEFT">
-    <a class="el" href="preface.html">
+    <a class="el" href="index.html">
     [Prev]
-    Preface
+    Main Page
     </a>
   </td>
   <td width="10%" align="CENTER">
@@ -98,7 +98,7 @@ http://forum.cockos.com/showthread.php?t=91811 [wdl-ol main discussion thread]<B
   </td>
   <td width="45%" align="RIGHT">
     <a class="el" href="basics.html">
-    FLTK Basics
+    Basics
     [Next]
     </a>
   </td>

@@ -32,17 +32,17 @@ Build and run the examples located in IPlugExamples folder to see how to start a
 <table summary="navigation bar" width="100%" border="0">
 <tr>
   <td width="45%" align="LEFT">
-    <a class="el" href="preface.html">
+    <a class="el" href="intro.html">
     [Prev]
-    Preface
+    Introduction
     </a>
   </td>
   <td width="10%" align="CENTER">
     <a class="el" href="index.html">[Index]</a>
   </td>
   <td width="45%" align="RIGHT">
-    <a class="el" href="basics.html">
-    FLTK Basics
+    <a class="el" href="advanced.html">
+    Advanced
     [Next]
     </a>
   </td>
