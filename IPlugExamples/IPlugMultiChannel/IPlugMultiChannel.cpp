@@ -1,7 +1,7 @@
+#include "resource.h"
 #include "IPlugMultiChannel.h"
 #include "IPlug_include_in_plug_src.h"
 #include "IControl.h"
-#include "resource.h"
 #include "IAutoGUI.h"
 
 const int kNumPrograms = 1;

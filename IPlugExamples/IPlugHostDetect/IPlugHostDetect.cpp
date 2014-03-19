@@ -1,7 +1,7 @@
+#include "resource.h"
 #include "IPlugHostDetect.h"
 #include "IPlug_include_in_plug_src.h"
 #include "IControl.h"
-#include "resource.h"
 #include "IBitmapMonoText.h"
 
 const int kNumPrograms = 1;
@@ -63,6 +63,6 @@ void IPlugHostDetect::OnHostIdentified()
   char hostText[128];
   GetHostNameStr(GetHost(), hostText);
   mHostNameControl->SetTextFromPlug(hostText);
-  GetHostVersionStr(hostText);
+  GetHostVersionStr(hostText, sizeof(hostText));
   mHostVersionControl->SetTextFromPlug(hostText);
 }

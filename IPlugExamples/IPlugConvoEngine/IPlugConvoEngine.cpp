@@ -30,6 +30,7 @@
 // WDL-OL Version
 
 #include "IPlugConvoEngine.h"
+#include "resource.h"
 #include "IPlug_include_in_plug_src.h"
 #include "IAutoGUI.h"
 

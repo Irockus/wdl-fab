@@ -1,6 +1,5 @@
 #ifndef __IPLUGEEL__
 #define __IPLUGEEL__
-
 #include "IPlug_include_in_plug_hdr.h"
 #include "../../WDL/eel2/ns-eel.h"
 #include "IControl.h"

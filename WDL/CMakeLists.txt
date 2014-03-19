@@ -1,6 +1,8 @@
 add_subdirectory(zlib)
 add_subdirectory(libpng)
 add_subdirectory(jnetlib)
+add_subdirectory(eel2)
+add_subdirectory(plush2)
 add_subdirectory(rtaudiomidi)
 add_subdirectory(lice)
 add_subdirectory(IPlug)

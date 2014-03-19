@@ -1,7 +1,7 @@
+#include "resource.h"
 #include "IPlugPlush.h"
 #include "IPlug_include_in_plug_src.h"
 #include "IControl.h"
-#include "resource.h"
 #include "I3DControl.h"
 
 const int kNumPrograms = 1;

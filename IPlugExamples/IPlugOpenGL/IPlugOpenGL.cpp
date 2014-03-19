@@ -1,7 +1,7 @@
+#include "resource.h"
 #include "IPlugOpenGL.h"
 #include "IPlug_include_in_plug_src.h"
 #include "IControl.h"
-#include "resource.h"
 
 const int kNumPrograms = 1;
 

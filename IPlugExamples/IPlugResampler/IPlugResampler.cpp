@@ -1,9 +1,8 @@
+#include "resource.h"
 #include "IPlugResampler.h"
 #include "IPlug_include_in_plug_src.h"
 #include "IControl.h"
 #include "IAutoGUI.h"
-
-#include "resource.h"
 
 #include "../../WDL/resample.cpp"
 

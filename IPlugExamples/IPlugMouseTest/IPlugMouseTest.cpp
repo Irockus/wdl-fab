@@ -1,8 +1,8 @@
+#include "resource.h"
 #include "IPlugMouseTest.h"
 #include "IPlug_include_in_plug_src.h"
 #include "IControl.h"
 #include "IPlugMouseTestControls.h"
-#include "resource.h"
 
 const int kNumPrograms = 1;
 

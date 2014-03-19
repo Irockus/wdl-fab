@@ -66,7 +66,7 @@ instrument determined by PLUG _IS _INST
 // on MSVC, you must define SA_API in the resource editor preprocessor macros as well as the c++ ones
 #ifdef SA_API
 #ifndef OS_IOS
-#include "app_wrapper/app_resource.h"
+#include "app_resource.h"
 #endif
 #endif
 
