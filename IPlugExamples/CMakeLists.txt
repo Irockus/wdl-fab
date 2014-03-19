@@ -15,9 +15,6 @@ set(IPC_VST3
 if(WIN32)
  set (IPLUG_LIBS ${IPLUG_LIBS} asio)
 elseif(APPLE)
- 
- set(IPC_SRCS ${IPC_SRCS} ../../WDL/IPlug/IPlugCocoa.mm)
-
 
  find_library(AUDIO_UNIT AudioUnit)
  if (NOT AUDIO_UNIT)
@@ -38,15 +35,19 @@ endif(WIN32)
 
 MACRO(create_example name)
 	set (PLUGNAME ${ARGV0})
-
+	set (PN_SRC ${PLUGNAME}_SRC )
+	set (PN_HDR ${PLUGNAME}_HDR )
+	
 	# Source code to build
-	set(IPC_SRCS ${PLUGNAME}.cpp )
+	set(${PN_SRC} ${${PN_SRC}}   ${PLUGNAME}.cpp )
 	if(WIN32)
-	 set(IPC_SRCS ${IPC_SRCS} ${PLUGNAME}.rc)
+	  set(${PN_SRC} ${${PN_SRC}} ${PLUGNAME}.rc)
+	else(WIN32)
+	  set(${PN_SRC} ${${PN_SRC}}  ../../WDL/IPlug/IPlugCocoa.mm)
 	endif(WIN32)
 
 	# Source code headers
-	set(IPC_HEADERS ${IPC_HEADERS} resource.h ${PLUGNAME}.h  )
+	set(${PN_HDR} ${${PN_HDR}} resource.h ${PLUGNAME}.h  )
 	 
 	set (PLUGNAMEVST  ${PLUGNAME}VST)
 #	set (PLUGNAMEVST3 ${PLUGNAME}VST3)
@@ -55,18 +56,18 @@ MACRO(create_example name)
 #	set (PLUGNAMERTAS  ${PLUGNAME}RTAS)
 
 	#Build Executable 
-	add_executable(${PLUGNAME} ${IPC_SRCS} ${IPC_SA} ${IPC_HEADERS} ) 
+	add_executable(${PLUGNAME} ${${PN_SRC}} ${${PN_HDR}} ${IPC_SA}  ) 
 	target_link_libraries(${PLUGNAME} wdl lice iplug jnet eel plush rtam png zlib ${IPLUG_LIBS}  ${OSX_FMWKS} )
 	set_target_properties(${PLUGNAME}     PROPERTIES COMPILE_DEFINITIONS "SA_API=1")
 	
 	if( DEFINED PLUGNAMEVST )
-		add_library(${PLUGNAMEVST} SHARED ${IPC_SRCS} ${IPC_VST} ${IPC_HEADERS} )
+		add_library(${PLUGNAMEVST} SHARED ${${PN_SRC}} ${${PN_HDR}} ${IPC_VST} )
 		target_link_libraries(${PLUGNAMEVST} wdl lice iplug jnet eel plush rtam png zlib ${IPLUG_LIBS}  ${OSX_FMWKS} )
 		set_target_properties(${PLUGNAMEVST}  PROPERTIES COMPILE_DEFINITIONS "VST_API=1")
 	endif()
 
 	if( DEFINED PLUGNAMEVST3 )
-		add_library(${PLUGNAMEVST3} SHARED ${IPC_SRCS} ${IPC_VST3} ${IPC_HEADERS} )
+		add_library(${PLUGNAMEVST3} SHARED ${${PN_SRC}} ${${PN_HDR}} ${IPC_VST3} )
 		target_link_libraries(${PLUGNAMEVST3} wdl lice iplug vst3 jnet eel plush rtam png zlib ${IPLUG_LIBS}  ${OSX_FMWKS} )
 		set_target_properties(${PLUGNAMEVST3} PROPERTIES COMPILE_DEFINITIONS "VST3_API=1")
 	endif()
@@ -76,7 +77,7 @@ MACRO(create_example name)
 	   set_target_properties(${PLUGNAME} PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
 	elseif(APPLE)
 		if( DEFINED PLUGNAMEAU )
-			add_library(${PLUGNAMEAU} SHARED ${IPC_SRCS} ${IPC_VST} ${IPC_HEADERS} )
+			add_library(${PLUGNAMEAU} SHARED ${PN_SRC} ${PN_HDR} ${IPC_AU} )
 			target_link_libraries(${PLUGNAMEAU} wdl lice iplug jnet eel plush rtam png zlib ${IPLUG_LIBS} ${OSX_FMWKS} )
 			set_target_properties(${PLUGNAMEAU}  PROPERTIES COMPILE_DEFINITIONS "AU_API=1")
 		endif()
