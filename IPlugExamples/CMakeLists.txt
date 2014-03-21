@@ -1,16 +1,9 @@
-#TODO implement cmake portable builds for all examples
-set(IPC_SA
-    app_wrapper/app_dlg_main.cpp
-	../../WDL/IPlug/IPlugStandalone.cpp
-)
-
-set(IPC_VST
-	../../WDL/IPlug/IPlugVST.cpp
-)
-
-set(IPC_VST3
-	../../WDL/IPlug/IPlugVST3.cpp
-)
+set(IPC_SA   app_wrapper/app_dlg_main.cpp ../../WDL/IPlug/IPlugStandalone.cpp)
+set(IPC_AU   ../../WDL/IPlug/IPlugAU.cpp)
+set(IPC_VST	 ../../WDL/IPlug/IPlugVST.cpp)
+set(IPC_VST3 ../../WDL/IPlug/IPlugVST3.cpp)
+set(IPC_RTAS ../../WDL/IPlug/IPlugRTAS.cpp)
+set(IPC_AAX  ../../WDL/IPlug/IPlugAAX.cpp)
 
 if(WIN32)
  set (IPLUG_LIBS ${IPLUG_LIBS} asio)
@@ -72,20 +65,33 @@ MACRO(create_example name)
 		set_target_properties(${PLUGNAMEVST3} PROPERTIES COMPILE_DEFINITIONS "VST3_API=1")
 	endif()
 	
+	if( DEFINED PLUGNAMERTAS )
+		add_library(${PLUGNAMERTAS} SHARED ${${PN_SRC}} ${${PN_HDR}} ${IPC_RTAS} )
+		target_link_libraries(${PLUGNAMERTAS} wdl lice iplug jnet eel plush rtam png zlib ${IPLUG_LIBS}  ${OSX_FMWKS} )
+		set_target_properties(${PLUGNAMERTAS} PROPERTIES COMPILE_DEFINITIONS "RTAS_API=1")
+	endif()
+	
+	if( DEFINED PLUGNAMEAAX )
+		add_library(${PLUGNAMEAAX} SHARED ${${PN_SRC}} ${${PN_HDR}} ${IPC_AAX} )
+		target_link_libraries(${PLUGNAMEAAX} wdl lice iplug jnet eel plush rtam png zlib ${IPLUG_LIBS}  ${OSX_FMWKS} )
+		set_target_properties(${PLUGNAMEAAX} PROPERTIES COMPILE_DEFINITIONS "AAX_API=1")
+	endif()
+	
 	if(WIN32)
 	   set_target_properties(${PLUGNAME} PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:WINDOWS")
 	   set_target_properties(${PLUGNAME} PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
 	elseif(APPLE)
 		if( DEFINED PLUGNAMEAU )
-			add_library(${PLUGNAMEAU} SHARED ${PN_SRC} ${PN_HDR} ${IPC_AU} )
+			add_library(${PLUGNAMEAU} SHARED ${${PN_SRC}} ${${PN_HDR}}  ${IPC_AU} )
 			target_link_libraries(${PLUGNAMEAU} wdl lice iplug jnet eel plush rtam png zlib ${IPLUG_LIBS} ${OSX_FMWKS} )
 			set_target_properties(${PLUGNAMEAU}  PROPERTIES COMPILE_DEFINITIONS "AU_API=1")
 		endif()
 	endif(WIN32)
 endMACRO()
 
-add_subdirectory(IPlugChunks)
 add_subdirectory(IPlugControls)
+if(WIN32)
+add_subdirectory(IPlugChunks)
 add_subdirectory(IPlugConvoEngine)
 add_subdirectory(IPlugDistortion)
 add_subdirectory(IPlugEEL)
@@ -102,4 +108,4 @@ add_subdirectory(IPlugPolySynth)
 add_subdirectory(IPlugResampler)
 add_subdirectory(IPlugSideChain)
 add_subdirectory(IPlugText)
-
+endif()

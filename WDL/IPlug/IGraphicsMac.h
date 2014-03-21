@@ -153,6 +153,7 @@ struct CFStrLocal
 };
 
 /// CFStringRef to UTF8 char* string converter structure
+struct CStrLocal
 {
   char* mCStr;
   CStrLocal(CFStringRef cfStr)

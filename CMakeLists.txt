@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 2.8)
 
 if(APPLE)
 	set(CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX10.6.sdk/")
