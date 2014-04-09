@@ -29,20 +29,20 @@
     \subpage basics
 
     \subpage advanced
-	
+
     \subpage license
-	
+
   </TD>
   <TD ALIGN="LEFT" VALIGN="TOP">
 
     <b>Appendices:</b>
- 
+
     - \subpage enumerations
-	
+
     - \subpage issues
-	
+
     - \subpage development
-	
+
   </TD>
 </TR>
 </TABLE>

@@ -593,50 +593,56 @@ bool IKnobMultiControl::Draw(IGraphics* pGraphics)
 
 bool IKnobMultiControlText::Draw(IGraphics* pGraphics)
 {
-	IKnobMultiControl::Draw(pGraphics);
-    
-    char cStr[32];
-    mPlug->GetParam(mParamIdx)->GetDisplayForHost(cStr, sizeof(cStr));
-    mStr.Set(cStr);
-	if (mShowParamLabel) {
-		mStr.Append(" ");
-		mStr.Append(mPlug->GetParam(mParamIdx)->GetLabelForHost());
-	}
+  IKnobMultiControl::Draw(pGraphics);
 
-    if (CSTR_NOT_EMPTY(cStr)) {
-		// measure the text size
-		pGraphics->DrawIText(&mText, mStr.Get(), &mTextRECT,true);
-		// draw text
-		return pGraphics->DrawIText(&mText, mStr.Get(), &mTextRECT);
-    }
-    return true;
+  char cStr[32];
+  mPlug->GetParam(mParamIdx)->GetDisplayForHost(cStr, sizeof(cStr));
+  mStr.Set(cStr);
+  if (mShowParamLabel)
+  {
+    mStr.Append(" ");
+    mStr.Append(mPlug->GetParam(mParamIdx)->GetLabelForHost());
+  }
+
+  if (CSTR_NOT_EMPTY(cStr))
+  {
+    // measure the text size
+    pGraphics->DrawIText(&mText, mStr.Get(), &mTextRECT,true);
+    // draw text
+    return pGraphics->DrawIText(&mText, mStr.Get(), &mTextRECT);
+  }
+  return true;
 }
-	
+
 void IKnobMultiControlText::OnMouseDown(int x, int y, IMouseMod* pMod)
 {
-	if (mTextRECT.Contains(x, y)) PromptUserInput(&mTextRECT);
+  if (mTextRECT.Contains(x, y)) PromptUserInput(&mTextRECT);
 #ifdef PROTOOLS
-	else if (pMod->A) {
-		if (mDefaultValue >= 0.0) {
-			mValue = mDefaultValue;
-			SetDirty();
-		}
-	}
+  else if (pMod->A)
+  {
+    if (mDefaultValue >= 0.0)
+    {
+      mValue = mDefaultValue;
+      SetDirty();
+    }
+  }
 #endif
-	else {
-		OnMouseDrag(x, y, 0, 0, pMod);
-	}
+  else
+  {
+    OnMouseDrag(x, y, 0, 0, pMod);
+  }
 }
-	
+
 void IKnobMultiControlText::OnMouseDblClick(int x, int y, IMouseMod* pMod)
 {
 #ifdef PROTOOLS
-	PromptUserInput(&mTextRECT);
+  PromptUserInput(&mTextRECT);
 #else
-	if (mDefaultValue >= 0.0) {
-		mValue = mDefaultValue;
-		SetDirty();
-	}
+  if (mDefaultValue >= 0.0)
+  {
+    mValue = mDefaultValue;
+    SetDirty();
+  }
 #endif
 }
 

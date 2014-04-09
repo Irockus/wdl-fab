@@ -47,7 +47,7 @@ const char* AUPropertyStr(int propID);
 const char* AUScopeStr(int scope);
 
 /// Simple elapsed seconds polling class.
-struct Timer 
+struct Timer
 {
   int mT;
   Timer();

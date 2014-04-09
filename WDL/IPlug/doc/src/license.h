@@ -7,14 +7,14 @@ Copyright (C) 2005 and later Cockos Incorporated<BR>
 Portions copyright other contributors, see each source file for more information<BR>
 This software is provided 'as-is', without any express or implied warranty. <BR>
 In no event will the authors be held liable for any damages arising from the use of this software.
-Permission is granted to anyone to use this software for any purpose, 
-including commercial applications, and to alter it and redistribute it freely, 
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it freely,
 subject to the following restrictions:<BR>
-1. The origin of this software must not be misrepresented; 
+1. The origin of this software must not be misrepresented;
    you must not claim that you wrote the original software.
-   If you use this software in a product, an acknowledgement in the product documentation 
+   If you use this software in a product, an acknowledgement in the product documentation
    would be appreciated but is not required.<BR>
-2. Altered source versions must be plainly marked as such, 
+2. Altered source versions must be plainly marked as such,
    and must not be misrepresented as being the original software.<BR>
 3. This notice may not be removed or altered from any source distribution.<BR>
 
@@ -48,7 +48,7 @@ software--to make sure the software is free for all its users.
 This license, the Library General Public License, applies to some
 specially designated Free Software Foundation software, and to any
 other libraries whose authors decide to use it.  You can use it for
-your libraries, too. 
+your libraries, too.
 
 When we speak of free software, we are referring to freedom, not
 price.  Our General Public Licenses are designed to make sure that you
@@ -133,7 +133,7 @@ General Public License rather than by this special one.
 \b 0. This License Agreement applies to any software
 library which contains a notice placed by the copyright holder or other
 authorized party saying it may be distributed under the terms of this
-Library General Public License (also called &quot;this License&quot;). 
+Library General Public License (also called &quot;this License&quot;).
 Each licensee is addressed as &quot;you&quot;.
 
 A &quot;library&quot; means a collection of software functions and/or data

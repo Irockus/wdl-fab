@@ -11,7 +11,7 @@
 
 #include "../IPlugRTAS.h"
 #include "Resource.h"
-/// RTAS Iplug Process base class. 
+/// RTAS Iplug Process base class.
 class IPlugProcess :  virtual public CEffectProcess, ProcessInterface
 {
 public:

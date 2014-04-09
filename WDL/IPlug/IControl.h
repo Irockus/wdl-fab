@@ -8,7 +8,7 @@
 
 /**
  A control is anything on the GUI, it could be a static bitmap, or
- something that moves or changes.  
+ something that moves or changes.
  The control could manipulate bitmaps or do run-time vector drawing, or whatever.<BR>
  Some controls respond to mouse actions, either by moving a bitmap,
  transforming a bitmap, or cycling through a set of bitmaps.<BR>
@@ -37,7 +37,7 @@ public:
   virtual void OnMouseOver(int x, int y, IMouseMod* pMod) {}
   virtual void OnMouseOut() {}
 
-  /** By default, mouse double click has its own handler.  
+  /** By default, mouse double click has its own handler.
     A control can set mDblAsSingleClick to true to change,
     which maps double click to single click for this control (and also causes the mouse to be
     captured by the control on double click.
@@ -90,8 +90,8 @@ public:
   void DisablePrompt(bool disable) { mDisablePrompt = disable; } ///< Disables the right-click manual value entry.
 
   /**
-	Sometimes a control changes its state as part of its Draw method.
-	Redraw() prevents the control from being cleaned immediately after drawing.
+  Sometimes a control changes its state as part of its Draw method.
+  Redraw() prevents the control from being cleaned immediately after drawing.
    */
   void Redraw() { mRedraw = true; }
 
@@ -462,7 +462,7 @@ protected:
  This is a weird control for a few reasons.<BR>
  Although its numeric mValue is not meaningful, it needs to be associated with a plugin parameter
  so it can inform the plug when the file selection has changed.<BR>
- If the associated plugin parameter is  declared after kNumParams in the EParams enum, 
+ If the associated plugin parameter is  declared after kNumParams in the EParams enum,
  the parameter will be a dummy for this purpose only.<BR>
  Because it puts up a modal window, it needs to redraw itself twice when it's dirty,
  because moving the modal window will clear the first dirty state.
@@ -493,50 +493,51 @@ protected:
   EFileSelectorState mState;
 };
 
-class IKnobMultiControlText : public IKnobMultiControl  
+class IKnobMultiControlText : public IKnobMultiControl
 {
-	
+
 public:
-	
-	enum EKnobMultiControlTextPosition { kTxtPosBelow, kTxtPosAbove, kTxtPosMiddle };
-	
-	IKnobMultiControlText(IPlugBase* pPlug, int x, int y, int paramIdx, IBitmap* pBitmap, IText* pText, bool showParamLabel = true, IKnobMultiControlText::EKnobMultiControlTextPosition labelPosition = kTxtPosBelow)
-	:	IKnobMultiControl(pPlug, x, y, paramIdx, pBitmap)
-	{
-		mText = *pText;
-		//mTextRECT = IRECT(mRECT.L, mRECT.B-20, mRECT.R, mRECT.B);
-		mImgRECT = IRECT(x, y, pBitmap);
-		mDisablePrompt = false;
-		mShowParamLabel = showParamLabel;
-		
-		int captionHeight = pText->mSize + 4;
-		int captionTop;
-		switch (labelPosition) {
-			case kTxtPosBelow:
-				mTextRECT = IRECT(mImgRECT.L, mImgRECT.B, mImgRECT.L+mImgRECT.W(), mImgRECT.T+mImgRECT.H()+captionHeight);
-				break;
-			case kTxtPosAbove:
-				mTextRECT = IRECT(mImgRECT.L, mImgRECT.T-captionHeight, mImgRECT.L+mImgRECT.W(), mImgRECT.T);
-				break;
-			case kTxtPosMiddle:
-				captionTop = mImgRECT.T + (mImgRECT.H()/2) - (captionHeight/2)+2;
-				mTextRECT = IRECT(mImgRECT.L, captionTop, mImgRECT.L+mImgRECT.W(), captionTop+captionHeight);
-				break;
-		}
-	}
-	
-	~IKnobMultiControlText() {}
-	
-	bool Draw(IGraphics* pGraphics);
-	void OnMouseDown(int x, int y, IMouseMod* pMod);
-	void OnMouseDblClick(int x, int y, IMouseMod* pMod);
+
+  enum EKnobMultiControlTextPosition { kTxtPosBelow, kTxtPosAbove, kTxtPosMiddle };
+
+  IKnobMultiControlText(IPlugBase* pPlug, int x, int y, int paramIdx, IBitmap* pBitmap, IText* pText, bool showParamLabel = true, IKnobMultiControlText::EKnobMultiControlTextPosition labelPosition = kTxtPosBelow)
+    :	IKnobMultiControl(pPlug, x, y, paramIdx, pBitmap)
+  {
+    mText = *pText;
+    //mTextRECT = IRECT(mRECT.L, mRECT.B-20, mRECT.R, mRECT.B);
+    mImgRECT = IRECT(x, y, pBitmap);
+    mDisablePrompt = false;
+    mShowParamLabel = showParamLabel;
+
+    int captionHeight = pText->mSize + 4;
+    int captionTop;
+    switch (labelPosition)
+    {
+      case kTxtPosBelow:
+        mTextRECT = IRECT(mImgRECT.L, mImgRECT.B, mImgRECT.L+mImgRECT.W(), mImgRECT.T+mImgRECT.H()+captionHeight);
+        break;
+      case kTxtPosAbove:
+        mTextRECT = IRECT(mImgRECT.L, mImgRECT.T-captionHeight, mImgRECT.L+mImgRECT.W(), mImgRECT.T);
+        break;
+      case kTxtPosMiddle:
+        captionTop = mImgRECT.T + (mImgRECT.H()/2) - (captionHeight/2)+2;
+        mTextRECT = IRECT(mImgRECT.L, captionTop, mImgRECT.L+mImgRECT.W(), captionTop+captionHeight);
+        break;
+    }
+  }
+
+  ~IKnobMultiControlText() {}
+
+  bool Draw(IGraphics* pGraphics);
+  void OnMouseDown(int x, int y, IMouseMod* pMod);
+  void OnMouseDblClick(int x, int y, IMouseMod* pMod);
 
 private:
-	IRECT mTextRECT, mImgRECT;
-	IBitmap mBitmap;
-	WDL_String mStr;
-	bool mShowParamLabel;
-	
+  IRECT mTextRECT, mImgRECT;
+  IBitmap mBitmap;
+  WDL_String mStr;
+  bool mShowParamLabel;
+
 };
 
 #endif

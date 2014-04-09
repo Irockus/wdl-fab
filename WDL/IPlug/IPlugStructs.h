@@ -27,7 +27,7 @@ struct IBitmap
   inline int frameHeight() const { return H / N; }
 };
 
-/// Define an RGBA color 
+/// Define an RGBA color
 struct IColor
 {
   int A, R, G, B;
@@ -144,12 +144,12 @@ struct IText
 struct IRECT
 {
   /// left, top, right and bottom coordinates
-  int L, T, R, B; 
- 
+  int L, T, R, B;
+
   IRECT() { L = T = R = B = 0; } ///< Default constructor, creates an 'empty' rectangle
   IRECT(int l, int t, int r, int b) : L(l), R(r), T(t), B(b) {} ///< Creates a rectangle from left, top, right and bottom coordinates
   IRECT(int x, int y, IBitmap* pBitmap) : L(x), T(y), R(x + pBitmap->W), B(y + pBitmap->H / pBitmap->N) {} ///< creates a rectangle at position L,T and matching bitmap W and (H/N)
-  
+
   /// Return true if the rectangle fields are all 0 (init value)
   bool Empty() const
   {
@@ -177,7 +177,7 @@ struct IRECT
   inline int H() const { return B - T; } ///< Rectangle Height
   inline float MW() const { return 0.5f * (float) (L + R); } ///< horizontal middle position
   inline float MH() const { return 0.5f * (float) (T + B); } ///< vertical middle position
-  
+
   /// Grow a rectangle to the union of this rectangle with another rectangle
   inline IRECT Union(IRECT* pRHS)
   {
@@ -313,7 +313,7 @@ struct IMidiMsg
 {
   int mOffset;
   BYTE mStatus, mData1, mData2;
-  
+
   /// MIDI status MSB enum
   enum EStatusMsg
   {

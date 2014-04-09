@@ -58,10 +58,10 @@ public:
   virtual bool DrawScreen(IRECT* pR) = 0;///< Tells the OS class to put the final bitmap on the screen.
 
   /** @name Drawing primitives
-		API to draw Bitmaps, point, lines, triangles, rectangles, arcs, circles and texts
+  	API to draw Bitmaps, point, lines, triangles, rectangles, arcs, circles and texts
   */
   /// @{
-  
+
   // Methods for the drawing implementation class.
   bool DrawBitmap(IBitmap* pBitmap, IRECT* pDest, int srcX, int srcY, const IChannelBlend* pBlend = 0);
   bool DrawRotatedBitmap(IBitmap* pBitmap, int destCtrX, int destCtrY, double angle, int yOffsetZeroDeg = 0, const IChannelBlend* pBlend = 0);
@@ -82,9 +82,9 @@ public:
 
   bool DrawIText(IText* pTxt, const char* str, IRECT* pR, bool measure = false);
   virtual bool MeasureIText(IText* pTxt, const char* str, IRECT* pR) { return DrawIText(pTxt, str, pR, true); } ;
-  
+
   /// @}
-  
+
   IColor GetPoint(int x, int y);
   void* GetData();
 
@@ -93,17 +93,17 @@ public:
   // Methods for the OS implementation class.
 
   /** @name  OS dependent features
-	Abstracting window, standard dialogs, user input, path and URL primitives 
+  Abstracting window, standard dialogs, user input, path and URL primitives
   */
-  
+
   /// @{
 
   virtual void ForceEndUserEdit() = 0;
   virtual void Resize(int w, int h);
   virtual bool WindowIsOpen() { return (GetWindow()); }
   virtual const char* GetGUIAPI() { return ""; };
-  
-  /** Standard message box dialog. 
+
+  /** Standard message box dialog.
     Type can be MB_OKCANCEL/MB_YESNO/MB_YESNOCANCEL, return val is either IDOK, IDCANCEL or IDNO
     Not always focusing correctly depending on some VST hosts ...
    */
@@ -134,7 +134,7 @@ public:
   virtual bool PromptForColor(IColor* pColor, const char* prompt = 0) = 0;
 
   virtual bool OpenURL(const char* url, const char* msgWindowTitle = 0, const char* confirmMsg = 0, const char* errMsgOnFailure = 0) = 0;
-  
+
 
   // Strict (default): draw everything within the smallest rectangle that contains everything dirty.
   // Every control is guaranteed to get no more than one Draw() call per cycle.
@@ -180,7 +180,7 @@ public:
   void HideControl(int paramIdx, bool hide);
   void GrayOutControl(int paramIdx, bool gray);
 
- 
+
   void ClampControl(int paramIdx, double lo, double hi, bool normalized);///< Normalized means the value is in [0, 1].
   void SetParameterFromPlug(int paramIdx, double value, bool normalized);///< Normalized means the value is in [0, 1].
   /// For setting a control that does not have a parameter associated with it.
@@ -209,7 +209,7 @@ public:
   void OnMouseUp(int x, int y, IMouseMod* pMod);
   void OnMouseDrag(int x, int y, IMouseMod* pMod);
   /** Returns true if the control receiving the double click will treat it as a single click
-	(meaning the OS should capture the mouse).
+  (meaning the OS should capture the mouse).
    */
   bool OnMouseDblClick(int x, int y, IMouseMod* pMod);
   void OnMouseWheel(int x, int y, IMouseMod* pMod, int d);
@@ -250,8 +250,8 @@ public:
   /// Updates tooltips after (un)hiding controls.
   virtual void UpdateTooltips() = 0;
 
-  /** This is an idle call from the GUI thread, as opposed to IPlug::OnIdle 
-	which is called from the audio processing thread.
+  /** This is an idle call from the GUI thread, as opposed to IPlug::OnIdle
+  which is called from the audio processing thread.
    */
   void OnGUIIdle();
 

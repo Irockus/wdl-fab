@@ -113,7 +113,7 @@ public:
   }
 };
 
-/** 
+/**
 	Automatic  GUI horizontal slider control class.
     Especially valuable for quick protoyping, it defines a lot of sliders cnnected to your params with minimum information.
 */
@@ -206,7 +206,7 @@ private:
   }
 };
 
-/** 
+/**
 	Automatic  knob slider control class.
     Especially valuable for quick protoyping, it defines a lot of sliders cnnected to your params with minimum information.
 */

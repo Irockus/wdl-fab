@@ -1,7 +1,7 @@
+#include "resource.h"
 #include "IPlugControls.h"
 #include "IPlug_include_in_plug_src.h"
 #include "IControl.h"
-#include "resource.h"
 
 IPlugControls::IPlugControls(IPlugInstanceInfo instanceInfo)
   : IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo)
@@ -131,15 +131,15 @@ IPlugControls::IPlugControls(IPlugInstanceInfo instanceInfo)
   //Attach IURLControl
   pGraphics->AttachControl(new IURLControl(this, IRECT(kIUC_X, kIUC_Y, (kIUC_X + kIUC_W), (kIUC_Y + kIUC_W)), "https://github.com/audio-plugins/wdl-ce/wiki"));
 
- //Attach IFileControl
- 
+//Attach IFileControl
+
 #ifdef WIN32
-	  const char * baseDir = "C:\\";
+  const char * baseDir = "C:\\";
 #else
-	  const char * baseDir = "~/Desktop";
+  const char * baseDir = "~/Desktop";
 #endif
-  pGraphics->AttachControl(new IFileSelectorControl(this, IRECT(kIFC_X, kIFC_Y, (kIFC_X + kIFC_W), (kIFC_Y + kIFC_W)), kIFileSelectionControl, &bitmap, 
-	  kFileOpen, baseDir) );
+  pGraphics->AttachControl(new IFileSelectorControl(this, IRECT(kIFC_X, kIFC_Y, (kIFC_X + kIFC_W), (kIFC_Y + kIFC_W)), kIFileSelectionControl, &bitmap,
+                           kFileOpen, baseDir) );
 
   // Attach the graphics engine to the plugin.
 

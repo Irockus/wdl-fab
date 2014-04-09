@@ -14,7 +14,7 @@
 class BitmapStorage
 {
 public:
-  /// (id, lice_bitmap) pair 
+  /// (id, lice_bitmap) pair
   struct BitmapKey
   {
     int id;

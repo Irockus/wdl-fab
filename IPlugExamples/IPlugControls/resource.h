@@ -73,19 +73,19 @@ instrument determined by PLUG _IS _INST
 #define IBOC_ID                 112
 
 // Image resource locations for this plug.
-#define BG_FN                     "resources/img/BG_1024x640.png"
-#define ISWITCHCONTROL_2_FN       "resources/img/ISwitchControl_x2.png"
-#define ISWITCHCONTROL_3_FN       "resources/img/ISwitchControl_x3.png"
-#define IRADIOBUTTONSCONTROL_FN   "resources/img/IRadioButtonsControl_x2.png"
-#define ICONTACTCONTROL_FN        "resources/img/IContactControl_x2.png"
-#define IFADERCONTROL_HORIZ_FN    "resources/img/IFaderControl_Horiz.png"
-#define IFADERCONTROL_VERT_FN     "resources/img/IFaderControl_Vert.png"
-#define IKNOBROTATERCONTROL_FN    "resources/img/IKnobRotaterControl.png"
-#define IKNOBMULTICONTROL_FN      "resources/img/IKnobMultiControl_x14.png"
-#define IKRMC_BASE_FN             "resources/img/IKRMC_Base.png"
-#define IKRMC_MASK_FN             "resources/img/IKRMC_Mask.png"
-#define IKRMC_TOP_FN              "resources/img/IKRMC_Top.png"
-#define IBOC_FN                   "resources/img/IBitmapOverlayControl.png"
+#define BG_FN                      "resources/BG_1024x640.png"
+#define ISWITCHCONTROL_2_FN        "Resources/ISwitchControl_x2.png"
+#define ISWITCHCONTROL_3_FN        "Resources/ISwitchControl_x3.png"
+#define IRADIOBUTTONSCONTROL_FN    "Resources/IRadioButtonsControl_x2.png"
+#define ICONTACTCONTROL_FN         "Resources/IContactControl_x2.png"
+#define IFADERCONTROL_HORIZ_FN     "Resources/IFaderControl_Horiz.png"
+#define IFADERCONTROL_VERT_FN      "Resources/IFaderControl_Vert.png"
+#define IKNOBROTATERCONTROL_FN     "Resources/IKnobRotaterControl.png"
+#define IKNOBMULTICONTROL_FN       "Resources/IKnobMultiControl_x14.png"
+#define IKRMC_BASE_FN              "Resources/IKRMC_Base.png"
+#define IKRMC_MASK_FN              "Resources/IKRMC_Mask.png"
+#define IKRMC_TOP_FN               "Resources/IKRMC_Top.png"
+#define IBOC_FN                    "Resources/IBitmapOverlayControl.png"
 
 // GUI default dimensions
 #define GUI_WIDTH   1024

@@ -50,39 +50,39 @@ public:
 
   virtual ~IPlugBase();
 
-   /**
-    Called internally by the framework, should be overloaded with your custom re-initialization code. 
-	Implementations should set a mutex lock like in the no-op!
-	*/
+  /**
+   Called internally by the framework, should be overloaded with your custom re-initialization code.
+  Implementations should set a mutex lock like in the no-op!
+  */
   virtual void Reset() { TRACE; IMutexLock lock(this); }
-  
+
   /** Called whenever a plug-in parameter was initialized or changed by the host.
-		Called for all parameters on load too.
-		Implementations should set a mutex lock like in the no-op!
+  	Called for all parameters on load too.
+  	Implementations should set a mutex lock like in the no-op!
    */
   virtual void OnParamChange(int paramIdx) { IMutexLock lock(this); }
-  /** 
-		Default pass-through.  Inputs and outputs are [nChannel][nSample].
-		Mutex is already locked. \see ProcessSingleReplacing
+  /**
+  	Default pass-through.  Inputs and outputs are [nChannel][nSample].
+  	Mutex is already locked. \see ProcessSingleReplacing
    */
   virtual void ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames);
-  /** 
-		Single-precision version of the pass-through.  Inputs and outputs are [nChannel][nSample].
-		Mutex is already locked. \see ProcessDoubleReplacing
+  /**
+  	Single-precision version of the pass-through.  Inputs and outputs are [nChannel][nSample].
+  	Mutex is already locked. \see ProcessDoubleReplacing
    */
   virtual void ProcessSingleReplacing(float** inputs, float** outputs, int nFrames);
   /** Called when GUI opens, in case the audio processing thread needs to do anything when the GUI opens.
-	(like for example, set some state dependent initial values for controls). \see OnGUIClose
+  (like for example, set some state dependent initial values for controls). \see OnGUIClose
    */
-  virtual void OnGUIOpen() { TRACE; }  
+  virtual void OnGUIOpen() { TRACE; }
   /** Called when GUI opens, in case the audio processing thread needs to do anything when the GUI opens.
-	(like for example, set some state dependent initial values for controls).  \see OnGUIOpen
+  (like for example, set some state dependent initial values for controls).  \see OnGUIOpen
    */
   virtual void OnGUIClose() { TRACE; }
   /** This is an idle call from the audio processing thread, as opposed to
-		IGraphics::OnGUIIdle which is called from the GUI thread.
-		Only active if USE_IDLE_CALLS is defined. <BR>
-		Does nothing by default.
+  	IGraphics::OnGUIIdle which is called from the GUI thread.
+  	Only active if USE_IDLE_CALLS is defined. <BR>
+  	Does nothing by default.
    */
   virtual void OnIdle() {}
 
@@ -133,9 +133,9 @@ public:
   const char* GetMfrName() { return mMfrName; }
   /// Return your plug-in or standalone product name
   const char* GetProductName() { return mProductName; }
-  /// Return your plugin unique ID 
+  /// Return your plugin unique ID
   int GetUniqueID() { return mUniqueID; }
-  /// Return your manufacturer unique ID 
+  /// Return your manufacturer unique ID
   int GetMfrID() { return mMfrID; }
 
   virtual void SetParameterFromGUI(int idx, double normalizedValue);
@@ -158,8 +158,8 @@ public:
   bool GetIsBypassed() { return mIsBypassed; }
 
   /** @name Channel API.
-		In ProcessDoubleReplacing you are always guaranteed to get valid pointers	to all the channels the plug-in requested.  
-		If the host hasn't connected all the pins, the unconnected channels will be full of zeros.
+  	In ProcessDoubleReplacing you are always guaranteed to get valid pointers	to all the channels the plug-in requested.
+  	If the host hasn't connected all the pins, the unconnected channels will be full of zeros.
    */
   /// @{
   int NInChannels() { return mInChannels.GetSize(); }
@@ -167,7 +167,7 @@ public:
   bool IsInChannelConnected(int chIdx);
   bool IsOutChannelConnected(int chIdx);
   /// @}
-  
+
   virtual bool IsRenderingOffline() { return false; };
   virtual int GetSamplePos() = 0;   // Samples since start of project.
   virtual double GetTempo() = 0;
@@ -194,11 +194,11 @@ protected:
   /// @{ for labelling individual inputs/outputs (VST2)
   void SetInputLabel(int idx, const char* pLabel);
   void SetOutputLabel(int idx, const char* pLabel);
-  
+
   const WDL_String* GetInputLabel(int idx) { return &(mInChannels.Get(idx)->mLabel); }
   const WDL_String* GetOutputLabel(int idx) { return &(mOutChannels.Get(idx)->mLabel); }
   /// @}
-  
+
   // for labelling bus inputs/outputs (AU/VST3)
   void SetInputBusLabel(int idx, const char* pLabel);
   void SetOutputBusLabel(int idx, const char* pLabel);
@@ -235,7 +235,7 @@ protected:
   bool DoesMIDI() { return mDoesMIDI; }
 
   /** @name  Non-Chunks Based Preset API
-	You can't use these three methods with chunks-based plugins, because there is no way to set the custom data.
+  You can't use these three methods with chunks-based plugins, because there is no way to set the custom data.
    */
   /// @{
   void MakeDefaultPreset(const char* name = 0, int nPresets = 1);
@@ -247,14 +247,14 @@ protected:
    */
   void MakePresetFromNamedParams(const char* name, int nParamsNamed, ...);
   /// @}
-  
-   /** @name  Chunks Based Preset API
-		Use these methods with chunks-based plugins
-    */
+
+  /** @name  Chunks Based Preset API
+  Use these methods with chunks-based plugins
+   */
   /// @{
   void MakePresetFromChunk(const char* name, ByteChunk* pChunk);
   void MakePresetFromBlob(const char* name, const char* blob, int sizeOfChunk);
-  
+
   bool DoesStateChunks() { return mStateChunks; }
   /// Will append if the chunk is already started
   bool SerializeParams(ByteChunk* pChunk);
@@ -309,10 +309,10 @@ public:
 
   virtual void PresetsChangedByHost() {} ///< Notifies if host changed presets, does nothing by default
   void DirtyParameters();///< hack to tell the host to dirty file state, when a preset is recalled
-  
+
 #ifndef OS_IOS
   /** @name Program and Bank API
-	API to Load or Save FXP/FXB Program/Banks
+  API to Load or Save FXP/FXB Program/Banks
   */
   /// @{
   bool SaveProgramAsFXP(const char* defaultFileName = "");
@@ -326,9 +326,9 @@ public:
   virtual void SetBlockSize(int blockSize); // overridden in IPlugAU
 
   WDL_Mutex mMutex;
-  
+
   /**
-	Wrapping Mutex class enter and leave a critical section for the scope of that instance.
+  Wrapping Mutex class enter and leave a critical section for the scope of that instance.
    */
   struct IMutexLock
   {
@@ -347,7 +347,7 @@ private:
   int mHostVersion;   //  Version stored as 0xVVVVRRMM: V = version, R = revision, M = minor revision.
 
   /**
-	InChannel defines an input channel label, double buffers and if it is connected
+  InChannel defines an input channel label, double buffers and if it is connected
   */
   struct InChannel
   {
@@ -358,7 +358,7 @@ private:
   };
 
   /**
-	OutChannel defines an output channel label, buffers (both double and float) and if it is connected
+  OutChannel defines an output channel label, buffers (both double and float) and if it is connected
   */
   struct OutChannel
   {

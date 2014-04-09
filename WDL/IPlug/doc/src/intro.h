@@ -12,7 +12,7 @@ GitHub Oli branch can be found at http://github.com/olilarkin/wdl-ol/tree/master
 IPlug was designed to be statically linked. This was done by
 splitting it into many small objects and designing it so that
 functions that are not used do not have pointers to them in the
-parts that are used, and thus do not get linked in. 
+parts that are used, and thus do not get linked in.
 
 Here are some of the core features unique to IPlug:
 
@@ -28,8 +28,8 @@ Here are some of the core features unique to IPlug:
 
 \section intro_licensing Licensing
 
-This version of WDL/IPlug shares the same license as the Cockos edition. 
-Several of the added features are based on the work of other people. 
+This version of WDL/IPlug shares the same license as the Cockos edition.
+Several of the added features are based on the work of other people.
 See individual source code files for any extra license information.
 
 Cockos WDL Page: http://www.cockos.com/wdl
@@ -38,17 +38,17 @@ Discuss WDL on the WDL forum http://forum.cockos.com/forumdisplay.php?f=32
 Cockos WDL License
 Copyright (C) 2005 and later Cockos Incorporated
 Portions copyright other contributors, see each source file for more information
-This software is provided 'as-is', without any express or implied warranty.  
+This software is provided 'as-is', without any express or implied warranty.
 In no event will the authors be held liable for any damages arising from the use of this software.
-Permission is granted to anyone to use this software for any purpose, 
-including commercial applications, and to alter it and redistribute it freely, 
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it freely,
 subject to the following restrictions:
 
-1. The origin of this software must not be misrepresented; 
-   you must not claim that you wrote the original software. 
-   If you use this software in a product, an acknowledgement in the product documentation 
+1. The origin of this software must not be misrepresented;
+   you must not claim that you wrote the original software.
+   If you use this software in a product, an acknowledgement in the product documentation
    would be appreciated but is not required.
-2. Altered source versions must be plainly marked as such, 
+2. Altered source versions must be plainly marked as such,
    and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 
@@ -64,13 +64,13 @@ WDL includes the following 3rd party libraries (which are all similarly licensed
 \section intro_osx Building and Installing iPlug with Apple OS X
 
 \code
-cmake -G Xcode 
+cmake -G Xcode
 \endcode
 
 \section intro_windows Building and Installing iPlug with Windows
 
 \code
-cmake -G "Visual Studio 10" 
+cmake -G "Visual Studio 10"
 \endcode
 
 \section intro_internet Other Resources
