@@ -1,5 +1,5 @@
 set(IPC_SA   app_wrapper/app_dlg_main.cpp ../../WDL/IPlug/IPlugStandalone.cpp)
-set(IPC_AU   ../../WDL/IPlug/IPlugAU.cpp)
+set(IPC_AU   ../../WDL/IPlug/IPlugAU.cpp   ../../WDL/IPlug/dfx/dfx-au-utilities.c)
 set(IPC_VST	 ../../WDL/IPlug/IPlugVST.cpp)
 set(IPC_VST3 ../../WDL/IPlug/IPlugVST3.cpp)
 set(IPC_RTAS ../../WDL/IPlug/IPlugRTAS.cpp)
@@ -10,8 +10,12 @@ if(WIN32)
 elseif(APPLE)
 
  find_library(AUDIO_UNIT AudioUnit)
+ find_library(AUDIO_TOOLBOX AudioToolbox)
  if (NOT AUDIO_UNIT)
     message(FATAL_ERROR "AudioUnit not found")
+ endif()
+ if (NOT AUDIO_TOOLBOX)
+    message(FATAL_ERROR "AudioToolbox not found")
  endif()
  
  find_library(CARBON Carbon)
@@ -22,71 +26,171 @@ elseif(APPLE)
  find_library(CORE_AUDIO CoreAudio)
  find_library(APPKIT AppKit)
 
-  set (OSX_FMWKS ${AUDIO_UNIT} ${COCOA} ${CARBON} ${CORE_FND} ${CORE_SVCS} ${CORE_MIDI} ${CORE_AUDIO} ${APPKIT} )
+ set (OSX_FMWKS ${AUDIO_UNIT} ${AUDIO_TOOLBOX} ${CORE_MIDI} ${CORE_AUDIO} 
+ 	${COCOA} ${CARBON} ${CORE_FND} ${CORE_SVCS} ${APPKIT} )
 
 endif(WIN32)
 
+#-------------------------------------------------------------------------------------
+MACRO(set_bundle a_project a_pname an_ext)
+	set_target_properties( ${ARGV0} PROPERTIES
+    BUNDLE 1
+    BUNDLE_EXTENSION plugin
+    XCODE_ATTRIBUTE_WRAPPER_EXTENSION ${ARGV2}  #sets the extension to .${an_ext}
+    XCODE_ATTRIBUTE_MACH_O_TYPE mh_bundle
+    XCODE_ATTRIBUTE_INFOPLIST_FILE ${ARGV1}
+    MACOSX_BUNDLE_INFO_PLIST ${ARGV1}
+    )
+    SET_SOURCE_FILES_PROPERTIES( ${ARGV1} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+	message(STATUS "bundle plist is ${ARGV1}")
+endMACRO()
+
+MACRO(set_bundle_exp a_project a_pname an_ext)
+	set_target_properties( ${ARGV0} PROPERTIES
+    BUNDLE 1
+    BUNDLE_EXTENSION plugin
+    XCODE_ATTRIBUTE_WRAPPER_EXTENSION ${ARGV2}  #sets the extension to .${an_ext}
+    XCODE_ATTRIBUTE_MACH_O_TYPE mh_bundle
+    XCODE_ATTRIBUTE_INFOPLIST_FILE ${ARGV1}
+    MACOSX_BUNDLE_INFO_PLIST ${ARGV1}
+    LINK_FLAGS "-Wl,-exported_symbols_list,\"${CMAKE_CURRENT_SOURCE_DIR}/${PLUGNAME}.exp\"")
+    SET_SOURCE_FILES_PROPERTIES( ${ARGV1} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+	message(STATUS "bundle plist is ${ARGV1} exp is  ${CMAKE_CURRENT_SOURCE_DIR}/${PLUGNAME}.exp")
+endMACRO()
+
+#-------------------------------------------------------------------------------------
 MACRO(create_example name)
 	set (PLUGNAME ${ARGV0})
 	set (PN_SRC ${PLUGNAME}_SRC )
 	set (PN_HDR ${PLUGNAME}_HDR )
-	
-	# Source code to build
-	set(${PN_SRC} ${${PN_SRC}}   ${PLUGNAME}.cpp )
-	if(WIN32)
-	  set(${PN_SRC} ${${PN_SRC}} ${PLUGNAME}.rc)
-	else(WIN32)
-	  set(${PN_SRC} ${${PN_SRC}}  ../../WDL/IPlug/IPlugCocoa.mm)
-	endif(WIN32)
+	set (PN_RSC ${PLUGNAME}_RSC )
+	set (PN_IMG ${PLUGNAME}_IMG )
 
-	# Source code headers
-	set(${PN_HDR} ${${PN_HDR}} resource.h ${PLUGNAME}.h  )
-	 
+	set (PLUGNAMESA   ${PLUGNAME})
 	set (PLUGNAMEVST  ${PLUGNAME}VST)
 #	set (PLUGNAMEVST3 ${PLUGNAME}VST3)
 	set (PLUGNAMEAU   ${PLUGNAME}AU)
 #	set (PLUGNAMEAAX  ${PLUGNAME}AAX)
 #	set (PLUGNAMERTAS  ${PLUGNAME}RTAS)
 
-	#Build Executable 
-	add_executable(${PLUGNAME} ${${PN_SRC}} ${${PN_HDR}} ${IPC_SA}  ) 
-	target_link_libraries(${PLUGNAME} wdl lice iplug jnet eel plush rtam png zlib ${IPLUG_LIBS}  ${OSX_FMWKS} )
-	set_target_properties(${PLUGNAME}     PROPERTIES COMPILE_DEFINITIONS "SA_API=1")
+	PROJECT ( ${PLUGNAME} )
+
+	# Source code to build
+	set(${PN_SRC} ${${PN_SRC}}   ${PLUGNAME}.cpp )
+	if(WIN32)
+	  set(${PN_SRC} ${${PN_SRC}} ${PLUGNAME}.rc)
+	else(WIN32)
+	  set(${PN_SRC} ${${PN_SRC}}  ../../WDL/IPlug/IPlugCocoa.mm ../../common.xcconfig ${PLUGNAME}.xcconfig)
+	endif(WIN32)
+
+	# Source code headers
+	set(${PN_HDR} ${${PN_HDR}} resource.h ${PLUGNAME}.h  )
+  
+    ADD_DEFINITIONS(
+    	-D__MACOSX_CORE__ 
+    	-DSWELL_FORCE_COCOA_TEXT 
+    	-DBINARY_NAME=${PLUGNAME}
+    	-DCOCOA_PREFIX=v${PLUGNAME} 
+    	-DSWELL_APP_PREFIX=Swell_v${PLUGNAME}
+    	)
+    	
+	set(BINARY_NAME ${PLUGNAME} ) # needed by cmake for expanding the template plist file (one per target)
 	
+	# Add Images resources for all OSX builds
+	if(APPLE)
+      set(GUI_TYPE MACOSX_BUNDLE)
+      source_group(Resources\\img ".*png")
+      set( ${PN_SRC} ${${PN_SRC}}  ${${PN_IMG}} )
+      SET_SOURCE_FILES_PROPERTIES(${${PN_IMG}} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+    else()
+      SET(GUI_TYPE WIN32)
+	endif()
+	
+	#-------------------------------------------------------------------------------------
+	# Add  Executable 
+	if ( DEFINED PLUGNAMESA )
+		if(APPLE)
+		  set(APPICON_PATH resources/${PLUGNAME}.icns  )
+	  
+		  set(PLIST_PATHSA   ${CMAKE_CURRENT_SOURCE_DIR}/resources/${PLUGNAME}-OSXAPP-Info.plist )
+		  set(PLIST_PATHVST  ${CMAKE_CURRENT_SOURCE_DIR}/resources/${PLUGNAME}-VST2-Info.plist )
+		  set(PLIST_PATHVST3 ${CMAKE_CURRENT_SOURCE_DIR}/resources/${PLUGNAME}-VST3-Info.plist )
+		  set(PLIST_PATHAU   ${CMAKE_CURRENT_SOURCE_DIR}/resources/${PLUGNAME}-AU-Info.plist )
+		  set(PLIST_PATHRTAS ${CMAKE_CURRENT_SOURCE_DIR}/resources/${PLUGNAME}-RTAS-Info.plist )
+		  set(PLIST_PATHAAX  ${CMAKE_CURRENT_SOURCE_DIR}/resources/${PLUGNAME}-AAX-Info.plist )
+
+		# Resources
+		  set( ${PN_RSC}
+			${CMAKE_CURRENT_SOURCE_DIR}/resources/English.lproj/MainMenu.xib 
+			${CMAKE_CURRENT_SOURCE_DIR}/resources/English.lproj/InfoPlist.strings
+			${APPICON_PATH}
+			${PLIST_PATHSA}
+			)
+		
+			SET_SOURCE_FILES_PROPERTIES( ${${PN_RSC}} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+		endif()
+
+	
+		add_executable(${PLUGNAMESA} ${GUI_TYPE} ${${PN_SRC}} ${${PN_RSC}} ${APPICON_PATH} ${${PN_HDR}} ${IPC_SA}  ) 
+	
+		target_link_libraries(${PLUGNAMESA} wdl lice iplug jnet eel plush rtam png zlib ${IPLUG_LIBS}  ${OSX_FMWKS} )
+		set_target_properties(${PLUGNAMESA}     PROPERTIES COMPILE_DEFINITIONS "SA_API=1")
+	
+		if(WIN32)
+			 set_target_properties(${PLUGNAMESA} PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:WINDOWS")
+			 set_target_properties(${PLUGNAMESA} PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
+		elseif(APPLE)
+		  SET_TARGET_PROPERTIES(${PLUGNAMESA} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${PLIST_PATHSA} )
+		endif()
+	endif()
+  
+	#-------------------------------------------------------------------------------------
 	if( DEFINED PLUGNAMEVST )
-		add_library(${PLUGNAMEVST} SHARED ${${PN_SRC}} ${${PN_HDR}} ${IPC_VST} )
+		add_library(${PLUGNAMEVST}  MODULE  ${${PN_SRC}} ${${PN_HDR}} ${IPC_VST} 			)
+		set_bundle(${PLUGNAMEVST} ${PLIST_PATHVST} "vst" )
 		target_link_libraries(${PLUGNAMEVST} wdl lice iplug jnet eel plush rtam png zlib ${IPLUG_LIBS}  ${OSX_FMWKS} )
-		set_target_properties(${PLUGNAMEVST}  PROPERTIES COMPILE_DEFINITIONS "VST_API=1")
+		set_target_properties(${PLUGNAMEVST}  PROPERTIES COMPILE_DEFINITIONS "VST_API=1 VST_FORCE_DEPRECATED" )
+		set_target_properties(${PLUGNAMEVST}  PROPERTIES DEBUG_OUTPUT_NAME ${PLUGNAME} )
+
 	endif()
 
+	#-------------------------------------------------------------------------------------
 	if( DEFINED PLUGNAMEVST3 )
-		add_library(${PLUGNAMEVST3} SHARED ${${PN_SRC}} ${${PN_HDR}} ${IPC_VST3} )
+		add_library(${PLUGNAMEVST3} MODULE ${${PN_SRC}} ${${PN_HDR}} ${IPC_VST3} )
+     	set_bundle(${PLUGNAMEVST3} ${PLIST_PATHVST3} "vst3" )
+
 		target_link_libraries(${PLUGNAMEVST3} wdl lice iplug vst3 jnet eel plush rtam png zlib ${IPLUG_LIBS}  ${OSX_FMWKS} )
 		set_target_properties(${PLUGNAMEVST3} PROPERTIES COMPILE_DEFINITIONS "VST3_API=1")
 	endif()
 	
+	#-------------------------------------------------------------------------------------
 	if( DEFINED PLUGNAMERTAS )
-		add_library(${PLUGNAMERTAS} SHARED ${${PN_SRC}} ${${PN_HDR}} ${IPC_RTAS} )
+		add_library(${PLUGNAMERTAS} MODULE ${${PN_SRC}} ${${PN_HDR}} ${IPC_RTAS} )
+		set_bundle(${PLUGNAMERTAS} ${PLIST_PATHRTAS} "dpm" )
 		target_link_libraries(${PLUGNAMERTAS} wdl lice iplug jnet eel plush rtam png zlib ${IPLUG_LIBS}  ${OSX_FMWKS} )
 		set_target_properties(${PLUGNAMERTAS} PROPERTIES COMPILE_DEFINITIONS "RTAS_API=1")
 	endif()
 	
+	#-------------------------------------------------------------------------------------
 	if( DEFINED PLUGNAMEAAX )
-		add_library(${PLUGNAMEAAX} SHARED ${${PN_SRC}} ${${PN_HDR}} ${IPC_AAX} )
+		add_library(${PLUGNAMEAAX} MODULE ${${PN_SRC}} ${${PN_HDR}} ${IPC_AAX} )
+		set_bundle(${PLUGNAMEAAX} ${PLIST_PATHAAX} "aax" )
 		target_link_libraries(${PLUGNAMEAAX} wdl lice iplug jnet eel plush rtam png zlib ${IPLUG_LIBS}  ${OSX_FMWKS} )
 		set_target_properties(${PLUGNAMEAAX} PROPERTIES COMPILE_DEFINITIONS "AAX_API=1")
 	endif()
 	
-	if(WIN32)
-	   set_target_properties(${PLUGNAME} PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:WINDOWS")
-	   set_target_properties(${PLUGNAME} PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS")
-	elseif(APPLE)
+	#-------------------------------------------------------------------------------------
+	if(APPLE)
 		if( DEFINED PLUGNAMEAU )
-			add_library(${PLUGNAMEAU} SHARED ${${PN_SRC}} ${${PN_HDR}}  ${IPC_AU} )
+			add_library(${PLUGNAMEAU} MODULE ${${PN_SRC}} ${${PN_HDR}} ${PLIST_PATHAU}  
+				${IPC_AU} "${CMAKE_CURRENT_SOURCE_DIR}/IPlugControls.exp" )
+	     	set_bundle_exp(${PLUGNAMEAU} ${PLIST_PATHAU} "component" )
+
 			target_link_libraries(${PLUGNAMEAU} wdl lice iplug jnet eel plush rtam png zlib ${IPLUG_LIBS} ${OSX_FMWKS} )
 			set_target_properties(${PLUGNAMEAU}  PROPERTIES COMPILE_DEFINITIONS "AU_API=1")
 		endif()
-	endif(WIN32)
+	endif()
+	#-------------------------------------------------------------------------------------
 endMACRO()
 
 add_subdirectory(IPlugControls)

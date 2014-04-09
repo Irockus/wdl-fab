@@ -41,10 +41,11 @@ SET(IPLUG_HEADERS
 	IPlugVST3.h
 	IPlug_include_in_plug_hdr.h
 	IPlug_include_in_plug_src.h
+  IPlugCocoaSrc.h
 	IPopupMenu.h
 	Log.h
 	NChanDelay.h
-)
+  )
 if (WIN32)
 SET (IPLUG_SRC
 	${IPLUG_SRC}

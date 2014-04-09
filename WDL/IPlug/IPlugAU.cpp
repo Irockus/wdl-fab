@@ -256,7 +256,7 @@ ComponentResult IPlugAU::IPlugAUEntry(ComponentParameters *params, void* pPlug)
     {
       AudioUnitParameterEvent* pEvent = GET_COMP_PARAM(AudioUnitParameterEvent*, 1, 2);
       UInt32 nEvents = GET_COMP_PARAM(UInt32, 0, 2);
-      for (int i = 0; i < nEvents; ++i, ++pEvent)
+      for (uint i = 0; i < nEvents; ++i, ++pEvent)
       {
         if (pEvent->eventType == kParameterEvent_Immediate)
         {
@@ -521,7 +521,7 @@ UInt32 IPlugAU::GetChannelLayoutTags(AudioUnitScope scope, AudioUnitElement elem
 }
 
 #define ASSERT_SCOPE(reqScope) if (scope != reqScope) { return kAudioUnitErr_InvalidProperty; }
-#define ASSERT_ELEMENT(numElements) if (element >= numElements) { return kAudioUnitErr_InvalidElement; }
+#define ASSERT_ELEMENT(numElements) if ((int)element >= numElements) { return kAudioUnitErr_InvalidElement; }
 #define ASSERT_INPUT_OR_GLOBAL_SCOPE \
   if (scope != kAudioUnitScope_Input && scope != kAudioUnitScope_Global) { \
     return kAudioUnitErr_InvalidProperty; \
@@ -825,7 +825,7 @@ ComponentResult IPlugAU::GetProperty(AudioUnitPropertyID propID, AudioUnitScope 
     case kAudioUnitProperty_SetRenderCallback:           // 23,
     {
       ASSERT_INPUT_OR_GLOBAL_SCOPE;
-      if (element >= mInBuses.GetSize())
+      if ((int)element >= mInBuses.GetSize())
       {
         return kAudioUnitErr_InvalidProperty;
       }
@@ -1086,7 +1086,7 @@ ComponentResult IPlugAU::SetProperty(AudioUnitPropertyID propID, AudioUnitScope 
     {
       ASSERT_INPUT_OR_GLOBAL_SCOPE;
       AudioUnitConnection* pAUC = (AudioUnitConnection*) pData;
-      if (pAUC->destInputNumber >= mInBusConnections.GetSize())
+      if ((int)pAUC->destInputNumber >= mInBusConnections.GetSize())
       {
         return kAudioUnitErr_InvalidProperty;
       }
@@ -1196,7 +1196,7 @@ ComponentResult IPlugAU::SetProperty(AudioUnitPropertyID propID, AudioUnitScope 
     case kAudioUnitProperty_SetRenderCallback:           // 23,
     {
       ASSERT_SCOPE(kAudioUnitScope_Input);    // if global scope, set all
-      if (element >= mInBusConnections.GetSize())
+      if ((int)element >= mInBusConnections.GetSize())
       {
         return kAudioUnitErr_InvalidProperty;
       }
@@ -1489,7 +1489,7 @@ ComponentResult IPlugAU::SetState(CFPropertyListRef pPropList)
   }
 
   CFDictionaryRef pDict = (CFDictionaryRef) pPropList;
-  int version, type, subtype, mfr;
+  uint version, type, subtype, mfr;
   char presetName[64];
   if (!GetNumberFromDict(pDict, kAUPresetVersionKey, &version, kCFNumberSInt32Type) ||
       !GetNumberFromDict(pDict, kAUPresetTypeKey, &type, kCFNumberSInt32Type) ||
@@ -1614,7 +1614,7 @@ ComponentResult IPlugAU::RenderProc(void* pPlug, AudioUnitRenderActionFlags* pFl
 
   IPlugAU* _this = (IPlugAU*) pPlug;
 
-  if (!(pTimestamp->mFlags & kAudioTimeStampSampleTimeValid) || outputBusIdx >= _this->mOutBuses.GetSize() || nFrames > _this->GetBlockSize())
+  if (!(pTimestamp->mFlags & kAudioTimeStampSampleTimeValid) || (int) outputBusIdx >=  _this->mOutBuses.GetSize() || (int) nFrames > _this->GetBlockSize())
   {
     return kAudioUnitErr_InvalidPropertyValue;
   }
@@ -1650,7 +1650,7 @@ ComponentResult IPlugAU::RenderProc(void* pPlug, AudioUnitRenderActionFlags* pFl
       {
         pInBufList->mNumberBuffers = pInBus->mNHostChannels;
 
-        for (int b = 0; b < pInBufList->mNumberBuffers; ++b)
+        for (UInt32 b = 0; b < pInBufList->mNumberBuffers; ++b)
         {
           AudioBuffer* pBuffer = &(pInBufList->mBuffers[b]);
           pBuffer->mNumberChannels = 1;
@@ -1677,7 +1677,7 @@ ComponentResult IPlugAU::RenderProc(void* pPlug, AudioUnitRenderActionFlags* pFl
           {
             AudioSampleType* pScratchInput = _this->mInScratchBuf.Get() + pInBus->mPlugChannelStartIdx * nFrames;
 
-            for (int b = 0; b < pInBufList->mNumberBuffers; ++b, pScratchInput += nFrames)
+            for (UInt32 b = 0; b < pInBufList->mNumberBuffers; ++b, pScratchInput += nFrames)
             {
               pInBufList->mBuffers[b].mData = pScratchInput;
             }
@@ -1705,17 +1705,17 @@ ComponentResult IPlugAU::RenderProc(void* pPlug, AudioUnitRenderActionFlags* pFl
   BusChannels* pOutBus = _this->mOutBuses.Get(outputBusIdx);
 
   // if this bus is not connected OR the number of buffers that the host has given are not equal to the number the bus expects
-  if (!(pOutBus->mConnected) || pOutBus->mNHostChannels != pOutBufList->mNumberBuffers)
+  if (!(pOutBus->mConnected) || (UInt32) pOutBus->mNHostChannels != pOutBufList->mNumberBuffers)
   {
     int startChannelIdx = pOutBus->mPlugChannelStartIdx;
-    int nConnected = IPMIN(pOutBus->mNHostChannels, pOutBufList->mNumberBuffers);
+    int nConnected = IPMIN(pOutBus->mNHostChannels, (int) pOutBufList->mNumberBuffers);
     int nUnconnected = IPMAX(pOutBus->mNPlugChannels - nConnected, 0);
     _this->SetOutputChannelConnections(startChannelIdx, nConnected, true);
     _this->SetOutputChannelConnections(startChannelIdx + nConnected, nUnconnected, false); // This will disconnect the right handle channel on a single stereo bus
     pOutBus->mConnected = true;
   }
 
-  for (int i = 0, chIdx = pOutBus->mPlugChannelStartIdx; i < pOutBufList->mNumberBuffers; ++i, ++chIdx)
+  for (UInt32 i = 0, chIdx = pOutBus->mPlugChannelStartIdx; i < pOutBufList->mNumberBuffers; ++i, ++chIdx)
   {
     if (!(pOutBufList->mBuffers[i].mData)) // Downstream unit didn't give us buffers.
     {
@@ -1738,7 +1738,7 @@ ComponentResult IPlugAU::RenderProc(void* pPlug, AudioUnitRenderActionFlags* pFl
     }
   }
 
-  if (outputBusIdx == lastConnectedOutputBus)
+  if ((int) outputBusIdx == lastConnectedOutputBus)
   {
     int busIdx1based = outputBusIdx+1;
 
@@ -1774,11 +1774,11 @@ ComponentResult IPlugAU::RenderProc(void* pPlug, AudioUnitRenderActionFlags* pFl
 
 IPlugAU::BusChannels* IPlugAU::GetBus(AudioUnitScope scope, AudioUnitElement busIdx)
 {
-  if (scope == kAudioUnitScope_Input && busIdx >= 0 && busIdx < mInBuses.GetSize())
+  if (scope == kAudioUnitScope_Input && busIdx >= 0 && (int) busIdx < mInBuses.GetSize())
   {
     return mInBuses.Get(busIdx);
   }
-  if (scope == kAudioUnitScope_Output && busIdx >= 0 && busIdx < mOutBuses.GetSize())
+  if (scope == kAudioUnitScope_Output && busIdx >= 0 && (int) busIdx < mOutBuses.GetSize())
   {
     return mOutBuses.Get(busIdx);
   }
