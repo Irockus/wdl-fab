@@ -16,13 +16,13 @@
     2. Altered source versions must be plainly marked as such, and must not be
        misrepresented as being the original software.
     3. This notice may not be removed or altered from any source distribution.
-  
+
 
     This file provides basic APIs for browsing for files, directories, and messageboxes.
 
     These APIs don't all match the Windows equivelents, but are close enough to make it not too much trouble.
 
- 
+
     (GTK version)
   */
 
@@ -51,7 +51,7 @@ bool BrowseForDirectory(const char *text, const char *initialdir, char *fn, int 
 
 
 
-char *BrowseForFiles(const char *text, const char *initialdir, 
+char *BrowseForFiles(const char *text, const char *initialdir,
                      const char *initialfile, bool allowmul, const char *extlist)
 {
   return NULL;
@@ -66,9 +66,9 @@ static void messagebox_callback( GtkWidget *widget, gpointer   data )
 
 int MessageBox(HWND hwndParent, const char *text, const char *caption, int type)
 {
-  char has_clicks[3]={0,};
-  int ids[3]={0,};
-  const char *lbls[3]={0,};
+  char has_clicks[3]= {0,};
+  int ids[3]= {0,};
+  const char *lbls[3]= {0,};
   if (type == MB_OKCANCEL)
   {
     ids[0]=IDOK; lbls[0]="OK";
@@ -88,7 +88,7 @@ int MessageBox(HWND hwndParent, const char *text, const char *caption, int type)
   else // MB_OK?
   {
     ids[0]=IDOK; lbls[0]="OK";
-  }	
+  }
 
   GtkWidget *window;
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -98,10 +98,10 @@ int MessageBox(HWND hwndParent, const char *text, const char *caption, int type)
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
   gtk_window_set_title(GTK_WINDOW(window), caption);
   g_signal_connect (G_OBJECT (window), "destroy",
-		      G_CALLBACK (messagebox_callback), NULL);
+                    G_CALLBACK (messagebox_callback), NULL);
 
   gtk_container_set_border_width (GTK_CONTAINER (window), 10);
-  
+
   GtkWidget *outer_container = gtk_vbox_new(false, 4);
   {
     GtkWidget *label = gtk_label_new(text);
@@ -111,7 +111,7 @@ int MessageBox(HWND hwndParent, const char *text, const char *caption, int type)
   {
     GtkWidget *con = gtk_hbutton_box_new();
     int x;
-    for(x=0;x<3&&ids[x];x++)
+    for(x=0; x<3&&ids[x]; x++)
     {
       GtkWidget *but = gtk_button_new_with_label(lbls[x]);
       g_signal_connect(G_OBJECT(but), "clicked", G_CALLBACK(messagebox_callback), &has_clicks[x]);
@@ -121,16 +121,16 @@ int MessageBox(HWND hwndParent, const char *text, const char *caption, int type)
     gtk_container_add(GTK_CONTAINER(outer_container),con);
     gtk_widget_show(con);
   }
- 
-  
+
+
   gtk_container_add(GTK_CONTAINER(window), outer_container);
   gtk_widget_show(outer_container);
   gtk_widget_show(window);
-  
+
   gtk_main ();
-  
+
   int x;
-  for(x=0;x<3 && ids[x]; x++)
+  for(x=0; x<3 && ids[x]; x++)
   {
     if (has_clicks[x]) return ids[x];
   }

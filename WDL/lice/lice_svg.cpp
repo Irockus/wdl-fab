@@ -39,13 +39,13 @@ static void SVGMSet(double m[], double a, double b, double c, double d, double e
 
 static void SVGMMult(double m[], double a, double b, double c, double d, double e, double f)
 {
-  SVGMSet(m, 
-    m[0]*a+m[1]*b,        // 0  
-    m[3]*a+m[4]*b,        // 3
-    m[0]*c+m[1]*d,        // 1
-    m[3]*c+m[4]*d,        // 4
-    m[0]*e+m[1]*f+m[2],   // 2
-    m[3]*e+m[4]*f+m[5]);  // 5
+  SVGMSet(m,
+          m[0]*a+m[1]*b,        // 0
+          m[3]*a+m[4]*b,        // 3
+          m[0]*c+m[1]*d,        // 1
+          m[3]*c+m[4]*d,        // 4
+          m[0]*e+m[1]*f+m[2],   // 2
+          m[3]*e+m[4]*f+m[5]);  // 5
 }
 
 static void SVGMTransform(double m[], double* x, double* y)
@@ -75,7 +75,7 @@ static void SVGDrawLine(LICE_IBitmap* bmp, double x1, double y1, double x2, doub
   {
     LICE_FLine(bmp, x1, y1, x2, y2, color, alpha, LICE_BLIT_MODE_COPY, aa);
 
-    if (fabs(y2-y1) > fabs(x2-x1)) 
+    if (fabs(y2-y1) > fabs(x2-x1))
     {
       x1 += 1.0;
       x2 += 1.0;
@@ -113,14 +113,14 @@ static void SVGDrawCircle(LICE_IBitmap* bmp, double cx, double cy, double r, LIC
 }
 
 static void SVGDrawQBezier(LICE_IBitmap* bmp, double x1, double y1, double x2, double y2, double x3, double y3,
-  LICE_pixel color, float alpha, bool aa, int linewid=1)
+                           LICE_pixel color, float alpha, bool aa, int linewid=1)
 {
   int i;
   for (i = 0; i < linewid; ++i)
   {
     LICE_DrawQBezier(bmp, x1, y1, x2, y2, x3, y3, color, alpha, LICE_BLIT_MODE_COPY, aa);
 
-    if (fabs(y3-y1) > fabs(x3-x1)) 
+    if (fabs(y3-y1) > fabs(x3-x1))
     {
       x1 += 1.0;
       x2 += 1.0;
@@ -136,14 +136,14 @@ static void SVGDrawQBezier(LICE_IBitmap* bmp, double x1, double y1, double x2, d
 }
 
 static void SVGDrawCBezier(LICE_IBitmap* bmp, double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4,
-  LICE_pixel color, float alpha, bool aa, int linewid=1)
+                           LICE_pixel color, float alpha, bool aa, int linewid=1)
 {
   int i;
   for (i = 0; i < linewid; ++i)
   {
     LICE_DrawCBezier(bmp, x1, y1, x2, y2, x3, y3, x4, y4, color, alpha, LICE_BLIT_MODE_COPY, aa);
 
-    if (fabs(y4-y1) > fabs(x4-x1)) 
+    if (fabs(y4-y1) > fabs(x4-x1))
     {
       x1 += 1.0;
       x2 += 1.0;
@@ -265,7 +265,7 @@ static const char* GetSVGStyleStr(const char* str, const char* name, int* len)
     while (*s == ' ') ++s;
     int i;
     const int MAXLEN = 256;
-    for (i = 0; i < MAXLEN && s[i] && s[i] != ';'; ++i) 
+    for (i = 0; i < MAXLEN && s[i] && s[i] != ';'; ++i)
     {
       // run through
     }
@@ -332,7 +332,7 @@ bool LICE_SVGState::ParseColor(TiXmlElement* xmlelem)
     s = GetSVGStyleStr(str, "stroke-width:", &len);
     if (s && *s >= '0' && *s <= '9') m_strokewidth = *s-'0';
     else m_strokewidth = 1;
-  } 
+  }
   return true;
 }
 
@@ -347,7 +347,7 @@ bool LICE_SVGState::ParseFont(TiXmlElement* xmlelem)
   if (str)
   {
     s = GetSVGStyleStr(str, "font-family:", &len);
-    if (s) 
+    if (s)
     {
       lstrcpyn_safe(m_logfont.lfFaceName, s, len);
       m_fontdirty = true;
@@ -403,7 +403,7 @@ bool LICE_SVGState::ParseText(TiXmlElement* xmlelem)
     ParseColor(xmlchild);
     if (!ParseText(xmlchild)) ok = false;
   }
- 
+
   return ok;
 }
 
@@ -477,7 +477,7 @@ bool LICE_SVGState::ParseLine(TiXmlElement* xmlelem)
   double x1, y1, x2, y2;
 
   ok = (xmlelem->Attribute("x1", &x1) && xmlelem->Attribute("y1", &y1)
-   && xmlelem->Attribute("x2", &x2) && xmlelem->Attribute("y2", &y2));
+        && xmlelem->Attribute("x2", &x2) && xmlelem->Attribute("y2", &y2));
 
   if (ok)
   {
@@ -501,9 +501,9 @@ bool LICE_SVGState::ParsePolyline(TiXmlElement* xmlelem, bool close)
 
   const char* str = xmlelem->Attribute("points");
   while (str && *str == ' ') ++str;
-  
+
   while (str && *str)
-  {    
+  {
     double x, y;
     int n = 0;
 
@@ -511,12 +511,12 @@ bool LICE_SVGState::ParsePolyline(TiXmlElement* xmlelem, bool close)
     if (ok)
     {
       SVGMTransform(m_ctm, &x, &y);
-      if (!npts++) 
+      if (!npts++)
       {
         firstx = x;
         firsty = y;
       }
-      else 
+      else
       {
         //LICE_FLine(m_bmp, m_x, m_y, x, y, m_strokecolor, m_strokealpha, LICE_BLIT_MODE_COPY, true);
         SVGDrawLine(m_bmp, m_x, m_y, x, y, m_strokecolor, m_strokealpha, true, m_strokewidth);
@@ -559,12 +559,12 @@ static void AdjRelXY(double* lastx, double* lasty, double* x, double* y, double 
   }
 }
 
-static bool RenderSVGPath(const char* str, double m[], RECT* r, 
-  LICE_IBitmap* bmp=0, LICE_pixel color=0xFFFFFFFF, float alpha=1.0f, bool aa=false, int strokewid=1,
-  double* lastx=0, double* lasty=0)
+static bool RenderSVGPath(const char* str, double m[], RECT* r,
+                          LICE_IBitmap* bmp=0, LICE_pixel color=0xFFFFFFFF, float alpha=1.0f, bool aa=false, int strokewid=1,
+                          double* lastx=0, double* lasty=0)
 {
   bool allok = true;
-  
+
   double firstx, firsty;  // first point on subpath, global coords
   double prevx, prevy;    // previous point, local coords
   double x0, y0;          // point at end of previous move, global coords
@@ -586,7 +586,7 @@ static bool RenderSVGPath(const char* str, double m[], RECT* r,
       case 'L':
         ok = (sscanf(str, "%lf,%lf %n", &x1, &y1, &n) == 2);
         if (ok)
-        {          
+        {
           AdjRelXY(&prevx, &prevy, &x1, &y1, m, isrel, r);
           if (c == 'M')
           {
@@ -599,9 +599,9 @@ static bool RenderSVGPath(const char* str, double m[], RECT* r,
             SVGDrawLine(bmp, x0, y0, x1, y1, color, alpha, aa, strokewid);
           }
           x0 = x1;
-          y0 = y1;          
+          y0 = y1;
         }
-      break;
+        break;
 
       case 'Z':
         ok = true;
@@ -617,7 +617,7 @@ static bool RenderSVGPath(const char* str, double m[], RECT* r,
             y0 = firsty;
           }
         }
-      break;
+        break;
 
       case 'Q':
         ok = (sscanf(str, "%lf,%lf %lf,%lf %n", &x1, &y1, &x2, &y2, &n) == 4);
@@ -631,9 +631,9 @@ static bool RenderSVGPath(const char* str, double m[], RECT* r,
             SVGDrawQBezier(bmp, x0, y1, x1, y1, x2, y2, color, alpha, aa, strokewid);
             x0 = x2;
             y0 = y2;
-          }         
+          }
         }
-      break;
+        break;
 
       case 'C':
         ok = (sscanf(str, "%lf,%lf %lf,%lf %lf,%lf %n", &x1, &y1, &x2, &y2, &x3, &y3, &n) == 6);
@@ -650,11 +650,11 @@ static bool RenderSVGPath(const char* str, double m[], RECT* r,
             y0 = y3;
           }
         }
-      break;
+        break;
     }
 
     if (!ok) allok = false;
-    if (!ok || !n) break;    
+    if (!ok || !n) break;
     str += n;
     while (*str == ' ') ++str;
   }
@@ -699,17 +699,17 @@ static bool FillSVGScanLine(LICE_IBitmap* dest, LICE_pixel* rowpx, LICE_pixel co
 static bool FillSVGShape(LICE_IBitmap* dest, LICE_IBitmap* src, LICE_pixel col, float alpha, RECT *r)
 {
   bool ok = true;
-  
+
   LICE_pixel* rowpx = src->getBits();
   int span = src->getRowSpan();
 
   int y;
   for (y = r->top; y < r->bottom; ++y, rowpx += span)
   {
-    if (!FillSVGScanLine(dest, rowpx, col, alpha, r, y, 1) && 
-      !FillSVGScanLine(dest, rowpx, col, alpha, r, y, -1))
-    {      
-      ok = false;     
+    if (!FillSVGScanLine(dest, rowpx, col, alpha, r, y, 1) &&
+        !FillSVGScanLine(dest, rowpx, col, alpha, r, y, -1))
+    {
+      ok = false;
     }
   }
 
@@ -770,16 +770,16 @@ bool LICE_SVGState::ParseNode(TiXmlNode* xmlnode)
       ParseColor(xmlelem);
 
       if (!stricmp(name, "svg") || !stricmp(name, "g")) ok = ParseNode(xmlelem);
-      else if (!stricmp(name, "rect")) ok = ParseRect(xmlelem);      
+      else if (!stricmp(name, "rect")) ok = ParseRect(xmlelem);
       else if (!stricmp(name, "circle")) ok = ParseCircle(xmlelem);
-      else if (!stricmp(name, "line")) ok = ParseLine(xmlelem);      
+      else if (!stricmp(name, "line")) ok = ParseLine(xmlelem);
       else if (!stricmp(name, "polyline")) ok = ParsePolyline(xmlelem, false);
       else if (!stricmp(name, "polygon")) ok = ParsePolyline(xmlelem, true);
       else if (!stricmp(name, "path")) ok = ParsePath(xmlelem);
       else if (!stricmp(name, "text") || !stricmp(name, "tspan")) ok = ParseText(xmlelem);
       // it's not an error not to recognize a tag
 
-      if (!ok) 
+      if (!ok)
       {
         allok = false;
         // log error and continue
@@ -791,14 +791,14 @@ bool LICE_SVGState::ParseNode(TiXmlNode* xmlnode)
 
   return true; //allok;
 }
-        
+
 static LICE_IBitmap *LICE_RenderSVG(TiXmlDocument* xmldoc, LICE_IBitmap *bmp)
 {
   if (!xmldoc) return 0;
 
   TiXmlElement* xmlroot = xmldoc->RootElement();
   if (!xmlroot || stricmp(xmlroot->Value(), "svg")) return 0;
-  
+
   int srcw = 0;
   int srch = 0;
   if (!xmlroot->Attribute("width", &srcw) || !xmlroot->Attribute("height", &srch)) return 0;
@@ -808,23 +808,23 @@ static LICE_IBitmap *LICE_RenderSVG(TiXmlDocument* xmldoc, LICE_IBitmap *bmp)
   if (ourbmp) bmp = new LICE_MemBitmap;
   LICE_SVGState svgstate(bmp);
 
-/*
-  int destw = bmp->getWidth();
-  int desth = bmp->getHeight();
+  /*
+    int destw = bmp->getWidth();
+    int desth = bmp->getHeight();
 
-  if (destw && desth) 
-  {
-    double xscale = (double)destw/(double)srcw;
-    double yscale = (double)desth/(double)srch;
-    SVGMSet(svgstate.m_ctm, xscale, 0.0, 0.0, yscale, 0.0, 0.0);
-  }
-  else
-*/
+    if (destw && desth)
+    {
+      double xscale = (double)destw/(double)srcw;
+      double yscale = (double)desth/(double)srch;
+      SVGMSet(svgstate.m_ctm, xscale, 0.0, 0.0, yscale, 0.0, 0.0);
+    }
+    else
+  */
   {
     bmp->resize(srcw, srch);
   }
   LICE_Clear(bmp, 0);
-  
+
   if (!svgstate.ParseNode(xmlroot) && ourbmp)
   {
     delete(bmp);

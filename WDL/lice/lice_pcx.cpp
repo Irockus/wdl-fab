@@ -58,16 +58,16 @@ LICE_IBitmap *LICE_LoadPCX(const char *filename, LICE_IBitmap *_bmp)
     {
       int c = fgetc(fp);
       if (c&~255) break;
-      if ((c & 192) == 192) 
+      if ((c & 192) == 192)
       {
         int oc = (fgetc(fp))&255;
         LICE_pixel t=LICE_RGBA(pal[oc*3],pal[oc*3+1],pal[oc*3+2],255);
 
         c&=63;
         while (c-- && xpos<w) pout[xpos++] =  t;
-      } 
+      }
       else pout[xpos++] = LICE_RGBA(pal[c*3],pal[c*3+1],pal[c*3+2],255);
-    } 
+    }
     pout+=rowspan;
   }
 
@@ -79,7 +79,7 @@ class LICE_PCXLoader
 {
 public:
   _LICE_ImageLoader_rec rec;
-  LICE_PCXLoader() 
+  LICE_PCXLoader()
   {
     rec.loadfunc = loadfunc;
     rec.get_extlist = get_extlist;

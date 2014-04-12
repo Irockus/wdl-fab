@@ -37,8 +37,8 @@ void IControl::SetDirty(bool pushParamToPlug)
   {
     mPlug->SetParameterFromGUI(mParamIdx, mValue);
     IParam* pParam = mPlug->GetParam(mParamIdx);
-    
-    if (mValDisplayControl) 
+
+    if (mValDisplayControl)
     {
       WDL_String plusLabel;
       char str[32];
@@ -46,11 +46,11 @@ void IControl::SetDirty(bool pushParamToPlug)
       plusLabel.Set(str, 32);
       plusLabel.Append(" ", 32);
       plusLabel.Append(pParam->GetLabelForHost(), 32);
-      
+
       ((ITextControl*)mValDisplayControl)->SetTextFromPlug(plusLabel.Get());
     }
-    
-    if (mNameDisplayControl) 
+
+    if (mNameDisplayControl)
     {
       ((ITextControl*)mNameDisplayControl)->SetTextFromPlug((char*) pParam->GetNameForHost());
     }
@@ -79,50 +79,51 @@ void IControl::GrayOut(bool gray)
 
 void IControl::OnMouseDown(int x, int y, IMouseMod* pMod)
 {
-  #ifdef PROTOOLS
+#ifdef PROTOOLS
   if (pMod->A && mDefaultValue >= 0.0)
   {
     mValue = mDefaultValue;
     SetDirty();
   }
-  #endif
-  
-  if (pMod->R) {
-        PromptUserInput();
-    }
+#endif
+
+  if (pMod->R)
+  {
+    PromptUserInput();
+  }
 }
 
 void IControl::OnMouseDblClick(int x, int y, IMouseMod* pMod)
 {
-  #ifdef PROTOOLS
+#ifdef PROTOOLS
   PromptUserInput();
-  #else
+#else
   if (mDefaultValue >= 0.0)
   {
     mValue = mDefaultValue;
     SetDirty();
   }
-  #endif
+#endif
 }
 
 void IControl::OnMouseWheel(int x, int y, IMouseMod* pMod, int d)
 {
-  #ifdef PROTOOLS
+#ifdef PROTOOLS
   if (pMod->C)
   {
     mValue += 0.001 * d;
   }
-  #else
+#else
   if (pMod->C || pMod->S)
   {
     mValue += 0.001 * d;
   }
-  #endif
+#endif
   else
   {
     mValue += 0.01 * d;
   }
-  
+
   SetDirty();
 }
 
@@ -169,12 +170,12 @@ IControl::AuxParam* IControl::GetAuxParam(int idx)
 
 int IControl::AuxParamIdx(int paramIdx)
 {
-  for (int i=0;i<mAuxParams.GetSize();i++)
+  for (int i=0; i<mAuxParams.GetSize(); i++)
   {
     if(GetAuxParam(i)->mParamIdx == paramIdx)
       return i;
   }
-  
+
   return -1;
 }
 
@@ -186,7 +187,7 @@ void IControl::AddAuxParam(int paramIdx)
 void IControl::SetAuxParamValueFromPlug(int auxParamIdx, double value)
 {
   AuxParam* auxParam = GetAuxParam(auxParamIdx);
-  
+
   if (auxParam->mValue != value)
   {
     auxParam->mValue = value;
@@ -197,7 +198,7 @@ void IControl::SetAuxParamValueFromPlug(int auxParamIdx, double value)
 
 void IControl::SetAllAuxParamsFromGUI()
 {
-  for (int i=0;i<mAuxParams.GetSize();i++)
+  for (int i=0; i<mAuxParams.GetSize(); i++)
   {
     AuxParam* auxParam = GetAuxParam(i);
     mPlug->SetParameterFromGUI(auxParam->mParamIdx, auxParam->mValue);
@@ -207,9 +208,9 @@ void IControl::SetAllAuxParamsFromGUI()
 bool IPanelControl::Draw(IGraphics* pGraphics)
 {
   if (mRounding<=0)
-  pGraphics->FillIRect(&mColor, &mRECT, &mBlend);
-    else
-        pGraphics->FillRoundRect(&mColor, &mRECT, &mBlend, mRounding, true);
+    pGraphics->FillIRect(&mColor, &mRECT, &mBlend);
+  else
+    pGraphics->FillRoundRect(&mColor, &mRECT, &mBlend, mRounding, true);
   return true;
 }
 
@@ -258,29 +259,29 @@ ISwitchFramesControl::ISwitchFramesControl(IPlugBase* pPlug, int x, int y, int p
   : ISwitchControl(pPlug, x, y, paramIdx, pBitmap, blendMethod)
 {
   mDisablePrompt = false;
-  
+
   for(int i = 0; i < pBitmap->N; i++)
   {
     if (imagesAreHorizontal)
-      mRECTs.Add(mRECT.SubRectHorizontal(pBitmap->N, i)); 
+      mRECTs.Add(mRECT.SubRectHorizontal(pBitmap->N, i));
     else
-      mRECTs.Add(mRECT.SubRectVertical(pBitmap->N, i)); 
+      mRECTs.Add(mRECT.SubRectVertical(pBitmap->N, i));
   }
 }
 
 void ISwitchFramesControl::OnMouseDown(int x, int y, IMouseMod* pMod)
 {
   int n = mRECTs.GetSize();
-  
-  for (int i = 0; i < n; i++) 
+
+  for (int i = 0; i < n; i++)
   {
-    if (mRECTs.Get()[i].Contains(x, y)) 
+    if (mRECTs.Get()[i].Contains(x, y))
     {
       mValue = (double) i / (double) (n - 1);
       break;
     }
   }
-  
+
   SetDirty();
 }
 
@@ -309,15 +310,15 @@ IRadioButtonsControl::IRadioButtonsControl(IPlugBase* pPlug, IRECT pR, int param
 {
   mRECTs.Resize(nButtons);
   int h = int((double) pBitmap->H / (double) pBitmap->N);
-  
-  if (reverse) 
+
+  if (reverse)
   {
     if (direction == kHorizontal)
     {
       int dX = int((double) (pR.W() - nButtons * pBitmap->W) / (double) (nButtons - 1));
       int x = mRECT.R - pBitmap->W - dX;
       int y = mRECT.T;
-      
+
       for (int i = 0; i < nButtons; ++i)
       {
         mRECTs.Get()[i] = IRECT(x, y, x + pBitmap->W, y + h);
@@ -329,19 +330,19 @@ IRadioButtonsControl::IRadioButtonsControl(IPlugBase* pPlug, IRECT pR, int param
       int dY = int((double) (pR.H() - nButtons * h) /  (double) (nButtons - 1));
       int x = mRECT.L;
       int y = mRECT.B - h - dY;
-      
+
       for (int i = 0; i < nButtons; ++i)
       {
         mRECTs.Get()[i] = IRECT(x, y, x + pBitmap->W, y + h);
         y -= h + dY;
       }
     }
-    
+
   }
   else
   {
     int x = mRECT.L, y = mRECT.T;
-    
+
     if (direction == kHorizontal)
     {
       int dX = int((double) (pR.W() - nButtons * pBitmap->W) / (double) (nButtons - 1));
@@ -365,8 +366,8 @@ IRadioButtonsControl::IRadioButtonsControl(IPlugBase* pPlug, IRECT pR, int param
 
 void IRadioButtonsControl::OnMouseDown(int x, int y, IMouseMod* pMod)
 {
-  #ifdef PROTOOLS
-  if (pMod->A) 
+#ifdef PROTOOLS
+  if (pMod->A)
   {
     if (mDefaultValue >= 0.0)
     {
@@ -376,12 +377,12 @@ void IRadioButtonsControl::OnMouseDown(int x, int y, IMouseMod* pMod)
     }
   }
   else
-  #endif
-  if (pMod->R)
-  {
-    PromptUserInput();
-    return;
-  }
+#endif
+    if (pMod->R)
+    {
+      PromptUserInput();
+      return;
+    }
 
   int i, n = mRECTs.GetSize();
 
@@ -461,8 +462,8 @@ IRECT IFaderControl::GetHandleRECT(double value) const
 
 void IFaderControl::OnMouseDown(int x, int y, IMouseMod* pMod)
 {
-  #ifdef PROTOOLS
-  if (pMod->A) 
+#ifdef PROTOOLS
+  if (pMod->A)
   {
     if (mDefaultValue >= 0.0)
     {
@@ -472,12 +473,12 @@ void IFaderControl::OnMouseDown(int x, int y, IMouseMod* pMod)
     }
   }
   else
-  #endif
-  if (pMod->R)
-  {
-    PromptUserInput();
-    return;
-  }
+#endif
+    if (pMod->R)
+    {
+      PromptUserInput();
+      return;
+    }
 
   return SnapToMouse(x, y);
 }
@@ -506,33 +507,33 @@ bool IFaderControl::Draw(IGraphics* pGraphics)
   return pGraphics->DrawBitmap(&mBitmap, &r, 1, &mBlend);
 }
 
-bool IFaderControl::IsHit(int x, int y) 
+bool IFaderControl::IsHit(int x, int y)
 {
   if(mOnlyHandle)
   {
     IRECT r = GetHandleRECT();
-    return r.Contains(x, y); 
+    return r.Contains(x, y);
   }
-  else 
+  else
   {
-    return mTargetRECT.Contains(x, y); 
+    return mTargetRECT.Contains(x, y);
   }
 }
 
 void IKnobControl::OnMouseDrag(int x, int y, int dX, int dY, IMouseMod* pMod)
 {
   double gearing = mGearing;
-  
-  #ifdef PROTOOLS
-    #ifdef OS_WIN
-      if (pMod->C) gearing *= 10.0;
-    #else
-      if (pMod->R) gearing *= 10.0;
-    #endif
-  #else
-    if (pMod->C || pMod->S) gearing *= 10.0;
-  #endif
-  
+
+#ifdef PROTOOLS
+#ifdef OS_WIN
+  if (pMod->C) gearing *= 10.0;
+#else
+  if (pMod->R) gearing *= 10.0;
+#endif
+#else
+  if (pMod->C || pMod->S) gearing *= 10.0;
+#endif
+
   if (mDirection == kVertical)
   {
     mValue += (double) dY / (double) (mRECT.T - mRECT.B) / gearing;
@@ -588,6 +589,63 @@ bool IKnobMultiControl::Draw(IGraphics* pGraphics)
   i = BOUNDED(i, 1, mBitmap.N);
   return pGraphics->DrawBitmap(&mBitmap, &mRECT, i, &mBlend);
 }
+
+
+bool IKnobMultiControlText::Draw(IGraphics* pGraphics)
+{
+  IKnobMultiControl::Draw(pGraphics);
+
+  char cStr[32];
+  mPlug->GetParam(mParamIdx)->GetDisplayForHost(cStr, sizeof(cStr));
+  mStr.Set(cStr);
+  if (mShowParamLabel)
+  {
+    mStr.Append(" ");
+    mStr.Append(mPlug->GetParam(mParamIdx)->GetLabelForHost());
+  }
+
+  if (CSTR_NOT_EMPTY(cStr))
+  {
+    // measure the text size
+    pGraphics->DrawIText(&mText, mStr.Get(), &mTextRECT,true);
+    // draw text
+    return pGraphics->DrawIText(&mText, mStr.Get(), &mTextRECT);
+  }
+  return true;
+}
+
+void IKnobMultiControlText::OnMouseDown(int x, int y, IMouseMod* pMod)
+{
+  if (mTextRECT.Contains(x, y)) PromptUserInput(&mTextRECT);
+#ifdef PROTOOLS
+  else if (pMod->A)
+  {
+    if (mDefaultValue >= 0.0)
+    {
+      mValue = mDefaultValue;
+      SetDirty();
+    }
+  }
+#endif
+  else
+  {
+    OnMouseDrag(x, y, 0, 0, pMod);
+  }
+}
+
+void IKnobMultiControlText::OnMouseDblClick(int x, int y, IMouseMod* pMod)
+{
+#ifdef PROTOOLS
+  PromptUserInput(&mTextRECT);
+#else
+  if (mDefaultValue >= 0.0)
+  {
+    mValue = mDefaultValue;
+    SetDirty();
+  }
+#endif
+}
+
 
 bool IKnobRotatingMaskControl::Draw(IGraphics* pGraphics)
 {

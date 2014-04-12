@@ -13,9 +13,9 @@
 // MLTE text entry code was adapted from expdigital's infinity api http://www.expdigital.co.uk/legacy2/developers.htm
 
 #ifndef USE_MLTE
-  #define USE_MLTE 0
+#define USE_MLTE 0
 #endif
-
+///  IGraphics implementation for Mac OS X Carbon
 class IGraphicsCarbon
 {
 public:
@@ -35,7 +35,7 @@ public:
   void CreateTextEntry(IControl* pControl, IText* pText, IRECT* pTextRect, const char* pString, IParam* pParam);
 
   void EndUserInput(bool commit);
-  
+
 protected:
   void ShowTooltip();
   void HideTooltip();
@@ -52,18 +52,18 @@ private:
   EventHandlerRef mTextEntryHandler;
   CGContextRef mCGC;
 
-  #if USE_MLTE
+#if USE_MLTE
   TXNObject mTextEntryView;
   IRECT mTextEntryRect;
-  #else
+#else
   ControlRef mTextEntryView;
-  #endif
+#endif
 
   IControl* mEdControl;
   IParam* mEdParam;
   int mPrevX, mPrevY;
   short mLeftOffset, mTopOffset; // only for RTAS
-  
+
   bool mShowingTooltip;
   int mTooltipIdx, mTooltipTimer;
   const char* mTooltip;

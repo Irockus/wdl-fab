@@ -28,8 +28,9 @@ static SWELL_DialogResourceIndex *resById(SWELL_DialogResourceIndex *reshead, co
 }
 
 // keep list of modal dialogs
-struct modalDlgRet { 
-  HWND hwnd; 
+struct modalDlgRet
+{
+  HWND hwnd;
   bool has_ret;
   int ret;
 };
@@ -43,12 +44,12 @@ HWND DialogBoxIsActive()
 }
 
 void EndDialog(HWND wnd, int ret)
-{   
+{
   if (!wnd) return;
-  
+
   int x;
   for (x = 0; x < s_modalDialogs.GetSize(); x ++)
-    if (s_modalDialogs.Get(x)->hwnd == wnd)  
+    if (s_modalDialogs.Get(x)->hwnd == wnd)
     {
       s_modalDialogs.Get(x)->has_ret=true;
       s_modalDialogs.Get(x)->ret = ret;
@@ -109,14 +110,14 @@ HWND SWELL_CreateDialog(SWELL_DialogResourceIndex *reshead, const char *resid, H
 {
   SWELL_DialogResourceIndex *p=resById(reshead,resid);
   if (!p&&resid) return 0;
-  
-  RECT r={0,0,p?p->width : 300, p?p->height : 200};
+
+  RECT r= {0,0,p?p->width : 300, p?p->height : 200};
   HWND owner=NULL;
 
-  if ((!p || (p->windowTypeFlags&SWELL_DLG_WS_CHILD)) && parent) 
+  if ((!p || (p->windowTypeFlags&SWELL_DLG_WS_CHILD)) && parent)
   {
-  } 
-  else 
+  }
+  else
   {
     owner = parent;
     parent = NULL; // top level window
@@ -141,17 +142,17 @@ HWND SWELL_CreateDialog(SWELL_DialogResourceIndex *reshead, const char *resid, H
 
     //HWND hFoc=m_children;
 //    while (hFoc && !hFoc->m_wantfocus) hFoc=hFoc->m_next;
- //   if (!hFoc) hFoc=this;
-  //  if (dlgproc(this,WM_INITDIALOG,(WPARAM)hFoc,0)&&hFoc) SetFocus(hFoc);
+//   if (!hFoc) hFoc=this;
+    //  if (dlgproc(this,WM_INITDIALOG,(WPARAM)hFoc,0)&&hFoc) SetFocus(hFoc);
 
     h->m_dlgproc(h,WM_INITDIALOG,0,param);
-  } 
+  }
   else
   {
     h->m_wndproc = (WNDPROC)dlgproc;
     h->m_wndproc(h,WM_CREATE,0,param);
   }
-    
+
   return h;
 }
 
@@ -161,9 +162,9 @@ void SWELL_SetDefaultWindowMenu(HMENU menu)
 {
   g_swell_defaultmenu=menu;
 }
-HMENU SWELL_GetDefaultModalWindowMenu() 
-{ 
-  return g_swell_defaultmenumodal; 
+HMENU SWELL_GetDefaultModalWindowMenu()
+{
+  return g_swell_defaultmenumodal;
 }
 void SWELL_SetDefaultModalWindowMenu(HMENU menu)
 {
@@ -186,12 +187,12 @@ void SWELL_InitiateDragDrop(HWND hwnd, RECT* srcrect, const char* srcfn, void (*
 
   s_dragdropsrcfn = strdup(srcfn);
   s_dragdropsrccallback = callback;
-  
+
   char* p = s_dragdropsrcfn+strlen(s_dragdropsrcfn)-1;
   while (p >= s_dragdropsrcfn && *p != '.') --p;
   ++p;
-  
-} 
+
+}
 
 // owner owns srclist, make copies here etc
 void SWELL_InitiateDragDropOfFileList(HWND hwnd, RECT *srcrect, const char **srclist, int srccount, HICON icon)
@@ -199,14 +200,14 @@ void SWELL_InitiateDragDropOfFileList(HWND hwnd, RECT *srcrect, const char **src
   SWELL_FinishDragDrop();
 
   if (1) return;
-  
+
 }
 
 void SWELL_FinishDragDrop()
 {
   free(s_dragdropsrcfn);
   s_dragdropsrcfn = 0;
-  s_dragdropsrccallback = 0;  
+  s_dragdropsrccallback = 0;
 }
 
 #endif

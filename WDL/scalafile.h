@@ -78,261 +78,262 @@
 class ScalaScaleFile
 {
 public:
-	ScalaScaleFile(): m_fp(NULL) {}
+  ScalaScaleFile(): m_fp(NULL) {}
 
-	~ScalaScaleFile()
-	{
-		if (m_fp) fclose(m_fp);
-	}
+  ~ScalaScaleFile()
+  {
+    if (m_fp) fclose(m_fp);
+  }
 
-	bool Open(const char* filename)
-	{
-		m_fp = fopen(filename, "rb");
-		m_buf = EOF;
-		return (bool)m_fp;
-	}
+  bool Open(const char* filename)
+  {
+    m_fp = fopen(filename, "rb");
+    m_buf = EOF;
+    return (bool)m_fp;
+  }
 
-	int ReadDescr(char* buf, int size)
-	{
-		int c = SkipComments();
-		if (c == EOF) return 0;
+  int ReadDescr(char* buf, int size)
+  {
+    int c = SkipComments();
+    if (c == EOF) return 0;
 
-		int n = 0;
-		while (c != '\n' && c != EOF)
-		{
-			if (++n < size) *buf++ = c;
-			c = GetChar();
-		}
+    int n = 0;
+    while (c != '\n' && c != EOF)
+    {
+      if (++n < size) *buf++ = c;
+      c = GetChar();
+    }
 
-		if (size) *buf = '\0';
-		return ++n;
-	}
+    if (size) *buf = '\0';
+    return ++n;
+  }
 
-	inline int SkipDescr()
-	{
-		return ReadDescr(NULL, 0);
-	}
+  inline int SkipDescr()
+  {
+    return ReadDescr(NULL, 0);
+  }
 
-	int ReadNum()
-	{
-		const int err = -1;
+  int ReadNum()
+  {
+    const int err = -1;
 
-		char buf[16];
-		if (!ReadVal(buf, sizeof(buf))) return err;
+    char buf[16];
+    if (!ReadVal(buf, sizeof(buf))) return err;
 
-		return atoi(buf);
-	}
+    return atoi(buf);
+  }
 
-	double ReadPitch()
-	{
-		const double err = 0.;
+  double ReadPitch()
+  {
+    const double err = 0.;
 
-		char buf[32];
-		if (!ReadVal(buf, sizeof(buf))) return err;
+    char buf[32];
+    if (!ReadVal(buf, sizeof(buf))) return err;
 
-		double pitch;
-		if (strchr(buf, '.'))
-		{
-			double cents = atof(buf);
-			pitch = pow(2., cents / 1200.);
-		}
-		else
-		{
-			int num = atoi(buf);
-			if (num <= 0) return err;
-			char* slash = strchr(buf, '/');
-			if (slash)
-			{
-				int denom = atoi(slash + 1);
-				if (denom <= 0) return err;
-				pitch = (double)num / (double)denom;
-			}
-			else
-			{
-				pitch = (double)num;
-			}
-		}
+    double pitch;
+    if (strchr(buf, '.'))
+    {
+      double cents = atof(buf);
+      pitch = pow(2., cents / 1200.);
+    }
+    else
+    {
+      int num = atoi(buf);
+      if (num <= 0) return err;
+      char* slash = strchr(buf, '/');
+      if (slash)
+      {
+        int denom = atoi(slash + 1);
+        if (denom <= 0) return err;
+        pitch = (double)num / (double)denom;
+      }
+      else
+      {
+        pitch = (double)num;
+      }
+    }
 
-		return pitch;
-	}
+    return pitch;
+  }
 
-	bool Create(const char* filename)
-	{
-		if (m_fp) fclose(m_fp);
-		m_fp = fopen(filename, "w");
-		return (bool)m_fp;
-	}
+  bool Create(const char* filename)
+  {
+    if (m_fp) fclose(m_fp);
+    m_fp = fopen(filename, "w");
+    return (bool)m_fp;
+  }
 
-	inline int WriteComment(const char* buf)
-	{
-		return m_fp ? WriteLine(buf) : -1;
-	}
+  inline int WriteComment(const char* buf)
+  {
+    return m_fp ? WriteLine(buf) : -1;
+  }
 
-	int WriteFilename(const char* filename)
-	{
-		if (!m_fp) return -1;
+  int WriteFilename(const char* filename)
+  {
+    if (!m_fp) return -1;
 
-		int ret = fputs("! ", m_fp);
+    int ret = fputs("! ", m_fp);
 
-		if (ret >= 0)
-		{
-			const char* p = filename + strlen(filename);
-			while (--p >= filename && *p != '\\' && *p != '/');
-			ret = fputs(++p, m_fp);
-		}
+    if (ret >= 0)
+    {
+      const char* p = filename + strlen(filename);
+      while (--p >= filename && *p != '\\' && *p != '/');
+      ret = fputs(++p, m_fp);
+    }
 
-		if (ret >= 0) ret = fputs("\n", m_fp);
-		return ret;
-	}
+    if (ret >= 0) ret = fputs("\n", m_fp);
+    return ret;
+  }
 
-	inline int WriteDescr(const char* buf)
-	{
-		return m_fp ? WriteLine(buf) : -1;
-	}
+  inline int WriteDescr(const char* buf)
+  {
+    return m_fp ? WriteLine(buf) : -1;
+  }
 
-	int WriteNum(int num)
-	{
-		if (!m_fp) return -1;
-		return fprintf(m_fp, "%d\n", num);
-	}
+  int WriteNum(int num)
+  {
+    if (!m_fp) return -1;
+    return fprintf(m_fp, "%d\n", num);
+  }
 
-	int WriteCents(double cents, const char* comment = NULL)
-	{
-		if (!m_fp) return -1;
-		return WritePitchComment(fprintf(m_fp, "%0.5f", cents), comment);
-	}
+  int WriteCents(double cents, const char* comment = NULL)
+  {
+    if (!m_fp) return -1;
+    return WritePitchComment(fprintf(m_fp, "%0.5f", cents), comment);
+  }
 
-	int WriteRatio(int num, int denom, const char* comment = NULL)
-	{
-		if (!m_fp) return -1;
-		return WritePitchComment(fprintf(m_fp, "%d/%d", num, denom), comment);
-	}
+  int WriteRatio(int num, int denom, const char* comment = NULL)
+  {
+    if (!m_fp) return -1;
+    return WritePitchComment(fprintf(m_fp, "%d/%d", num, denom), comment);
+  }
 
-	int WritePitch(double pitch, const char* comment = NULL)
-	{
-		if (!m_fp) return -1;
+  int WritePitch(double pitch, const char* comment = NULL)
+  {
+    if (!m_fp) return -1;
 
-		double i;
-		int ret;
-		if (modf(pitch, &i) == 0.)
-			ret = fprintf(m_fp, "%0.0f/1", i);
-		else
-			ret = fprintf(m_fp, "%0.5f", log(pitch) / log(2.) * 1200.);
+    double i;
+    int ret;
+    if (modf(pitch, &i) == 0.)
+      ret = fprintf(m_fp, "%0.0f/1", i);
+    else
+      ret = fprintf(m_fp, "%0.5f", log(pitch) / log(2.) * 1200.);
 
-		return WritePitchComment(ret, comment);
-	}
+    return WritePitchComment(ret, comment);
+  }
 
-	int Close()
-	{
-		if (m_fp)
-		{
-			if (fclose(m_fp)) return EOF;
-			m_fp = NULL;
-		}
-		return 0;
-	}
+  int Close()
+  {
+    if (m_fp)
+    {
+      if (fclose(m_fp)) return EOF;
+      m_fp = NULL;
+    }
+    return 0;
+  }
 
 protected:
-	int GetChar()
-	{
-		int c = m_buf;
-		if (c != EOF)
-		{
-			m_buf = EOF;
-			return c;
-		}
+  int GetChar()
+  {
+    int c = m_buf;
+    if (c != EOF)
+    {
+      m_buf = EOF;
+      return c;
+    }
 
-		c = m_fp ? fgetc(m_fp) : EOF;
-		if (c == EOF) return c;
+    c = m_fp ? fgetc(m_fp) : EOF;
+    if (c == EOF) return c;
 
-		switch (c)
-		{
-			case '\r':
-				m_buf = fgetc(m_fp);
-				if (m_buf == '\n') m_buf = EOF;
-				c = '\n';
-				break;
-			case '\n':
-				m_buf = fgetc(m_fp);
-				if (m_buf == '\r') m_buf = EOF;
-				break;
-		}
+    switch (c)
+    {
+      case '\r':
+        m_buf = fgetc(m_fp);
+        if (m_buf == '\n') m_buf = EOF;
+        c = '\n';
+        break;
+      case '\n':
+        m_buf = fgetc(m_fp);
+        if (m_buf == '\r') m_buf = EOF;
+        break;
+    }
 
-		return c;
-	}
+    return c;
+  }
 
-	int SkipComments()
-	{
-		int c = GetChar();
-		while (c == '!')
-		{
-			do
-			{
-				c = GetChar();
-				if (c == EOF) return c;
-			} while (c != '\n');
-			c = GetChar();
-		}
-		return c;
-	}
+  int SkipComments()
+  {
+    int c = GetChar();
+    while (c == '!')
+    {
+      do
+      {
+        c = GetChar();
+        if (c == EOF) return c;
+      }
+      while (c != '\n');
+      c = GetChar();
+    }
+    return c;
+  }
 
-	int ReadVal(char* buf, int size)
-	{
-		int c = SkipComments();
-		if (c == EOF) return 0;
+  int ReadVal(char* buf, int size)
+  {
+    int c = SkipComments();
+    if (c == EOF) return 0;
 
-		int n = 0;
-		bool ignore = false;
-		while (c != '\n' && c != EOF)
-		{
-			if (!ignore)
-			{
-				if (c != ' ' && c != '\t')
-				{
-					if (++n < size) *buf++ = c;
-				}
-				else if (n)
-				{
-					ignore = true;
-				}
-			}
-			c = GetChar();
-		}
-		if (n >= size) return 0;
+    int n = 0;
+    bool ignore = false;
+    while (c != '\n' && c != EOF)
+    {
+      if (!ignore)
+      {
+        if (c != ' ' && c != '\t')
+        {
+          if (++n < size) *buf++ = c;
+        }
+        else if (n)
+        {
+          ignore = true;
+        }
+      }
+      c = GetChar();
+    }
+    if (n >= size) return 0;
 
-		*buf = '\0';
-		return ++n;
-	}
+    *buf = '\0';
+    return ++n;
+  }
 
-	int WriteLine(const char* buf)
-	{
-		// if (!m_fp) return -1;
+  int WriteLine(const char* buf)
+  {
+    // if (!m_fp) return -1;
 
-		if (buf)
-		{
-			int ret = fputs(buf, m_fp);
-			if (ret < 0) return ret;
-		}
+    if (buf)
+    {
+      int ret = fputs(buf, m_fp);
+      if (ret < 0) return ret;
+    }
 
-		return fputs("\n", m_fp);
-	}
+    return fputs("\n", m_fp);
+  }
 
-	int WritePitchComment(int ret, const char* comment)
-	{
-		// if (!m_fp) return -1;
+  int WritePitchComment(int ret, const char* comment)
+  {
+    // if (!m_fp) return -1;
 
-		if (comment && ret >= 0)
-		{
-			ret = fputs(" ", m_fp);
-			if (ret >= 0) ret = fputs(comment, m_fp);
-		}
+    if (comment && ret >= 0)
+    {
+      ret = fputs(" ", m_fp);
+      if (ret >= 0) ret = fputs(comment, m_fp);
+    }
 
-		if (ret >= 0) ret = fputs("\n", m_fp);
-		return ret;
-	}
+    if (ret >= 0) ret = fputs("\n", m_fp);
+    return ret;
+  }
 
-	FILE* m_fp;
-	int m_buf;
+  FILE* m_fp;
+  int m_buf;
 };
 
 

@@ -76,7 +76,7 @@
       {
         [nsMenuItem setState:NSOffState];
       }
-      
+
       if (menuItem->GetEnabled())
       {
         [nsMenuItem setEnabled:YES];
@@ -132,7 +132,7 @@ inline IMouseMod GetRightMouseMod(NSEvent* pEvent)
   {
     int i = 0;
     int len = [partialString length];
-    
+
     for (i = 0; i < len; i++)
     {
       if (![filterCharacterSet characterIsMember:[partialString characterAtIndex:i]])
@@ -198,7 +198,7 @@ inline IMouseMod GetRightMouseMod(NSEvent* pEvent)
 
 inline int GetMouseOver(IGraphicsMac* pGraphics)
 {
-	return pGraphics->GetMouseOver();
+  return pGraphics->GetMouseOver();
 }
 
 @implementation IGRAPHICS_COCOA
@@ -295,7 +295,7 @@ inline int GetMouseOver(IGraphicsMac* pGraphics)
     [self getMouseXY:pEvent x:&x y:&y];
     IMouseMod ms = GetMouseMod(pEvent);
 
-    #ifdef RTAS_API
+#ifdef RTAS_API
     if (ms.L && ms.R && ms.C && (mGraphics->GetParamIdxForPTAutomation(x, y) > -1))
     {
       WindowRef carbonParent = (WindowRef) [[[self window] parentWindow] windowRef];
@@ -303,7 +303,7 @@ inline int GetMouseOver(IGraphicsMac* pGraphics)
       SendEventToWindow(carbonEvent, carbonParent);
       return;
     }
-    #endif
+#endif
 
     if ([pEvent clickCount] > 1)
     {
@@ -420,12 +420,12 @@ inline int GetMouseOver(IGraphicsMac* pGraphics)
 
     if (!handle)
     {
-      #ifdef RTAS_API
+#ifdef RTAS_API
       [[NSApp mainWindow] makeKeyWindow];
       [NSApp postEvent: [NSApp currentEvent] atStart: YES];
-      #else
+#else
       [[self nextResponder] keyDown:pEvent];
-      #endif
+#endif
     }
   }
 }
@@ -475,7 +475,7 @@ inline int GetMouseOver(IGraphicsMac* pGraphics)
   {
     mEdControl->TextFromTextEntry(txt);
   }
-  
+
   [self endUserInput ];
   [self setNeedsDisplay: YES];
 }
@@ -491,11 +491,11 @@ inline int GetMouseOver(IGraphicsMac* pGraphics)
   wp = [self convertPointToBase:wp];
 
   NSEvent* event = [NSEvent otherEventWithType:NSApplicationDefined
-                  location:wp
-                  modifierFlags:NSApplicationDefined
-                  timestamp: (NSTimeInterval) 0
-                  windowNumber: [pWindow windowNumber]
-                  context: [NSGraphicsContext currentContext]
+                    location:wp
+                    modifierFlags:NSApplicationDefined
+                    timestamp: (NSTimeInterval) 0
+                    windowNumber: [pWindow windowNumber]
+                    context: [NSGraphicsContext currentContext]
                     subtype:0
                     data1: 0
                     data2: 0];
@@ -575,13 +575,13 @@ inline int GetMouseOver(IGraphicsMac* pGraphics)
   [mTextFieldView setBordered: NO];
   [mTextFieldView setFocusRingType:NSFocusRingTypeNone];
 #endif
-  
+
 #if __MAC_OS_X_VERSION_MAX_ALLOWED > 1050
   [mTextFieldView setDelegate: (id<NSTextFieldDelegate>) self];
 #else
   [mTextFieldView setDelegate: self];
 #endif
-  
+
   [self addSubview: mTextFieldView];
   NSWindow* pWindow = [self window];
   [pWindow makeKeyAndOrderFront:nil];
@@ -608,7 +608,7 @@ inline int GetMouseOver(IGraphicsMac* pGraphics)
 {
   int c = mGraphics ? GetMouseOver(mGraphics) : -1;
   if (c < 0) return @"";
-  
+
   const char* tooltip = mGraphics->GetControl(c)->GetTooltip();
   return CSTR_NOT_EMPTY(tooltip) ? ToNSString((const char*) tooltip) : @"";
 }

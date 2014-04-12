@@ -1,12 +1,12 @@
 /*
-    WDL - Skinned/Resizing thumb scrollbar library 
+    WDL - Skinned/Resizing thumb scrollbar library
     Based on the "Cool Scrollbar Library v1.2" by James Brown - http://www.catch22.net
-  
+
     Original version Copyright(c) 2001 J Brown
     Modifications copyright (C) 2006 and later Cockos Incorporated
 
-    Note: for a more featureful and complete, less hacked up version, you may wish to 
-    download the  original from http://www.catch22.net. It has lots of added features, 
+    Note: for a more featureful and complete, less hacked up version, you may wish to
+    download the  original from http://www.catch22.net. It has lots of added features,
     whereas this version is very much tailored for Cockos' needs.
 
     License:
@@ -26,20 +26,20 @@
       2. Altered source versions must be plainly marked as such, and must not be
          misrepresented as being the original software.
       3. This notice may not be removed or altered from any source distribution.
-    
+
 
     Original readme from        Cool Scrollbar Library Version 1.2
 
 	    Copyright (c) J Brown 2001
-	      
+
 	    This code is freeware, however, you may not publish
 	    this code elsewhere or charge any money for it. This code
 	    is supplied as-is. I make no guarantees about the suitability
 	    of this code - use at your own risk.
-	    
+
 	    It would be nice if you credited me, in the event
 	    that you use this code in a product.
-	    
+
 	    VERSION HISTORY:
 
 	     V1.2: TreeView problem fixed by Diego Tartara
@@ -64,7 +64,7 @@
 	     the coordinates are "rotated" before the horizontal function is called, and
 	     then rotated back once the function has completed. When something needs to
 	     be drawn, the coords are converted back again before drawing.
-	     
+
          This trick greatly reduces the amount of code required, and makes
 	     maintanence much simpler. This way, only one function is needed to draw
 	     a scrollbar, but this can be used for both horizontal and vertical bars
@@ -79,18 +79,18 @@
 */
 
 #ifdef _WIN32
-  #include <windows.h>
-  #include <windowsx.h>
-  #include <commctrl.h>
-  #include <tchar.h>
-  #pragma warning(disable:4244) // implicit cast int to float
+#include <windows.h>
+#include <windowsx.h>
+#include <commctrl.h>
+#include <tchar.h>
+#pragma warning(disable:4244) // implicit cast int to float
 #else
-  #include "../../swell/swell.h"
-  #define __stdcall
-  typedef char TCHAR;
-  #ifndef SWP_FRAMECHANGED
-    #define SWP_FRAMECHANGED  0
-  #endif
+#include "../../swell/swell.h"
+#define __stdcall
+typedef char TCHAR;
+#ifndef SWP_FRAMECHANGED
+#define SWP_FRAMECHANGED  0
+#endif
 #endif
 
 #include "../../lice/lice.h"
@@ -104,15 +104,15 @@
 //
 //	SCROLLBAR datatype. There are two of these structures per window
 //
-typedef struct 
+typedef struct
 {
-	UINT		fScrollFlags;		//flags
-	BOOL		fScrollVisible;		//if this scrollbar visible?
-	SCROLLINFO	scrollInfo;			//positional data (range, position, page size etc)
-	
-	int			nBarType;			//SB_HORZ / SB_VERT
+  UINT		fScrollFlags;		//flags
+  BOOL		fScrollVisible;		//if this scrollbar visible?
+  SCROLLINFO	scrollInfo;			//positional data (range, position, page size etc)
 
-	int			nMinThumbSize;
+  int			nBarType;			//SB_HORZ / SB_VERT
+
+  int			nMinThumbSize;
 
   LICE_SysBitmap *liceBkgnd;
   LICE_SysBitmap *liceThumb;
@@ -128,22 +128,22 @@ typedef struct
 //
 typedef struct
 {
-	UINT bars;				//which of the scrollbars do we handle? SB_VERT / SB_HORZ / SB_BOTH
-	WNDPROC oldproc;		//old window procedure to call for every message
+  UINT bars;				//which of the scrollbars do we handle? SB_VERT / SB_HORZ / SB_BOTH
+  WNDPROC oldproc;		//old window procedure to call for every message
 
-	SCROLLBAR sbarHorz;		//one scrollbar structure each for 
-	SCROLLBAR sbarVert;		//the horizontal and vertical scrollbars
+  SCROLLBAR sbarHorz;		//one scrollbar structure each for
+  SCROLLBAR sbarVert;		//the horizontal and vertical scrollbars
 
-	BOOL fThumbTracking;	// are we currently thumb-tracking??
-	BOOL fLeftScrollbar;	// support the WS_EX_LEFTSCROLLBAR style
+  BOOL fThumbTracking;	// are we currently thumb-tracking??
+  BOOL fLeftScrollbar;	// support the WS_EX_LEFTSCROLLBAR style
 
-	//size of the window borders
-	int cxLeftEdge, cxRightEdge;
-	int cyTopEdge,  cyBottomEdge;
+  //size of the window borders
+  int cxLeftEdge, cxRightEdge;
+  int cyTopEdge,  cyBottomEdge;
 
-	// To prevent calling original WindowProc in response
-	// to our own temporary style change (fixes TreeView problem)
-	BOOL bPreventStyleChange;
+  // To prevent calling original WindowProc in response
+  // to our own temporary style change (fixes TreeView problem)
+  BOOL bPreventStyleChange;
 
   BOOL resizingHthumb;
 
@@ -151,7 +151,7 @@ typedef struct
   // internal state stuff
 
   UINT uScrollTimerMsg;
-  
+
   UINT uMouseOverId;
   UINT uScrollTimerId;
   UINT uZoomTimerId, uZoomTimerMode;
@@ -249,7 +249,7 @@ static int g_coolsb_imageVersion; // liceBkgnd_ver, liceThumb_ver
 
 static LICE_IBitmap **m_scrollbar_bmp = NULL;
 static int m_scrollbar_hasPink;
-static int m_sb_thumbHV[5], m_sb_thumbVV[5]; // 
+static int m_sb_thumbHV[5], m_sb_thumbVV[5]; //
 static int m_sb_bkghl, m_sb_bkghr;
 static int m_sb_bkgvt, m_sb_bkgvb;
 
@@ -289,14 +289,14 @@ static SCROLLWND *GetScrollWndFromHwnd(HWND hwnd);
 //
 static void __stdcall RotateRect(RECT *rect)
 {
-	int temp;
-	temp = rect->left;
-	rect->left = rect->top;
-	rect->top = temp;
+  int temp;
+  temp = rect->left;
+  rect->left = rect->top;
+  rect->top = temp;
 
-	temp = rect->right;
-	rect->right = rect->bottom;
-	rect->bottom = temp;
+  temp = rect->right;
+  rect->right = rect->bottom;
+  rect->bottom = temp;
 }
 
 //
@@ -304,8 +304,8 @@ static void __stdcall RotateRect(RECT *rect)
 //
 static void __stdcall RotateRect0(SCROLLBAR *sb, RECT *rect)
 {
-	if(sb->nBarType == SB_VERT)
-		RotateRect(rect);
+  if(sb->nBarType == SB_VERT)
+    RotateRect(rect);
 }
 
 //
@@ -314,11 +314,11 @@ static void __stdcall RotateRect0(SCROLLBAR *sb, RECT *rect)
 //
 static BOOL IsScrollInfoActive(SCROLLINFO *si)
 {
-	if((si->nPage > (UINT)si->nMax
-		|| si->nMax <= si->nMin || si->nMax == 0))
-		return FALSE;
-	else
-		return TRUE;
+  if((si->nPage > (UINT)si->nMax
+      || si->nMax <= si->nMin || si->nMax == 0))
+    return FALSE;
+  else
+    return TRUE;
 }
 
 //
@@ -326,20 +326,20 @@ static BOOL IsScrollInfoActive(SCROLLINFO *si)
 //
 static BOOL IsScrollbarActive(SCROLLBAR *sb)
 {
-	SCROLLINFO *si = &sb->scrollInfo;
-	if(((sb->fScrollFlags & ESB_DISABLE_BOTH) == ESB_DISABLE_BOTH) ||
-		(!(sb->fScrollFlags & CSBS_THUMBALWAYS) && !IsScrollInfoActive(si)))
-		return FALSE;
-	else
-		return TRUE;
+  SCROLLINFO *si = &sb->scrollInfo;
+  if(((sb->fScrollFlags & ESB_DISABLE_BOTH) == ESB_DISABLE_BOTH) ||
+      (!(sb->fScrollFlags & CSBS_THUMBALWAYS) && !IsScrollInfoActive(si)))
+    return FALSE;
+  else
+    return TRUE;
 }
 
 #ifdef __APPLE__
 static void GET_WINDOW_RECT(HWND hwnd, RECT *r)
 {
   GetWindowContentViewRect(hwnd,r);
-  if (r->top>r->bottom) 
-  { 
+  if (r->top>r->bottom)
+  {
     int tmp = r->top;
     r->top = r->bottom;
     r->bottom = tmp;
@@ -355,14 +355,14 @@ static void OSX_REMAP_SCREENY(HWND hwnd, LONG *y)
 {
 //  POINT p={0,0};
   //ClientToScreen(hwnd,&p);
-  POINT p={0,*y};
+  POINT p= {0,*y};
   RECT tr;
   GetClientRect(hwnd,&tr);
   ScreenToClient(hwnd,&p);
   p.y-=tr.top;
   RECT r;
   GetWindowRect(hwnd,&r);
-  
+
   *y=min(r.bottom,r.top)+p.y;
 // map Y from "screen" coordinate
 }
@@ -393,21 +393,21 @@ static BOOL ownDrawEdge(HWND hwnd, HDC hdc, LPRECT qrc, UINT edge, UINT grfFlags
     LineTo(hdc, qrc->left+1, qrc->bottom-2);
     SelectObject(hdc,pen2);
     MoveToEx(hdc, qrc->left+1, qrc->bottom-2, NULL);
-    LineTo(hdc, qrc->right-1, qrc->bottom-2);  
+    LineTo(hdc, qrc->right-1, qrc->bottom-2);
     MoveToEx(hdc, qrc->right-2, qrc->bottom-2, NULL);
-    LineTo(hdc, qrc->right-2, qrc->top+1);  
+    LineTo(hdc, qrc->right-2, qrc->top+1);
     SelectObject(hdc,pen4);
     MoveToEx(hdc, qrc->left, qrc->bottom-1, NULL);
-    LineTo(hdc, qrc->right, qrc->bottom-1);  
+    LineTo(hdc, qrc->right, qrc->bottom-1);
     MoveToEx(hdc, qrc->right-1, qrc->bottom-1, NULL);
-    LineTo(hdc, qrc->right-1, qrc->top);  
+    LineTo(hdc, qrc->right-1, qrc->top);
   }
   else
   {
     HBRUSH br = CreateSolidBrush(CoolSB_GetSysColor(hwnd,COLOR_BTNFACE));
     FillRect(hdc, qrc, br);
     DeleteObject(br);
-    
+
     SelectObject(hdc, pen2);
     MoveToEx(hdc, qrc->left, qrc->top, NULL);
     LineTo(hdc, qrc->right, qrc->top);
@@ -418,14 +418,14 @@ static BOOL ownDrawEdge(HWND hwnd, HDC hdc, LPRECT qrc, UINT edge, UINT grfFlags
     MoveToEx(hdc, qrc->left, qrc->bottom-1, NULL);
     LineTo(hdc, qrc->left, qrc->top);
   }
-  
+
   SelectObject(hdc, oldpen);
 
   DeleteObject(pen1);
   DeleteObject(pen2);
   DeleteObject(pen3);
   DeleteObject(pen4);
-  
+
   if(grfFlags & BF_ADJUST)
   {
     qrc->left+=2;
@@ -449,7 +449,7 @@ static LRESULT CallWindowProcStyleMod(SCROLLWND *sw, HWND hwnd, UINT msg, WPARAM
     restore = true;
   }
 #endif
-  
+
   LRESULT ret  = CallWindowProc(sw->oldproc,hwnd,msg,wParam,lParam);
 #ifdef _WIN32
   if (restore)
@@ -476,14 +476,14 @@ static BOOL ownDrawFrameControl(HWND hwnd, HDC hdc, LPRECT lprc, UINT uType, UIN
     else if((uState&0xf) == DFCS_SCROLLDOWN) starty += 60;
     if(uState & DFCS_PUSHED) startx += 34;
     else if(mouseOver) startx += 17;
-    
+
     if (w>tmpbmp.getWidth() || h>tmpbmp.getHeight())
       tmpbmp.resize(max(w,tmpbmp.getWidth()), max(h,tmpbmp.getHeight()));
 
     LICE_ScaledBlit(&tmpbmp, bmp, 0, 0, w, h, startx, starty, 17, 17, 1.0f, LICE_BLIT_FILTER_BILINEAR);
-          #ifndef _WIN32
-          SWELL_SyncCtxFrameBuffer(tmpbmp.getDC());
-          #endif
+#ifndef _WIN32
+    SWELL_SyncCtxFrameBuffer(tmpbmp.getDC());
+#endif
     BitBlt(hdc, lprc->left, lprc->top, w, h, tmpbmp.getDC(), 0, 0, SRCCOPY);
     return 1;
   }
@@ -496,9 +496,9 @@ static BOOL ownDrawFrameControl(HWND hwnd, HDC hdc, LPRECT lprc, UINT uType, UIN
   HBRUSH oldbrush;
 
   ownDrawEdge(hwnd,hdc, &r, uState&DFCS_PUSHED?EDGE_ETCHED:EDGE_RAISED, BF_ADJUST);
-	FillRect(hdc, &r, br);
+  FillRect(hdc, &r, br);
 
-  if(uState & DFCS_PUSHED) 
+  if(uState & DFCS_PUSHED)
   {
     r.left++;
     r.top++;
@@ -513,7 +513,7 @@ static BOOL ownDrawFrameControl(HWND hwnd, HDC hdc, LPRECT lprc, UINT uType, UIN
       else r.left--;
       r.top--;*/
       r.bottom--;
-      if ((uState&0xf) == DFCS_SCROLLRIGHT) 
+      if ((uState&0xf) == DFCS_SCROLLRIGHT)
       {
         r.left--;
         r.right--;
@@ -542,25 +542,25 @@ static BOOL ownDrawFrameControl(HWND hwnd, HDC hdc, LPRECT lprc, UINT uType, UIN
   if((uState&0xf) == DFCS_SCROLLRIGHT)
   {
     int h = r.bottom-r.top-6;
-    POINT p[3]={{r.right-4,r.top+3+(h/2)},{r.left+5,r.top+2},{r.left+5,r.bottom-3}};
+    POINT p[3]= {{r.right-4,r.top+3+(h/2)},{r.left+5,r.top+2},{r.left+5,r.bottom-3}};
     Polygon(hdc, p, 3);
   }
   else if((uState&0xf) == DFCS_SCROLLLEFT)
   {
     int h = r.bottom-r.top-6;
-    POINT p[3]={{r.left+3,r.top+3+(h/2)},{r.right-6,r.top+2},{r.right-6,r.bottom-3}};
+    POINT p[3]= {{r.left+3,r.top+3+(h/2)},{r.right-6,r.top+2},{r.right-6,r.bottom-3}};
     Polygon(hdc, p, 3);
   }
   else if((uState&0xf) == DFCS_SCROLLDOWN)
   {
     int w = r.right-r.left-6;
-    POINT p[3]={{r.left+3+(w/2),r.bottom-4},{r.left+2,r.top+5},{r.right-3,r.top+5}};
+    POINT p[3]= {{r.left+3+(w/2),r.bottom-4},{r.left+2,r.top+5},{r.right-3,r.top+5}};
     Polygon(hdc, p, 3);
   }
   else if((uState&0xf) == DFCS_SCROLLUP)
   {
     int w = r.right-r.left-6;
-    POINT p[3]={{r.left+3+(w/2),r.top+3},{r.left+2,r.bottom-6},{r.right-3,r.bottom-6}};
+    POINT p[3]= {{r.left+3+(w/2),r.top+3},{r.left+2,r.bottom-6},{r.right-3,r.bottom-6}};
     Polygon(hdc, p, 3);
   }
 
@@ -579,22 +579,22 @@ static BOOL ownDrawFrameControl(HWND hwnd, HDC hdc, LPRECT lprc, UINT uType, UIN
 //
 static int DrawScrollArrow(HWND hwnd, SCROLLBAR *sbar, HDC hdc, RECT *rect, UINT arrow, BOOL fMouseDown, BOOL fMouseOver)
 {
-	UINT ret;
-	UINT flags = arrow;
+  UINT ret;
+  UINT flags = arrow;
 
-	//HACKY bit so this routine can be called by vertical and horizontal code
-	if(sbar->nBarType == SB_VERT)
-	{
-		if(flags & DFCS_SCROLLLEFT)		flags = (flags & ~DFCS_SCROLLLEFT)  | DFCS_SCROLLUP;
-		if(flags & DFCS_SCROLLRIGHT)	flags = (flags & ~DFCS_SCROLLRIGHT) | DFCS_SCROLLDOWN;
-	}
+  //HACKY bit so this routine can be called by vertical and horizontal code
+  if(sbar->nBarType == SB_VERT)
+  {
+    if(flags & DFCS_SCROLLLEFT)		flags = (flags & ~DFCS_SCROLLLEFT)  | DFCS_SCROLLUP;
+    if(flags & DFCS_SCROLLRIGHT)	flags = (flags & ~DFCS_SCROLLRIGHT) | DFCS_SCROLLDOWN;
+  }
 
-	if(fMouseDown) flags |= (DFCS_FLAT | DFCS_PUSHED);
+  if(fMouseDown) flags |= (DFCS_FLAT | DFCS_PUSHED);
 
 
-	ret = ownDrawFrameControl(hwnd,hdc, rect, DFC_SCROLL, flags, fMouseOver);
+  ret = ownDrawFrameControl(hwnd,hdc, rect, DFC_SCROLL, flags, fMouseOver);
 
-	return ret;
+  return ret;
 }
 
 void CoolSB_SetScale(float scale)
@@ -610,30 +610,30 @@ void CoolSB_SetScale(float scale)
 //
 static int GetScrollMetric(BOOL isVert, int metric)
 {
-	if(!isVert)
-	{
-		if(metric == SM_CXHORZSB)
-		{
-  		return (int)(GetSystemMetrics(SM_CXHSCROLL) * m_scale);
-		}
-		else
-		{
-		  return (int)(GetSystemMetrics(SM_CYHSCROLL) * m_scale);
-		}
-	}
-	else
-	{
-		if(metric == SM_CYVERTSB)
-		{
-			return (int)(GetSystemMetrics(SM_CYVSCROLL) * m_scale);
-		}
-		else
-		{
-  		return (int)(GetSystemMetrics(SM_CXVSCROLL) * m_scale);
-		}
-	}
+  if(!isVert)
+  {
+    if(metric == SM_CXHORZSB)
+    {
+      return (int)(GetSystemMetrics(SM_CXHSCROLL) * m_scale);
+    }
+    else
+    {
+      return (int)(GetSystemMetrics(SM_CYHSCROLL) * m_scale);
+    }
+  }
+  else
+  {
+    if(metric == SM_CYVERTSB)
+    {
+      return (int)(GetSystemMetrics(SM_CYVSCROLL) * m_scale);
+    }
+    else
+    {
+      return (int)(GetSystemMetrics(SM_CXVSCROLL) * m_scale);
+    }
+  }
 
-	return 0;
+  return 0;
 }
 static int GetZoomButtonSize(BOOL isVert)
 {
@@ -642,26 +642,26 @@ static int GetZoomButtonSize(BOOL isVert)
 
 
 //
-//	
+//
 //
 static COLORREF GetSBForeColor(HWND hwnd)
 {
-	COLORREF c1 = CoolSB_GetSysColor(hwnd,COLOR_3DHILIGHT);
-	COLORREF c2 = CoolSB_GetSysColor(hwnd,COLOR_WINDOW);
+  COLORREF c1 = CoolSB_GetSysColor(hwnd,COLOR_3DHILIGHT);
+  COLORREF c2 = CoolSB_GetSysColor(hwnd,COLOR_WINDOW);
 
-	if(c1 != 0xffffff && c1 == c2)
-	{
-		return CoolSB_GetSysColor(hwnd,COLOR_BTNFACE);
-	}
-	else
-	{
-		return CoolSB_GetSysColor(hwnd,COLOR_3DHILIGHT);
-	}
+  if(c1 != 0xffffff && c1 == c2)
+  {
+    return CoolSB_GetSysColor(hwnd,COLOR_BTNFACE);
+  }
+  else
+  {
+    return CoolSB_GetSysColor(hwnd,COLOR_3DHILIGHT);
+  }
 }
 
 static COLORREF GetSBBackColor(HWND hwnd)
 {
-	return CoolSB_GetSysColor(hwnd,COLOR_SCROLLBAR);
+  return CoolSB_GetSysColor(hwnd,COLOR_SCROLLBAR);
 }
 
 
@@ -679,17 +679,17 @@ void DrawAdHocVScrollbar(LICE_IBitmap* dest, RECT* r, int pos, int page, int max
   int thumb=range*page/max;
   int tpos=(range*pos)/max;
 
-  if (m_scrollbar_hasPink) 
-  { 
-    LICE_ScaledBlit(dest, src, 
-                    x, y, w, m_sb_bkgvt, 
-                    170, 37, 17, m_sb_bkgvt, 
+  if (m_scrollbar_hasPink)
+  {
+    LICE_ScaledBlit(dest, src,
+                    x, y, w, m_sb_bkgvt,
+                    170, 37, 17, m_sb_bkgvt,
                     1.0f, LICE_BLIT_FILTER_BILINEAR);
-    LICE_ScaledBlit(dest, src, 
-                    x, y+m_sb_bkgvt, w, h-m_sb_bkgvt-m_sb_bkgvb, 
-                    170, 37+m_sb_bkgvt, 17, 238-37-m_sb_bkgvt-m_sb_bkgvb, 
+    LICE_ScaledBlit(dest, src,
+                    x, y+m_sb_bkgvt, w, h-m_sb_bkgvt-m_sb_bkgvb,
+                    170, 37+m_sb_bkgvt, 17, 238-37-m_sb_bkgvt-m_sb_bkgvb,
                     1.0f, LICE_BLIT_FILTER_BILINEAR);
-    LICE_ScaledBlit(dest, src, x, y+h-m_sb_bkgvb, w, m_sb_bkgvb, 
+    LICE_ScaledBlit(dest, src, x, y+h-m_sb_bkgvb, w, m_sb_bkgvb,
                     170, 238-m_sb_bkgvb, 17, m_sb_bkgvb,
                     1.0f, LICE_BLIT_FILTER_BILINEAR);
 
@@ -697,46 +697,46 @@ void DrawAdHocVScrollbar(LICE_IBitmap* dest, RECT* r, int pos, int page, int max
     if (th < 0) th=0;
 
     LICE_ScaledBlit(dest, src,
-                    x, y+17+tpos, w, m_sb_thumbVV[0], 
-                    0, 91, 17, m_sb_thumbVV[0], 
+                    x, y+17+tpos, w, m_sb_thumbVV[0],
+                    0, 91, 17, m_sb_thumbVV[0],
                     1.0f, LICE_BLIT_FILTER_BILINEAR|LICE_BLIT_USE_ALPHA);
     LICE_ScaledBlit(dest, src,
-                    x, y+17+tpos+m_sb_thumbVV[0], w, th, 
-                    0, 91+m_sb_thumbVV[0], 17, m_sb_thumbVV[1], 
+                    x, y+17+tpos+m_sb_thumbVV[0], w, th,
+                    0, 91+m_sb_thumbVV[0], 17, m_sb_thumbVV[1],
                     1.0f, LICE_BLIT_FILTER_BILINEAR|LICE_BLIT_USE_ALPHA);
     LICE_ScaledBlit(dest, src,
-                    x, y+17+tpos+m_sb_thumbVV[0]+th, w, m_sb_thumbVV[2], 
-                    0, 91+m_sb_thumbVV[0]+m_sb_thumbVV[1], 17, m_sb_thumbVV[2], 
+                    x, y+17+tpos+m_sb_thumbVV[0]+th, w, m_sb_thumbVV[2],
+                    0, 91+m_sb_thumbVV[0]+m_sb_thumbVV[1], 17, m_sb_thumbVV[2],
                     1.0f, LICE_BLIT_FILTER_BILINEAR|LICE_BLIT_USE_ALPHA);
     LICE_ScaledBlit(dest, src,
-                    x, y+17+tpos+m_sb_thumbVV[0]+th+m_sb_thumbVV[2], w, th, 
-                    0, 91+m_sb_thumbVV[0]+m_sb_thumbVV[1]+m_sb_thumbVV[2], 17, m_sb_thumbVV[3], 
+                    x, y+17+tpos+m_sb_thumbVV[0]+th+m_sb_thumbVV[2], w, th,
+                    0, 91+m_sb_thumbVV[0]+m_sb_thumbVV[1]+m_sb_thumbVV[2], 17, m_sb_thumbVV[3],
                     1.0f, LICE_BLIT_FILTER_BILINEAR|LICE_BLIT_USE_ALPHA);
     LICE_ScaledBlit(dest, src,
-                    x, y+17+tpos+m_sb_thumbVV[0]+th+m_sb_thumbVV[2]+th, w, m_sb_thumbVV[4], 
-                    0, 91+m_sb_thumbVV[0]+m_sb_thumbVV[1]+m_sb_thumbVV[2]+m_sb_thumbVV[3], 17, m_sb_thumbVV[4], 
+                    x, y+17+tpos+m_sb_thumbVV[0]+th+m_sb_thumbVV[2]+th, w, m_sb_thumbVV[4],
+                    0, 91+m_sb_thumbVV[0]+m_sb_thumbVV[1]+m_sb_thumbVV[2]+m_sb_thumbVV[3], 17, m_sb_thumbVV[4],
                     1.0f, LICE_BLIT_FILTER_BILINEAR|LICE_BLIT_USE_ALPHA);
   }
   else
   {
     LICE_ScaledBlit(dest, src,
-                    x, y, w, h, 
-                    170, 34, 17, 238-34, 
+                    x, y, w, h,
+                    170, 34, 17, 238-34,
                     1.0f, LICE_BLIT_FILTER_BILINEAR);
- 
+
     LICE_ScaledBlit(dest, src,
-                    x, y+17+tpos, w, thumb, 
-                    0, 90, 17, 238-90, 1.0f, 
+                    x, y+17+tpos, w, thumb,
+                    0, 90, 17, 238-90, 1.0f,
                     LICE_BLIT_FILTER_BILINEAR|LICE_BLIT_USE_ALPHA);
   }
 
   LICE_ScaledBlit(dest, src,
                   x, y, w, w,
-                  116, 121, 17, 17, 
+                  116, 121, 17, 17,
                   1.0f, LICE_BLIT_FILTER_BILINEAR);
   LICE_ScaledBlit(dest, src,
                   x, y+h-w, w, w,
-                  116, 181, 17, 17, 
+                  116, 181, 17, 17,
                   1.0f, LICE_BLIT_FILTER_BILINEAR);
 }
 
@@ -776,18 +776,18 @@ static void DrawCheckedRect(LICE_IBitmap *bmOut, HDC hdc, RECT *rect, COLORREF f
         int desth = nh/2;
         if(m_scrollbar_hasPink)
         {
-          LICE_ScaledBlit(sb->liceBkgnd, bmp, 0, 0, m_sb_bkghl, desth, 
-                                     0, 0, m_sb_bkghl, 17, 1.0f, LICE_BLIT_FILTER_BILINEAR);
+          LICE_ScaledBlit(sb->liceBkgnd, bmp, 0, 0, m_sb_bkghl, desth,
+                          0, 0, m_sb_bkghl, 17, 1.0f, LICE_BLIT_FILTER_BILINEAR);
           LICE_ScaledBlit(sb->liceBkgnd, bmp, m_sb_bkghl, 0, ww-m_sb_bkghl-m_sb_bkghr, desth,
-                                     m_sb_bkghl, 0, 204-m_sb_bkghl-m_sb_bkghr, 17, 1.0f, LICE_BLIT_FILTER_BILINEAR);
-          LICE_ScaledBlit(sb->liceBkgnd, bmp, ww-m_sb_bkghr, 0, m_sb_bkghr, desth, 
-                                     204-m_sb_bkghr, 0, m_sb_bkghr, 17, 1.0f, LICE_BLIT_FILTER_BILINEAR);
-          LICE_ScaledBlit(sb->liceBkgnd, bmp, 0, desth, m_sb_bkghl, desth, 
-                                     0, 17, m_sb_bkghl, 17, 1.0f, LICE_BLIT_FILTER_BILINEAR);
-          LICE_ScaledBlit(sb->liceBkgnd, bmp, m_sb_bkghl, desth, ww-m_sb_bkghl-m_sb_bkghr, desth, 
-                                     m_sb_bkghl, 17, 204-m_sb_bkghl-m_sb_bkghr, 17, 1.0f, LICE_BLIT_FILTER_BILINEAR);
-          LICE_ScaledBlit(sb->liceBkgnd, bmp, ww-m_sb_bkghr, desth, m_sb_bkghr, desth, 204-m_sb_bkghr, 
-                                     17, m_sb_bkghr, 17, 1.0f, LICE_BLIT_FILTER_BILINEAR);
+                          m_sb_bkghl, 0, 204-m_sb_bkghl-m_sb_bkghr, 17, 1.0f, LICE_BLIT_FILTER_BILINEAR);
+          LICE_ScaledBlit(sb->liceBkgnd, bmp, ww-m_sb_bkghr, 0, m_sb_bkghr, desth,
+                          204-m_sb_bkghr, 0, m_sb_bkghr, 17, 1.0f, LICE_BLIT_FILTER_BILINEAR);
+          LICE_ScaledBlit(sb->liceBkgnd, bmp, 0, desth, m_sb_bkghl, desth,
+                          0, 17, m_sb_bkghl, 17, 1.0f, LICE_BLIT_FILTER_BILINEAR);
+          LICE_ScaledBlit(sb->liceBkgnd, bmp, m_sb_bkghl, desth, ww-m_sb_bkghl-m_sb_bkghr, desth,
+                          m_sb_bkghl, 17, 204-m_sb_bkghl-m_sb_bkghr, 17, 1.0f, LICE_BLIT_FILTER_BILINEAR);
+          LICE_ScaledBlit(sb->liceBkgnd, bmp, ww-m_sb_bkghr, desth, m_sb_bkghr, desth, 204-m_sb_bkghr,
+                          17, m_sb_bkghr, 17, 1.0f, LICE_BLIT_FILTER_BILINEAR);
         }
         else
         {
@@ -799,21 +799,21 @@ static void DrawCheckedRect(LICE_IBitmap *bmOut, HDC hdc, RECT *rect, COLORREF f
       {
         int destw = nw/2;
         int starty = 34;
-        if(m_scrollbar_hasPink) 
+        if(m_scrollbar_hasPink)
         {
           starty = 37;
-          LICE_ScaledBlit(sb->liceBkgnd, bmp, 0, 0, destw, m_sb_bkgvt, 
-                                     170, starty, 17, m_sb_bkgvt, 1.0f, LICE_BLIT_FILTER_BILINEAR);
-          LICE_ScaledBlit(sb->liceBkgnd, bmp, 0, m_sb_bkgvt, destw, wh-m_sb_bkgvt-m_sb_bkgvb, 
-                                     170, starty+m_sb_bkgvt, 17, 238-starty-m_sb_bkgvt-m_sb_bkgvb, 1.0f, LICE_BLIT_FILTER_BILINEAR);
-          LICE_ScaledBlit(sb->liceBkgnd, bmp, 0, wh-m_sb_bkgvb, destw, m_sb_bkgvb, 
-                                     170, 238-m_sb_bkgvb, 17, m_sb_bkgvb, 1.0f, LICE_BLIT_FILTER_BILINEAR);
-          LICE_ScaledBlit(sb->liceBkgnd, bmp, destw, 0, destw, m_sb_bkgvt, 
-                                     187, starty, 17, m_sb_bkgvt, 1.0f, LICE_BLIT_FILTER_BILINEAR);
-          LICE_ScaledBlit(sb->liceBkgnd, bmp, destw, m_sb_bkgvt, destw, wh-m_sb_bkgvt-m_sb_bkgvb, 
-                                     187, starty+m_sb_bkgvt, 17, 238-starty-m_sb_bkgvt-m_sb_bkgvb, 1.0f, LICE_BLIT_FILTER_BILINEAR);
-          LICE_ScaledBlit(sb->liceBkgnd, bmp, destw, wh-m_sb_bkgvb, destw, m_sb_bkgvb, 
-                                     187, 238-m_sb_bkgvb, 17, m_sb_bkgvb, 1.0f, LICE_BLIT_FILTER_BILINEAR);
+          LICE_ScaledBlit(sb->liceBkgnd, bmp, 0, 0, destw, m_sb_bkgvt,
+                          170, starty, 17, m_sb_bkgvt, 1.0f, LICE_BLIT_FILTER_BILINEAR);
+          LICE_ScaledBlit(sb->liceBkgnd, bmp, 0, m_sb_bkgvt, destw, wh-m_sb_bkgvt-m_sb_bkgvb,
+                          170, starty+m_sb_bkgvt, 17, 238-starty-m_sb_bkgvt-m_sb_bkgvb, 1.0f, LICE_BLIT_FILTER_BILINEAR);
+          LICE_ScaledBlit(sb->liceBkgnd, bmp, 0, wh-m_sb_bkgvb, destw, m_sb_bkgvb,
+                          170, 238-m_sb_bkgvb, 17, m_sb_bkgvb, 1.0f, LICE_BLIT_FILTER_BILINEAR);
+          LICE_ScaledBlit(sb->liceBkgnd, bmp, destw, 0, destw, m_sb_bkgvt,
+                          187, starty, 17, m_sb_bkgvt, 1.0f, LICE_BLIT_FILTER_BILINEAR);
+          LICE_ScaledBlit(sb->liceBkgnd, bmp, destw, m_sb_bkgvt, destw, wh-m_sb_bkgvt-m_sb_bkgvb,
+                          187, starty+m_sb_bkgvt, 17, 238-starty-m_sb_bkgvt-m_sb_bkgvb, 1.0f, LICE_BLIT_FILTER_BILINEAR);
+          LICE_ScaledBlit(sb->liceBkgnd, bmp, destw, wh-m_sb_bkgvb, destw, m_sb_bkgvb,
+                          187, 238-m_sb_bkgvb, 17, m_sb_bkgvb, 1.0f, LICE_BLIT_FILTER_BILINEAR);
         }
         else
         {
@@ -826,8 +826,8 @@ static void DrawCheckedRect(LICE_IBitmap *bmOut, HDC hdc, RECT *rect, COLORREF f
     {
 //      if (nh/2 != h) OutputDebugString("blah\n");
       if (bmOut)
-        LICE_ScaledBlit(bmOut, sb->liceBkgnd, rect->left,rect->top, w, h,  
-                      rect->left+offsx,on?nh/2:0, w, nh/2, 1.0f, LICE_BLIT_MODE_COPY);
+        LICE_ScaledBlit(bmOut, sb->liceBkgnd, rect->left,rect->top, w, h,
+                        rect->left+offsx,on?nh/2:0, w, nh/2, 1.0f, LICE_BLIT_MODE_COPY);
       else
       {
         BitBlt(hdc, rect->left, rect->top, w, h, sb->liceBkgnd->getDC(), rect->left+offsx, on?nh/2:0, SRCCOPY);
@@ -848,37 +848,37 @@ static void DrawCheckedRect(LICE_IBitmap *bmOut, HDC hdc, RECT *rect, COLORREF f
 
 
 #ifdef _WIN32
-	static WORD wCheckPat[8] =
-	{
-		0xaaaa, 0x5555, 0xaaaa, 0x5555, 0xaaaa, 0x5555, 0xaaaa, 0x5555
-	};
+  static WORD wCheckPat[8] =
+  {
+    0xaaaa, 0x5555, 0xaaaa, 0x5555, 0xaaaa, 0x5555, 0xaaaa, 0x5555
+  };
 
-	HBITMAP hbmp;
-	HBRUSH  hbr, hbrold;
-	COLORREF fgold, bgold;
+  HBITMAP hbmp;
+  HBRUSH  hbr, hbrold;
+  COLORREF fgold, bgold;
 
-	hbmp = CreateBitmap(8, 8, 1, 1, wCheckPat);
-	hbr  = CreatePatternBrush(hbmp);
+  hbmp = CreateBitmap(8, 8, 1, 1, wCheckPat);
+  hbr  = CreatePatternBrush(hbmp);
 
-	UnrealizeObject(hbr);
-	SetBrushOrgEx(hdc, rect->left, rect->top, 0);
+  UnrealizeObject(hbr);
+  SetBrushOrgEx(hdc, rect->left, rect->top, 0);
 
-	hbrold = (HBRUSH)SelectObject(hdc, hbr);
+  hbrold = (HBRUSH)SelectObject(hdc, hbr);
 
-	fgold = SetTextColor(hdc, fg);
-	bgold = SetBkColor(hdc, bg);
-	
-	PatBlt(hdc, rect->left, rect->top, 
-				rect->right - rect->left, 
-				rect->bottom - rect->top, 
-				PATCOPY);
-	
-	SetBkColor(hdc, bgold);
-	SetTextColor(hdc, fgold);
-	
-	SelectObject(hdc, hbrold);
-	DeleteObject(hbr);
-	DeleteObject(hbmp);
+  fgold = SetTextColor(hdc, fg);
+  bgold = SetBkColor(hdc, bg);
+
+  PatBlt(hdc, rect->left, rect->top,
+         rect->right - rect->left,
+         rect->bottom - rect->top,
+         PATCOPY);
+
+  SetBkColor(hdc, bgold);
+  SetTextColor(hdc, fgold);
+
+  SelectObject(hdc, hbrold);
+  DeleteObject(hbr);
+  DeleteObject(hbmp);
 #else
   HBRUSH br=CreateSolidBrush(RGB(100,100,100));
   FillRect(hdc,rect,br);
@@ -894,9 +894,9 @@ static void DrawCheckedRect(LICE_IBitmap *bmOut, HDC hdc, RECT *rect, COLORREF f
 static void PaintRect(HDC hdc, RECT *rect, COLORREF color)
 {
 #ifdef _WIN32
-	COLORREF oldcol = SetBkColor(hdc, color);
-	ExtTextOut(hdc, 0, 0, ETO_OPAQUE, rect, _T(""), 0, 0);
-	SetBkColor(hdc, oldcol);
+  COLORREF oldcol = SetBkColor(hdc, color);
+  ExtTextOut(hdc, 0, 0, ETO_OPAQUE, rect, _T(""), 0, 0);
+  SetBkColor(hdc, oldcol);
 #else
   HBRUSH br=CreateSolidBrush(color);
   FillRect(hdc,rect,br);
@@ -911,11 +911,11 @@ static void PaintRect(HDC hdc, RECT *rect, COLORREF color)
 //
 static void DrawBlankButton(HWND hwnd, HDC hdc, const RECT *rect)
 {
-	RECT rc = *rect;
+  RECT rc = *rect;
   HBRUSH br = CreateSolidBrush(CoolSB_GetSysColor(hwnd,COLOR_BTNFACE));
-			
-	ownDrawEdge(hwnd,hdc, &rc, EDGE_RAISED, BF_RECT | BF_ADJUST);
-	FillRect(hdc, &rc, br);
+
+  ownDrawEdge(hwnd,hdc, &rc, EDGE_RAISED, BF_RECT | BF_ADJUST);
+  FillRect(hdc, &rc, br);
   DeleteObject(br);
 }
 
@@ -924,7 +924,7 @@ static void DrawBlankButton(HWND hwnd, HDC hdc, const RECT *rect)
 //
 static void SendScrollMessage(HWND hwnd, UINT scrMsg, UINT scrId, UINT pos)
 {
-	SendMessage(hwnd, scrMsg, MAKEWPARAM(scrId, pos), 0);
+  SendMessage(hwnd, scrMsg, MAKEWPARAM(scrId, pos), 0);
 }
 
 //
@@ -934,28 +934,28 @@ static void SendScrollMessage(HWND hwnd, UINT scrMsg, UINT scrId, UINT pos)
 //
 static BOOL GetHScrollRect(SCROLLWND *sw, HWND hwnd, RECT *rect, BOOL *hasZoomButtons)
 {
-	GET_WINDOW_RECT(hwnd, rect);
-  
-	if(sw->fLeftScrollbar)
-	{
-		rect->left  += sw->cxLeftEdge + (sw->sbarVert.fScrollVisible ? 
-					GetScrollMetric(TRUE, SM_CXVERTSB) : 0);
-		rect->right -= sw->cxRightEdge;
-	}
-	else
-	{
-		rect->left   += sw->cxLeftEdge;					//left window edge
-	
-		rect->right  -= sw->cxRightEdge +				//right window edge
-					(sw->sbarVert.fScrollVisible ? 
-					GetScrollMetric(TRUE, SM_CXVERTSB) : 0);
-	}
-	
-	rect->bottom -= sw->cyBottomEdge;				//bottom window edge
-	
-	rect->top	  = rect->bottom -
-					(sw->sbarHorz.fScrollVisible ?
-					GetScrollMetric(FALSE, SM_CYHORZSB) : 0);
+  GET_WINDOW_RECT(hwnd, rect);
+
+  if(sw->fLeftScrollbar)
+  {
+    rect->left  += sw->cxLeftEdge + (sw->sbarVert.fScrollVisible ?
+                                     GetScrollMetric(TRUE, SM_CXVERTSB) : 0);
+    rect->right -= sw->cxRightEdge;
+  }
+  else
+  {
+    rect->left   += sw->cxLeftEdge;					//left window edge
+
+    rect->right  -= sw->cxRightEdge +				//right window edge
+                    (sw->sbarVert.fScrollVisible ?
+                     GetScrollMetric(TRUE, SM_CXVERTSB) : 0);
+  }
+
+  rect->bottom -= sw->cyBottomEdge;				//bottom window edge
+
+  rect->top	  = rect->bottom -
+                (sw->sbarHorz.fScrollVisible ?
+                 GetScrollMetric(FALSE, SM_CYHORZSB) : 0);
 
   if (hasZoomButtons) *hasZoomButtons=0;
   if(sw->resizingHthumb)
@@ -967,9 +967,9 @@ static BOOL GetHScrollRect(SCROLLWND *sw, HWND hwnd, RECT *rect, BOOL *hasZoomBu
       rect->right -= zbs*2 + ZOOMBUTTON_RESIZER_SIZE(zbs);
     }
   }
-	//printf("ry=%d,%d\n",rect->top,rect->bottom);
+  //printf("ry=%d,%d\n",rect->top,rect->bottom);
 
-	return TRUE;
+  return TRUE;
 }
 
 //
@@ -978,25 +978,25 @@ static BOOL GetHScrollRect(SCROLLWND *sw, HWND hwnd, RECT *rect, BOOL *hasZoomBu
 //
 static BOOL GetVScrollRect(SCROLLWND *sw, HWND hwnd, RECT *rect, BOOL *hasZoomButtons)
 {
-	GET_WINDOW_RECT(hwnd, rect);
-	rect->top	 += sw->cyTopEdge + sw->vscrollbarShrinkTop;						//top window edge
-	
-	rect->bottom -= sw->cyBottomEdge + sw->vscrollbarShrinkBottom + 
-					(sw->sbarHorz.fScrollVisible ?		//bottom window edge
-					GetScrollMetric(FALSE, SM_CYHORZSB) : 0);
+  GET_WINDOW_RECT(hwnd, rect);
+  rect->top	 += sw->cyTopEdge + sw->vscrollbarShrinkTop;						//top window edge
 
-	if(sw->fLeftScrollbar)
-	{
-		rect->left	+= sw->cxLeftEdge;
-		rect->right = rect->left + (sw->sbarVert.fScrollVisible ?
-					GetScrollMetric(TRUE, SM_CXVERTSB) : 0);
-	}
-	else
-	{
-		rect->right  -= sw->cxRightEdge;
-		rect->left    = rect->right - (sw->sbarVert.fScrollVisible ?	
-					GetScrollMetric(TRUE, SM_CXVERTSB) : 0);
-	}
+  rect->bottom -= sw->cyBottomEdge + sw->vscrollbarShrinkBottom +
+                  (sw->sbarHorz.fScrollVisible ?		//bottom window edge
+                   GetScrollMetric(FALSE, SM_CYHORZSB) : 0);
+
+  if(sw->fLeftScrollbar)
+  {
+    rect->left	+= sw->cxLeftEdge;
+    rect->right = rect->left + (sw->sbarVert.fScrollVisible ?
+                                GetScrollMetric(TRUE, SM_CXVERTSB) : 0);
+  }
+  else
+  {
+    rect->right  -= sw->cxRightEdge;
+    rect->left    = rect->right - (sw->sbarVert.fScrollVisible ?
+                                   GetScrollMetric(TRUE, SM_CXVERTSB) : 0);
+  }
 
   if (hasZoomButtons) *hasZoomButtons=0;
   if(sw->resizingHthumb)
@@ -1004,12 +1004,12 @@ static BOOL GetVScrollRect(SCROLLWND *sw, HWND hwnd, RECT *rect, BOOL *hasZoomBu
     int zbs = GetZoomButtonSize(TRUE);
     if (rect->bottom - rect->top >= MIN_SIZE_FOR_ZOOMBUTTONS(zbs))
     {
-      if (hasZoomButtons) *hasZoomButtons=1;   
+      if (hasZoomButtons) *hasZoomButtons=1;
       rect->bottom -= zbs*2 + ZOOMBUTTON_RESIZER_SIZE(zbs);
     }
   }
 
-	return TRUE;
+  return TRUE;
 }
 
 //	Depending on what type of scrollbar nBar refers to, call the
@@ -1017,14 +1017,14 @@ static BOOL GetVScrollRect(SCROLLWND *sw, HWND hwnd, RECT *rect, BOOL *hasZoomBu
 //
 static BOOL GetScrollRect(SCROLLWND *sw, UINT nBar, HWND hwnd, RECT *rect, BOOL *hasZoomButtons)
 {
-	if(nBar == SB_HORZ)
-		return GetHScrollRect(sw, hwnd, rect,hasZoomButtons);
-	else if(nBar == SB_VERT)
-		return GetVScrollRect(sw, hwnd, rect,hasZoomButtons);
-	else
+  if(nBar == SB_HORZ)
+    return GetHScrollRect(sw, hwnd, rect,hasZoomButtons);
+  else if(nBar == SB_VERT)
+    return GetVScrollRect(sw, hwnd, rect,hasZoomButtons);
+  else
   {
     if (hasZoomButtons) *hasZoomButtons=0;
-		return FALSE;
+    return FALSE;
   }
 }
 
@@ -1037,101 +1037,101 @@ static BOOL GetScrollRect(SCROLLWND *sw, UINT nBar, HWND hwnd, RECT *rect, BOOL 
 //
 static int CalcThumbSize(SCROLLBAR *sbar, const RECT *rect, int *pthumbsize, int *pthumbpos)
 {
-	SCROLLINFO *si;
-	int scrollsize;			//total size of the scrollbar including arrow buttons
-	int workingsize;		//working area (where the thumb can slide)
-	int siMaxMin;
-	int butsize;
-	int startcoord;
-	int thumbpos = 0, thumbsize = 0;
+  SCROLLINFO *si;
+  int scrollsize;			//total size of the scrollbar including arrow buttons
+  int workingsize;		//working area (where the thumb can slide)
+  int siMaxMin;
+  int butsize;
+  int startcoord;
+  int thumbpos = 0, thumbsize = 0;
 
 
-	//work out the width (for a horizontal) or the height (for a vertical)
-	//of a standard scrollbar button
-	butsize = GetScrollMetric(sbar->nBarType == SB_VERT, SM_SCROLL_LENGTH);
+  //work out the width (for a horizontal) or the height (for a vertical)
+  //of a standard scrollbar button
+  butsize = GetScrollMetric(sbar->nBarType == SB_VERT, SM_SCROLL_LENGTH);
 
-	if(1) //sbar->nBarType == SB_HORZ)
-	{
-		scrollsize = rect->right - rect->left;
-		startcoord = rect->left;
-	}
-	/*else if(sbar->nBarType == SB_VERT)
-	{
-		scrollsize = rect->bottom - rect->top;
-		startcoord = rect->top;
-	}
-	else
-	{
-		return 0;
-	}*/
+  if(1) //sbar->nBarType == SB_HORZ)
+  {
+    scrollsize = rect->right - rect->left;
+    startcoord = rect->left;
+  }
+  /*else if(sbar->nBarType == SB_VERT)
+  {
+  	scrollsize = rect->bottom - rect->top;
+  	startcoord = rect->top;
+  }
+  else
+  {
+  	return 0;
+  }*/
 
-	si = &sbar->scrollInfo;
-	siMaxMin = si->nMax - si->nMin + 1;
-	workingsize = scrollsize - butsize * 2;
+  si = &sbar->scrollInfo;
+  siMaxMin = si->nMax - si->nMin + 1;
+  workingsize = scrollsize - butsize * 2;
 
-	//
-	// Work out the scrollbar thumb SIZE
-	//
-	if(si->nPage == 0)
-	{
-		thumbsize = butsize;
-	}
-	else if(siMaxMin > 0)
-	{
-		thumbsize = MulDiv(si->nPage, workingsize, siMaxMin);
+  //
+  // Work out the scrollbar thumb SIZE
+  //
+  if(si->nPage == 0)
+  {
+    thumbsize = butsize;
+  }
+  else if(siMaxMin > 0)
+  {
+    thumbsize = MulDiv(si->nPage, workingsize, siMaxMin);
 
-		if(thumbsize < sbar->nMinThumbSize)
-			thumbsize = sbar->nMinThumbSize;
-	}
+    if(thumbsize < sbar->nMinThumbSize)
+      thumbsize = sbar->nMinThumbSize;
+  }
 
-	//
-	// Work out the scrollbar thumb position
-	//
-	if(siMaxMin > 0)
-	{
-		int pagesize = max(1, si->nPage);
-		thumbpos = MulDiv(si->nPos - si->nMin, workingsize-thumbsize, siMaxMin - pagesize);
-		
-		if(thumbpos < 0)						
-			thumbpos = 0;
+  //
+  // Work out the scrollbar thumb position
+  //
+  if(siMaxMin > 0)
+  {
+    int pagesize = max(1, si->nPage);
+    thumbpos = MulDiv(si->nPos - si->nMin, workingsize-thumbsize, siMaxMin - pagesize);
 
-		if(thumbpos >= workingsize-thumbsize)	
-			thumbpos = workingsize-thumbsize;
-	}
+    if(thumbpos < 0)
+      thumbpos = 0;
 
-	thumbpos += startcoord + butsize;
+    if(thumbpos >= workingsize-thumbsize)
+      thumbpos = workingsize-thumbsize;
+  }
 
-	*pthumbpos  = thumbpos;
-	*pthumbsize = thumbsize;
+  thumbpos += startcoord + butsize;
 
-	return 1;
+  *pthumbpos  = thumbpos;
+  *pthumbsize = thumbsize;
+
+  return 1;
 }
 
 //
 //	return a hit-test value for whatever part of the scrollbar x,y is located in
 //	rect, x, y: SCREEN coordinates
-//	the rectangle must not include space for any inserted buttons 
+//	the rectangle must not include space for any inserted buttons
 //	(i.e, JUST the scrollbar area)
 //
 static UINT GetHorzScrollPortion(SCROLLBAR *sbar, HWND hwnd, const RECT *rect, int x, int y, BOOL hasZoomButtons)
 {
-	int thumbwidth, thumbpos;
-	int butwidth = GetScrollMetric(sbar->nBarType == SB_VERT, SM_SCROLL_LENGTH);
-	int scrollwidth  = rect->right-rect->left;
-	int workingwidth = scrollwidth - butwidth*2;
+  int thumbwidth, thumbpos;
+  int butwidth = GetScrollMetric(sbar->nBarType == SB_VERT, SM_SCROLL_LENGTH);
+  int scrollwidth  = rect->right-rect->left;
+  int workingwidth = scrollwidth - butwidth*2;
   SCROLLWND *sw = GetScrollWndFromHwnd(hwnd);
 
-	if(y < rect->top || y >= rect->bottom)
-		return HTSCROLL_NONE;
+  if(y < rect->top || y >= rect->bottom)
+    return HTSCROLL_NONE;
 
-	CalcThumbSize(sbar, rect, &thumbwidth, &thumbpos);
+  CalcThumbSize(sbar, rect, &thumbwidth, &thumbpos);
 
-	//if we have had to scale the buttons to fit in the rect,
-	//then adjust the button width accordingly
-	if(scrollwidth <= butwidth * 2)
-	{
-		butwidth = scrollwidth / 2;	
-	}
+  //if we have had to scale the buttons to fit in the rect,
+  //then adjust the button width accordingly
+  if(scrollwidth <= butwidth * 2)
+  {
+    butwidth = scrollwidth / 2;
+  }
 
   if(sw->resizingHthumb&&hasZoomButtons)
   {
@@ -1145,26 +1145,26 @@ static UINT GetHorzScrollPortion(SCROLLBAR *sbar, HWND hwnd, const RECT *rect, i
       if (x < rect->right+zbs*2+zrs) return HTSCROLL_ZOOMOUT;
     }
   }
-  
-	//check for left button click
-	if(x >= rect->left && x < rect->left + butwidth)
-	{
-		return HTSCROLL_LEFT;	
-	}
-	//check for right button click
-	else if(x >= rect->right-butwidth && x < rect->right)
-	{
-		return HTSCROLL_RIGHT;
-	}
-	
-	//if the thumb is too big to fit (i.e. it isn't visible)
-	//then return a NULL scrollbar area
-	if(thumbwidth >= workingwidth)
-		return HTSCROLL_NONE;
 
-	//check for point in the thumbbar
-	if(x >= thumbpos && x < thumbpos+thumbwidth)
-	{
+  //check for left button click
+  if(x >= rect->left && x < rect->left + butwidth)
+  {
+    return HTSCROLL_LEFT;
+  }
+  //check for right button click
+  else if(x >= rect->right-butwidth && x < rect->right)
+  {
+    return HTSCROLL_RIGHT;
+  }
+
+  //if the thumb is too big to fit (i.e. it isn't visible)
+  //then return a NULL scrollbar area
+  if(thumbwidth >= workingwidth)
+    return HTSCROLL_NONE;
+
+  //check for point in the thumbbar
+  if(x >= thumbpos && x < thumbpos+thumbwidth)
+  {
     if(sw->resizingHthumb)
     {
       if(sbar->nBarType == SB_HORZ) //only for horizontal
@@ -1175,19 +1175,19 @@ static UINT GetHorzScrollPortion(SCROLLBAR *sbar, HWND hwnd, const RECT *rect, i
           return HTSCROLL_RRESIZER;
       }
     }
-		return HTSCROLL_THUMB;
-	}	
-	//check for left margin
-	else if(x >= rect->left+butwidth && x < thumbpos)
-	{
-		return HTSCROLL_PAGELEFT;
-	}
-	else if(x >= thumbpos+thumbwidth && x < rect->right-butwidth)
-	{
-		return HTSCROLL_PAGERIGHT;
-	}
-	
-	return HTSCROLL_NONE;
+    return HTSCROLL_THUMB;
+  }
+  //check for left margin
+  else if(x >= rect->left+butwidth && x < thumbpos)
+  {
+    return HTSCROLL_PAGELEFT;
+  }
+  else if(x >= thumbpos+thumbwidth && x < rect->right-butwidth)
+  {
+    return HTSCROLL_PAGERIGHT;
+  }
+
+  return HTSCROLL_NONE;
 }
 
 //
@@ -1196,12 +1196,12 @@ static UINT GetHorzScrollPortion(SCROLLBAR *sbar, HWND hwnd, const RECT *rect, i
 //
 static UINT GetVertScrollPortion(SCROLLBAR *sb, HWND hwnd, RECT *rect, int x, int y, BOOL hasZoomButtons)
 {
-	UINT r;
-	
-	RotateRect(rect);
-	r = GetHorzScrollPortion(sb, hwnd, rect, y, x,hasZoomButtons);
-	RotateRect(rect);
-	return r;
+  UINT r;
+
+  RotateRect(rect);
+  r = GetHorzScrollPortion(sb, hwnd, rect, y, x,hasZoomButtons);
+  RotateRect(rect);
+  return r;
 }
 
 
@@ -1260,7 +1260,7 @@ static void drawSkinThumb(HDC hdc, RECT r, int fBarHot, int pressed, int vert, c
         LICE_ScaledBlit(sb->liceThumb, bmp, mid, 0, part3_s, h, startx+part1+part2, starty, part3, 17, 1.0f, LICE_BLIT_FILTER_BILINEAR);
         LICE_ScaledBlit(sb->liceThumb, bmp, mid+part3_s, 0, w-(mid+part3_s)-part5, h, startx+part1+part2+part3, starty, part4, 17, 1.0f, LICE_BLIT_FILTER_BILINEAR);
         LICE_ScaledBlit(sb->liceThumb, bmp, w-part5_s, 0, part5_s, h, startx+part1+part2+part3+part4, starty, part5, 17, 1.0f, LICE_BLIT_FILTER_BILINEAR);
-        
+
       }
 
       LICE_ScaledBlit(&tmpbmp, sb->liceThumb, 0, 0, neww, h, 0, 0, w, h, 1.0f, LICE_BLIT_FILTER_BILINEAR|LICE_BLIT_USE_ALPHA);
@@ -1307,7 +1307,7 @@ static void drawSkinThumb(HDC hdc, RECT r, int fBarHot, int pressed, int vert, c
 
         if(fBarHot) startx += 17;
         else if(pressed) startx += 17*2;
-      
+
         int mid = (h-part3)/2;
         LICE_ScaledBlit(sb->liceThumb, bmp, 0, 0, w, part1_s, startx, starty, 17, part1, 1.0f, LICE_BLIT_FILTER_BILINEAR);
         LICE_ScaledBlit(sb->liceThumb, bmp, 0, part1_s, w, mid-part1_s, startx, starty+part1, 17, part2, 1.0f, LICE_BLIT_FILTER_BILINEAR);
@@ -1326,48 +1326,48 @@ static void drawSkinThumb(HDC hdc, RECT r, int fBarHot, int pressed, int vert, c
 //
 //	Draw a complete HORIZONTAL scrollbar in the given rectangle
 //	Don't draw any inserted buttons in this procedure
-//	
+//
 //	uDrawFlags - hittest code, to say if to draw the
 //  specified portion in an active state or not.
 //
 //
 static LRESULT NCDrawHScrollbar(SCROLLBAR *sb, HWND hwnd, HDC hdc, const RECT *rect, UINT uDrawFlags, BOOL hasZoomButtons)
 {
-	SCROLLINFO *si;
-	RECT ctrl, thumb;
-	RECT sbm;
-	int butwidth	 = GetScrollMetric(sb->nBarType == SB_VERT, SM_SCROLL_LENGTH);
-	int scrollwidth  = rect->right-rect->left;
-	int workingwidth = scrollwidth - butwidth*2;
-	int thumbwidth   = 0, thumbpos = 0;
-	int siMaxMin;
+  SCROLLINFO *si;
+  RECT ctrl, thumb;
+  RECT sbm;
+  int butwidth	 = GetScrollMetric(sb->nBarType == SB_VERT, SM_SCROLL_LENGTH);
+  int scrollwidth  = rect->right-rect->left;
+  int workingwidth = scrollwidth - butwidth*2;
+  int thumbwidth   = 0, thumbpos = 0;
+  int siMaxMin;
 
-	BOOL fMouseDownL = 0, fMouseOverL = 0, fBarHot = 0;
-	BOOL fMouseDownR = 0, fMouseOverR = 0;
+  BOOL fMouseDownL = 0, fMouseOverL = 0, fBarHot = 0;
+  BOOL fMouseDownR = 0, fMouseOverR = 0;
 
-	COLORREF crCheck1   = GetSBForeColor(hwnd);
-	COLORREF crCheck2   = GetSBBackColor(hwnd);
-	COLORREF crInverse1 = InvertCOLORREF(crCheck1);
-	COLORREF crInverse2 = InvertCOLORREF(crCheck2);
+  COLORREF crCheck1   = GetSBForeColor(hwnd);
+  COLORREF crCheck2   = GetSBBackColor(hwnd);
+  COLORREF crInverse1 = InvertCOLORREF(crCheck1);
+  COLORREF crInverse2 = InvertCOLORREF(crCheck2);
 
-	//drawing flags to modify the appearance of the scrollbar buttons
-	UINT uLeftButFlags  = DFCS_SCROLLLEFT;
-	UINT uRightButFlags = DFCS_SCROLLRIGHT;
+  //drawing flags to modify the appearance of the scrollbar buttons
+  UINT uLeftButFlags  = DFCS_SCROLLLEFT;
+  UINT uRightButFlags = DFCS_SCROLLRIGHT;
 
   SCROLLWND *sw = GetScrollWndFromHwnd(hwnd);
 
-	if(scrollwidth <= 0)
-		return 0;
+  if(scrollwidth <= 0)
+    return 0;
 
-	si = &sb->scrollInfo;
-	siMaxMin = si->nMax - si->nMin;
+  si = &sb->scrollInfo;
+  siMaxMin = si->nMax - si->nMin;
 
   int sbYoffs=-(int)sw->vscrollbarShrinkTop,sbXoffs=0;
 #ifdef _WIN32
-    // this is a stupid fix for now . this needs a ton of overhauling
+  // this is a stupid fix for now . this needs a ton of overhauling
   {
     RECT r;
-    POINT p={0,0};
+    POINT p= {0,0};
     ClientToScreen(hwnd,&p);
     GetWindowRect(hwnd,&r);
 
@@ -1377,89 +1377,89 @@ static LRESULT NCDrawHScrollbar(SCROLLBAR *sb, HWND hwnd, HDC hdc, const RECT *r
 #endif
 
 
-	if(hwnd != hwndCurCoolSB)
-		uDrawFlags = HTSCROLL_NONE;
-	//
-	// work out the thumb size and position
-	//
-	CalcThumbSize(sb, rect, &thumbwidth, &thumbpos);
-	
-	if(sb->fScrollFlags & ESB_DISABLE_LEFT)		uLeftButFlags  |= DFCS_INACTIVE;
-	if(sb->fScrollFlags & ESB_DISABLE_RIGHT)	uRightButFlags |= DFCS_INACTIVE;
+  if(hwnd != hwndCurCoolSB)
+    uDrawFlags = HTSCROLL_NONE;
+  //
+  // work out the thumb size and position
+  //
+  CalcThumbSize(sb, rect, &thumbwidth, &thumbpos);
 
-	//if we need to grey the arrows because there is no data to scroll
-	if(!IsScrollInfoActive(si) && !(sb->fScrollFlags & CSBS_THUMBALWAYS))
-	{
-		uLeftButFlags  |= DFCS_INACTIVE;
-		uRightButFlags |= DFCS_INACTIVE;
-	}
+  if(sb->fScrollFlags & ESB_DISABLE_LEFT)		uLeftButFlags  |= DFCS_INACTIVE;
+  if(sb->fScrollFlags & ESB_DISABLE_RIGHT)	uRightButFlags |= DFCS_INACTIVE;
 
-	if(hwnd == hwndCurCoolSB)
-	{
-		fMouseDownL = (uDrawFlags == HTSCROLL_LEFT);
-		fMouseDownR = (uDrawFlags == HTSCROLL_RIGHT);
-	}
+  //if we need to grey the arrows because there is no data to scroll
+  if(!IsScrollInfoActive(si) && !(sb->fScrollFlags & CSBS_THUMBALWAYS))
+  {
+    uLeftButFlags  |= DFCS_INACTIVE;
+    uRightButFlags |= DFCS_INACTIVE;
+  }
+
+  if(hwnd == hwndCurCoolSB)
+  {
+    fMouseDownL = (uDrawFlags == HTSCROLL_LEFT);
+    fMouseDownR = (uDrawFlags == HTSCROLL_RIGHT);
+  }
 
 
   int fMouseOverPlus, fMouseOverMinus;
   {
     BOOL ldis = !(uLeftButFlags & DFCS_INACTIVE);
     BOOL rdis = !(uRightButFlags & DFCS_INACTIVE);
-    
+
     fBarHot = sb->nBarType == (int)sw->uMouseOverScrollbar;
-    
-    fMouseOverL = sw->uHitTestPortion == HTSCROLL_LEFT && fBarHot && ldis;		
+
+    fMouseOverL = sw->uHitTestPortion == HTSCROLL_LEFT && fBarHot && ldis;
     fMouseOverR = sw->uHitTestPortion == HTSCROLL_RIGHT && fBarHot && rdis;
     fMouseOverPlus = sw->uHitTestPortion == HTSCROLL_ZOOMIN && fBarHot && ldis;
     fMouseOverMinus = sw->uHitTestPortion == HTSCROLL_ZOOMOUT && fBarHot && ldis;
   }
 
-	//
-	// Draw the scrollbar now
-	//
-	if(scrollwidth > butwidth*2)
-	{
-		//LEFT ARROW
-		SetRect(&ctrl, rect->left, rect->top, rect->left + butwidth, rect->bottom);
+  //
+  // Draw the scrollbar now
+  //
+  if(scrollwidth > butwidth*2)
+  {
+    //LEFT ARROW
+    SetRect(&ctrl, rect->left, rect->top, rect->left + butwidth, rect->bottom);
 
-		RotateRect0(sb, &ctrl);
+    RotateRect0(sb, &ctrl);
 
-  	DrawScrollArrow(hwnd,sb, hdc, &ctrl, uLeftButFlags, fMouseDownL, fMouseOverL);
+    DrawScrollArrow(hwnd,sb, hdc, &ctrl, uLeftButFlags, fMouseDownL, fMouseOverL);
 
-		RotateRect0(sb, &ctrl);
+    RotateRect0(sb, &ctrl);
 
-		//MIDDLE PORTION
-		//if we can fit the thumbbar in, then draw it
-		if(thumbwidth > 0 && thumbwidth <= workingwidth
-			&& IsScrollInfoActive(si) && ((sb->fScrollFlags & ESB_DISABLE_BOTH) != ESB_DISABLE_BOTH))
-		{	
-			//Draw the scrollbar margin above the thumb
-			SetRect(&sbm, rect->left + butwidth, rect->top, thumbpos, rect->bottom);
-			
-			RotateRect0(sb, &sbm);
-			
-			if(uDrawFlags == HTSCROLL_PAGELEFT)
-				DrawCheckedRect(NULL,hdc, &sbm, crInverse1, crInverse2, sb, rect, 1,sbXoffs,sbYoffs);
-			else
-				DrawCheckedRect(NULL,hdc, &sbm, crCheck1, crCheck2, sb, rect, 0,sbXoffs,sbYoffs);
+    //MIDDLE PORTION
+    //if we can fit the thumbbar in, then draw it
+    if(thumbwidth > 0 && thumbwidth <= workingwidth
+        && IsScrollInfoActive(si) && ((sb->fScrollFlags & ESB_DISABLE_BOTH) != ESB_DISABLE_BOTH))
+    {
+      //Draw the scrollbar margin above the thumb
+      SetRect(&sbm, rect->left + butwidth, rect->top, thumbpos, rect->bottom);
 
-			RotateRect0(sb, &sbm);			
-			
-			//Draw the margin below the thumb
-			sbm.left = thumbpos+thumbwidth;
-			sbm.right = rect->right - butwidth;
-			
-			RotateRect0(sb, &sbm);
-			if(uDrawFlags == HTSCROLL_PAGERIGHT)
-				DrawCheckedRect(NULL,hdc, &sbm, crInverse1, crInverse2, sb, rect, 1,sbXoffs,sbYoffs);
-			else
-				DrawCheckedRect(NULL,hdc, &sbm, crCheck1, crCheck2, sb, rect, 0,sbXoffs,sbYoffs);
-			RotateRect0(sb, &sbm);
-			
-			//Draw the THUMB finally
-			SetRect(&thumb, thumbpos, rect->top, thumbpos+thumbwidth, rect->bottom);
+      RotateRect0(sb, &sbm);
 
-			RotateRect0(sb, &thumb);			
+      if(uDrawFlags == HTSCROLL_PAGELEFT)
+        DrawCheckedRect(NULL,hdc, &sbm, crInverse1, crInverse2, sb, rect, 1,sbXoffs,sbYoffs);
+      else
+        DrawCheckedRect(NULL,hdc, &sbm, crCheck1, crCheck2, sb, rect, 0,sbXoffs,sbYoffs);
+
+      RotateRect0(sb, &sbm);
+
+      //Draw the margin below the thumb
+      sbm.left = thumbpos+thumbwidth;
+      sbm.right = rect->right - butwidth;
+
+      RotateRect0(sb, &sbm);
+      if(uDrawFlags == HTSCROLL_PAGERIGHT)
+        DrawCheckedRect(NULL,hdc, &sbm, crInverse1, crInverse2, sb, rect, 1,sbXoffs,sbYoffs);
+      else
+        DrawCheckedRect(NULL,hdc, &sbm, crCheck1, crCheck2, sb, rect, 0,sbXoffs,sbYoffs);
+      RotateRect0(sb, &sbm);
+
+      //Draw the THUMB finally
+      SetRect(&thumb, thumbpos, rect->top, thumbpos+thumbwidth, rect->bottom);
+
+      RotateRect0(sb, &thumb);
 
       if(m_scrollbar_bmp && *m_scrollbar_bmp)
       {
@@ -1487,7 +1487,7 @@ static LRESULT NCDrawHScrollbar(SCROLLBAR *sb, HWND hwnd, HDC hdc, const RECT *r
           }
           DrawBlankButton(hwnd,hdc, &r);
         }
-        
+
         if(sw->resizingHthumb)
         {
           //draw left and right resizers
@@ -1495,12 +1495,12 @@ static LRESULT NCDrawHScrollbar(SCROLLBAR *sb, HWND hwnd, HDC hdc, const RECT *r
           {
             HBRUSH br = CreateSolidBrush(CoolSB_GetSysColor(hwnd,COLOR_BTNFACE));
             {
-              RECT r={thumb.left, thumb.top, thumb.left+m_thumbsize, thumb.bottom};
+              RECT r= {thumb.left, thumb.top, thumb.left+m_thumbsize, thumb.bottom};
               ownDrawEdge(hwnd,hdc, &r, EDGE_RAISED, BF_RECT | BF_ADJUST);
               FillRect(hdc, &r, br);
             }
             {
-              RECT r={thumb.right-m_thumbsize, thumb.top, thumb.right, thumb.bottom};
+              RECT r= {thumb.right-m_thumbsize, thumb.top, thumb.right, thumb.bottom};
               ownDrawEdge(hwnd,hdc, &r, EDGE_RAISED, BF_RECT | BF_ADJUST);
               FillRect(hdc, &r, br);
             }
@@ -1526,256 +1526,258 @@ static LRESULT NCDrawHScrollbar(SCROLLBAR *sb, HWND hwnd, HDC hdc, const RECT *r
       }
       RotateRect0(sb, &thumb);
 
-		}
-		//otherwise, just leave that whole area blank
-		else
-		{
-			OffsetRect(&ctrl, butwidth, 0);
-			ctrl.right = rect->right - butwidth;
+    }
+    //otherwise, just leave that whole area blank
+    else
+    {
+      OffsetRect(&ctrl, butwidth, 0);
+      ctrl.right = rect->right - butwidth;
 
-			//if we always show the thumb covering the whole scrollbar,
-			//then draw it that way
-			if(!IsScrollInfoActive(si)	&& (sb->fScrollFlags & CSBS_THUMBALWAYS) 
-				&& ctrl.right - ctrl.left > sb->nMinThumbSize)
-			{
-				//leave a 1-pixel gap between the thumb + right button
-				ctrl.right --;
-				RotateRect0(sb, &ctrl);
+      //if we always show the thumb covering the whole scrollbar,
+      //then draw it that way
+      if(!IsScrollInfoActive(si)	&& (sb->fScrollFlags & CSBS_THUMBALWAYS)
+          && ctrl.right - ctrl.left > sb->nMinThumbSize)
+      {
+        //leave a 1-pixel gap between the thumb + right button
+        ctrl.right --;
+        RotateRect0(sb, &ctrl);
 
-				DrawBlankButton(hwnd,hdc, &ctrl);
+        DrawBlankButton(hwnd,hdc, &ctrl);
 
-				RotateRect0(sb, &ctrl);
+        RotateRect0(sb, &ctrl);
 
-				//draw the single-line gap
-				ctrl.left = ctrl.right;
-				ctrl.right += 1;
-				
+        //draw the single-line gap
+        ctrl.left = ctrl.right;
+        ctrl.right += 1;
+
         RECT r2 = ctrl;
         r2.right -= 1;
-				RotateRect0(sb, &ctrl);
+        RotateRect0(sb, &ctrl);
         RotateRect0(sb, &r2);
-				
-  			PaintRect(hdc, &r2, CoolSB_GetSysColor(hwnd,COLOR_SCROLLBAR));
 
-				RotateRect0(sb, &ctrl);
-			}
-			//otherwise, paint a blank if the thumb doesn't fit in
-			else
-			{
-				RotateRect0(sb, &ctrl);
-	
-  			DrawCheckedRect(NULL,hdc, &ctrl, crCheck1, crCheck2, sb, rect, 0, sbXoffs,sbYoffs);
-				
-				RotateRect0(sb, &ctrl);
-			}
-		}
+        PaintRect(hdc, &r2, CoolSB_GetSysColor(hwnd,COLOR_SCROLLBAR));
 
-		//RIGHT ARROW
-		SetRect(&ctrl, rect->right - butwidth, rect->top, rect->right, rect->bottom);
+        RotateRect0(sb, &ctrl);
+      }
+      //otherwise, paint a blank if the thumb doesn't fit in
+      else
+      {
+        RotateRect0(sb, &ctrl);
+
+        DrawCheckedRect(NULL,hdc, &ctrl, crCheck1, crCheck2, sb, rect, 0, sbXoffs,sbYoffs);
+
+        RotateRect0(sb, &ctrl);
+      }
+    }
+
+    //RIGHT ARROW
+    SetRect(&ctrl, rect->right - butwidth, rect->top, rect->right, rect->bottom);
 
     RECT r2 = ctrl;
-   // r2.right -= 1;
+    // r2.right -= 1;
     RotateRect0(sb, &ctrl);
     RotateRect0(sb, &r2);
 
-		DrawScrollArrow(hwnd,sb, hdc, &r2, uRightButFlags, fMouseDownR, fMouseOverR);
+    DrawScrollArrow(hwnd,sb, hdc, &r2, uRightButFlags, fMouseDownR, fMouseOverR);
 
     if(sw->resizingHthumb && hasZoomButtons)
     {
-    //zoom/resize buttons
+      //zoom/resize buttons
+      {
+        SetBkMode(hdc, TRANSPARENT);
+        if(sb->nBarType == SB_HORZ)
+        {
+          int zbs = GetZoomButtonSize(FALSE);
+          if(m_scrollbar_bmp && *m_scrollbar_bmp)
+          {
+            LICE_IBitmap *bmp = *m_scrollbar_bmp;
+            static LICE_SysBitmap tmpbmp;
+
+            int w = zbs;
+            int h = ctrl.bottom-ctrl.top;
+            int startx = 116;
+            int starty = 201;
+            if(fMouseOverPlus) startx += 17;
+            if(uDrawFlags == HTSCROLL_ZOOMIN) startx = 116+17+17;
+            if (w>tmpbmp.getWidth() || h>tmpbmp.getHeight())
+              tmpbmp.resize(max(w,tmpbmp.getWidth()), max(h,tmpbmp.getHeight()));
+            LICE_ScaledBlit(&tmpbmp, bmp, 0, 0, w, h, startx, starty, 17, 17, 1.0f, LICE_BLIT_FILTER_BILINEAR);
+
+            BitBlt(hdc, ctrl.right, ctrl.top, w, h, tmpbmp.getDC(), 0, 0, SRCCOPY);
+
+            LICE_ScaledBlit(&tmpbmp, bmp, 0, 0, ZOOMBUTTON_RESIZER_SIZE(zbs), h, 163, 101, 4, 17, 1.0f, LICE_BLIT_FILTER_BILINEAR);
+            BitBlt(hdc, ctrl.right+zbs, ctrl.top, ZOOMBUTTON_RESIZER_SIZE(zbs), h, tmpbmp.getDC(), 0, 0, SRCCOPY);
+
+            startx = 116;
+            starty = 221;
+            if(fMouseOverMinus) startx += 17;
+            if(uDrawFlags == HTSCROLL_ZOOMOUT) startx = 116+17+17;
+
+            LICE_ScaledBlit(&tmpbmp, bmp, 0, 0, w, h, startx, starty, 17, 17, 1.0f, LICE_BLIT_FILTER_BILINEAR);
+            BitBlt(hdc, ctrl.right+zbs+ZOOMBUTTON_RESIZER_SIZE(zbs), ctrl.top, w, h, tmpbmp.getDC(), 0, 0, SRCCOPY);
+          }
+          else
+          {
+            HBRUSH br = CreateSolidBrush(CoolSB_GetSysColor(hwnd,COLOR_BTNFACE));
+            HPEN pen=CreatePen(PS_SOLID, 0, CoolSB_GetSysColor(hwnd,COLOR_3DDKSHADOW));
+            HGDIOBJ oldPen=SelectObject(hdc,pen);
+            // +
+            {
+              int pressed = (uDrawFlags == HTSCROLL_ZOOMIN);
+              RECT r = {ctrl.right+pressed, ctrl.top+pressed, ctrl.right + zbs, ctrl.bottom};
+              ownDrawEdge(hwnd,hdc, &r, pressed?0:EDGE_RAISED, BF_RECT | BF_ADJUST);
+              FillRect(hdc, &r, br);
+
+
+              int cy=(ctrl.top+ctrl.bottom)/2+pressed,
+                  cx=ctrl.right+zbs/2+pressed;
+              int sz=min(14,ctrl.bottom-ctrl.top)/4;
+
+              MoveToEx(hdc,cx-sz,cy,NULL);
+              LineTo(hdc,cx+sz+1,cy);
+              MoveToEx(hdc,cx,cy-sz,NULL);
+              LineTo(hdc,cx,cy+sz+1);
+            }
+            // resize thumb
+            {
+              RECT r = {ctrl.right + zbs, ctrl.top, ctrl.right + zbs + ZOOMBUTTON_RESIZER_SIZE(zbs), ctrl.bottom};
+              ownDrawEdge(hwnd,hdc, &r, EDGE_RAISED, BF_RECT | BF_ADJUST);
+              FillRect(hdc, &r, br);
+            }
+            // -
+            {
+              int pressed = (uDrawFlags == HTSCROLL_ZOOMOUT);
+              RECT r = {ctrl.right + zbs + ZOOMBUTTON_RESIZER_SIZE(zbs) +pressed, ctrl.top+pressed,
+                        ctrl.right + zbs*2 + ZOOMBUTTON_RESIZER_SIZE(zbs), ctrl.bottom
+                       };
+              ownDrawEdge(hwnd,hdc, &r, pressed?0:EDGE_RAISED, BF_RECT | BF_ADJUST);
+              FillRect(hdc, &r, br);
+              int cy=(ctrl.top+ctrl.bottom)/2+pressed,
+                  cx=ctrl.right+zbs+ZOOMBUTTON_RESIZER_SIZE(zbs)+zbs/2+pressed;
+              int sz=min(14,ctrl.bottom-ctrl.top)/4;
+
+              MoveToEx(hdc,cx-sz,cy,NULL);
+              LineTo(hdc,cx+sz+1,cy);
+            }
+            SelectObject(hdc,oldPen);
+            DeleteObject(pen);
+            DeleteObject(br);
+          }
+        }
+        else
+        {
+          int zbs = GetZoomButtonSize(TRUE);
+          if(m_scrollbar_bmp && *m_scrollbar_bmp)
+          {
+            LICE_IBitmap *bmp = *m_scrollbar_bmp;
+            static LICE_SysBitmap tmpbmp;
+            int w = ctrl.right - ctrl.left;
+            int h = zbs;
+            int startx = 116;
+            int starty = 201;
+            if(fMouseOverPlus) startx += 17;
+            if(uDrawFlags == HTSCROLL_ZOOMIN) startx = 116+17+17;
+            if (w>tmpbmp.getWidth() || h>tmpbmp.getHeight())
+              tmpbmp.resize(max(w,tmpbmp.getWidth()), max(h,tmpbmp.getHeight()));
+            LICE_ScaledBlit(&tmpbmp, bmp, 0, 0, w, h, startx, starty, 17, 17, 1.0f, LICE_BLIT_FILTER_BILINEAR);
+            BitBlt(hdc, ctrl.left, ctrl.bottom, w, h, tmpbmp.getDC(), 0, 0, SRCCOPY);
+
+            LICE_ScaledBlit(&tmpbmp, bmp, 0, 0, w, ZOOMBUTTON_RESIZER_SIZE(zbs), 143, 114, 17, 4, 1.0f, LICE_BLIT_FILTER_BILINEAR);
+            BitBlt(hdc, ctrl.left, ctrl.bottom+zbs, w, ZOOMBUTTON_RESIZER_SIZE(zbs), tmpbmp.getDC(), 0, 0, SRCCOPY);
+
+            startx = 116;
+            starty = 221;
+            if(fMouseOverMinus) startx += 17;
+            if(uDrawFlags == HTSCROLL_ZOOMOUT) startx = 116+17+17;
+
+            LICE_ScaledBlit(&tmpbmp, bmp, 0, 0, w, h, startx, starty, 17, 17, 1.0f, LICE_BLIT_FILTER_BILINEAR);
+            BitBlt(hdc, ctrl.left, ctrl.bottom+zbs+ZOOMBUTTON_RESIZER_SIZE(zbs), w, h, tmpbmp.getDC(), 0, 0, SRCCOPY);
+          }
+          else
+          {
+            HBRUSH br = CreateSolidBrush(CoolSB_GetSysColor(hwnd,COLOR_BTNFACE));
+            HPEN pen=CreatePen(PS_SOLID, 0, CoolSB_GetSysColor(hwnd,COLOR_3DDKSHADOW));
+            HGDIOBJ oldPen=SelectObject(hdc,pen);
+            // +
+            {
+              int pressed = (uDrawFlags == HTSCROLL_ZOOMIN);
+              RECT r = {ctrl.left+pressed, ctrl.bottom+pressed, ctrl.right, ctrl.bottom + zbs};
+              ownDrawEdge(hwnd,hdc, &r, pressed?0:EDGE_RAISED, BF_RECT | BF_ADJUST);
+              FillRect(hdc, &r, br);
+
+              int cx=(ctrl.left+ctrl.right)/2+pressed,cy=ctrl.bottom+zbs/2+pressed;
+              int sz=min(14,ctrl.right-ctrl.left)/4;
+
+              MoveToEx(hdc,cx-sz,cy,NULL);
+              LineTo(hdc,cx+sz+1,cy);
+              MoveToEx(hdc,cx,cy-sz,NULL);
+              LineTo(hdc,cx,cy+sz+1);
+            }
+            // resize thumb
+            {
+              RECT r = {ctrl.left, ctrl.bottom + zbs, ctrl.right, ctrl.bottom + zbs + ZOOMBUTTON_RESIZER_SIZE(zbs)};
+              ownDrawEdge(hwnd,hdc, &r, EDGE_RAISED, BF_RECT | BF_ADJUST);
+              FillRect(hdc, &r, br);
+            }
+            // -
+            {
+              int pressed = (uDrawFlags == HTSCROLL_ZOOMOUT);
+              RECT r = {ctrl.left+pressed, ctrl.bottom + zbs  + ZOOMBUTTON_RESIZER_SIZE(zbs) + pressed,
+                        ctrl.right, ctrl.bottom + ZOOMBUTTON_RESIZER_SIZE(zbs) + zbs*2
+                       };
+              ownDrawEdge(hwnd,hdc, &r, pressed?0:EDGE_RAISED, BF_RECT | BF_ADJUST);
+              FillRect(hdc, &r, br);
+
+              int cx=(ctrl.left+ctrl.right)/2+pressed,cy=ctrl.bottom+zbs+ZOOMBUTTON_RESIZER_SIZE(zbs)+zbs/2+pressed;
+              int sz=min(14,ctrl.right-ctrl.left)/4;
+
+              MoveToEx(hdc,cx-sz,cy,NULL);
+              LineTo(hdc,cx+sz+1,cy);
+            }
+            SelectObject(hdc,oldPen);
+            DeleteObject(pen);
+            DeleteObject(br);
+          }
+        }
+      }
+    }
+    RotateRect0(sb, &ctrl);
+  }
+  //not enough room for the scrollbar, so just draw the buttons (scaled in size to fit)
+  else
+  {
+    butwidth = scrollwidth / 2;
+
+    //LEFT ARROW
+    SetRect(&ctrl, rect->left, rect->top, rect->left + butwidth, rect->bottom);
+
+    RotateRect0(sb, &ctrl);
+    DrawScrollArrow(hwnd,sb, hdc, &ctrl, uLeftButFlags, fMouseDownL, fMouseOverL);
+    RotateRect0(sb, &ctrl);
+
+    //RIGHT ARROW
+    OffsetRect(&ctrl, scrollwidth - butwidth, 0);
+
+    RotateRect0(sb, &ctrl);
+    DrawScrollArrow(hwnd,sb, hdc, &ctrl, uRightButFlags, fMouseDownR, fMouseOverR);
+    RotateRect0(sb, &ctrl);
+
+    //if there is a gap between the buttons, fill it with a solid color
+    //if(butwidth & 0x0001)
+    if(ctrl.left != rect->left + butwidth)
     {
-      SetBkMode(hdc, TRANSPARENT);
-      if(sb->nBarType == SB_HORZ)
-      {
-        int zbs = GetZoomButtonSize(FALSE);
-        if(m_scrollbar_bmp && *m_scrollbar_bmp)
-        {
-          LICE_IBitmap *bmp = *m_scrollbar_bmp;
-          static LICE_SysBitmap tmpbmp;
+      ctrl.left --;
+      ctrl.right -= butwidth;
+      RotateRect0(sb, &ctrl);
 
-          int w = zbs;
-          int h = ctrl.bottom-ctrl.top;
-          int startx = 116;
-          int starty = 201;
-          if(fMouseOverPlus) startx += 17;
-          if(uDrawFlags == HTSCROLL_ZOOMIN) startx = 116+17+17;
-          if (w>tmpbmp.getWidth() || h>tmpbmp.getHeight())
-            tmpbmp.resize(max(w,tmpbmp.getWidth()), max(h,tmpbmp.getHeight()));
-          LICE_ScaledBlit(&tmpbmp, bmp, 0, 0, w, h, startx, starty, 17, 17, 1.0f, LICE_BLIT_FILTER_BILINEAR);
-          
-          BitBlt(hdc, ctrl.right, ctrl.top, w, h, tmpbmp.getDC(), 0, 0, SRCCOPY);
+      DrawCheckedRect(NULL,hdc, &ctrl, crCheck1, crCheck2, sb, rect, 0, sbXoffs, sbYoffs);
 
-          LICE_ScaledBlit(&tmpbmp, bmp, 0, 0, ZOOMBUTTON_RESIZER_SIZE(zbs), h, 163, 101, 4, 17, 1.0f, LICE_BLIT_FILTER_BILINEAR);
-          BitBlt(hdc, ctrl.right+zbs, ctrl.top, ZOOMBUTTON_RESIZER_SIZE(zbs), h, tmpbmp.getDC(), 0, 0, SRCCOPY);
-
-          startx = 116;
-          starty = 221;
-          if(fMouseOverMinus) startx += 17;
-          if(uDrawFlags == HTSCROLL_ZOOMOUT) startx = 116+17+17;
-
-          LICE_ScaledBlit(&tmpbmp, bmp, 0, 0, w, h, startx, starty, 17, 17, 1.0f, LICE_BLIT_FILTER_BILINEAR);
-          BitBlt(hdc, ctrl.right+zbs+ZOOMBUTTON_RESIZER_SIZE(zbs), ctrl.top, w, h, tmpbmp.getDC(), 0, 0, SRCCOPY);
-        }
-        else
-        {
-          HBRUSH br = CreateSolidBrush(CoolSB_GetSysColor(hwnd,COLOR_BTNFACE));
-          HPEN pen=CreatePen(PS_SOLID, 0, CoolSB_GetSysColor(hwnd,COLOR_3DDKSHADOW));
-          HGDIOBJ oldPen=SelectObject(hdc,pen);
-          // +
-          {
-            int pressed = (uDrawFlags == HTSCROLL_ZOOMIN);
-            RECT r = {ctrl.right+pressed, ctrl.top+pressed, ctrl.right + zbs, ctrl.bottom};
-            ownDrawEdge(hwnd,hdc, &r, pressed?0:EDGE_RAISED, BF_RECT | BF_ADJUST);
-            FillRect(hdc, &r, br);
-
-
-            int cy=(ctrl.top+ctrl.bottom)/2+pressed,
-                    cx=ctrl.right+zbs/2+pressed;
-            int sz=min(14,ctrl.bottom-ctrl.top)/4;
-            
-            MoveToEx(hdc,cx-sz,cy,NULL);
-            LineTo(hdc,cx+sz+1,cy);            
-            MoveToEx(hdc,cx,cy-sz,NULL);
-            LineTo(hdc,cx,cy+sz+1);
-          }
-          // resize thumb
-          {
-            RECT r = {ctrl.right + zbs, ctrl.top, ctrl.right + zbs + ZOOMBUTTON_RESIZER_SIZE(zbs), ctrl.bottom};
-            ownDrawEdge(hwnd,hdc, &r, EDGE_RAISED, BF_RECT | BF_ADJUST);
-            FillRect(hdc, &r, br);
-          }
-          // -
-          {
-            int pressed = (uDrawFlags == HTSCROLL_ZOOMOUT);
-            RECT r = {ctrl.right + zbs + ZOOMBUTTON_RESIZER_SIZE(zbs) +pressed, ctrl.top+pressed, 
-              ctrl.right + zbs*2 + ZOOMBUTTON_RESIZER_SIZE(zbs), ctrl.bottom};
-            ownDrawEdge(hwnd,hdc, &r, pressed?0:EDGE_RAISED, BF_RECT | BF_ADJUST);
-            FillRect(hdc, &r, br);
-            int cy=(ctrl.top+ctrl.bottom)/2+pressed,
-                cx=ctrl.right+zbs+ZOOMBUTTON_RESIZER_SIZE(zbs)+zbs/2+pressed;
-            int sz=min(14,ctrl.bottom-ctrl.top)/4;
-            
-            MoveToEx(hdc,cx-sz,cy,NULL);
-            LineTo(hdc,cx+sz+1,cy);            
-          }
-          SelectObject(hdc,oldPen);
-          DeleteObject(pen);
-          DeleteObject(br);
-        }
-      }
-      else
-      {
-        int zbs = GetZoomButtonSize(TRUE);
-        if(m_scrollbar_bmp && *m_scrollbar_bmp)
-        {
-          LICE_IBitmap *bmp = *m_scrollbar_bmp;
-          static LICE_SysBitmap tmpbmp;
-          int w = ctrl.right - ctrl.left;
-          int h = zbs;
-          int startx = 116;
-          int starty = 201;
-          if(fMouseOverPlus) startx += 17;
-          if(uDrawFlags == HTSCROLL_ZOOMIN) startx = 116+17+17;
-          if (w>tmpbmp.getWidth() || h>tmpbmp.getHeight())
-            tmpbmp.resize(max(w,tmpbmp.getWidth()), max(h,tmpbmp.getHeight()));
-          LICE_ScaledBlit(&tmpbmp, bmp, 0, 0, w, h, startx, starty, 17, 17, 1.0f, LICE_BLIT_FILTER_BILINEAR);
-          BitBlt(hdc, ctrl.left, ctrl.bottom, w, h, tmpbmp.getDC(), 0, 0, SRCCOPY);
-
-          LICE_ScaledBlit(&tmpbmp, bmp, 0, 0, w, ZOOMBUTTON_RESIZER_SIZE(zbs), 143, 114, 17, 4, 1.0f, LICE_BLIT_FILTER_BILINEAR);
-          BitBlt(hdc, ctrl.left, ctrl.bottom+zbs, w, ZOOMBUTTON_RESIZER_SIZE(zbs), tmpbmp.getDC(), 0, 0, SRCCOPY);
-
-          startx = 116;
-          starty = 221;
-          if(fMouseOverMinus) startx += 17;
-          if(uDrawFlags == HTSCROLL_ZOOMOUT) startx = 116+17+17;
-
-          LICE_ScaledBlit(&tmpbmp, bmp, 0, 0, w, h, startx, starty, 17, 17, 1.0f, LICE_BLIT_FILTER_BILINEAR);
-          BitBlt(hdc, ctrl.left, ctrl.bottom+zbs+ZOOMBUTTON_RESIZER_SIZE(zbs), w, h, tmpbmp.getDC(), 0, 0, SRCCOPY);
-        }
-        else
-        {
-          HBRUSH br = CreateSolidBrush(CoolSB_GetSysColor(hwnd,COLOR_BTNFACE));
-          HPEN pen=CreatePen(PS_SOLID, 0, CoolSB_GetSysColor(hwnd,COLOR_3DDKSHADOW));
-          HGDIOBJ oldPen=SelectObject(hdc,pen);
-          // +
-          {
-            int pressed = (uDrawFlags == HTSCROLL_ZOOMIN);
-            RECT r = {ctrl.left+pressed, ctrl.bottom+pressed, ctrl.right, ctrl.bottom + zbs};
-            ownDrawEdge(hwnd,hdc, &r, pressed?0:EDGE_RAISED, BF_RECT | BF_ADJUST);
-            FillRect(hdc, &r, br);
-
-            int cx=(ctrl.left+ctrl.right)/2+pressed,cy=ctrl.bottom+zbs/2+pressed;
-            int sz=min(14,ctrl.right-ctrl.left)/4;
-            
-            MoveToEx(hdc,cx-sz,cy,NULL);
-            LineTo(hdc,cx+sz+1,cy);            
-            MoveToEx(hdc,cx,cy-sz,NULL);
-            LineTo(hdc,cx,cy+sz+1);
-          }
-          // resize thumb
-          {
-            RECT r = {ctrl.left, ctrl.bottom + zbs, ctrl.right, ctrl.bottom + zbs + ZOOMBUTTON_RESIZER_SIZE(zbs)};
-            ownDrawEdge(hwnd,hdc, &r, EDGE_RAISED, BF_RECT | BF_ADJUST);
-            FillRect(hdc, &r, br);
-          }
-          // -
-          {
-            int pressed = (uDrawFlags == HTSCROLL_ZOOMOUT);
-            RECT r = {ctrl.left+pressed, ctrl.bottom + zbs  + ZOOMBUTTON_RESIZER_SIZE(zbs) + pressed, 
-                      ctrl.right, ctrl.bottom + ZOOMBUTTON_RESIZER_SIZE(zbs) + zbs*2};
-            ownDrawEdge(hwnd,hdc, &r, pressed?0:EDGE_RAISED, BF_RECT | BF_ADJUST);
-            FillRect(hdc, &r, br);
-
-            int cx=(ctrl.left+ctrl.right)/2+pressed,cy=ctrl.bottom+zbs+ZOOMBUTTON_RESIZER_SIZE(zbs)+zbs/2+pressed;
-            int sz=min(14,ctrl.right-ctrl.left)/4;
-            
-            MoveToEx(hdc,cx-sz,cy,NULL);
-            LineTo(hdc,cx+sz+1,cy);
-          }
-          SelectObject(hdc,oldPen);
-          DeleteObject(pen);
-          DeleteObject(br);
-        }
-      }
+      RotateRect0(sb, &ctrl);
     }
-    }
-		RotateRect0(sb, &ctrl);
-	}
-	//not enough room for the scrollbar, so just draw the buttons (scaled in size to fit)
-	else
-	{
-		butwidth = scrollwidth / 2;
 
-		//LEFT ARROW
-		SetRect(&ctrl, rect->left, rect->top, rect->left + butwidth, rect->bottom);
+  }
 
-		RotateRect0(sb, &ctrl);
-		DrawScrollArrow(hwnd,sb, hdc, &ctrl, uLeftButFlags, fMouseDownL, fMouseOverL);
-		RotateRect0(sb, &ctrl);
-
-		//RIGHT ARROW
-		OffsetRect(&ctrl, scrollwidth - butwidth, 0);
-		
-		RotateRect0(sb, &ctrl);
-		DrawScrollArrow(hwnd,sb, hdc, &ctrl, uRightButFlags, fMouseDownR, fMouseOverR);		
-		RotateRect0(sb, &ctrl);
-
-		//if there is a gap between the buttons, fill it with a solid color
-		//if(butwidth & 0x0001)
-		if(ctrl.left != rect->left + butwidth)
-		{
-			ctrl.left --;
-			ctrl.right -= butwidth;
-			RotateRect0(sb, &ctrl);
-			
-  		DrawCheckedRect(NULL,hdc, &ctrl, crCheck1, crCheck2, sb, rect, 0, sbXoffs, sbYoffs);
-
-			RotateRect0(sb, &ctrl);
-		}
-			
-	}
-
-	return FALSE;
+  return FALSE;
 }
 
 //
@@ -1784,15 +1786,15 @@ static LRESULT NCDrawHScrollbar(SCROLLBAR *sb, HWND hwnd, HDC hdc, const RECT *r
 //
 static LRESULT NCDrawVScrollbar(SCROLLBAR *sb, HWND hwnd, HDC hdc, const RECT *rect, UINT uDrawFlags, BOOL hasZoomButtons)
 {
-	LRESULT ret;
-	RECT rc;
+  LRESULT ret;
+  RECT rc;
 
-	rc = *rect;
-	RotateRect(&rc);
-	ret = NCDrawHScrollbar(sb, hwnd, hdc, &rc, uDrawFlags,hasZoomButtons);
-	RotateRect(&rc);
-	
-	return ret;
+  rc = *rect;
+  RotateRect(&rc);
+  ret = NCDrawHScrollbar(sb, hwnd, hdc, &rc, uDrawFlags,hasZoomButtons);
+  RotateRect(&rc);
+
+  return ret;
 }
 
 //
@@ -1800,10 +1802,10 @@ static LRESULT NCDrawVScrollbar(SCROLLBAR *sb, HWND hwnd, HDC hdc, const RECT *r
 //
 static LRESULT NCDrawScrollbar(SCROLLBAR *sb, HWND hwnd, HDC hdc, const RECT *rect, UINT uDrawFlags, BOOL hasZoomButtons)
 {
-	if(sb->nBarType == SB_HORZ)
-		return NCDrawHScrollbar(sb, hwnd, hdc, rect, uDrawFlags,hasZoomButtons);
-	else
-		return NCDrawVScrollbar(sb, hwnd, hdc, rect, uDrawFlags,hasZoomButtons);
+  if(sb->nBarType == SB_HORZ)
+    return NCDrawHScrollbar(sb, hwnd, hdc, rect, uDrawFlags,hasZoomButtons);
+  else
+    return NCDrawVScrollbar(sb, hwnd, hdc, rect, uDrawFlags,hasZoomButtons);
 }
 
 
@@ -1822,7 +1824,7 @@ static int getPink(int x, int y, int vert, int np=0, int add=1)
   if(!vert)
   {
     int l;
-    for(l=0;;l++)
+    for(l=0;; l++)
     {
       if(np && *p==LICE_RGBA(255,0,255,255)) break;
       if(!np && *p!=LICE_RGBA(255,0,255,255)) break;
@@ -1834,7 +1836,7 @@ static int getPink(int x, int y, int vert, int np=0, int add=1)
   }
 
   int l;
-  for(l=0;;l++)
+  for(l=0;; l++)
   {
     if(np && *p==LICE_RGBA(255,0,255,255)) break;
     if(!np && *p!=LICE_RGBA(255,0,255,255)) break;
@@ -1857,7 +1859,7 @@ static void initLiceBmp()
     memset(&m_sb_thumbHV, 0, sizeof(m_sb_thumbHV));
     memset(&m_sb_thumbVV, 0, sizeof(m_sb_thumbVV));
 //    int w = bmp->getWidth();
- //   int h = bmp->getHeight();
+//   int h = bmp->getHeight();
     {
       int l = getPink(0,89,0);
       m_sb_thumbHV[0] = l;
@@ -1901,133 +1903,133 @@ static void initLiceBmp()
 
 static LRESULT NCPaint(SCROLLWND *sw, HWND hwnd, WPARAM wParam, LPARAM lParam, HDC hdcParam=NULL)
 {
-	SCROLLBAR *sb;
-	HDC hdc;
-	HRGN hrgn;
-	RECT winrect, rect;
+  SCROLLBAR *sb;
+  HDC hdc;
+  HRGN hrgn;
+  RECT winrect, rect;
 //	BOOL fUpdateAll = (wParam == 1);
-	UINT ret;
+  UINT ret;
 
   if(!m_scrollbar_bmp)
   {
     initLiceBmp();
   }
-  
-	GET_WINDOW_RECT(hwnd, &winrect);
-	
-	//if entire region needs painting, then make a region to cover the entire window
-/*	if(fUpdateAll)
-		hrgn = (HRGN)wParam;
-	else
-  */
+
+  GET_WINDOW_RECT(hwnd, &winrect);
+
+  //if entire region needs painting, then make a region to cover the entire window
+  /*	if(fUpdateAll)
+  		hrgn = (HRGN)wParam;
+  	else
+    */
   hrgn = (HRGN)wParam;
-	
-	//hdc = GetWindowDC(hwnd);
-  if(hdcParam != NULL) 
+
+  //hdc = GetWindowDC(hwnd);
+  if(hdcParam != NULL)
     hdc = hdcParam;
   else
-	  hdc = GetWindowDC(hwnd);
+    hdc = GetWindowDC(hwnd);
 
 //  printf("wndrect: %d,%d,%d,%d hdc=%d hv=%d\n",winrect.left,winrect.top,winrect.right,winrect.bottom,hdc,sw->sbarHorz.fScrollVisible);
 
-	//
-	//	Only draw the horizontal scrollbar if the window is tall enough
-	//
-	sb = &sw->sbarHorz;
-	if(sb->fScrollVisible)
-	{
-		//get the screen coordinates of the whole horizontal scrollbar area
+  //
+  //	Only draw the horizontal scrollbar if the window is tall enough
+  //
+  sb = &sw->sbarHorz;
+  if(sb->fScrollVisible)
+  {
+    //get the screen coordinates of the whole horizontal scrollbar area
     BOOL hasZoomButtons;
-		GetHScrollRect(sw, hwnd, &rect, &hasZoomButtons);
+    GetHScrollRect(sw, hwnd, &rect, &hasZoomButtons);
 
-		//make the coordinates relative to the window for drawing
-		OffsetRect(&rect, -winrect.left, -winrect.top);
-
-
-		if(sw->uCurrentScrollbar == SB_HORZ)
-			NCDrawHScrollbar(sb, hwnd, hdc, &rect, sw->uScrollTimerPortion,hasZoomButtons);
-		else
-			NCDrawHScrollbar(sb, hwnd, hdc, &rect, HTSCROLL_NONE,hasZoomButtons);
-	}
-
-	//
-	// Only draw the vertical scrollbar if the window is wide enough to accomodate it
-	//
-	sb = &sw->sbarVert;
-	if(sb->fScrollVisible)
-	{
-		//get the screen cooridinates of the whole horizontal scrollbar area
-    BOOL hasZoomButtons;
-		GetVScrollRect(sw, hwnd, &rect,&hasZoomButtons);
-
-		//make the coordinates relative to the window for drawing
-		OffsetRect(&rect, -winrect.left, -winrect.top);
+    //make the coordinates relative to the window for drawing
+    OffsetRect(&rect, -winrect.left, -winrect.top);
 
 
-		if(sw->uCurrentScrollbar == SB_VERT)
-    {
-			NCDrawVScrollbar(sb, hwnd, hdc, &rect, sw->uScrollTimerPortion,hasZoomButtons);
-		}
+    if(sw->uCurrentScrollbar == SB_HORZ)
+      NCDrawHScrollbar(sb, hwnd, hdc, &rect, sw->uScrollTimerPortion,hasZoomButtons);
     else
-			NCDrawVScrollbar(sb, hwnd, hdc, &rect, HTSCROLL_NONE,hasZoomButtons);
-	}
+      NCDrawHScrollbar(sb, hwnd, hdc, &rect, HTSCROLL_NONE,hasZoomButtons);
+  }
 
-	//Call the default window procedure for WM_NCPAINT, with the
-	//new window region. ** region must be in SCREEN coordinates **
+  //
+  // Only draw the vertical scrollbar if the window is wide enough to accomodate it
+  //
+  sb = &sw->sbarVert;
+  if(sb->fScrollVisible)
+  {
+    //get the screen cooridinates of the whole horizontal scrollbar area
+    BOOL hasZoomButtons;
+    GetVScrollRect(sw, hwnd, &rect,&hasZoomButtons);
 
-    // If the window has WS_(H-V)SCROLL bits set, we should reset them
-    // to avoid windows taking the scrollbars into account.
-    // We temporarily set a flag preventing the subsecuent 
-    // WM_STYLECHANGING/WM_STYLECHANGED to be forwarded to 
-    // the original window procedure
-	
-	ret = CallWindowProcStyleMod(sw, hwnd, WM_NCPAINT, (WPARAM)hrgn, lParam);
-
-	
+    //make the coordinates relative to the window for drawing
+    OffsetRect(&rect, -winrect.left, -winrect.top);
 
 
-	// DRAW THE DEAD AREA
-	// only do this if the horizontal and vertical bars are visible
+    if(sw->uCurrentScrollbar == SB_VERT)
+    {
+      NCDrawVScrollbar(sb, hwnd, hdc, &rect, sw->uScrollTimerPortion,hasZoomButtons);
+    }
+    else
+      NCDrawVScrollbar(sb, hwnd, hdc, &rect, HTSCROLL_NONE,hasZoomButtons);
+  }
+
+  //Call the default window procedure for WM_NCPAINT, with the
+  //new window region. ** region must be in SCREEN coordinates **
+
+  // If the window has WS_(H-V)SCROLL bits set, we should reset them
+  // to avoid windows taking the scrollbars into account.
+  // We temporarily set a flag preventing the subsecuent
+  // WM_STYLECHANGING/WM_STYLECHANGED to be forwarded to
+  // the original window procedure
+
+  ret = CallWindowProcStyleMod(sw, hwnd, WM_NCPAINT, (WPARAM)hrgn, lParam);
+
+
+
+
+  // DRAW THE DEAD AREA
+  // only do this if the horizontal and vertical bars are visible
   if (sw->sbarVert.fScrollVisible && (sw->vscrollbarShrinkTop || sw->vscrollbarShrinkBottom || sw->sbarHorz.fScrollVisible))
   {
     int col=CoolSB_GetSysColor(hwnd,COLOR_3DFACE);
-		GET_WINDOW_RECT(hwnd, &rect);
-		OffsetRect(&rect, -winrect.left, -winrect.top);
+    GET_WINDOW_RECT(hwnd, &rect);
+    OffsetRect(&rect, -winrect.left, -winrect.top);
 
-		if(sw->fLeftScrollbar)
-		{
-			rect.left += sw->cxLeftEdge;
-			rect.right = rect.left + GetScrollMetric(TRUE, SM_CXVERTSB);
-		}
-		else
-		{
-			rect.right -= sw->cxRightEdge;
-			rect.left = rect.right  - GetScrollMetric(TRUE, SM_CXVERTSB);
-		}
+    if(sw->fLeftScrollbar)
+    {
+      rect.left += sw->cxLeftEdge;
+      rect.right = rect.left + GetScrollMetric(TRUE, SM_CXVERTSB);
+    }
+    else
+    {
+      rect.right -= sw->cxRightEdge;
+      rect.left = rect.right  - GetScrollMetric(TRUE, SM_CXVERTSB);
+    }
 
     if (sw->vscrollbarShrinkTop)
     {
       RECT r2=rect;
       r2.top += sw->cyTopEdge;
-	  	r2.bottom = r2.top + sw->vscrollbarShrinkTop;
+      r2.bottom = r2.top + sw->vscrollbarShrinkTop;
 
       LICE_IBitmap *bm=NULL;
       if (sw->getDeadAreaBitmap) bm = (LICE_IBitmap *)sw->getDeadAreaBitmap(1,hwnd,&r2,col);
-      
+
       if (bm)
       {
         BitBlt(hdc,r2.left,r2.top,r2.right-r2.left,r2.bottom-r2.top,bm->getDC(),0,0,SRCCOPY);
       }
       else
       {
-  		  PaintRect(hdc, &r2, col);
+        PaintRect(hdc, &r2, col);
       }
     }
 
     if (sw->sbarHorz.fScrollVisible||sw->vscrollbarShrinkBottom)
     {
-		  rect.bottom -= sw->cyBottomEdge;
-		  rect.top  = rect.bottom - GetScrollMetric(FALSE, SM_CYHORZSB) - sw->vscrollbarShrinkBottom;
+      rect.bottom -= sw->cyBottomEdge;
+      rect.top  = rect.bottom - GetScrollMetric(FALSE, SM_CYHORZSB) - sw->vscrollbarShrinkBottom;
       LICE_IBitmap *bm=NULL;
       if (sw->getDeadAreaBitmap) bm = (LICE_IBitmap *)sw->getDeadAreaBitmap(0,hwnd,&rect,col);
 
@@ -2037,7 +2039,7 @@ static LRESULT NCPaint(SCROLLWND *sw, HWND hwnd, WPARAM wParam, LPARAM lParam, H
       }
       else
       {
-    		PaintRect(hdc, &rect, col);
+        PaintRect(hdc, &rect, col);
       }
     }
   }
@@ -2045,7 +2047,7 @@ static LRESULT NCPaint(SCROLLWND *sw, HWND hwnd, WPARAM wParam, LPARAM lParam, H
 //	UNREFERENCED_PARAMETER(clip);
 
   if(!hdcParam) ReleaseDC(hwnd, hdc);
-	return ret;
+  return ret;
 }
 
 //
@@ -2057,42 +2059,42 @@ static LRESULT NCHitTest(SCROLLWND *sw, HWND hwnd, WPARAM wParam, LPARAM lParam)
   RECT vrect;
   POINT pt;
 
-  pt.x = GET_X_LPARAM(lParam); 
+  pt.x = GET_X_LPARAM(lParam);
   pt.y = GET_Y_LPARAM(lParam);
   OSX_REMAP_SCREENY(hwnd,&pt.y);
-	
-	//work out exactly where the Horizontal and Vertical scrollbars are
+
+  //work out exactly where the Horizontal and Vertical scrollbars are
   BOOL hasZoomButtons;
-	GetHScrollRect(sw, hwnd, &hrect, &hasZoomButtons);
-  if (hasZoomButtons && sw->resizingHthumb) 
+  GetHScrollRect(sw, hwnd, &hrect, &hasZoomButtons);
+  if (hasZoomButtons && sw->resizingHthumb)
   {
     int zbs = GetZoomButtonSize(FALSE);
     hrect.right += zbs*2+ZOOMBUTTON_RESIZER_SIZE(zbs);
   }
-	GetVScrollRect(sw, hwnd, &vrect,&hasZoomButtons);
-  if (hasZoomButtons && sw->resizingHthumb) 
+  GetVScrollRect(sw, hwnd, &vrect,&hasZoomButtons);
+  if (hasZoomButtons && sw->resizingHthumb)
   {
     int zbs = GetZoomButtonSize(TRUE);
     vrect.bottom += zbs*2+ZOOMBUTTON_RESIZER_SIZE(zbs);
   }
-	  
-    
-	//Clicked in the horizontal scrollbar area
-	if(sw->sbarHorz.fScrollVisible && PtInRect(&hrect, pt))
-	{
-		return HTHSCROLL;
-	}
-	//Clicked in the vertical scrollbar area
-	else if(sw->sbarVert.fScrollVisible && PtInRect(&vrect, pt))
-	{
 
-		return HTVSCROLL;
-	}
-	//clicked somewhere else
-	else
-	{
-		return CallWindowProc(sw->oldproc, hwnd, WM_NCHITTEST, wParam, lParam);
-	}
+
+  //Clicked in the horizontal scrollbar area
+  if(sw->sbarHorz.fScrollVisible && PtInRect(&hrect, pt))
+  {
+    return HTHSCROLL;
+  }
+  //Clicked in the vertical scrollbar area
+  else if(sw->sbarVert.fScrollVisible && PtInRect(&vrect, pt))
+  {
+
+    return HTVSCROLL;
+  }
+  //clicked somewhere else
+  else
+  {
+    return CallWindowProc(sw->oldproc, hwnd, WM_NCHITTEST, wParam, lParam);
+  }
 }
 
 //
@@ -2101,14 +2103,14 @@ static LRESULT NCHitTest(SCROLLWND *sw, HWND hwnd, WPARAM wParam, LPARAM lParam)
 //
 static UINT GetHorzPortion(SCROLLBAR *sb, HWND hwnd, RECT *rect, int x, int y, BOOL hasZoomButtons)
 {
-	RECT rc = *rect;
+  RECT rc = *rect;
 
-	if(y < rc.top || y >= rc.bottom) return HTSCROLL_NONE;
+  if(y < rc.top || y >= rc.bottom) return HTSCROLL_NONE;
 
 
-	//Now we have the rectangle for the scrollbar itself, so work out
-	//what part we clicked on.
-	return GetHorzScrollPortion(sb, hwnd, &rc, x, y,hasZoomButtons);
+  //Now we have the rectangle for the scrollbar itself, so work out
+  //what part we clicked on.
+  return GetHorzScrollPortion(sb, hwnd, &rc, x, y,hasZoomButtons);
 }
 
 //
@@ -2116,11 +2118,11 @@ static UINT GetHorzPortion(SCROLLBAR *sb, HWND hwnd, RECT *rect, int x, int y, B
 //
 static UINT GetVertPortion(SCROLLBAR *sb, HWND hwnd, RECT *rect, int x, int y, BOOL hasZoomButtons)
 {
-	UINT ret;
-	RotateRect(rect);
-	ret = GetHorzPortion(sb, hwnd, rect, y, x,hasZoomButtons);
-	RotateRect(rect);
-	return ret;
+  UINT ret;
+  RotateRect(rect);
+  ret = GetHorzPortion(sb, hwnd, rect, y, x,hasZoomButtons);
+  RotateRect(rect);
+  return ret;
 }
 
 //
@@ -2128,12 +2130,12 @@ static UINT GetVertPortion(SCROLLBAR *sb, HWND hwnd, RECT *rect, int x, int y, B
 //
 static UINT GetPortion(SCROLLBAR *sb, HWND hwnd, RECT *rect, int x, int y, BOOL hasZoomButtons)
 {
-	if(sb->nBarType == SB_HORZ)
-		return GetHorzPortion(sb, hwnd, rect, x, y,hasZoomButtons);
-	else if(sb->nBarType == SB_VERT)
-		return GetVertPortion(sb, hwnd, rect, x, y,hasZoomButtons);
-	else
-		return HTSCROLL_NONE;
+  if(sb->nBarType == SB_HORZ)
+    return GetHorzPortion(sb, hwnd, rect, x, y,hasZoomButtons);
+  else if(sb->nBarType == SB_VERT)
+    return GetVertPortion(sb, hwnd, rect, x, y,hasZoomButtons);
+  else
+    return HTSCROLL_NONE;
 }
 
 
@@ -2142,221 +2144,221 @@ static UINT GetPortion(SCROLLBAR *sb, HWND hwnd, RECT *rect, int x, int y, BOOL 
 //
 static LRESULT NCLButtonDown(SCROLLWND *sw, HWND hwnd, WPARAM wParam, LPARAM lParam, BOOL isDouble)
 {
-	RECT rect, winrect;
-	HDC hdc;
-	SCROLLBAR *sb;
-	POINT pt;
+  RECT rect, winrect;
+  HDC hdc;
+  SCROLLBAR *sb;
+  POINT pt;
 
-	pt.x = GET_X_LPARAM(lParam);
-	pt.y = GET_Y_LPARAM(lParam);
+  pt.x = GET_X_LPARAM(lParam);
+  pt.y = GET_Y_LPARAM(lParam);
   OSX_REMAP_SCREENY(hwnd,&pt.y);
 
-	hwndCurCoolSB = hwnd;
+  hwndCurCoolSB = hwnd;
 
-	//
-	//	HORIZONTAL SCROLLBAR PROCESSING
-	//
+  //
+  //	HORIZONTAL SCROLLBAR PROCESSING
+  //
   BOOL hasZoomButtons;
-	if(wParam == HTHSCROLL)
-	{
-		sw->uScrollTimerMsg = WM_HSCROLL;
-		sw->uCurrentScrollbar = SB_HORZ;
-		sb = &sw->sbarHorz;
+  if(wParam == HTHSCROLL)
+  {
+    sw->uScrollTimerMsg = WM_HSCROLL;
+    sw->uCurrentScrollbar = SB_HORZ;
+    sb = &sw->sbarHorz;
 
-		//get the total area of the normal Horz scrollbar area
-		GetHScrollRect(sw, hwnd, &rect,&hasZoomButtons);
-		sw->uCurrentScrollPortion = GetHorzPortion(sb, hwnd, &rect, pt.x,pt.y,hasZoomButtons);
-	}
-	//
-	//	VERTICAL SCROLLBAR PROCESSING
-	//
-	else if(wParam == HTVSCROLL)
-	{
-		sw->uScrollTimerMsg = WM_VSCROLL;
-		sw->uCurrentScrollbar = SB_VERT;
-		sb = &sw->sbarVert;
+    //get the total area of the normal Horz scrollbar area
+    GetHScrollRect(sw, hwnd, &rect,&hasZoomButtons);
+    sw->uCurrentScrollPortion = GetHorzPortion(sb, hwnd, &rect, pt.x,pt.y,hasZoomButtons);
+  }
+  //
+  //	VERTICAL SCROLLBAR PROCESSING
+  //
+  else if(wParam == HTVSCROLL)
+  {
+    sw->uScrollTimerMsg = WM_VSCROLL;
+    sw->uCurrentScrollbar = SB_VERT;
+    sb = &sw->sbarVert;
 
-		//get the total area of the normal Horz scrollbar area
-		GetVScrollRect(sw, hwnd, &rect,&hasZoomButtons);
-		sw->uCurrentScrollPortion = GetVertPortion(sb, hwnd, &rect, pt.x,pt.y,hasZoomButtons);
-	}
-	//
-	//	NORMAL PROCESSING
-	//
-	else
-	{
-		sw->uCurrentScrollPortion = HTSCROLL_NONE;
-		return CallWindowProc(sw->oldproc, hwnd, WM_NCLBUTTONDOWN, wParam, lParam);
-	}
+    //get the total area of the normal Horz scrollbar area
+    GetVScrollRect(sw, hwnd, &rect,&hasZoomButtons);
+    sw->uCurrentScrollPortion = GetVertPortion(sb, hwnd, &rect, pt.x,pt.y,hasZoomButtons);
+  }
+  //
+  //	NORMAL PROCESSING
+  //
+  else
+  {
+    sw->uCurrentScrollPortion = HTSCROLL_NONE;
+    return CallWindowProc(sw->oldproc, hwnd, WM_NCLBUTTONDOWN, wParam, lParam);
+  }
 
-	//
-	// we can now share the same code for vertical
-	// and horizontal scrollbars
-	//
-	switch(sw->uCurrentScrollPortion)
-	{
-	//inserted buttons to the left/right
+  //
+  // we can now share the same code for vertical
+  // and horizontal scrollbars
+  //
+  switch(sw->uCurrentScrollPortion)
+  {
+    //inserted buttons to the left/right
 
-	case HTSCROLL_THUMB: 
+    case HTSCROLL_THUMB:
 
-		//if the scrollbar is disabled, then do no further processing
-		if(!IsScrollbarActive(sb))
-			return 0;
-		
-    if (isDouble)
-    {
-      SendMessage(hwnd,WM_SB_DBLCLK,wParam == HTVSCROLL ? SB_VERT : SB_HORZ,0);
-    }
-    else
-    {
+      //if the scrollbar is disabled, then do no further processing
+      if(!IsScrollbarActive(sb))
+        return 0;
 
-		  RotateRect0(sb, &rect);
-		  CalcThumbSize(sb, &rect, &nThumbSize, &nThumbPos);
-		  RotateRect0(sb, &rect);
-		  
-		  //remember the bounding rectangle of the scrollbar work area
-		  rcThumbBounds = rect;
-		  
-		  sw->fThumbTracking = TRUE;
-		  sb->scrollInfo.nTrackPos = sb->scrollInfo.nPos;
-		  
-		  if(wParam == HTVSCROLL) 
-			  nThumbMouseOffset = pt.y - nThumbPos;
-		  else
-			  nThumbMouseOffset = pt.x - nThumbPos;
+      if (isDouble)
+      {
+        SendMessage(hwnd,WM_SB_DBLCLK,wParam == HTVSCROLL ? SB_VERT : SB_HORZ,0);
+      }
+      else
+      {
 
-		  nLastPos = sb->scrollInfo.nPos;
-		  nThumbPos0 = nThumbPos;
-	  
+        RotateRect0(sb, &rect);
+        CalcThumbSize(sb, &rect, &nThumbSize, &nThumbPos);
+        RotateRect0(sb, &rect);
+
+        //remember the bounding rectangle of the scrollbar work area
+        rcThumbBounds = rect;
+
+        sw->fThumbTracking = TRUE;
+        sb->scrollInfo.nTrackPos = sb->scrollInfo.nPos;
+
+        if(wParam == HTVSCROLL)
+          nThumbMouseOffset = pt.y - nThumbPos;
+        else
+          nThumbMouseOffset = pt.x - nThumbPos;
+
+        nLastPos = sb->scrollInfo.nPos;
+        nThumbPos0 = nThumbPos;
+
 #if 0
-		  //if(sb->fFlatScrollbar)
-		  //{
-			  GetWindowRect(hwnd, &winrect);
+        //if(sb->fFlatScrollbar)
+        //{
+        GetWindowRect(hwnd, &winrect);
         FIXWINDOWRECT(&winrect);
-			  OffsetRect(&rect, -winrect.left, -winrect.top);
-			  hdc = GetWindowDC(hwnd);
-			  NCDrawScrollbar(sb, hwnd, hdc, &rect, HTSCROLL_THUMB);
-			  ReleaseDC(hwnd, hdc);
-		  //}
+        OffsetRect(&rect, -winrect.left, -winrect.top);
+        hdc = GetWindowDC(hwnd);
+        NCDrawScrollbar(sb, hwnd, hdc, &rect, HTSCROLL_THUMB);
+        ReleaseDC(hwnd, hdc);
+        //}
 #endif
 
         MouseMove(sw, hwnd, 0, 0);
-    }
+      }
 
-		break;
+      break;
 
-		//Any part of the scrollbar
-	case HTSCROLL_LEFT:  
-		if(sb->fScrollFlags & ESB_DISABLE_LEFT)		return 0;
-		else										goto target1;
-	
-	case HTSCROLL_RIGHT: 
-		if(sb->fScrollFlags & ESB_DISABLE_RIGHT)	return 0;
-		else										goto target1;
+    //Any part of the scrollbar
+    case HTSCROLL_LEFT:
+      if(sb->fScrollFlags & ESB_DISABLE_LEFT)		return 0;
+      else										goto target1;
 
-		goto target1;	
+    case HTSCROLL_RIGHT:
+      if(sb->fScrollFlags & ESB_DISABLE_RIGHT)	return 0;
+      else										goto target1;
 
-	case HTSCROLL_PAGELEFT:  case HTSCROLL_PAGERIGHT:
+      goto target1;
 
-		target1:
+    case HTSCROLL_PAGELEFT:  case HTSCROLL_PAGERIGHT:
 
-		//if the scrollbar is disabled, then do no further processing
-		if(!IsScrollbarActive(sb))
-			break;
+target1:
 
-		//ajust the horizontal rectangle to NOT include
-		//any inserted buttons
+      //if the scrollbar is disabled, then do no further processing
+      if(!IsScrollbarActive(sb))
+        break;
 
-		SendScrollMessage(hwnd, sw->uScrollTimerMsg, sw->uCurrentScrollPortion, 0);
+      //ajust the horizontal rectangle to NOT include
+      //any inserted buttons
 
-		// Check what area the mouse is now over :
-		// If the scroll thumb has moved under the mouse in response to 
-		// a call to SetScrollPos etc, then we don't hilight the scrollbar margin
-		if(sw->uCurrentScrollbar == SB_HORZ)
-			sw->uScrollTimerPortion = GetHorzScrollPortion(sb, hwnd, &rect, pt.x, pt.y,hasZoomButtons);
-		else
-			sw->uScrollTimerPortion = GetVertScrollPortion(sb, hwnd, &rect, pt.x, pt.y,hasZoomButtons);
+      SendScrollMessage(hwnd, sw->uScrollTimerMsg, sw->uCurrentScrollPortion, 0);
 
-		GET_WINDOW_RECT(hwnd, &winrect);
-		OffsetRect(&rect, -winrect.left, -winrect.top);
-		hdc = GetWindowDC(hwnd);
-			
-		NCDrawScrollbar(sb, hwnd, hdc, &rect, sw->uScrollTimerPortion,hasZoomButtons);
-		ReleaseDC(hwnd, hdc);
+      // Check what area the mouse is now over :
+      // If the scroll thumb has moved under the mouse in response to
+      // a call to SetScrollPos etc, then we don't hilight the scrollbar margin
+      if(sw->uCurrentScrollbar == SB_HORZ)
+        sw->uScrollTimerPortion = GetHorzScrollPortion(sb, hwnd, &rect, pt.x, pt.y,hasZoomButtons);
+      else
+        sw->uScrollTimerPortion = GetVertScrollPortion(sb, hwnd, &rect, pt.x, pt.y,hasZoomButtons);
 
-		//Post the scroll message!!!!
-		sw->uScrollTimerPortion = sw->uCurrentScrollPortion;
-
-		//set a timer going on the first click.
-		//if this one expires, then we can start off a more regular timer
-		//to generate the auto-scroll behaviour
-		sw->uScrollTimerId = SetTimer(hwnd, COOLSB_TIMERID1, COOLSB_TIMERINTERVAL1, 0);
-		break;
-  case HTSCROLL_LRESIZER:
-  case HTSCROLL_RRESIZER:
-		if(wParam == HTVSCROLL) 
-			nThumbMouseOffset = pt.y - nThumbPos;
-		else
-			nThumbMouseOffset = pt.x;
-    if(wParam == HTHSCROLL)
-    {
-      RECT rect;
-      int nThumbSize, nThumbPos;
-      GetHScrollRect(sw, hwnd, &rect,NULL);
-      CalcThumbSize(sb, &rect, &nThumbSize, &nThumbPos);
-      SendMessage(hwnd, WM_SB_TRESIZE_START, nThumbSize, nThumbPos);
-    }
-    else
-    {
-      RECT rect;
-      int nThumbSize, nThumbPos;
-      GetVScrollRect(sw, hwnd, &rect,NULL);
-      RotateRect0(sb, &rect);
-      CalcThumbSize(sb, &rect, &nThumbSize, &nThumbPos);
-      SendMessage(hwnd, WM_SB_TRESIZE_START, nThumbSize, nThumbPos);
-    }
-    break;
-  case HTSCROLL_RESIZER:
-		if(wParam == HTVSCROLL) 
-			nThumbMouseOffset = pt.y;
-		else
-			nThumbMouseOffset = pt.x;
-    break;
-  case HTSCROLL_ZOOMIN:
-    SendMessage(hwnd, WM_SB_ZOOM, 0, (wParam == HTVSCROLL));
-    if (sw->uZoomTimerId) KillTimer(hwnd,sw->uZoomTimerId);
-    sw->uZoomTimerId=SetTimer(hwnd,COOLSB_TIMERID4,COOLSB_TIMERINTERVAL4,NULL);
-    sw->uZoomTimerMode=wParam == HTVSCROLL;
-    sw->uScrollTimerPortion = HTSCROLL_ZOOMIN;
-    {
       GET_WINDOW_RECT(hwnd, &winrect);
       OffsetRect(&rect, -winrect.left, -winrect.top);
       hdc = GetWindowDC(hwnd);
-      NCDrawScrollbar(sb, hwnd, hdc, &rect, HTSCROLL_ZOOMIN,hasZoomButtons);
+
+      NCDrawScrollbar(sb, hwnd, hdc, &rect, sw->uScrollTimerPortion,hasZoomButtons);
       ReleaseDC(hwnd, hdc);
-    }
-    break;
-  case HTSCROLL_ZOOMOUT:
-    SendMessage(hwnd, WM_SB_ZOOM, 1, (wParam == HTVSCROLL));
-    if (sw->uZoomTimerId) KillTimer(hwnd,sw->uZoomTimerId);
-    sw->uZoomTimerId=SetTimer(hwnd,COOLSB_TIMERID4,COOLSB_TIMERINTERVAL4,NULL);
-    sw->uZoomTimerMode=2 + (wParam == HTVSCROLL);
-    sw->uScrollTimerPortion = HTSCROLL_ZOOMOUT;
-    {
-      GET_WINDOW_RECT(hwnd, &winrect);
-      OffsetRect(&rect, -winrect.left, -winrect.top);
-      hdc = GetWindowDC(hwnd);
-      NCDrawScrollbar(sb, hwnd, hdc, &rect, HTSCROLL_ZOOMOUT,hasZoomButtons);
-      ReleaseDC(hwnd, hdc);
-    }
-    break;
-	default:
-		return CallWindowProc(sw->oldproc, hwnd, WM_NCLBUTTONDOWN, wParam, lParam);
-		//return 0;
-	}
-		
-	SetCapture(hwnd);
-	return 0;
+
+      //Post the scroll message!!!!
+      sw->uScrollTimerPortion = sw->uCurrentScrollPortion;
+
+      //set a timer going on the first click.
+      //if this one expires, then we can start off a more regular timer
+      //to generate the auto-scroll behaviour
+      sw->uScrollTimerId = SetTimer(hwnd, COOLSB_TIMERID1, COOLSB_TIMERINTERVAL1, 0);
+      break;
+    case HTSCROLL_LRESIZER:
+    case HTSCROLL_RRESIZER:
+      if(wParam == HTVSCROLL)
+        nThumbMouseOffset = pt.y - nThumbPos;
+      else
+        nThumbMouseOffset = pt.x;
+      if(wParam == HTHSCROLL)
+      {
+        RECT rect;
+        int nThumbSize, nThumbPos;
+        GetHScrollRect(sw, hwnd, &rect,NULL);
+        CalcThumbSize(sb, &rect, &nThumbSize, &nThumbPos);
+        SendMessage(hwnd, WM_SB_TRESIZE_START, nThumbSize, nThumbPos);
+      }
+      else
+      {
+        RECT rect;
+        int nThumbSize, nThumbPos;
+        GetVScrollRect(sw, hwnd, &rect,NULL);
+        RotateRect0(sb, &rect);
+        CalcThumbSize(sb, &rect, &nThumbSize, &nThumbPos);
+        SendMessage(hwnd, WM_SB_TRESIZE_START, nThumbSize, nThumbPos);
+      }
+      break;
+    case HTSCROLL_RESIZER:
+      if(wParam == HTVSCROLL)
+        nThumbMouseOffset = pt.y;
+      else
+        nThumbMouseOffset = pt.x;
+      break;
+    case HTSCROLL_ZOOMIN:
+      SendMessage(hwnd, WM_SB_ZOOM, 0, (wParam == HTVSCROLL));
+      if (sw->uZoomTimerId) KillTimer(hwnd,sw->uZoomTimerId);
+      sw->uZoomTimerId=SetTimer(hwnd,COOLSB_TIMERID4,COOLSB_TIMERINTERVAL4,NULL);
+      sw->uZoomTimerMode=wParam == HTVSCROLL;
+      sw->uScrollTimerPortion = HTSCROLL_ZOOMIN;
+      {
+        GET_WINDOW_RECT(hwnd, &winrect);
+        OffsetRect(&rect, -winrect.left, -winrect.top);
+        hdc = GetWindowDC(hwnd);
+        NCDrawScrollbar(sb, hwnd, hdc, &rect, HTSCROLL_ZOOMIN,hasZoomButtons);
+        ReleaseDC(hwnd, hdc);
+      }
+      break;
+    case HTSCROLL_ZOOMOUT:
+      SendMessage(hwnd, WM_SB_ZOOM, 1, (wParam == HTVSCROLL));
+      if (sw->uZoomTimerId) KillTimer(hwnd,sw->uZoomTimerId);
+      sw->uZoomTimerId=SetTimer(hwnd,COOLSB_TIMERID4,COOLSB_TIMERINTERVAL4,NULL);
+      sw->uZoomTimerMode=2 + (wParam == HTVSCROLL);
+      sw->uScrollTimerPortion = HTSCROLL_ZOOMOUT;
+      {
+        GET_WINDOW_RECT(hwnd, &winrect);
+        OffsetRect(&rect, -winrect.left, -winrect.top);
+        hdc = GetWindowDC(hwnd);
+        NCDrawScrollbar(sb, hwnd, hdc, &rect, HTSCROLL_ZOOMOUT,hasZoomButtons);
+        ReleaseDC(hwnd, hdc);
+      }
+      break;
+    default:
+      return CallWindowProc(sw->oldproc, hwnd, WM_NCLBUTTONDOWN, wParam, lParam);
+      //return 0;
+  }
+
+  SetCapture(hwnd);
+  return 0;
 }
 
 //
@@ -2364,135 +2366,135 @@ static LRESULT NCLButtonDown(SCROLLWND *sw, HWND hwnd, WPARAM wParam, LPARAM lPa
 //
 static LRESULT LButtonUp(SCROLLWND *sw, HWND hwnd, WPARAM wParam, LPARAM lParam)
 {
-	RECT rect;
-	//UINT thisportion;
-	HDC hdc;
-	POINT pt;
-	RECT winrect;
+  RECT rect;
+  //UINT thisportion;
+  HDC hdc;
+  POINT pt;
+  RECT winrect;
 
   if (sw->uZoomTimerId) KillTimer(hwnd,sw->uZoomTimerId);
   sw->uZoomTimerId=0;
 
-	//current scrollportion is the button that we clicked down on
-	if(sw->uCurrentScrollPortion != HTSCROLL_NONE)
-	{
-		SCROLLBAR *sb = &sw->sbarHorz;
-		lParam = GetMessagePos();
-		ReleaseCapture();
+  //current scrollportion is the button that we clicked down on
+  if(sw->uCurrentScrollPortion != HTSCROLL_NONE)
+  {
+    SCROLLBAR *sb = &sw->sbarHorz;
+    lParam = GetMessagePos();
+    ReleaseCapture();
 #ifndef _WIN32
-        SetCursor(LoadCursor(NULL,IDC_ARROW)); // OS X seems to like this
+    SetCursor(LoadCursor(NULL,IDC_ARROW)); // OS X seems to like this
 #endif
-		GET_WINDOW_RECT(hwnd, &winrect);
-		pt.x = GET_X_LPARAM(lParam);
-		pt.y = GET_Y_LPARAM(lParam);
+    GET_WINDOW_RECT(hwnd, &winrect);
+    pt.x = GET_X_LPARAM(lParam);
+    pt.y = GET_Y_LPARAM(lParam);
     OSX_REMAP_SCREENY(hwnd,&pt.y);
     BOOL hasZoomButtons=0;
 
 
-		//emulate the mouse input on a scrollbar here...
-		if(sw->uCurrentScrollbar == SB_HORZ)
-		{
-			//get the total area of the normal Horz scrollbar area
-			sb = &sw->sbarHorz;
-			GetHScrollRect(sw, hwnd, &rect,&hasZoomButtons);
-		}
-		else if(sw->uCurrentScrollbar == SB_VERT)
-		{
-			//get the total area of the normal Horz scrollbar area
-			sb = &sw->sbarVert;
-			GetVScrollRect(sw, hwnd, &rect,&hasZoomButtons);
-		}
+    //emulate the mouse input on a scrollbar here...
+    if(sw->uCurrentScrollbar == SB_HORZ)
+    {
+      //get the total area of the normal Horz scrollbar area
+      sb = &sw->sbarHorz;
+      GetHScrollRect(sw, hwnd, &rect,&hasZoomButtons);
+    }
+    else if(sw->uCurrentScrollbar == SB_VERT)
+    {
+      //get the total area of the normal Horz scrollbar area
+      sb = &sw->sbarVert;
+      GetVScrollRect(sw, hwnd, &rect,&hasZoomButtons);
+    }
 
-		//we need to do different things depending on if the
-		//user is activating the scrollbar itself, or one of
-		//the inserted buttons
-		switch(sw->uCurrentScrollPortion)
-		{
+    //we need to do different things depending on if the
+    //user is activating the scrollbar itself, or one of
+    //the inserted buttons
+    switch(sw->uCurrentScrollPortion)
+    {
 
-		//The scrollbar is active
-		case HTSCROLL_LEFT:  case HTSCROLL_RIGHT: 
-		case HTSCROLL_PAGELEFT:  case HTSCROLL_PAGERIGHT: 
-		case HTSCROLL_NONE:
-	  case HTSCROLL_ZOOMIN:
-	  case HTSCROLL_ZOOMOUT:
-			
-			KillTimer(hwnd, sw->uScrollTimerId);
+      //The scrollbar is active
+      case HTSCROLL_LEFT:  case HTSCROLL_RIGHT:
+      case HTSCROLL_PAGELEFT:  case HTSCROLL_PAGERIGHT:
+      case HTSCROLL_NONE:
+      case HTSCROLL_ZOOMIN:
+      case HTSCROLL_ZOOMOUT:
 
-		case HTSCROLL_THUMB: 
+        KillTimer(hwnd, sw->uScrollTimerId);
 
-			//In case we were thumb tracking, make sure we stop NOW
-			if(sw->fThumbTracking == TRUE)
-			{
-				SendScrollMessage(hwnd, sw->uScrollTimerMsg, SB_THUMBPOSITION, nLastPos);
-				sw->fThumbTracking = FALSE;
-			}
+      case HTSCROLL_THUMB:
 
-			//send the SB_ENDSCROLL message now that scrolling has finished
-			SendScrollMessage(hwnd, sw->uScrollTimerMsg, SB_ENDSCROLL, 0);
+        //In case we were thumb tracking, make sure we stop NOW
+        if(sw->fThumbTracking == TRUE)
+        {
+          SendScrollMessage(hwnd, sw->uScrollTimerMsg, SB_THUMBPOSITION, nLastPos);
+          sw->fThumbTracking = FALSE;
+        }
 
-			//adjust the total scroll area to become where the scrollbar
-			//really is (take into account the inserted buttons)
-			OffsetRect(&rect, -winrect.left, -winrect.top);
-			hdc = GetWindowDC(hwnd);
-			
-			//draw whichever scrollbar sb is
-			NCDrawScrollbar(sb, hwnd, hdc, &rect, HTSCROLL_NORMAL,hasZoomButtons);
+        //send the SB_ENDSCROLL message now that scrolling has finished
+        SendScrollMessage(hwnd, sw->uScrollTimerMsg, SB_ENDSCROLL, 0);
 
-			ReleaseDC(hwnd, hdc);
-			break;
-		}
+        //adjust the total scroll area to become where the scrollbar
+        //really is (take into account the inserted buttons)
+        OffsetRect(&rect, -winrect.left, -winrect.top);
+        hdc = GetWindowDC(hwnd);
 
-		//reset our state to default
-		sw->uCurrentScrollPortion = HTSCROLL_NONE;
-		sw->uScrollTimerPortion	  = HTSCROLL_NONE;
-		sw->uScrollTimerId		  = 0;
+        //draw whichever scrollbar sb is
+        NCDrawScrollbar(sb, hwnd, hdc, &rect, HTSCROLL_NORMAL,hasZoomButtons);
 
-		sw->uScrollTimerMsg       = 0;
-		sw->uCurrentScrollbar     = COOLSB_NONE;
+        ReleaseDC(hwnd, hdc);
+        break;
+    }
 
-		return 0;
-	}
-	else
-	{
-		/*
-		// Can't remember why I did this!
-		if(GetCapture() == hwnd)
-		{
-			ReleaseCapture();
-		}*/
-	}
+    //reset our state to default
+    sw->uCurrentScrollPortion = HTSCROLL_NONE;
+    sw->uScrollTimerPortion	  = HTSCROLL_NONE;
+    sw->uScrollTimerId		  = 0;
 
-	return CallWindowProc(sw->oldproc, hwnd, WM_LBUTTONUP, wParam, lParam);
+    sw->uScrollTimerMsg       = 0;
+    sw->uCurrentScrollbar     = COOLSB_NONE;
+
+    return 0;
+  }
+  else
+  {
+    /*
+    // Can't remember why I did this!
+    if(GetCapture() == hwnd)
+    {
+    	ReleaseCapture();
+    }*/
+  }
+
+  return CallWindowProc(sw->oldproc, hwnd, WM_LBUTTONUP, wParam, lParam);
 }
 
 //
-//	This function is called whenever the mouse is moved and 
+//	This function is called whenever the mouse is moved and
 //  we are dragging the scrollbar thumb about.
 //
 static LRESULT ThumbTrackHorz(SCROLLBAR *sbar, HWND hwnd, int x, int y)
 {
-	POINT pt;
-	RECT rc, winrect, rc2;
-	COLORREF crCheck1 = GetSBForeColor(hwnd);
-	COLORREF crCheck2 = GetSBBackColor(hwnd);
-	HDC hdc;
-	int thumbpos = nThumbPos;
-	int pos;
-	int siMaxMin = 0;
+  POINT pt;
+  RECT rc, winrect, rc2;
+  COLORREF crCheck1 = GetSBForeColor(hwnd);
+  COLORREF crCheck2 = GetSBBackColor(hwnd);
+  HDC hdc;
+  int thumbpos = nThumbPos;
+  int pos;
+  int siMaxMin = 0;
   SCROLLWND *sw = GetScrollWndFromHwnd(hwnd);
 
-	SCROLLINFO *si;
-	si = &sbar->scrollInfo;
+  SCROLLINFO *si;
+  si = &sbar->scrollInfo;
 
-	pt.x = x;
-	pt.y = y;
+  pt.x = x;
+  pt.y = y;
 
   int sbYoffs=-(int)sw->vscrollbarShrinkTop,sbXoffs=0;
 #ifdef _WIN32
   // this is a stupid fix for now . this needs a ton of overhauling
   {
     RECT r;
-    POINT p={0,0};
+    POINT p= {0,0};
     ClientToScreen(hwnd,&p);
     GetWindowRect(hwnd,&r);
 
@@ -2501,55 +2503,55 @@ static LRESULT ThumbTrackHorz(SCROLLBAR *sbar, HWND hwnd, int x, int y)
   }
 #endif
 
-	//draw the thumb at whatever position
-	rc = rcThumbBounds;
+  //draw the thumb at whatever position
+  rc = rcThumbBounds;
 
 #define THUMBTRACK_SNAPDIST 24
 
-	SetRect(&rc2, rc.left -  THUMBTRACK_SNAPDIST*2, rc.top -    THUMBTRACK_SNAPDIST, 
-				  rc.right + THUMBTRACK_SNAPDIST*2, rc.bottom + THUMBTRACK_SNAPDIST);
+  SetRect(&rc2, rc.left -  THUMBTRACK_SNAPDIST*2, rc.top -    THUMBTRACK_SNAPDIST,
+          rc.right + THUMBTRACK_SNAPDIST*2, rc.bottom + THUMBTRACK_SNAPDIST);
 
   int adj = GetScrollMetric(sbar->nBarType == SB_VERT, SM_CXHORZSB);
-	rc.left += adj;
-	rc.right -= adj;
+  rc.left += adj;
+  rc.right -= adj;
 
-	//keep the thumb within the scrollbar limits
-	thumbpos = pt.x - nThumbMouseOffset;
-	if(thumbpos < rc.left) thumbpos = rc.left;
-	if(thumbpos > rc.right - nThumbSize) thumbpos = rc.right - nThumbSize;
+  //keep the thumb within the scrollbar limits
+  thumbpos = pt.x - nThumbMouseOffset;
+  if(thumbpos < rc.left) thumbpos = rc.left;
+  if(thumbpos > rc.right - nThumbSize) thumbpos = rc.right - nThumbSize;
 
-	GET_WINDOW_RECT(hwnd, &winrect);
+  GET_WINDOW_RECT(hwnd, &winrect);
 
-	if(sbar->nBarType == SB_VERT)
-		RotateRect(&winrect);
-	
-	hdc = GetWindowDC(hwnd);
-		
+  if(sbar->nBarType == SB_VERT)
+    RotateRect(&winrect);
 
-	OffsetRect(&rc, -winrect.left, -winrect.top);
-	thumbpos -= winrect.left;
+  hdc = GetWindowDC(hwnd);
 
-	//draw the margin before the thumb
-	SetRect(&rc2, rc.left, rc.top, thumbpos, rc.bottom);
-	RotateRect0(sbar, &rc2);
 
-	DrawCheckedRect(NULL,hdc, &rc2, crCheck1, crCheck2, sbar, &rcThumbBounds, 0,sbXoffs, sbYoffs );
-	
-	RotateRect0(sbar, &rc2);
+  OffsetRect(&rc, -winrect.left, -winrect.top);
+  thumbpos -= winrect.left;
 
-	//draw the margin after the thumb 
-	SetRect(&rc2, thumbpos+nThumbSize, rc.top, rc.right, rc.bottom);
-	
-	RotateRect0(sbar, &rc2);
-	
-	DrawCheckedRect(NULL,hdc, &rc2, crCheck1, crCheck2, sbar, &rcThumbBounds, 0, sbXoffs, sbYoffs );
-  
-	RotateRect0(sbar, &rc2);
-	
-	//finally draw the thumb itelf. This is how it looks on win2000, anyway
-	SetRect(&rc2, thumbpos, rc.top, thumbpos+nThumbSize, rc.bottom);
-	
-	RotateRect0(sbar, &rc2);
+  //draw the margin before the thumb
+  SetRect(&rc2, rc.left, rc.top, thumbpos, rc.bottom);
+  RotateRect0(sbar, &rc2);
+
+  DrawCheckedRect(NULL,hdc, &rc2, crCheck1, crCheck2, sbar, &rcThumbBounds, 0,sbXoffs, sbYoffs );
+
+  RotateRect0(sbar, &rc2);
+
+  //draw the margin after the thumb
+  SetRect(&rc2, thumbpos+nThumbSize, rc.top, rc.right, rc.bottom);
+
+  RotateRect0(sbar, &rc2);
+
+  DrawCheckedRect(NULL,hdc, &rc2, crCheck1, crCheck2, sbar, &rcThumbBounds, 0, sbXoffs, sbYoffs );
+
+  RotateRect0(sbar, &rc2);
+
+  //finally draw the thumb itelf. This is how it looks on win2000, anyway
+  SetRect(&rc2, thumbpos, rc.top, thumbpos+nThumbSize, rc.bottom);
+
+  RotateRect0(sbar, &rc2);
 
   if(m_scrollbar_bmp && *m_scrollbar_bmp)
   {
@@ -2576,7 +2578,7 @@ static LRESULT ThumbTrackHorz(SCROLLBAR *sbar, HWND hwnd, int x, int y)
       }
       DrawBlankButton(hwnd,hdc, &r);
     }
-    
+
     if(sw->resizingHthumb)
     {
       //draw left and right resizers
@@ -2585,12 +2587,12 @@ static LRESULT ThumbTrackHorz(SCROLLBAR *sbar, HWND hwnd, int x, int y)
         RECT thumb = rc2;
         HBRUSH br = CreateSolidBrush(CoolSB_GetSysColor(hwnd,COLOR_BTNFACE));
         {
-          RECT r={thumb.left, thumb.top, thumb.left+m_thumbsize, thumb.bottom};
+          RECT r= {thumb.left, thumb.top, thumb.left+m_thumbsize, thumb.bottom};
           ownDrawEdge(hwnd,hdc, &r, EDGE_RAISED, BF_RECT | BF_ADJUST);
           FillRect(hdc, &r, br);
         }
         {
-          RECT r={thumb.right-m_thumbsize, thumb.top, thumb.right, thumb.bottom};
+          RECT r= {thumb.right-m_thumbsize, thumb.top, thumb.right, thumb.bottom};
           ownDrawEdge(hwnd,hdc, &r, EDGE_RAISED, BF_RECT | BF_ADJUST);
           FillRect(hdc, &r, br);
         }
@@ -2616,27 +2618,27 @@ static LRESULT ThumbTrackHorz(SCROLLBAR *sbar, HWND hwnd, int x, int y)
     }
   }
 
-	RotateRect0(sbar, &rc2);
-	ReleaseDC(hwnd, hdc);
+  RotateRect0(sbar, &rc2);
+  ReleaseDC(hwnd, hdc);
 
-	//post a SB_TRACKPOS message!!!
-	siMaxMin = si->nMax - si->nMin;
+  //post a SB_TRACKPOS message!!!
+  siMaxMin = si->nMax - si->nMin;
 
-	if(siMaxMin > 0)
-		pos = MulDiv(thumbpos-rc.left, siMaxMin-si->nPage + 1, rc.right-rc.left-nThumbSize);
-	else
-		pos = thumbpos - rc.left;
+  if(siMaxMin > 0)
+    pos = MulDiv(thumbpos-rc.left, siMaxMin-si->nPage + 1, rc.right-rc.left-nThumbSize);
+  else
+    pos = thumbpos - rc.left;
 
-	if(pos != nLastPos)
-	{
-		si->nTrackPos = pos;	
-		SendScrollMessage(hwnd, sw->uScrollTimerMsg, SB_THUMBTRACK, pos);
-	}
+  if(pos != nLastPos)
+  {
+    si->nTrackPos = pos;
+    SendScrollMessage(hwnd, sw->uScrollTimerMsg, SB_THUMBTRACK, pos);
+  }
 
-	nLastPos = pos;
+  nLastPos = pos;
 
-	
-	return 0;
+
+  return 0;
 }
 
 //
@@ -2644,117 +2646,117 @@ static LRESULT ThumbTrackHorz(SCROLLBAR *sbar, HWND hwnd, int x, int y)
 //
 static LRESULT ThumbTrackVert(SCROLLBAR *sb, HWND hwnd, int x, int y)
 {
-	//sw->swapcoords = TRUE;
-	RotateRect(&rcThumbBounds);
-	ThumbTrackHorz(sb, hwnd, y, x);
-	RotateRect(&rcThumbBounds);
-	//sw->swapcoords = FALSE;
+  //sw->swapcoords = TRUE;
+  RotateRect(&rcThumbBounds);
+  ThumbTrackHorz(sb, hwnd, y, x);
+  RotateRect(&rcThumbBounds);
+  //sw->swapcoords = FALSE;
 
-	return 0;
+  return 0;
 }
 
 //
 //	Called when we have set the capture from the NCLButtonDown(...)
-//	
+//
 static LRESULT MouseMove(SCROLLWND *sw, HWND hwnd, WPARAM wParam, LPARAM lParam)
 {
-	RECT rect;
-	UINT thisportion;
-	HDC hdc;
-	static UINT lastportion = 0;
-	POINT pt;
-	RECT winrect;
+  RECT rect;
+  UINT thisportion;
+  HDC hdc;
+  static UINT lastportion = 0;
+  POINT pt;
+  RECT winrect;
 
-	if(sw->fThumbTracking == TRUE)
-	{
-		LONG x, y;
-		lParam = GetMessagePos();
-		x = GET_X_LPARAM(lParam);
-		y = GET_Y_LPARAM(lParam);
+  if(sw->fThumbTracking == TRUE)
+  {
+    LONG x, y;
+    lParam = GetMessagePos();
+    x = GET_X_LPARAM(lParam);
+    y = GET_Y_LPARAM(lParam);
     OSX_REMAP_SCREENY(hwnd,&y);
 
-		if(sw->uCurrentScrollbar == SB_HORZ)
-			return ThumbTrackHorz(&sw->sbarHorz, hwnd, x,y);
+    if(sw->uCurrentScrollbar == SB_HORZ)
+      return ThumbTrackHorz(&sw->sbarHorz, hwnd, x,y);
 
 
-		else if(sw->uCurrentScrollbar == SB_VERT)
-			return ThumbTrackVert(&sw->sbarVert, hwnd, x,y);
-	}
+    else if(sw->uCurrentScrollbar == SB_VERT)
+      return ThumbTrackVert(&sw->sbarVert, hwnd, x,y);
+  }
 
-	if(sw->uCurrentScrollPortion == HTSCROLL_NONE)
-	{
-		return CallWindowProc(sw->oldproc, hwnd, WM_MOUSEMOVE, wParam, lParam);
-	}
-	else
-	{
-		LPARAM nlParam;
-		SCROLLBAR *sb = &sw->sbarHorz;
+  if(sw->uCurrentScrollPortion == HTSCROLL_NONE)
+  {
+    return CallWindowProc(sw->oldproc, hwnd, WM_MOUSEMOVE, wParam, lParam);
+  }
+  else
+  {
+    LPARAM nlParam;
+    SCROLLBAR *sb = &sw->sbarHorz;
 
-		nlParam = GetMessagePos();
+    nlParam = GetMessagePos();
 
-		GET_WINDOW_RECT(hwnd, &winrect);
+    GET_WINDOW_RECT(hwnd, &winrect);
 
-		pt.x = GET_X_LPARAM(nlParam);
-		pt.y = GET_Y_LPARAM(nlParam);
+    pt.x = GET_X_LPARAM(nlParam);
+    pt.y = GET_Y_LPARAM(nlParam);
     OSX_REMAP_SCREENY(hwnd,&pt.y);
 
-		//emulate the mouse input on a scrollbar here...
-		if(sw->uCurrentScrollbar == SB_HORZ)
-		{
-			sb = &sw->sbarHorz;
-		}
-		else if(sw->uCurrentScrollbar == SB_VERT)
-		{
-			sb = &sw->sbarVert;
-		}
+    //emulate the mouse input on a scrollbar here...
+    if(sw->uCurrentScrollbar == SB_HORZ)
+    {
+      sb = &sw->sbarHorz;
+    }
+    else if(sw->uCurrentScrollbar == SB_VERT)
+    {
+      sb = &sw->sbarVert;
+    }
 
-		//get the total area of the normal scrollbar area
+    //get the total area of the normal scrollbar area
     BOOL hasZoomButtons;
-		GetScrollRect(sw, sb->nBarType, hwnd, &rect,&hasZoomButtons);
-		
-		//see if we clicked in the inserted buttons / normal scrollbar
-		//thisportion = GetPortion(sb, hwnd, &rect, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		thisportion = GetPortion(sb, hwnd, &rect, pt.x, pt.y,hasZoomButtons);
-		
-		//we need to do different things depending on if the
-		//user is activating the scrollbar itself, or one of
-		//the inserted buttons
-		switch(sw->uCurrentScrollPortion)
-		{
+    GetScrollRect(sw, sb->nBarType, hwnd, &rect,&hasZoomButtons);
+
+    //see if we clicked in the inserted buttons / normal scrollbar
+    //thisportion = GetPortion(sb, hwnd, &rect, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+    thisportion = GetPortion(sb, hwnd, &rect, pt.x, pt.y,hasZoomButtons);
+
+    //we need to do different things depending on if the
+    //user is activating the scrollbar itself, or one of
+    //the inserted buttons
+    switch(sw->uCurrentScrollPortion)
+    {
 
 
-		//The scrollbar is active
-		case HTSCROLL_LEFT:		 case HTSCROLL_RIGHT:case HTSCROLL_THUMB: 
-		case HTSCROLL_PAGELEFT:  case HTSCROLL_PAGERIGHT: 
-		case HTSCROLL_NONE:
-			
-			//adjust the total scroll area to become where the scrollbar
-			//really is (take into account the inserted buttons)
+      //The scrollbar is active
+      case HTSCROLL_LEFT:		 case HTSCROLL_RIGHT:case HTSCROLL_THUMB:
+      case HTSCROLL_PAGELEFT:  case HTSCROLL_PAGERIGHT:
+      case HTSCROLL_NONE:
 
-			OffsetRect(&rect, -winrect.left, -winrect.top);
-			hdc = GetWindowDC(hwnd);
-		
-			if(thisportion != sw->uCurrentScrollPortion)
-			{
-				sw->uScrollTimerPortion = HTSCROLL_NONE;
+        //adjust the total scroll area to become where the scrollbar
+        //really is (take into account the inserted buttons)
 
-				if(lastportion != thisportion)
-					NCDrawScrollbar(sb, hwnd, hdc, &rect, HTSCROLL_NORMAL,hasZoomButtons);
-			}
-			//otherwise, draw the button in its depressed / clicked state
-			else
-			{
-				sw->uScrollTimerPortion = sw->uCurrentScrollPortion;
+        OffsetRect(&rect, -winrect.left, -winrect.top);
+        hdc = GetWindowDC(hwnd);
 
-				if(lastportion != thisportion)
-					NCDrawScrollbar(sb, hwnd, hdc, &rect, thisportion,hasZoomButtons);
-			}
+        if(thisportion != sw->uCurrentScrollPortion)
+        {
+          sw->uScrollTimerPortion = HTSCROLL_NONE;
 
-			ReleaseDC(hwnd, hdc);
+          if(lastportion != thisportion)
+            NCDrawScrollbar(sb, hwnd, hdc, &rect, HTSCROLL_NORMAL,hasZoomButtons);
+        }
+        //otherwise, draw the button in its depressed / clicked state
+        else
+        {
+          sw->uScrollTimerPortion = sw->uCurrentScrollPortion;
 
-			break;
-    case HTSCROLL_LRESIZER:
-    case HTSCROLL_RRESIZER:
+          if(lastportion != thisportion)
+            NCDrawScrollbar(sb, hwnd, hdc, &rect, thisportion,hasZoomButtons);
+        }
+
+        ReleaseDC(hwnd, hdc);
+
+        break;
+      case HTSCROLL_LRESIZER:
+      case HTSCROLL_RRESIZER:
       {
         RECT rect;
         int nThumbSize, nThumbPos;
@@ -2765,18 +2767,18 @@ static LRESULT MouseMove(SCROLLWND *sw, HWND hwnd, WPARAM wParam, LPARAM lParam)
         if(sw->uCurrentScrollbar == SB_VERT)
         {
           GetVScrollRect(sw, hwnd, &rect,NULL);
-		      RotateRect0(sb, &rect);
+          RotateRect0(sb, &rect);
           CalcThumbSize(sb, &rect, &nThumbSize, &nThumbPos);
           SendMessage(hwnd, (sw->uCurrentScrollPortion == HTSCROLL_RRESIZER?WM_SB_TRESIZE_VB:WM_SB_TRESIZE_VT), offs, ((nThumbSize&0xffff)<<16) + ((rect.right-rect.left)&0xffff));
         }
         else
         {
-		      GetHScrollRect(sw, hwnd, &rect,NULL);
-		      CalcThumbSize(sb, &rect, &nThumbSize, &nThumbPos);
+          GetHScrollRect(sw, hwnd, &rect,NULL);
+          CalcThumbSize(sb, &rect, &nThumbSize, &nThumbPos);
           SendMessage(hwnd, (sw->uCurrentScrollPortion == HTSCROLL_RRESIZER?WM_SB_TRESIZE_HR:WM_SB_TRESIZE_HL), offs, ((nThumbSize&0xffff)<<16) + ((rect.right-rect.left)&0xffff));
         }
 
-        if(sw->uCurrentScrollbar == SB_VERT) 
+        if(sw->uCurrentScrollbar == SB_VERT)
         {
           //nThumbMouseOffset = pt.y;
           SetCursor(LoadCursor(NULL,IDC_SIZENS));
@@ -2788,12 +2790,12 @@ static LRESULT MouseMove(SCROLLWND *sw, HWND hwnd, WPARAM wParam, LPARAM lParam)
         }
       }
       break;
-    case HTSCROLL_RESIZER:
+      case HTSCROLL_RESIZER:
       {
         int offs = pt.x - nThumbMouseOffset;
         if(sw->uCurrentScrollbar == SB_VERT) offs = pt.y - nThumbMouseOffset;
         SendMessage(hwnd, WM_SB_RESIZE, offs, sw->uCurrentScrollbar == SB_VERT);
-        if(sw->uCurrentScrollbar == SB_VERT) 
+        if(sw->uCurrentScrollbar == SB_VERT)
         {
           nThumbMouseOffset = pt.y;
           SetCursor(LoadCursor(NULL,IDC_SIZENS));
@@ -2805,16 +2807,16 @@ static LRESULT MouseMove(SCROLLWND *sw, HWND hwnd, WPARAM wParam, LPARAM lParam)
         }
       }
       break;
-		}
+    }
 
 
-		lastportion = thisportion;
+    lastportion = thisportion;
 
-		//must return zero here, because we might get cursor anomilies
-		//CallWindowProc(sw->oldproc, hwnd, WM_MOUSEMOVE, wParam, lParam);
-		return 0;
-		
-	}
+    //must return zero here, because we might get cursor anomilies
+    //CallWindowProc(sw->oldproc, hwnd, WM_MOUSEMOVE, wParam, lParam);
+    return 0;
+
+  }
 }
 
 
@@ -2826,72 +2828,72 @@ static LRESULT MouseMove(SCROLLWND *sw, HWND hwnd, WPARAM wParam, LPARAM lParam)
 //
 static LRESULT NCCalcSize(SCROLLWND *sw, HWND hwnd, WPARAM wParam, LPARAM lParam)
 {
-	NCCALCSIZE_PARAMS *nccsp;
-	RECT *rect;
-	RECT oldrect;
+  NCCALCSIZE_PARAMS *nccsp;
+  RECT *rect;
+  RECT oldrect;
 //	BOOL fCalcValidRects = (wParam == TRUE);
-	SCROLLBAR *sb;
-	UINT ret;
+  SCROLLBAR *sb;
+  UINT ret;
 
-	//Regardless of the value of fCalcValidRects, the first rectangle 
-	//in the array specified by the rgrc structure member of the 
-	//NCCALCSIZE_PARAMS structure contains the coordinates of the window,
-	//so we can use the exact same code to modify this rectangle, when
-	//wParam is TRUE and when it is FALSE.
-	nccsp = (NCCALCSIZE_PARAMS *)lParam;
-	rect = &nccsp->rgrc[0];
-	oldrect = *rect;
+  //Regardless of the value of fCalcValidRects, the first rectangle
+  //in the array specified by the rgrc structure member of the
+  //NCCALCSIZE_PARAMS structure contains the coordinates of the window,
+  //so we can use the exact same code to modify this rectangle, when
+  //wParam is TRUE and when it is FALSE.
+  nccsp = (NCCALCSIZE_PARAMS *)lParam;
+  rect = &nccsp->rgrc[0];
+  oldrect = *rect;
 
 
-	//call the default procedure to get the borders allocated
-	ret = CallWindowProcStyleMod(sw,hwnd, WM_NCCALCSIZE, wParam, lParam);
+  //call the default procedure to get the borders allocated
+  ret = CallWindowProcStyleMod(sw,hwnd, WM_NCCALCSIZE, wParam, lParam);
 
   // calculate what the size of each window border is,
-	sw->cxLeftEdge   = rect->left     - oldrect.left;
-	sw->cxRightEdge  = oldrect.right  - rect->right;
-	sw->cyTopEdge    = rect->top      - oldrect.top;
-	sw->cyBottomEdge = oldrect.bottom - rect->bottom;
+  sw->cxLeftEdge   = rect->left     - oldrect.left;
+  sw->cxRightEdge  = oldrect.right  - rect->right;
+  sw->cyTopEdge    = rect->top      - oldrect.top;
+  sw->cyBottomEdge = oldrect.bottom - rect->bottom;
 
-	sb = &sw->sbarHorz;
+  sb = &sw->sbarHorz;
 
-	//if there is room, allocate some space for the horizontal scrollbar
-	//NOTE: Change the ">" to a ">=" to make the horz bar totally fill the
-	//window before disappearing
-  
-	if((sb->fScrollFlags & CSBS_VISIBLE) && 
-		rect->bottom - rect->top > GetScrollMetric(FALSE, SM_CYHORZSB))
-	{
-		rect->bottom -= GetScrollMetric(FALSE, SM_CYHORZSB);
-		sb->fScrollVisible = TRUE;
-	}
-	else
+  //if there is room, allocate some space for the horizontal scrollbar
+  //NOTE: Change the ">" to a ">=" to make the horz bar totally fill the
+  //window before disappearing
+
+  if((sb->fScrollFlags & CSBS_VISIBLE) &&
+      rect->bottom - rect->top > GetScrollMetric(FALSE, SM_CYHORZSB))
   {
-		sb->fScrollVisible = FALSE;
+    rect->bottom -= GetScrollMetric(FALSE, SM_CYHORZSB);
+    sb->fScrollVisible = TRUE;
+  }
+  else
+  {
+    sb->fScrollVisible = FALSE;
   }
 
-	sb = &sw->sbarVert;
+  sb = &sw->sbarVert;
 
-	//if there is room, allocate some space for the vertical scrollbar
-	if((sb->fScrollFlags & CSBS_VISIBLE) && 
-		rect->right - rect->left >= GetScrollMetric(TRUE, SM_CXVERTSB))
-	{
-		if(sw->fLeftScrollbar)
-			rect->left  += GetScrollMetric(TRUE, SM_CXVERTSB);
-		else
-			rect->right -= GetScrollMetric(TRUE, SM_CXVERTSB);
+  //if there is room, allocate some space for the vertical scrollbar
+  if((sb->fScrollFlags & CSBS_VISIBLE) &&
+      rect->right - rect->left >= GetScrollMetric(TRUE, SM_CXVERTSB))
+  {
+    if(sw->fLeftScrollbar)
+      rect->left  += GetScrollMetric(TRUE, SM_CXVERTSB);
+    else
+      rect->right -= GetScrollMetric(TRUE, SM_CXVERTSB);
 
-		sb->fScrollVisible = TRUE;
-	}
-	else
-		sb->fScrollVisible = FALSE;
+    sb->fScrollVisible = TRUE;
+  }
+  else
+    sb->fScrollVisible = FALSE;
 
 //printf("nccalcsize, %d,%d,%d,%d -> %d,%d,%d,%d\n",oldrect.left,oldrect.top,oldrect.right,oldrect.bottom,
 //       rect->left,rect->top,rect->right,rect->bottom);
 
-	//don't return a value unless we actually modify the other rectangles
-	//in the NCCALCSIZE_PARAMS structure. In this case, we return 0
-	//no matter what the value of fCalcValidRects is
-	return ret;//FALSE;
+  //don't return a value unless we actually modify the other rectangles
+  //in the NCCALCSIZE_PARAMS structure. In this case, we return 0
+  //no matter what the value of fCalcValidRects is
+  return ret;//FALSE;
 }
 
 //
@@ -2923,42 +2925,42 @@ static LRESULT NCMouseMove(SCROLLWND *sw, HWND hwnd, WPARAM wHitTest, LPARAM lPa
         SetCursor(LoadCursor(NULL,IDC_SIZENS));
     }
 #ifndef _WIN32
-    else SetCursor(LoadCursor(NULL,IDC_ARROW)); 
+    else SetCursor(LoadCursor(NULL,IDC_ARROW));
 #endif
   }
 
-	//install a timer for the mouse-over events, if the mouse moves
-	//over one of the scrollbars
-	hwndCurCoolSB = hwnd;
-	if(wHitTest == HTHSCROLL)
-	{
-		if(sw->uMouseOverScrollbar == SB_HORZ)
-			return CallWindowProc(sw->oldproc, hwnd, WM_NCMOUSEMOVE, wHitTest, lParam);
+  //install a timer for the mouse-over events, if the mouse moves
+  //over one of the scrollbars
+  hwndCurCoolSB = hwnd;
+  if(wHitTest == HTHSCROLL)
+  {
+    if(sw->uMouseOverScrollbar == SB_HORZ)
+      return CallWindowProc(sw->oldproc, hwnd, WM_NCMOUSEMOVE, wHitTest, lParam);
 
-		sw->uLastHitTestPortion = HTSCROLL_NONE;
-		sw->uHitTestPortion     = HTSCROLL_NONE;
-		GetScrollRect(sw, SB_HORZ, hwnd, &sw->MouseOverRect, &sw->MouseOverRect_hasZoomButtons);
-		sw->uMouseOverScrollbar = SB_HORZ;
-		sw->uMouseOverId = SetTimer(hwnd, COOLSB_TIMERID3, COOLSB_TIMERINTERVAL3, 0);
+    sw->uLastHitTestPortion = HTSCROLL_NONE;
+    sw->uHitTestPortion     = HTSCROLL_NONE;
+    GetScrollRect(sw, SB_HORZ, hwnd, &sw->MouseOverRect, &sw->MouseOverRect_hasZoomButtons);
+    sw->uMouseOverScrollbar = SB_HORZ;
+    sw->uMouseOverId = SetTimer(hwnd, COOLSB_TIMERID3, COOLSB_TIMERINTERVAL3, 0);
 
-		NCPaint(sw, hwnd, 1, 0);
-	}
-	else if(wHitTest == HTVSCROLL)
-	{
-		if(sw->uMouseOverScrollbar == SB_VERT)
-			return CallWindowProc(sw->oldproc, hwnd, WM_NCMOUSEMOVE, wHitTest, lParam);
+    NCPaint(sw, hwnd, 1, 0);
+  }
+  else if(wHitTest == HTVSCROLL)
+  {
+    if(sw->uMouseOverScrollbar == SB_VERT)
+      return CallWindowProc(sw->oldproc, hwnd, WM_NCMOUSEMOVE, wHitTest, lParam);
 
-		sw->uLastHitTestPortion = HTSCROLL_NONE;
-		sw->uHitTestPortion     = HTSCROLL_NONE;
-		GetScrollRect(sw, SB_VERT, hwnd, &sw->MouseOverRect, &sw->MouseOverRect_hasZoomButtons);
-		sw->uMouseOverScrollbar = SB_VERT;
-		sw->uMouseOverId = SetTimer(hwnd, COOLSB_TIMERID3, COOLSB_TIMERINTERVAL3, 0);
+    sw->uLastHitTestPortion = HTSCROLL_NONE;
+    sw->uHitTestPortion     = HTSCROLL_NONE;
+    GetScrollRect(sw, SB_VERT, hwnd, &sw->MouseOverRect, &sw->MouseOverRect_hasZoomButtons);
+    sw->uMouseOverScrollbar = SB_VERT;
+    sw->uMouseOverId = SetTimer(hwnd, COOLSB_TIMERID3, COOLSB_TIMERINTERVAL3, 0);
 
-		NCPaint(sw, hwnd, 1, 0);
-	}
+    NCPaint(sw, hwnd, 1, 0);
+  }
 
 
-	return CallWindowProc(sw->oldproc, hwnd, WM_NCMOUSEMOVE, wHitTest, lParam);
+  return CallWindowProc(sw->oldproc, hwnd, WM_NCMOUSEMOVE, wHitTest, lParam);
 }
 
 //
@@ -2966,11 +2968,11 @@ static LRESULT NCMouseMove(SCROLLWND *sw, HWND hwnd, WPARAM wHitTest, LPARAM lPa
 //
 static LRESULT CoolSB_Timer(SCROLLWND *swnd, HWND hwnd, WPARAM wTimerId, LPARAM lParam)
 {
-	//let all timer messages go past if we don't have a timer installed ourselves
-	if(swnd->uScrollTimerId == 0 && swnd->uMouseOverId == 0 && swnd->uZoomTimerId == 0)
-	{
-		return CallWindowProc(swnd->oldproc, hwnd, WM_TIMER, wTimerId, lParam);
-	}
+  //let all timer messages go past if we don't have a timer installed ourselves
+  if(swnd->uScrollTimerId == 0 && swnd->uMouseOverId == 0 && swnd->uZoomTimerId == 0)
+  {
+    return CallWindowProc(swnd->oldproc, hwnd, WM_TIMER, wTimerId, lParam);
+  }
 
   if (wTimerId == COOLSB_TIMERID4)
   {
@@ -2978,20 +2980,20 @@ static LRESULT CoolSB_Timer(SCROLLWND *swnd, HWND hwnd, WPARAM wTimerId, LPARAM 
     return 0;
   }
 
-	//mouse-over timer
-	if(wTimerId == COOLSB_TIMERID3)
-	{
-		POINT pt;
-		RECT rect, winrect;
-		HDC hdc;
-		SCROLLBAR *sbar;
+  //mouse-over timer
+  if(wTimerId == COOLSB_TIMERID3)
+  {
+    POINT pt;
+    RECT rect, winrect;
+    HDC hdc;
+    SCROLLBAR *sbar;
 
-		if(swnd->fThumbTracking)
-			return 0;
+    if(swnd->fThumbTracking)
+      return 0;
 
-		//if the mouse moves outside the current scrollbar,
-		//then kill the timer..
-		GetCursorPos(&pt);
+    //if the mouse moves outside the current scrollbar,
+    //then kill the timer..
+    GetCursorPos(&pt);
 
     RECT mor = swnd->MouseOverRect;
     BOOL hasZoomButtons = swnd->MouseOverRect_hasZoomButtons;
@@ -3007,79 +3009,79 @@ static LRESULT CoolSB_Timer(SCROLLWND *swnd, HWND hwnd, WPARAM wTimerId, LPARAM 
         mor.right += extrasz;
     }
 
-		if(!PtInRect(&mor, pt)||WindowFromPoint(pt)!=hwnd)
-		{
-			KillTimer(hwnd, swnd->uMouseOverId);
-			swnd->uMouseOverId = 0;
-			swnd->uMouseOverScrollbar = COOLSB_NONE;
-			swnd->uLastHitTestPortion = HTSCROLL_NONE;
+    if(!PtInRect(&mor, pt)||WindowFromPoint(pt)!=hwnd)
+    {
+      KillTimer(hwnd, swnd->uMouseOverId);
+      swnd->uMouseOverId = 0;
+      swnd->uMouseOverScrollbar = COOLSB_NONE;
+      swnd->uLastHitTestPortion = HTSCROLL_NONE;
 
-			swnd->uHitTestPortion = HTSCROLL_NONE;
-			NCPaint(swnd, hwnd, 1, 0);
-		}
-		else
-		{
-			if(swnd->uMouseOverScrollbar == SB_HORZ)
-			{
-				sbar = &swnd->sbarHorz;
-				swnd->uHitTestPortion = GetHorzPortion(sbar, hwnd, &swnd->MouseOverRect, pt.x, pt.y,hasZoomButtons);
-			}
-			else
-			{
-				sbar = &swnd->sbarVert;
-				swnd->uHitTestPortion = GetVertPortion(sbar, hwnd, &swnd->MouseOverRect, pt.x, pt.y,hasZoomButtons);
-			}
-      
-			if(swnd->uLastHitTestPortion != swnd->uHitTestPortion)
-			{
-				rect = swnd->MouseOverRect;
+      swnd->uHitTestPortion = HTSCROLL_NONE;
+      NCPaint(swnd, hwnd, 1, 0);
+    }
+    else
+    {
+      if(swnd->uMouseOverScrollbar == SB_HORZ)
+      {
+        sbar = &swnd->sbarHorz;
+        swnd->uHitTestPortion = GetHorzPortion(sbar, hwnd, &swnd->MouseOverRect, pt.x, pt.y,hasZoomButtons);
+      }
+      else
+      {
+        sbar = &swnd->sbarVert;
+        swnd->uHitTestPortion = GetVertPortion(sbar, hwnd, &swnd->MouseOverRect, pt.x, pt.y,hasZoomButtons);
+      }
 
-				GET_WINDOW_RECT(hwnd, &winrect);
-				OffsetRect(&rect, -winrect.left, -winrect.top);
+      if(swnd->uLastHitTestPortion != swnd->uHitTestPortion)
+      {
+        rect = swnd->MouseOverRect;
 
-				hdc = GetWindowDC(hwnd);
-				NCDrawScrollbar(sbar, hwnd, hdc, &rect, HTSCROLL_NONE,hasZoomButtons);
-				ReleaseDC(hwnd, hdc);
-			}
-			
-			swnd->uLastHitTestPortion = swnd->uHitTestPortion;
-		}
+        GET_WINDOW_RECT(hwnd, &winrect);
+        OffsetRect(&rect, -winrect.left, -winrect.top);
 
-		return 0;
-	}
+        hdc = GetWindowDC(hwnd);
+        NCDrawScrollbar(sbar, hwnd, hdc, &rect, HTSCROLL_NONE,hasZoomButtons);
+        ReleaseDC(hwnd, hdc);
+      }
 
-	//if the first timer goes off, then we can start a more
-	//regular timer interval to auto-generate scroll messages
-	//this gives a slight pause between first pressing the scroll arrow, and the
-	//actual scroll starting
-	if(wTimerId == COOLSB_TIMERID1)
-	{
-		KillTimer(hwnd, swnd->uScrollTimerId);
-		swnd->uScrollTimerId = SetTimer(hwnd, COOLSB_TIMERID2, COOLSB_TIMERINTERVAL2, 0);
-		return 0;
-	}
-	//send the scrollbar message repeatedly
-	else if(wTimerId == COOLSB_TIMERID2)
-	{
-		//need to process a spoof WM_MOUSEMOVE, so that
-		//we know where the mouse is each time the scroll timer goes off.
-		//This is so we can stop sending scroll messages if the thumb moves
-		//under the mouse.
-		POINT pt;
-		GetCursorPos(&pt);
-		ScreenToClient(hwnd, &pt);
-		
-		MouseMove(swnd, hwnd, MK_LBUTTON, MAKELPARAM(pt.x, pt.y));
+      swnd->uLastHitTestPortion = swnd->uHitTestPortion;
+    }
 
-		if(swnd->uScrollTimerPortion != HTSCROLL_NONE)
-			SendScrollMessage(hwnd, swnd->uScrollTimerMsg, swnd->uScrollTimerPortion, 0);
-		
-		return 0;
-	}
-	else
-	{
-		return CallWindowProc(swnd->oldproc, hwnd, WM_TIMER, wTimerId, lParam);
-	}
+    return 0;
+  }
+
+  //if the first timer goes off, then we can start a more
+  //regular timer interval to auto-generate scroll messages
+  //this gives a slight pause between first pressing the scroll arrow, and the
+  //actual scroll starting
+  if(wTimerId == COOLSB_TIMERID1)
+  {
+    KillTimer(hwnd, swnd->uScrollTimerId);
+    swnd->uScrollTimerId = SetTimer(hwnd, COOLSB_TIMERID2, COOLSB_TIMERINTERVAL2, 0);
+    return 0;
+  }
+  //send the scrollbar message repeatedly
+  else if(wTimerId == COOLSB_TIMERID2)
+  {
+    //need to process a spoof WM_MOUSEMOVE, so that
+    //we know where the mouse is each time the scroll timer goes off.
+    //This is so we can stop sending scroll messages if the thumb moves
+    //under the mouse.
+    POINT pt;
+    GetCursorPos(&pt);
+    ScreenToClient(hwnd, &pt);
+
+    MouseMove(swnd, hwnd, MK_LBUTTON, MAKELPARAM(pt.x, pt.y));
+
+    if(swnd->uScrollTimerPortion != HTSCROLL_NONE)
+      SendScrollMessage(hwnd, swnd->uScrollTimerMsg, swnd->uScrollTimerPortion, 0);
+
+    return 0;
+  }
+  else
+  {
+    return CallWindowProc(swnd->oldproc, hwnd, WM_TIMER, wTimerId, lParam);
+  }
 }
 
 //
@@ -3088,17 +3090,17 @@ static LRESULT CoolSB_Timer(SCROLLWND *swnd, HWND hwnd, WPARAM wTimerId, LPARAM 
 //
 static LRESULT CoolSB_StyleChange(SCROLLWND *swnd, HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	STYLESTRUCT *ss = (STYLESTRUCT *)lParam;
+  STYLESTRUCT *ss = (STYLESTRUCT *)lParam;
 
-	if(wParam == GWL_EXSTYLE)
-	{
-		if(ss->styleNew & WS_EX_LEFTSCROLLBAR)
-			swnd->fLeftScrollbar = TRUE;
-		else
-			swnd->fLeftScrollbar = FALSE;
-	}
+  if(wParam == GWL_EXSTYLE)
+  {
+    if(ss->styleNew & WS_EX_LEFTSCROLLBAR)
+      swnd->fLeftScrollbar = TRUE;
+    else
+      swnd->fLeftScrollbar = FALSE;
+  }
 
-	return CallWindowProc(swnd->oldproc, hwnd, msg, wParam, lParam);
+  return CallWindowProc(swnd->oldproc, hwnd, msg, wParam, lParam);
 }
 
 
@@ -3109,113 +3111,113 @@ static LRESULT CoolSB_StyleChange(SCROLLWND *swnd, HWND hwnd, UINT msg, WPARAM w
 //
 static LRESULT CALLBACK CoolSBWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	WNDPROC oldproc;
-	SCROLLWND *swnd = GetScrollWndFromHwnd(hwnd);
-	
+  WNDPROC oldproc;
+  SCROLLWND *swnd = GetScrollWndFromHwnd(hwnd);
+
   switch(message)
-	{
-	case WM_NCDESTROY:
-		//this should NEVER be called, because the user
-		//should have called Uninitialize() themselves.
+  {
+    case WM_NCDESTROY:
+      //this should NEVER be called, because the user
+      //should have called Uninitialize() themselves.
 
-		//However, if the user tries to call Uninitialize().. 
-		//after this window is destroyed, this window's entry in the lookup
-		//table will not be there, and the call will fail
-		oldproc = swnd->oldproc;
-		UninitializeCoolSB(hwnd);
-		
-		//we must call the original window procedure, otherwise it
-		//will never get the WM_NCDESTROY message, and it wouldn't
-		//be able to clean up etc.
-		return CallWindowProc(oldproc, hwnd, message, wParam, lParam);
+      //However, if the user tries to call Uninitialize()..
+      //after this window is destroyed, this window's entry in the lookup
+      //table will not be there, and the call will fail
+      oldproc = swnd->oldproc;
+      UninitializeCoolSB(hwnd);
 
-	case WM_NCCALCSIZE:
-		return NCCalcSize(swnd, hwnd, wParam, lParam);
+      //we must call the original window procedure, otherwise it
+      //will never get the WM_NCDESTROY message, and it wouldn't
+      //be able to clean up etc.
+      return CallWindowProc(oldproc, hwnd, message, wParam, lParam);
 
-	case WM_NCPAINT:
-		return NCPaint(swnd, hwnd, wParam, lParam);	
+    case WM_NCCALCSIZE:
+      return NCCalcSize(swnd, hwnd, wParam, lParam);
 
-	case WM_NCHITTEST:
-		return NCHitTest(swnd, hwnd, wParam, lParam);
+    case WM_NCPAINT:
+      return NCPaint(swnd, hwnd, wParam, lParam);
 
-  #ifdef _WIN32
-	  case WM_NCRBUTTONDOWN: case WM_NCRBUTTONUP: 
-	  case WM_NCMBUTTONDOWN: case WM_NCMBUTTONUP: 
-  		  if(wParam == HTHSCROLL || wParam == HTVSCROLL) 
-	  		  return 0;
-    break;
-  #endif
-
-	case WM_NCLBUTTONDBLCLK:
-		if(wParam == HTHSCROLL || wParam == HTVSCROLL)
-			return NCLButtonDown(swnd, hwnd, wParam, lParam,TRUE);
-		else
-			break;
-
-	case WM_NCLBUTTONDOWN:
-		return NCLButtonDown(swnd, hwnd, wParam, lParam,FALSE);
-
-
-	case WM_LBUTTONUP:
-		return LButtonUp(swnd, hwnd, wParam, lParam);
-
-	case WM_MOUSEMOVE: 
-		return MouseMove(swnd, hwnd, wParam, lParam);
-	
-	case WM_TIMER:
-		return CoolSB_Timer(swnd, hwnd, wParam, lParam);
-
-	//case WM_STYLECHANGING:
-	//	return CoolSB_StyleChange(swnd, hwnd, WM_STYLECHANGING, wParam, lParam);
-	case WM_STYLECHANGED:
-
-		if(swnd->bPreventStyleChange)
-		{
-			// the NCPAINT handler has told us to eat this message!
-			return 0;
-		}
-		else
-		{
-            if (message == WM_STYLECHANGED) 
-				return CoolSB_StyleChange(swnd, hwnd, WM_STYLECHANGED, wParam, lParam);
-			else
-				break;
-		}
-
-	case WM_NCMOUSEMOVE: 
-		return NCMouseMove(swnd, hwnd, wParam, lParam);
-
-
-	case WM_CAPTURECHANGED:
-		break;
+    case WM_NCHITTEST:
+      return NCHitTest(swnd, hwnd, wParam, lParam);
 
 #ifdef _WIN32
-  case WM_NCACTIVATE: // fix for floating windows etc on XPsp2 etc
-  case WM_SYSCOMMAND: // fix for MIDI editor when fully zoomed out on XPsp2
-
-  return CallWindowProcStyleMod(swnd,hwnd,message,wParam,lParam);
+    case WM_NCRBUTTONDOWN: case WM_NCRBUTTONUP:
+    case WM_NCMBUTTONDOWN: case WM_NCMBUTTONUP:
+      if(wParam == HTHSCROLL || wParam == HTVSCROLL)
+        return 0;
+      break;
 #endif
-	default:
-#if 0
-    if (message)
-    {
-      static int msgs[512]={0,};
-      int x;
-      for(x=0;x<512&&msgs[x] && msgs[x]!=message;x++);
-      if (x<512 && !msgs[x])
+
+    case WM_NCLBUTTONDBLCLK:
+      if(wParam == HTHSCROLL || wParam == HTVSCROLL)
+        return NCLButtonDown(swnd, hwnd, wParam, lParam,TRUE);
+      else
+        break;
+
+    case WM_NCLBUTTONDOWN:
+      return NCLButtonDown(swnd, hwnd, wParam, lParam,FALSE);
+
+
+    case WM_LBUTTONUP:
+      return LButtonUp(swnd, hwnd, wParam, lParam);
+
+    case WM_MOUSEMOVE:
+      return MouseMove(swnd, hwnd, wParam, lParam);
+
+    case WM_TIMER:
+      return CoolSB_Timer(swnd, hwnd, wParam, lParam);
+
+    //case WM_STYLECHANGING:
+    //	return CoolSB_StyleChange(swnd, hwnd, WM_STYLECHANGING, wParam, lParam);
+    case WM_STYLECHANGED:
+
+      if(swnd->bPreventStyleChange)
       {
-        msgs[x]=message;
-        FILE *fp = fopen("C:/log.txt","a+");
-        if (fp) { fprintf(fp,"%d\n",message); fclose(fp); }
-
+        // the NCPAINT handler has told us to eat this message!
+        return 0;
       }
-    }
+      else
+      {
+        if (message == WM_STYLECHANGED)
+          return CoolSB_StyleChange(swnd, hwnd, WM_STYLECHANGED, wParam, lParam);
+        else
+          break;
+      }
+
+    case WM_NCMOUSEMOVE:
+      return NCMouseMove(swnd, hwnd, wParam, lParam);
+
+
+    case WM_CAPTURECHANGED:
+      break;
+
+#ifdef _WIN32
+    case WM_NCACTIVATE: // fix for floating windows etc on XPsp2 etc
+    case WM_SYSCOMMAND: // fix for MIDI editor when fully zoomed out on XPsp2
+
+      return CallWindowProcStyleMod(swnd,hwnd,message,wParam,lParam);
 #endif
-		break;
-	}
+    default:
+#if 0
+      if (message)
+      {
+        static int msgs[512]= {0,};
+        int x;
+        for(x=0; x<512&&msgs[x] && msgs[x]!=message; x++);
+        if (x<512 && !msgs[x])
+        {
+          msgs[x]=message;
+          FILE *fp = fopen("C:/log.txt","a+");
+          if (fp) { fprintf(fp,"%d\n",message); fclose(fp); }
+
+        }
+      }
+#endif
+      break;
+  }
 
 
-	return CallWindowProc(swnd->oldproc, hwnd, message, wParam, lParam);
+  return CallWindowProc(swnd->oldproc, hwnd, message, wParam, lParam);
 }
 
 void CoolSB_OnColorThemeChange()
@@ -3251,7 +3253,7 @@ static BOOL SetScrollInfo(HWND hwnd, int sb, SCROLLINFO *si, BOOL redraw)
 }
 static BOOL SetScrollRange(HWND hwnd, int nBar, int minv, int maxv, BOOL fRedraw)
 {
-return 0;
+  return 0;
 }
 static int SetScrollPos(HWND hwnd, int nBar, int nPos, BOOL fRedraw)
 {
@@ -3269,37 +3271,37 @@ static TCHAR szPropStr[] = _T("CoolSBSubclassPtr");
 
 SCROLLWND *GetScrollWndFromHwnd(HWND hwnd)
 {
-	return (SCROLLWND *)GetProp(hwnd, szPropStr);
+  return (SCROLLWND *)GetProp(hwnd, szPropStr);
 }
 
 SCROLLBAR *GetScrollBarFromHwnd(HWND hwnd, UINT nBar)
 {
-	SCROLLWND *sw = GetScrollWndFromHwnd(hwnd);
-	
-	if(!sw) return 0;
-	
-	if(nBar == SB_HORZ)
-		return &sw->sbarHorz;
-	else if(nBar == SB_VERT)
-		return &sw->sbarVert;
-	else
-		return 0;
+  SCROLLWND *sw = GetScrollWndFromHwnd(hwnd);
+
+  if(!sw) return 0;
+
+  if(nBar == SB_HORZ)
+    return &sw->sbarHorz;
+  else if(nBar == SB_VERT)
+    return &sw->sbarVert;
+  else
+    return 0;
 }
 
 BOOL WINAPI CoolSB_IsCoolScrollEnabled(HWND hwnd)
 {
-	if(GetScrollWndFromHwnd(hwnd))
-		return TRUE;
-	else
-		return FALSE;
+  if(GetScrollWndFromHwnd(hwnd))
+    return TRUE;
+  else
+    return FALSE;
 }
 
 //
 //	Special support for USER32.DLL patching (using Detours library)
 //	The only place we call a real scrollbar API is in InitializeCoolSB,
 //	where we call EnableScrollbar.
-//	
-//	We HAVE to call the origial EnableScrollbar function, 
+//
+//	We HAVE to call the origial EnableScrollbar function,
 //	so we need to be able to set a pointer to this func when using
 //	using Detours (or any other LIB??)
 //
@@ -3307,23 +3309,23 @@ BOOL WINAPI CoolSB_IsCoolScrollEnabled(HWND hwnd)
 
 static void RedrawNonClient(HWND hwnd, BOOL fFrameChanged)
 {
-	if(fFrameChanged == FALSE)
-	{
-		SendMessage(hwnd, WM_NCPAINT, (WPARAM)1, 0);
-	}
-	else
-	{
+  if(fFrameChanged == FALSE)
+  {
+    SendMessage(hwnd, WM_NCPAINT, (WPARAM)1, 0);
+  }
+  else
+  {
 #ifdef _WIN32
-		SetWindowPos(hwnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE
-			| SWP_FRAMECHANGED | SWP_DRAWFRAME);
+    SetWindowPos(hwnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE
+                 | SWP_FRAMECHANGED | SWP_DRAWFRAME);
 #endif
-	}
+  }
 }
 
 void CoolSB_SetVScrollPad(HWND hwnd, UINT topamt, UINT botamt, void *(*getDeadAreaBitmap)(int which, HWND hwnd, RECT *r, int col))
 {
-	SCROLLWND *sw = GetScrollWndFromHwnd(hwnd);
-  if (sw && (botamt != sw->vscrollbarShrinkBottom||topamt != sw->vscrollbarShrinkTop||sw->getDeadAreaBitmap != getDeadAreaBitmap)) 
+  SCROLLWND *sw = GetScrollWndFromHwnd(hwnd);
+  if (sw && (botamt != sw->vscrollbarShrinkBottom||topamt != sw->vscrollbarShrinkTop||sw->getDeadAreaBitmap != getDeadAreaBitmap))
   {
     sw->getDeadAreaBitmap=getDeadAreaBitmap;
     sw->vscrollbarShrinkBottom = botamt;
@@ -3339,45 +3341,45 @@ void CoolSB_SetVScrollPad(HWND hwnd, UINT topamt, UINT botamt, void *(*getDeadAr
 int WINAPI CoolSB_GetDefaultMinThumbSize(void)
 {
 #ifdef _WIN32
-	DWORD dwVersion = GetVersion();
+  DWORD dwVersion = GetVersion();
 
-	// set the minimum thumb size for a scrollbar. This
-	// differs between NT4 and 2000, so need to check to see
-	// which platform we are running under
-	if(dwVersion < 0x80000000)              // Windows NT/2000
-	{
-		if(LOBYTE(LOWORD(dwVersion)) >= 5)
-			return MINTHUMBSIZE_2000;
-		else
-			return MINTHUMBSIZE_NT4;
-	}
-	else
-	{
-		return MINTHUMBSIZE_NT4;
-	}
-  #else
-			return MINTHUMBSIZE_2000;
-  #endif
+  // set the minimum thumb size for a scrollbar. This
+  // differs between NT4 and 2000, so need to check to see
+  // which platform we are running under
+  if(dwVersion < 0x80000000)              // Windows NT/2000
+  {
+    if(LOBYTE(LOWORD(dwVersion)) >= 5)
+      return MINTHUMBSIZE_2000;
+    else
+      return MINTHUMBSIZE_NT4;
+  }
+  else
+  {
+    return MINTHUMBSIZE_NT4;
+  }
+#else
+  return MINTHUMBSIZE_2000;
+#endif
 }
 
 
 static SCROLLINFO *GetScrollInfoFromHwnd(HWND hwnd, int fnBar)
 {
-	SCROLLBAR *sb = GetScrollBarFromHwnd(hwnd, fnBar);
+  SCROLLBAR *sb = GetScrollBarFromHwnd(hwnd, fnBar);
 
-	if(sb == 0)
-		return FALSE;
+  if(sb == 0)
+    return FALSE;
 
-	if(fnBar == SB_HORZ)
-	{
-		return &sb->scrollInfo;
-	}
-	else if(fnBar == SB_VERT)
-	{
-		return &sb->scrollInfo;
-	}
-	else
-		return NULL;
+  if(fnBar == SB_HORZ)
+  {
+    return &sb->scrollInfo;
+  }
+  else if(fnBar == SB_VERT)
+  {
+    return &sb->scrollInfo;
+  }
+  else
+    return NULL;
 }
 //
 //	Initialize the cool scrollbars for a window by subclassing it
@@ -3385,26 +3387,26 @@ static SCROLLINFO *GetScrollInfoFromHwnd(HWND hwnd, int fnBar)
 //
 BOOL WINAPI InitializeCoolSB(HWND hwnd)
 {
-	SCROLLWND *sw;
-	SCROLLINFO *si;
-	RECT rect;
-	DWORD dwCurStyle;
-	//BOOL fDisabled;
+  SCROLLWND *sw;
+  SCROLLINFO *si;
+  RECT rect;
+  DWORD dwCurStyle;
+  //BOOL fDisabled;
 
 
-	GetClientRect(hwnd, &rect);
+  GetClientRect(hwnd, &rect);
 
-	//if we have already initialized Cool Scrollbars for this window,
-	//then stop the user from doing it again
-	if(GetScrollWndFromHwnd(hwnd) != 0)
-	{
-		return FALSE;
-	}
+  //if we have already initialized Cool Scrollbars for this window,
+  //then stop the user from doing it again
+  if(GetScrollWndFromHwnd(hwnd) != 0)
+  {
+    return FALSE;
+  }
 
-	//allocate a private scrollbar structure which we 
-	//will use to keep track of the scrollbar data
+  //allocate a private scrollbar structure which we
+  //will use to keep track of the scrollbar data
 #ifdef _WIN32
-	sw = (SCROLLWND *)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(SCROLLWND));
+  sw = (SCROLLWND *)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(SCROLLWND));
 #else
   sw = (SCROLLWND *)calloc(1,sizeof(SCROLLWND));
 #endif
@@ -3416,255 +3418,255 @@ BOOL WINAPI InitializeCoolSB(HWND hwnd)
   sw->uLastHitTestPortion = HTSCROLL_NONE;
   sw->uScrollTimerPortion = HTSCROLL_NONE;
 
-	si = &sw->sbarHorz.scrollInfo;
-	si->cbSize = sizeof(SCROLLINFO);
-	si->fMask  = SIF_ALL;
-	GetScrollInfo(hwnd, SB_HORZ, si);
+  si = &sw->sbarHorz.scrollInfo;
+  si->cbSize = sizeof(SCROLLINFO);
+  si->fMask  = SIF_ALL;
+  GetScrollInfo(hwnd, SB_HORZ, si);
 
-	si = &sw->sbarVert.scrollInfo;
-	si->cbSize = sizeof(SCROLLINFO);
-	si->fMask  = SIF_ALL;
-	GetScrollInfo(hwnd, SB_VERT, si);
+  si = &sw->sbarVert.scrollInfo;
+  si->cbSize = sizeof(SCROLLINFO);
+  si->fMask  = SIF_ALL;
+  GetScrollInfo(hwnd, SB_VERT, si);
 
-	//check to see if the window has left-aligned scrollbars
-	if(GetWindowLong(hwnd, GWL_EXSTYLE) & WS_EX_LEFTSCROLLBAR)
-		sw->fLeftScrollbar = TRUE;
-	else
-		sw->fLeftScrollbar = FALSE;
+  //check to see if the window has left-aligned scrollbars
+  if(GetWindowLong(hwnd, GWL_EXSTYLE) & WS_EX_LEFTSCROLLBAR)
+    sw->fLeftScrollbar = TRUE;
+  else
+    sw->fLeftScrollbar = FALSE;
 
-	dwCurStyle = GetWindowLong(hwnd, GWL_STYLE);
+  dwCurStyle = GetWindowLong(hwnd, GWL_STYLE);
 
-	SetProp(hwnd, szPropStr, (HANDLE)sw);
+  SetProp(hwnd, szPropStr, (HANDLE)sw);
 
 
-	//scrollbars will automatically get enabled, even if
-	//they aren't to start with....sorry, but there isn't an
-	//easy alternative.
-	if(dwCurStyle & WS_HSCROLL)
-		sw->sbarHorz.fScrollFlags = CSBS_VISIBLE;
+  //scrollbars will automatically get enabled, even if
+  //they aren't to start with....sorry, but there isn't an
+  //easy alternative.
+  if(dwCurStyle & WS_HSCROLL)
+    sw->sbarHorz.fScrollFlags = CSBS_VISIBLE;
 
-	if(dwCurStyle & WS_VSCROLL)
-		sw->sbarVert.fScrollFlags = CSBS_VISIBLE;
+  if(dwCurStyle & WS_VSCROLL)
+    sw->sbarVert.fScrollFlags = CSBS_VISIBLE;
 
-	//need to be able to distinguish between horizontal and vertical
-	//scrollbars in some instances
-	sw->sbarHorz.nBarType	     = SB_HORZ;
-	sw->sbarVert.nBarType	     = SB_VERT;
+  //need to be able to distinguish between horizontal and vertical
+  //scrollbars in some instances
+  sw->sbarHorz.nBarType	     = SB_HORZ;
+  sw->sbarVert.nBarType	     = SB_VERT;
 
-	sw->bPreventStyleChange		 = FALSE;
+  sw->bPreventStyleChange		 = FALSE;
 
   sw->resizingHthumb = FALSE;
-	
-	sw->oldproc = (WNDPROC)SetWindowLongPtr(hwnd, GWLP_WNDPROC, (INT_PTR)CoolSBWndProc);
 
-	CoolSB_SetMinThumbSize(hwnd, SB_BOTH, CoolSB_GetDefaultMinThumbSize());
+  sw->oldproc = (WNDPROC)SetWindowLongPtr(hwnd, GWLP_WNDPROC, (INT_PTR)CoolSBWndProc);
 
-	
-	//send the window a frame changed message to update the scrollbars
-	RedrawNonClient(hwnd, TRUE);
+  CoolSB_SetMinThumbSize(hwnd, SB_BOTH, CoolSB_GetDefaultMinThumbSize());
 
-	return TRUE;
+
+  //send the window a frame changed message to update the scrollbars
+  RedrawNonClient(hwnd, TRUE);
+
+  return TRUE;
 }
 
 
-BOOL WINAPI CoolSB_IsThumbTracking(HWND hwnd)	
-{ 
-	SCROLLWND *sw;
+BOOL WINAPI CoolSB_IsThumbTracking(HWND hwnd)
+{
+  SCROLLWND *sw;
 
-	if((sw = GetScrollWndFromHwnd(hwnd)) == NULL)
-		return FALSE;
-	else
-		return sw->fThumbTracking; 
+  if((sw = GetScrollWndFromHwnd(hwnd)) == NULL)
+    return FALSE;
+  else
+    return sw->fThumbTracking;
 }
 
 
 BOOL WINAPI CoolSB_GetScrollInfo (HWND hwnd, int fnBar, LPSCROLLINFO lpsi)
 {
-	SCROLLINFO *mysi;
-	BOOL copied = FALSE;
-	
-	if(!lpsi)
-		return FALSE;
+  SCROLLINFO *mysi;
+  BOOL copied = FALSE;
 
-	if(!(mysi = GetScrollInfoFromHwnd(hwnd, fnBar)))
-	{
-		return GetScrollInfo(hwnd, fnBar, lpsi);
-	}
-	
-	if(lpsi->fMask & SIF_PAGE)
-	{
-		lpsi->nPage = mysi->nPage;
-		copied = TRUE;
-	}
+  if(!lpsi)
+    return FALSE;
 
-	if(lpsi->fMask & SIF_POS)
-	{
-		lpsi->nPos = mysi->nPos;
-		copied = TRUE;
-	}
+  if(!(mysi = GetScrollInfoFromHwnd(hwnd, fnBar)))
+  {
+    return GetScrollInfo(hwnd, fnBar, lpsi);
+  }
 
-	if(lpsi->fMask & SIF_TRACKPOS)
-	{
-		lpsi->nTrackPos = mysi->nTrackPos;
-		copied = TRUE;
-	}
+  if(lpsi->fMask & SIF_PAGE)
+  {
+    lpsi->nPage = mysi->nPage;
+    copied = TRUE;
+  }
 
-	if(lpsi->fMask & SIF_RANGE)
-	{
-		lpsi->nMin = mysi->nMin;
-		lpsi->nMax = mysi->nMax;
-		copied = TRUE;
-	}
+  if(lpsi->fMask & SIF_POS)
+  {
+    lpsi->nPos = mysi->nPos;
+    copied = TRUE;
+  }
 
-	return copied;
+  if(lpsi->fMask & SIF_TRACKPOS)
+  {
+    lpsi->nTrackPos = mysi->nTrackPos;
+    copied = TRUE;
+  }
+
+  if(lpsi->fMask & SIF_RANGE)
+  {
+    lpsi->nMin = mysi->nMin;
+    lpsi->nMax = mysi->nMax;
+    copied = TRUE;
+  }
+
+  return copied;
 }
 
 int	WINAPI CoolSB_GetScrollPos (HWND hwnd, int nBar)
 {
-	SCROLLINFO *mysi;
-	
-	if(!(mysi = GetScrollInfoFromHwnd(hwnd, nBar)))
-		return GetScrollPos(hwnd, nBar);
+  SCROLLINFO *mysi;
 
-	return mysi->nPos;
+  if(!(mysi = GetScrollInfoFromHwnd(hwnd, nBar)))
+    return GetScrollPos(hwnd, nBar);
+
+  return mysi->nPos;
 }
 
 BOOL WINAPI CoolSB_GetScrollRange (HWND hwnd, int nBar, LPINT lpMinPos, LPINT lpMaxPos)
 {
-	SCROLLINFO *mysi;
-	
-	if(!lpMinPos || !lpMaxPos)
-		return FALSE;
+  SCROLLINFO *mysi;
 
-	if(!(mysi = GetScrollInfoFromHwnd(hwnd, nBar)))
-		return GetScrollRange(hwnd, nBar, lpMinPos, lpMaxPos);
+  if(!lpMinPos || !lpMaxPos)
+    return FALSE;
 
-	*lpMinPos = mysi->nMin;
-	*lpMaxPos = mysi->nMax;
+  if(!(mysi = GetScrollInfoFromHwnd(hwnd, nBar)))
+    return GetScrollRange(hwnd, nBar, lpMinPos, lpMaxPos);
 
-	return TRUE;
+  *lpMinPos = mysi->nMin;
+  *lpMaxPos = mysi->nMax;
+
+  return TRUE;
 }
 
 int	WINAPI CoolSB_SetScrollInfo (HWND hwnd, int fnBar, LPSCROLLINFO lpsi, BOOL fRedraw)
 {
-	SCROLLINFO *mysi;
-	SCROLLBAR *sbar;
-	BOOL       fRecalcFrame = FALSE;
+  SCROLLINFO *mysi;
+  SCROLLBAR *sbar;
+  BOOL       fRecalcFrame = FALSE;
 
-	if(!lpsi)
-		return FALSE;
+  if(!lpsi)
+    return FALSE;
 
-	if(!(mysi = GetScrollInfoFromHwnd(hwnd, fnBar)))
-		return SetScrollInfo(hwnd, fnBar, lpsi, fRedraw);
+  if(!(mysi = GetScrollInfoFromHwnd(hwnd, fnBar)))
+    return SetScrollInfo(hwnd, fnBar, lpsi, fRedraw);
 
-	//if(CoolSB_IsThumbTracking(hwnd))
-	//	return mysi->nPos;
+  //if(CoolSB_IsThumbTracking(hwnd))
+  //	return mysi->nPos;
 
-	if(lpsi->fMask & SIF_RANGE)
-	{
-		mysi->nMin = lpsi->nMin;
-		mysi->nMax = lpsi->nMax;
-	}
+  if(lpsi->fMask & SIF_RANGE)
+  {
+    mysi->nMin = lpsi->nMin;
+    mysi->nMax = lpsi->nMax;
+  }
 
-	//The nPage member must specify a value from 0 to nMax - nMin +1. 
-	if(lpsi->fMask & SIF_PAGE)
-	{
-		UINT t = (UINT)(mysi->nMax - mysi->nMin + 1);
-		mysi->nPage = min(max(0, lpsi->nPage), t);
-	}
+  //The nPage member must specify a value from 0 to nMax - nMin +1.
+  if(lpsi->fMask & SIF_PAGE)
+  {
+    UINT t = (UINT)(mysi->nMax - mysi->nMin + 1);
+    mysi->nPage = min(max(0, lpsi->nPage), t);
+  }
 
-	//The nPos member must specify a value between nMin and nMax - max(nPage - 1, 0).
-	if(lpsi->fMask & SIF_POS)
-	{
-		mysi->nPos = max(lpsi->nPos, mysi->nMin);
-		mysi->nPos = min((UINT)mysi->nPos, mysi->nMax - max(mysi->nPage - 1, 0));
-	}
+  //The nPos member must specify a value between nMin and nMax - max(nPage - 1, 0).
+  if(lpsi->fMask & SIF_POS)
+  {
+    mysi->nPos = max(lpsi->nPos, mysi->nMin);
+    mysi->nPos = min((UINT)mysi->nPos, mysi->nMax - max(mysi->nPage - 1, 0));
+  }
 
-	sbar = GetScrollBarFromHwnd(hwnd, fnBar);
+  sbar = GetScrollBarFromHwnd(hwnd, fnBar);
 
-	if((lpsi->fMask & SIF_DISABLENOSCROLL) || (sbar->fScrollFlags & CSBS_THUMBALWAYS))
-	{
-		if(!sbar->fScrollVisible)
-		{
-			CoolSB_ShowScrollBar(hwnd, fnBar, TRUE);
-			fRecalcFrame = TRUE;
-		}
-	}
-	else
-	{
-		if(mysi->nPage >  (UINT)mysi->nMax
-			|| (mysi->nPage == (UINT)mysi->nMax && mysi->nMax == 0)
-			|| mysi->nMax  <= mysi->nMin)
-		{
-			if(sbar->fScrollVisible)
-			{
-				CoolSB_ShowScrollBar(hwnd, fnBar, FALSE);
-				fRecalcFrame = TRUE;
-			}
-		}
-		else
-		{
-			if(!sbar->fScrollVisible)
-			{
-				CoolSB_ShowScrollBar(hwnd, fnBar, TRUE);
-				fRecalcFrame = TRUE;
-			}
+  if((lpsi->fMask & SIF_DISABLENOSCROLL) || (sbar->fScrollFlags & CSBS_THUMBALWAYS))
+  {
+    if(!sbar->fScrollVisible)
+    {
+      CoolSB_ShowScrollBar(hwnd, fnBar, TRUE);
+      fRecalcFrame = TRUE;
+    }
+  }
+  else
+  {
+    if(mysi->nPage >  (UINT)mysi->nMax
+        || (mysi->nPage == (UINT)mysi->nMax && mysi->nMax == 0)
+        || mysi->nMax  <= mysi->nMin)
+    {
+      if(sbar->fScrollVisible)
+      {
+        CoolSB_ShowScrollBar(hwnd, fnBar, FALSE);
+        fRecalcFrame = TRUE;
+      }
+    }
+    else
+    {
+      if(!sbar->fScrollVisible)
+      {
+        CoolSB_ShowScrollBar(hwnd, fnBar, TRUE);
+        fRecalcFrame = TRUE;
+      }
 
-		}
+    }
 
-	}
+  }
 
-	if(fRedraw && !CoolSB_IsThumbTracking(hwnd))
-		RedrawNonClient(hwnd, fRecalcFrame);
-	
-	return mysi->nPos;
+  if(fRedraw && !CoolSB_IsThumbTracking(hwnd))
+    RedrawNonClient(hwnd, fRecalcFrame);
+
+  return mysi->nPos;
 }
 
 
 int WINAPI CoolSB_SetScrollPos(HWND hwnd, int nBar, int nPos, BOOL fRedraw)
 {
-	SCROLLINFO *mysi;
-	int oldpos;
-	
-	if(!(mysi = GetScrollInfoFromHwnd(hwnd, nBar)))
-	{
-		return SetScrollPos(hwnd, nBar, nPos, fRedraw);
-	}
+  SCROLLINFO *mysi;
+  int oldpos;
 
-	//this is what should happen, but real scrollbars don't work like this..
-	//if(CoolSB_IsThumbTracking(hwnd))
-	//	return mysi->nPos;
+  if(!(mysi = GetScrollInfoFromHwnd(hwnd, nBar)))
+  {
+    return SetScrollPos(hwnd, nBar, nPos, fRedraw);
+  }
 
-	//validate and set the scollbar position
-	oldpos = mysi->nPos;
-	mysi->nPos = max(nPos, mysi->nMin);
-	mysi->nPos = min((UINT)mysi->nPos, mysi->nMax - max(mysi->nPage - 1, 0));
+  //this is what should happen, but real scrollbars don't work like this..
+  //if(CoolSB_IsThumbTracking(hwnd))
+  //	return mysi->nPos;
 
-	if(fRedraw && !CoolSB_IsThumbTracking(hwnd))
-		RedrawNonClient(hwnd, FALSE);
+  //validate and set the scollbar position
+  oldpos = mysi->nPos;
+  mysi->nPos = max(nPos, mysi->nMin);
+  mysi->nPos = min((UINT)mysi->nPos, mysi->nMax - max(mysi->nPage - 1, 0));
 
-	return oldpos;
+  if(fRedraw && !CoolSB_IsThumbTracking(hwnd))
+    RedrawNonClient(hwnd, FALSE);
+
+  return oldpos;
 }
 
 int WINAPI CoolSB_SetScrollRange (HWND hwnd, int nBar, int nMinPos, int nMaxPos, BOOL fRedraw)
 {
-	SCROLLINFO *mysi;
-	
-	if(!(mysi = GetScrollInfoFromHwnd(hwnd, nBar)))
-		return SetScrollRange(hwnd, nBar, nMinPos, nMaxPos, fRedraw);
+  SCROLLINFO *mysi;
 
-	if(CoolSB_IsThumbTracking(hwnd))
-		return mysi->nPos;
+  if(!(mysi = GetScrollInfoFromHwnd(hwnd, nBar)))
+    return SetScrollRange(hwnd, nBar, nMinPos, nMaxPos, fRedraw);
 
-	//hide the scrollbar if nMin == nMax
-	//nMax-nMin must not be greater than MAXLONG
-	mysi->nMin = nMinPos;
-	mysi->nMax = nMaxPos;
-	
-	if(fRedraw)
-		RedrawNonClient(hwnd, FALSE);
+  if(CoolSB_IsThumbTracking(hwnd))
+    return mysi->nPos;
 
-	return TRUE;
+  //hide the scrollbar if nMin == nMax
+  //nMax-nMin must not be greater than MAXLONG
+  mysi->nMin = nMinPos;
+  mysi->nMax = nMaxPos;
+
+  if(fRedraw)
+    RedrawNonClient(hwnd, FALSE);
+
+  return TRUE;
 }
 
 //
@@ -3672,54 +3674,54 @@ int WINAPI CoolSB_SetScrollRange (HWND hwnd, int nBar, int nMinPos, int nMaxPos,
 //
 BOOL WINAPI CoolSB_ShowScrollBar (HWND hwnd, int wBar, BOOL fShow)
 {
-	SCROLLBAR *sbar;
-	BOOL bFailed = FALSE;
-	DWORD dwStyle = GetWindowLong(hwnd, GWL_STYLE);
+  SCROLLBAR *sbar;
+  BOOL bFailed = FALSE;
+  DWORD dwStyle = GetWindowLong(hwnd, GWL_STYLE);
 
-	if(!CoolSB_IsCoolScrollEnabled(hwnd))
+  if(!CoolSB_IsCoolScrollEnabled(hwnd))
   {
-		return ShowScrollBar(hwnd, wBar, fShow);
+    return ShowScrollBar(hwnd, wBar, fShow);
   }
-	if((wBar == SB_HORZ || wBar == SB_BOTH) && 
-	   (sbar = GetScrollBarFromHwnd(hwnd, SB_HORZ)))
-	{
-		sbar->fScrollFlags  =  sbar->fScrollFlags & ~CSBS_VISIBLE;
-		sbar->fScrollFlags |= (fShow == TRUE ? CSBS_VISIBLE : 0);
-		//bFailed = TRUE;
-    
-		if(fShow)	SetWindowLong(hwnd, GWL_STYLE, dwStyle | WS_HSCROLL);
-		else		SetWindowLong(hwnd, GWL_STYLE, dwStyle & ~WS_HSCROLL);
-	}
+  if((wBar == SB_HORZ || wBar == SB_BOTH) &&
+      (sbar = GetScrollBarFromHwnd(hwnd, SB_HORZ)))
+  {
+    sbar->fScrollFlags  =  sbar->fScrollFlags & ~CSBS_VISIBLE;
+    sbar->fScrollFlags |= (fShow == TRUE ? CSBS_VISIBLE : 0);
+    //bFailed = TRUE;
 
-	if((wBar == SB_VERT || wBar == SB_BOTH) && 
-	   (sbar = GetScrollBarFromHwnd(hwnd, SB_VERT)))
-	{
-		sbar->fScrollFlags  =  sbar->fScrollFlags & ~CSBS_VISIBLE;
-		sbar->fScrollFlags |= (fShow == TRUE ? CSBS_VISIBLE : 0);
-		//bFailed = TRUE;
+    if(fShow)	SetWindowLong(hwnd, GWL_STYLE, dwStyle | WS_HSCROLL);
+    else		SetWindowLong(hwnd, GWL_STYLE, dwStyle & ~WS_HSCROLL);
+  }
 
-		if(fShow)	SetWindowLong(hwnd, GWL_STYLE, dwStyle | WS_VSCROLL);
-		else		SetWindowLong(hwnd, GWL_STYLE, dwStyle & ~WS_VSCROLL);
-	}
+  if((wBar == SB_VERT || wBar == SB_BOTH) &&
+      (sbar = GetScrollBarFromHwnd(hwnd, SB_VERT)))
+  {
+    sbar->fScrollFlags  =  sbar->fScrollFlags & ~CSBS_VISIBLE;
+    sbar->fScrollFlags |= (fShow == TRUE ? CSBS_VISIBLE : 0);
+    //bFailed = TRUE;
 
-	if(bFailed)
-	{
-		return FALSE;
-	}
-	else
-	{
-		//DWORD style = GetWindowLong(hwnd, GWL_STYLE);
-		//style |= WS_VSCROLL;
-		
-		//if(s
-		//SetWindowLong(hwnd, GWL_STYLE, style);
+    if(fShow)	SetWindowLong(hwnd, GWL_STYLE, dwStyle | WS_VSCROLL);
+    else		SetWindowLong(hwnd, GWL_STYLE, dwStyle & ~WS_VSCROLL);
+  }
 
-		SetWindowPos(hwnd, 0, 0, 0, 0, 0, 
-			SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | 
-			SWP_NOACTIVATE | SWP_FRAMECHANGED);
-		
-		return TRUE;
-	}
+  if(bFailed)
+  {
+    return FALSE;
+  }
+  else
+  {
+    //DWORD style = GetWindowLong(hwnd, GWL_STYLE);
+    //style |= WS_VSCROLL;
+
+    //if(s
+    //SetWindowLong(hwnd, GWL_STYLE, style);
+
+    SetWindowPos(hwnd, 0, 0, 0, 0, 0,
+                 SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER |
+                 SWP_NOACTIVATE | SWP_FRAMECHANGED);
+
+    return TRUE;
+  }
 }
 
 //
@@ -3727,14 +3729,14 @@ BOOL WINAPI CoolSB_ShowScrollBar (HWND hwnd, int wBar, BOOL fShow)
 //
 HRESULT WINAPI UninitializeCoolSB(HWND hwnd)
 {
-	SCROLLWND *sw = GetScrollWndFromHwnd(hwnd);
-	if(!sw) return E_FAIL;
+  SCROLLWND *sw = GetScrollWndFromHwnd(hwnd);
+  if(!sw) return E_FAIL;
 
-	//restore the window procedure with the original one
-	SetWindowLongPtr(hwnd, GWLP_WNDPROC, (INT_PTR)sw->oldproc);
+  //restore the window procedure with the original one
+  SetWindowLongPtr(hwnd, GWLP_WNDPROC, (INT_PTR)sw->oldproc);
 
-	RemoveProp(hwnd, szPropStr);
-	//SetWindowLong(hwnd, GWL_USERDATA, 0);
+  RemoveProp(hwnd, szPropStr);
+  //SetWindowLong(hwnd, GWL_USERDATA, 0);
 
   delete sw->sbarHorz.liceBkgnd;
   delete sw->sbarHorz.liceThumb;
@@ -3745,17 +3747,17 @@ HRESULT WINAPI UninitializeCoolSB(HWND hwnd)
   sw->sbarVert.liceBkgnd = NULL;
   sw->sbarVert.liceThumb = NULL;
 
-      //finally, release the memory needed for the cool scrollbars
+  //finally, release the memory needed for the cool scrollbars
 #ifdef _WIN32
-	HeapFree(GetProcessHeap(), 0, sw);
+  HeapFree(GetProcessHeap(), 0, sw);
 #else
   free(sw);
 #endif
 
   //Force WM_NCCALCSIZE and WM_NCPAINT so the original scrollbars can kick in
   RedrawNonClient(hwnd, TRUE);
-  
-	return S_OK;
+
+  return S_OK;
 }
 
 
@@ -3764,35 +3766,35 @@ HRESULT WINAPI UninitializeCoolSB(HWND hwnd)
 //
 BOOL WINAPI CoolSB_SetMinThumbSize(HWND hwnd, UINT wBar, UINT size)
 {
-	SCROLLBAR *sbar;
+  SCROLLBAR *sbar;
 
-	if(!GetScrollWndFromHwnd(hwnd))
-		return FALSE;
+  if(!GetScrollWndFromHwnd(hwnd))
+    return FALSE;
 
-	if(size == -1)
-		size = CoolSB_GetDefaultMinThumbSize();
+  if(size == -1)
+    size = CoolSB_GetDefaultMinThumbSize();
 
-	if((wBar == SB_HORZ || wBar == SB_BOTH) && 
-	   (sbar = GetScrollBarFromHwnd(hwnd, SB_HORZ)))
-	{
-		sbar->nMinThumbSize = size;
-	}
+  if((wBar == SB_HORZ || wBar == SB_BOTH) &&
+      (sbar = GetScrollBarFromHwnd(hwnd, SB_HORZ)))
+  {
+    sbar->nMinThumbSize = size;
+  }
 
-	if((wBar == SB_VERT || wBar == SB_BOTH) && 
-	   (sbar = GetScrollBarFromHwnd(hwnd, SB_VERT)))
-	{
-		sbar->nMinThumbSize = size;
-	}
+  if((wBar == SB_VERT || wBar == SB_BOTH) &&
+      (sbar = GetScrollBarFromHwnd(hwnd, SB_VERT)))
+  {
+    sbar->nMinThumbSize = size;
+  }
 
-	return TRUE;
+  return TRUE;
 }
 
 BOOL WINAPI CoolSB_SetResizingThumb(HWND hwnd, BOOL active)
 {
-	SCROLLWND *swnd;
+  SCROLLWND *swnd;
 
-	if(!(swnd = GetScrollWndFromHwnd(hwnd)))
-		return FALSE;
+  if(!(swnd = GetScrollWndFromHwnd(hwnd)))
+    return FALSE;
 
   swnd->resizingHthumb = active;
 

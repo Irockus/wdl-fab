@@ -29,128 +29,129 @@ static void writeToStandardError(const char *fmt, ...)
 }
 
 
-class sInst {
-  public:
-    enum 
-    { 
-      MAX_USER_STRINGS=16384, 
-      STRING_INDEX_BASE=90000,
-      MAX_FILE_HANDLES=512,
-      FILE_HANDLE_INDEX_BASE=1000000
-    };
+class sInst
+{
+public:
+  enum
+  {
+    MAX_USER_STRINGS=16384,
+    STRING_INDEX_BASE=90000,
+    MAX_FILE_HANDLES=512,
+    FILE_HANDLE_INDEX_BASE=1000000
+  };
 
-    sInst() 
+  sInst()
+  {
+    memset(m_handles,0,sizeof(m_handles));
+    memset(m_rw_strings,0,sizeof(m_rw_strings));
+    m_vm = NSEEL_VM_alloc();
+    if (!m_vm) fprintf(stderr,"NSEEL_VM_alloc(): failed\n");
+    NSEEL_VM_SetCustomFuncThis(m_vm,this);
+  }
+
+  ~sInst()
+  {
+    m_code_freelist.Empty((void (*)(void *))NSEEL_code_free);
+    if (m_vm) NSEEL_VM_free(m_vm);
+
+    int x;
+    for (x=0; x<MAX_USER_STRINGS; x++) delete m_rw_strings[x];
+    for (x=0; x<MAX_FILE_HANDLES; x++)
     {
-      memset(m_handles,0,sizeof(m_handles));
-      memset(m_rw_strings,0,sizeof(m_rw_strings));
-      m_vm = NSEEL_VM_alloc();
-      if (!m_vm) fprintf(stderr,"NSEEL_VM_alloc(): failed\n");
-      NSEEL_VM_SetCustomFuncThis(m_vm,this);
+      if (m_handles[x]) fclose(m_handles[x]);
+      m_handles[x]=0;
     }
+    m_strings.Empty(true);
+  }
+  int runcode(const char *code, bool showerr, bool canfree);
 
-    ~sInst() 
+  NSEEL_VMCTX m_vm;
+
+  WDL_FastString *m_rw_strings[MAX_USER_STRINGS];
+  WDL_PtrList<WDL_FastString> m_strings;
+  WDL_StringKeyedArray<EEL_F *> m_namedvars;
+  WDL_PtrList<void> m_code_freelist;
+  WDL_FastString m_pc;
+
+  static int varEnumProc(const char *name, EEL_F *val, void *ctx)
+  {
+    if (!((sInst *)ctx)->m_namedvars.Get(name)) ((sInst *)ctx)->m_namedvars.Insert(name,val);
+    return 1;
+  }
+
+  EEL_F *GetNamedVar(const char *s, bool createIfNotExists)
+  {
+    if (!*s) return NULL;
+    EEL_F *r = m_namedvars.Get(s);
+    if (r || !createIfNotExists) return r;
+    r=NSEEL_VM_regvar(m_vm,s);
+    if (r) m_namedvars.Insert(s,r);
+    return r;
+  }
+  EEL_F *GetVarForFormat(int formatidx) { return NULL; } // must use %{xyz}s syntax
+
+  int AddString(const WDL_FastString &s)
+  {
+    WDL_FastString *ns = new WDL_FastString;
+    *ns = s;
+    m_strings.Add(ns);
+    return m_strings.GetSize()-1+STRING_INDEX_BASE;
+  }
+
+  const char *GetStringForIndex(EEL_F val, WDL_FastString **isWriteableAs=NULL)
+  {
+    int idx = (int) (val+0.5);
+    if (idx>=0 && idx < MAX_USER_STRINGS)
     {
-      m_code_freelist.Empty((void (*)(void *))NSEEL_code_free);
-      if (m_vm) NSEEL_VM_free(m_vm);
-
-      int x;
-      for (x=0;x<MAX_USER_STRINGS;x++) delete m_rw_strings[x];
-      for (x=0;x<MAX_FILE_HANDLES;x++) 
+      if (isWriteableAs)
       {
-        if (m_handles[x]) fclose(m_handles[x]); 
-        m_handles[x]=0;
+        if (!m_rw_strings[idx]) m_rw_strings[idx] = new WDL_FastString;
+        *isWriteableAs = m_rw_strings[idx];
       }
-      m_strings.Empty(true);
+      return m_rw_strings[idx]?m_rw_strings[idx]->Get():"";
     }
-    int runcode(const char *code, bool showerr, bool canfree);
 
-    NSEEL_VMCTX m_vm;
+    WDL_FastString *s = m_strings.Get(idx - STRING_INDEX_BASE);
+    if (isWriteableAs) *isWriteableAs=s;
+    return s ? s->Get() : NULL;
+  }
 
-    WDL_FastString *m_rw_strings[MAX_USER_STRINGS];
-    WDL_PtrList<WDL_FastString> m_strings;
-    WDL_StringKeyedArray<EEL_F *> m_namedvars;
-    WDL_PtrList<void> m_code_freelist;
-    WDL_FastString m_pc;
+  FILE *m_handles[MAX_FILE_HANDLES];
+  EEL_F OpenFile(const char *fn, const char *mode)
+  {
+    if (!*fn || !*mode) return -1.0;
+    if (!strcmp(fn,"stdin")) return 0;
+    if (!strcmp(fn,"stdout")) return 1;
+    if (!strcmp(fn,"stderr")) return 2;
 
-    static int varEnumProc(const char *name, EEL_F *val, void *ctx)
+    int x;
+    for (x=0; x<MAX_FILE_HANDLES && m_handles[x]; x++);
+    if (x>= MAX_FILE_HANDLES) return -1.0;
+    FILE *fp = fopen(fn,mode);
+    if (!fp) return -1.0;
+    m_handles[x]=fp;
+    return x + FILE_HANDLE_INDEX_BASE;
+  }
+  EEL_F CloseFile(int fp_idx)
+  {
+    fp_idx-=FILE_HANDLE_INDEX_BASE;
+    if (fp_idx>=0 && fp_idx<MAX_FILE_HANDLES && m_handles[fp_idx])
     {
-      if (!((sInst *)ctx)->m_namedvars.Get(name)) ((sInst *)ctx)->m_namedvars.Insert(name,val);
-      return 1;
+      fclose(m_handles[fp_idx]);
+      m_handles[fp_idx]=0;
+      return 0.0;
     }
-
-    EEL_F *GetNamedVar(const char *s, bool createIfNotExists)
-    {
-      if (!*s) return NULL;
-      EEL_F *r = m_namedvars.Get(s);
-      if (r || !createIfNotExists) return r;
-      r=NSEEL_VM_regvar(m_vm,s);
-      if (r) m_namedvars.Insert(s,r);
-      return r;
-    }
-    EEL_F *GetVarForFormat(int formatidx) { return NULL; } // must use %{xyz}s syntax
-
-    int AddString(const WDL_FastString &s)
-    {
-      WDL_FastString *ns = new WDL_FastString;
-      *ns = s;
-      m_strings.Add(ns);
-      return m_strings.GetSize()-1+STRING_INDEX_BASE;
-    }
-
-    const char *GetStringForIndex(EEL_F val, WDL_FastString **isWriteableAs=NULL)
-    {
-      int idx = (int) (val+0.5);
-      if (idx>=0 && idx < MAX_USER_STRINGS)
-      {
-        if (isWriteableAs)
-        {
-          if (!m_rw_strings[idx]) m_rw_strings[idx] = new WDL_FastString;
-          *isWriteableAs = m_rw_strings[idx];
-        }
-        return m_rw_strings[idx]?m_rw_strings[idx]->Get():"";
-      }
-
-      WDL_FastString *s = m_strings.Get(idx - STRING_INDEX_BASE);
-      if (isWriteableAs) *isWriteableAs=s;
-      return s ? s->Get() : NULL;
-    }
-
-    FILE *m_handles[MAX_FILE_HANDLES];
-    EEL_F OpenFile(const char *fn, const char *mode)
-    {
-      if (!*fn || !*mode) return -1.0;
-      if (!strcmp(fn,"stdin")) return 0;
-      if (!strcmp(fn,"stdout")) return 1;
-      if (!strcmp(fn,"stderr")) return 2;
-
-      int x;
-      for (x=0;x<MAX_FILE_HANDLES && m_handles[x];x++);
-      if (x>= MAX_FILE_HANDLES) return -1.0;
-      FILE *fp = fopen(fn,mode);
-      if (!fp) return -1.0;
-      m_handles[x]=fp;
-      return x + FILE_HANDLE_INDEX_BASE;
-    }
-    EEL_F CloseFile(int fp_idx)
-    {
-      fp_idx-=FILE_HANDLE_INDEX_BASE;
-      if (fp_idx>=0 && fp_idx<MAX_FILE_HANDLES && m_handles[fp_idx])
-      {
-        fclose(m_handles[fp_idx]);
-        m_handles[fp_idx]=0;
-        return 0.0;
-      }
-      return -1.0;
-    }
-    FILE *GetFileFP(int fp_idx)
-    {
-      if (fp_idx==0) return stdin;
-      if (fp_idx==1) return stdout;
-      if (fp_idx==2) return stderr;
-      fp_idx-=FILE_HANDLE_INDEX_BASE;
-      if (fp_idx>=0 && fp_idx<MAX_FILE_HANDLES) return m_handles[fp_idx];
-      return NULL;
-    }
+    return -1.0;
+  }
+  FILE *GetFileFP(int fp_idx)
+  {
+    if (fp_idx==0) return stdin;
+    if (fp_idx==1) return stdout;
+    if (fp_idx==2) return stderr;
+    fp_idx-=FILE_HANDLE_INDEX_BASE;
+    if (fp_idx>=0 && fp_idx<MAX_FILE_HANDLES) return m_handles[fp_idx];
+    return NULL;
+  }
 
 };
 
@@ -171,7 +172,7 @@ class sInst {
 
 int sInst::runcode(const char *code, bool showerr, bool canfree)
 {
-  if (m_vm) 
+  if (m_vm)
   {
     m_pc.Set("");
     eel_preprocess_strings(this,m_pc,code);
@@ -197,7 +198,7 @@ int sInst::runcode(const char *code, bool showerr, bool canfree)
   }
   return -1;
 }
-    
+
 
 
 void NSEEL_HOSTSTUB_EnterMutex() { }
@@ -231,11 +232,11 @@ int main(int argc, char **argv)
   else
   {
 #ifndef _WIN32
-    if (!g_interactive && isatty(0)) 
+    if (!g_interactive && isatty(0))
 #else
     if (1)
 #endif
-       g_interactive=1;
+      g_interactive=1;
   }
 
   if (NSEEL_init())
@@ -253,7 +254,7 @@ int main(int argc, char **argv)
     const int argv_offs = 1<<22;
     code.SetFormatted(64,"argc=0; argv=%d;\n",argv_offs);
     int x;
-    for (x=0;x<argc;x++)
+    for (x=0; x<argc; x++)
     {
       if (x==0 || x >= argpos)
       {
@@ -284,7 +285,7 @@ int main(int argc, char **argv)
                line[strlen(line)-1] == '\n' ||
                line[strlen(line)-1] == '\t' ||
                line[strlen(line)-1] == ' '
-              )) line[strlen(line)-1]=0;
+             )) line[strlen(line)-1]=0;
 
       if (!strcmp(line,"quit")) break;
       if (!strcmp(line,"abort")) code.Set("");
@@ -320,7 +321,7 @@ int main(int argc, char **argv)
     if (fp != stdin) fclose(fp);
 
     inst.runcode(code.Get(),true,true);
-    
+
   }
 
   return 0;

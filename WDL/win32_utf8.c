@@ -36,23 +36,23 @@ BOOL WDL_HasUTF8(const char *_str)
 {
   const unsigned char *str = (const unsigned char *)_str;
   BOOL hasUTF=FALSE;
-  
-  if (str) while (*str) 
-  {
-    unsigned char c = *str++;
-    if (c<0x80) { } // allow 7 bit ascii straight through
-    else if (c < 0xC2 || c > 0xF7) return FALSE; // treat overlongs or other values in this range as indicators of non-utf8ness
-    else 
+
+  if (str) while (*str)
     {
-      hasUTF=TRUE;
-      if (str[0] < 0x80 || str[0] > 0xBF) return FALSE;
-      else if (c < 0xE0) str++; 
-      else if (str[1] < 0x80 || str[1] > 0xBF) return FALSE;
-      else if (c < 0xF0) str+=2;
-      else if (str[2] < 0x80 || str[2] > 0xBF) return FALSE;
-      else str+=3;
+      unsigned char c = *str++;
+      if (c<0x80) { } // allow 7 bit ascii straight through
+      else if (c < 0xC2 || c > 0xF7) return FALSE; // treat overlongs or other values in this range as indicators of non-utf8ness
+      else
+      {
+        hasUTF=TRUE;
+        if (str[0] < 0x80 || str[0] > 0xBF) return FALSE;
+        else if (c < 0xE0) str++;
+        else if (str[1] < 0x80 || str[1] > 0xBF) return FALSE;
+        else if (c < 0xF0) str+=2;
+        else if (str[2] < 0x80 || str[2] > 0xBF) return FALSE;
+        else str+=3;
+      }
     }
-  }
   return hasUTF;
 }
 
@@ -63,7 +63,7 @@ int GetWindowTextUTF8(HWND hWnd, LPTSTR lpString, int nMaxCount)
     int alloc_size=nMaxCount;
 
     // prevent large values of nMaxCount from allocating memory unless the underlying text is big too
-    if (alloc_size > 512)  
+    if (alloc_size > 512)
     {
       int l=GetWindowTextLengthW(hWnd);
       if (l>=0 && l < 512) alloc_size=1000;
@@ -73,7 +73,7 @@ int GetWindowTextUTF8(HWND hWnd, LPTSTR lpString, int nMaxCount)
       WIDETOMB_ALLOC(wbuf, alloc_size);
       if (wbuf)
       {
-        GetWindowTextW(hWnd,wbuf,wbuf_size/sizeof(WCHAR));      
+        GetWindowTextW(hWnd,wbuf,wbuf_size/sizeof(WCHAR));
 
         if (!WideCharToMultiByte(CP_UTF8,0,wbuf,-1,lpString,nMaxCount,NULL,NULL) && GetLastError()==ERROR_INSUFFICIENT_BUFFER)
           lpString[nMaxCount-1]=0;
@@ -232,7 +232,7 @@ WCHAR *WDL_UTF8ToWC(const char *buf, BOOL doublenull, int minsize, DWORD *sizeou
 static BOOL GetOpenSaveFileNameUTF8(LPOPENFILENAME lpofn, BOOL save)
 {
 
-  OPENFILENAMEW tmp={sizeof(tmp),lpofn->hwndOwner,lpofn->hInstance,};
+  OPENFILENAMEW tmp= {sizeof(tmp),lpofn->hwndOwner,lpofn->hInstance,};
   BOOL ret;
 
   // allocate, convert input
@@ -248,7 +248,7 @@ static BOOL GetOpenSaveFileNameUTF8(LPOPENFILENAME lpofn, BOOL save)
   tmp.lCustData = lpofn->lCustData;
   tmp.lpfnHook = lpofn->lpfnHook;
   tmp.lpTemplateName  = (const WCHAR *)lpofn->lpTemplateName ;
- 
+
   ret=save ? GetSaveFileNameW(&tmp) : GetOpenFileNameW(&tmp);
 
   // free, convert output
@@ -274,13 +274,13 @@ static BOOL GetOpenSaveFileNameUTF8(LPOPENFILENAME lpofn, BOOL save)
       int len = WideCharToMultiByte(CP_UTF8,0,tmp.lpstrFile,-1,lpofn->lpstrFile,lpofn->nMaxFile-1,NULL,NULL);
       if (len == 0 && GetLastError()==ERROR_INSUFFICIENT_BUFFER) len = lpofn->nMaxFile-2;
       lpofn->lpstrFile[len]=0;
-      if (!len) 
+      if (!len)
       {
         lpofn->lpstrFile[len+1]=0;
         ret=0;
       }
     }
-    // convert 
+    // convert
   }
 
   lpofn->nFileOffset  = tmp.nFileOffset ;
@@ -460,7 +460,7 @@ HANDLE CreateFileUTF8(LPCTSTR lpFileName,DWORD dwDesiredAccess,DWORD dwShareMode
   if (WDL_HasUTF8(lpFileName) && GetVersion()<0x80000000)
   {
     HANDLE h = INVALID_HANDLE_VALUE;
-    
+
     MBTOWIDE(wstr, lpFileName);
     if (wstr_ok) h = CreateFileW(wstr,dwDesiredAccess,dwShareMode,lpSecurityAttributes,dwCreationDisposition,dwFlagsAndAttributes,hTemplateFile);
     MBTOWIDE_FREE(wstr);
@@ -596,7 +596,7 @@ FILE *fopenUTF8(const char *filename, const char *mode)
     if (wbuf_ok)
     {
       FILE *rv;
-      WCHAR tb[32];      
+      WCHAR tb[32];
       tb[0]=0;
       MultiByteToWideChar(CP_UTF8,0,mode,-1,tb,32);
       rv=tb[0] ? _wfopen(wbuf,tb) : NULL;
@@ -757,7 +757,7 @@ static LRESULT WINAPI tc_newProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
     SetWindowLongPtr(hwnd, GWLP_WNDPROC,(INT_PTR)oldproc);
     RemoveProp(hwnd,WDL_UTF8_OLDPROCPROP);
   }
-  else if (msg == TCM_INSERTITEMA) 
+  else if (msg == TCM_INSERTITEMA)
   {
     LPTCITEM pItem = (LPTCITEM) lParam;
     char *str;
@@ -793,7 +793,7 @@ static LRESULT WINAPI tv_newProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
     SetWindowLongPtr(hwnd, GWLP_WNDPROC,(INT_PTR)oldproc);
     RemoveProp(hwnd,WDL_UTF8_OLDPROCPROP);
   }
-  else if (msg == TVM_INSERTITEMA || msg == TVM_SETITEMA) 
+  else if (msg == TVM_INSERTITEMA || msg == TVM_SETITEMA)
   {
     LPTVITEM pItem = msg == TVM_INSERTITEMA ? &((LPTVINSERTSTRUCT)lParam)->item : (LPTVITEM) lParam;
     char *str;
@@ -874,7 +874,7 @@ static LRESULT WINAPI lv_newProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 
     }
   }
-  else if (msg == LVM_INSERTITEMA || msg == LVM_SETITEMA || msg == LVM_SETITEMTEXTA) 
+  else if (msg == LVM_INSERTITEMA || msg == LVM_SETITEMA || msg == LVM_SETITEMTEXTA)
   {
     LPLVITEMA pItem = (LPLVITEMA) lParam;
     char *str;
@@ -966,7 +966,7 @@ void WDL_UTF8_ListViewConvertDispInfoToW(void *_di)
         if (!MultiByteToWideChar(CP_ACP,MB_ERR_INVALID_CHARS,tmp,-1,(LPWSTR)di->item.pszText,di->item.cchTextMax) && GetLastError()==ERROR_INSUFFICIENT_BUFFER)
           ((WCHAR *)di->item.pszText)[di->item.cchTextMax-1] = 0;
       }
-    }   
+    }
 
     if (tmp!=tmp_buf) free(tmp);
 

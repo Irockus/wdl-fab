@@ -53,33 +53,33 @@ int main(void)
   durand_kerner_c(dk_coeff_c, dk_roots_c, poly_order(dk_coeff_c));
 
   /* */
-  #ifdef _CMATH_ANSI
-    puts("\n\nansi c is: on");
-  #else
-    puts("\n\nansi c is: off");
-  #endif
+#ifdef _CMATH_ANSI
+  puts("\n\nansi c is: on");
+#else
+  puts("\n\nansi c is: off");
+#endif
 
   /* */
-  puts("\n\nevaluate polynomials:\n");  
-  printf("* y[]: %.15f\n", (double)fx);  
+  puts("\n\nevaluate polynomials:\n");
+  printf("* y[]: %.15f\n", (double)fx);
   printf("* cy[]: %.15f \t %.15f*i\n", (double)fcx.r, (double)fcx.i);
 
   /* */
   puts("\nfind roots:");
-  puts("\n* dk_coeff[]:");  
+  puts("\n* dk_coeff[]:");
   i = 0;
   while (i < poly_order(dk_coeff))
   {
     printf("root[%2d]: %.15f \t % .15f*i\n",
-      i+1, (double)dk_roots[i].r, (double)dk_roots[i].i);
+           i+1, (double)dk_roots[i].r, (double)dk_roots[i].i);
     i++;
-  }  
+  }
   i = 0;
   puts("\n* dk_coeff_c[]:");
   while (i < poly_order(dk_coeff_c))
   {
     printf("root[%2d]: %.15f \t % .15f*i\n",
-      i+1, (double)dk_roots_c[i].r, (double)dk_roots_c[i].i);
+           i+1, (double)dk_roots_c[i].r, (double)dk_roots_c[i].i);
     i++;
   }
 

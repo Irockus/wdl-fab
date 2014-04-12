@@ -14,33 +14,33 @@ static EEL_F NSEEL_CGEN_CALL _eel_fopen(void *opaque, EEL_F *fn_index, EEL_F *mo
   return (EEL_F) EEL_FILE_OPEN(fn,mode);
 }
 static EEL_F NSEEL_CGEN_CALL _eel_fclose(void *opaque, EEL_F *fpp) { return EEL_FILE_CLOSE((int)*fpp); }
-static EEL_F NSEEL_CGEN_CALL _eel_fgetc(void *opaque, EEL_F *fpp) 
+static EEL_F NSEEL_CGEN_CALL _eel_fgetc(void *opaque, EEL_F *fpp)
 {
   FILE *fp = EEL_FILE_GETFP((int)*fpp);
   if (fp) return (EEL_F)fgetc(fp);
   return -1.0;
 }
 
-static EEL_F NSEEL_CGEN_CALL _eel_ftell(void *opaque, EEL_F *fpp) 
+static EEL_F NSEEL_CGEN_CALL _eel_ftell(void *opaque, EEL_F *fpp)
 {
   FILE *fp = EEL_FILE_GETFP((int)*fpp);
   if (fp) return (EEL_F)ftell(fp);
   return -1.0;
 }
-static EEL_F NSEEL_CGEN_CALL _eel_fflush(void *opaque, EEL_F *fpp) 
+static EEL_F NSEEL_CGEN_CALL _eel_fflush(void *opaque, EEL_F *fpp)
 {
   FILE *fp = EEL_FILE_GETFP((int)*fpp);
   if (fp) { fflush(fp); return 0.0; }
   return -1.0;
 }
 
-static EEL_F NSEEL_CGEN_CALL _eel_feof(void *opaque, EEL_F *fpp) 
+static EEL_F NSEEL_CGEN_CALL _eel_feof(void *opaque, EEL_F *fpp)
 {
   FILE *fp = EEL_FILE_GETFP((int)*fpp);
   if (fp) return feof(fp) ? 1.0 : 0.0;
   return -1.0;
 }
-static EEL_F NSEEL_CGEN_CALL _eel_fseek(void *opaque, EEL_F *fpp, EEL_F *wh, EEL_F *offset) 
+static EEL_F NSEEL_CGEN_CALL _eel_fseek(void *opaque, EEL_F *fpp, EEL_F *wh, EEL_F *offset)
 {
   FILE *fp = EEL_FILE_GETFP((int)*fpp);
   if (fp) return fseek(fp,*wh<0 ? SEEK_SET : *wh > 0 ? SEEK_END : SEEK_CUR, (int) *offset);

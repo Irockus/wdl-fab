@@ -9,20 +9,20 @@ LICE_pixel LICE_AlterColorHSV_int(LICE_pixel color, int dH, int dS, int dV)  // 
 {
   int h, s, v;
   LICE_RGB2HSV(LICE_GETR(color), LICE_GETG(color), LICE_GETB(color), &h, &s, &v);
-  
+
   h += dH;
   s += dS;
   v += dV;
 
   if (h < 0) h += 384;
   else if (h >= 384) h -= 384;
-  
-  if (s & ~255) 
+
+  if (s & ~255)
   {
     if (s<0) s = 0;
     else s = 255;
   }
-  
+
   if (v&~255)
   {
     if (v < 0) v = 0.;
@@ -49,23 +49,27 @@ void LICE_AlterRectHSV(LICE_IBitmap* src, int x, int y, int w, int h, float dH, 
 {
   if (!src) return;
 
-  if (x < 0) {
+  if (x < 0)
+  {
     w += x;
     x = 0;
   }
-  if (y < 0) {
+  if (y < 0)
+  {
     h += y;
     y = 0;
   }
-  if (x+w > src->getWidth()) {
+  if (x+w > src->getWidth())
+  {
     w = src->getWidth()-x;
   }
-  if (y+h > src->getHeight()) {
+  if (y+h > src->getHeight())
+  {
     h = src->getHeight()-y;
   }
 
   int span = src->getRowSpan();
-  LICE_pixel* px = src->getBits()+y*span+x;  
+  LICE_pixel* px = src->getBits()+y*span+x;
 
   int dHi = (int)(dH*384.0f);
   int dSi = (int)(dS*255.0f);
@@ -82,7 +86,7 @@ void LICE_AlterRectHSV(LICE_IBitmap* src, int x, int y, int w, int h, float dH, 
     unsigned char stab[256], vtab[256];
     short htab[384];
     int x;
-    for(x=0;x<256;x++)
+    for(x=0; x<256; x++)
     {
       int a=x+dSi;
       if(a<0)a=0; else if (a>255)a=255;
@@ -96,7 +100,7 @@ void LICE_AlterRectHSV(LICE_IBitmap* src, int x, int y, int w, int h, float dH, 
       if(a<0)a+=384; else if (a>=384)a-=384;
       htab[x]=a;
     }
-    for(;x<384;x++)
+    for(; x<384; x++)
     {
       int a=x+dHi;
       if(a<0)a+=384; else if (a>=384)a-=384;

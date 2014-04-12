@@ -1,8 +1,8 @@
 #include "digicode.h"
 
 #ifdef OS_WIN
- #undef _UNICODE
- #undef UNICODE
+#undef _UNICODE
+#undef UNICODE
 #endif
 
 #include "CEffectGroup.cpp"

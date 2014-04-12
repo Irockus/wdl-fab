@@ -2,47 +2,51 @@
 #define _IGRAPHICSMAC_
 
 #if defined(__APPLE__) && defined(__LP64__) && !defined(IPLUG_NO_CARBON_SUPPORT)
-  #define IPLUG_NO_CARBON_SUPPORT
+#define IPLUG_NO_CARBON_SUPPORT
 #endif
 
+#define STR_HELPER(x) #x
+#define STR(x) STR_HELPER(x)
 // carbon support uses quickdraw methods that have been removed in SDKs > 10.6
 #if __MAC_OS_X_VERSION_MAX_ALLOWED > 1060
-  #warning Carbon GUIs work best with the 10.6 sdk
+#pragma message ("sdk max ver allowed is " STR(__MAC_OS_X_VERSION_MAX_ALLOWED))
+#warning Carbon GUIs work best with the 10.6 sdk
 #endif
 
 #include "IGraphics.h"
 #include "../swell/swell.h"
 
 #ifdef VST3_API
-  #define _UINT32 // this is necessary to get VST3 to compile with the 10.6 SDK due to a conflict
+#define _UINT32 // this is necessary to get VST3 to compile with the 10.6 SDK due to a conflict
 #endif
 
 #include <Carbon/Carbon.h>
 
 #ifndef DEFAULT_PATH_OSX
-  #define DEFAULT_PATH_OSX "~/Desktop"
+#define DEFAULT_PATH_OSX "~/Desktop"
 #endif
 
 #ifndef IPLUG_NO_CARBON_SUPPORT
-  class IGraphicsCarbon;
+class IGraphicsCarbon;
 #endif
 
 #ifndef COCOA_PREFIX
-  #define COCOA_PREFIX vOliLarkin
+#define COCOA_PREFIX_AUTO(a) a##__COUNTER__
+#define COCOA_PREFIX COCOA_PREFIX_AUTO(CocoaPre)
 #endif
 
 #if defined(VST_API)
-  #define API _vst
+#define API _vst
 #elif defined(AU_API)
-  #define API _au
+#define API _au
 #elif defined(RTAS_API)
-  #define API _rtas
+#define API _rtas
 #elif defined(AAX_API)
-  #define API _aax
+#define API _aax
 #elif defined(VST3_API)
-  #define API _vst3
+#define API _vst3
 #elif defined(SA_API)
-  #define API _sa
+#define API _sa
 #endif
 
 #define CONCAT3(a,b,c) a##b##c
@@ -54,7 +58,7 @@
 #define IGRAPHICS_MENU_RCVR CONCAT(IGraphicsMenuRcvr_)
 #define CUSTOM_COCOA_WINDOW CONCAT(CustomCocoaWindow_)
 #define COCOA_FORMATTER CONCAT(CocoaFormatter_)
-
+/// Concrete IGraphics implementation for Mac OS X
 class IGraphicsMac : public IGraphics
 {
 public:
@@ -65,7 +69,7 @@ public:
 
   bool DrawScreen(IRECT* pR);
   bool MeasureIText(IText* pTxt, char* str, IRECT* pR);
-  
+
   void* OpenWindow(void* pWindow);
 #ifndef IPLUG_NO_CARBON_SUPPORT
   void* OpenWindow(void* pWindow, void* pControl, short leftOffset = 0, short topOffset = 0);
@@ -90,7 +94,7 @@ public:
   void ForceEndUserEdit();
 
   const char* GetGUIAPI();
-  
+
   void UpdateTooltips();
 
   void HostPath(WDL_String* pPath);
@@ -113,7 +117,7 @@ public:
 
 protected:
   virtual LICE_IBitmap* OSLoadBitmap(int ID, const char* name);
-  
+
 private:
 #ifndef IPLUG_NO_CARBON_SUPPORT
   IGraphicsCarbon* mGraphicsCarbon;
@@ -121,13 +125,13 @@ private:
   void* mGraphicsCocoa;   // Can't forward-declare IGraphicsCocoa because it's an obj-C object.
 
   WDL_String mBundleID;
-  
+
   friend int GetMouseOver(IGraphicsMac* pGraphics);
-  
+
 #ifndef IPLUG_NO_CARBON_SUPPORT
   friend class IGraphicsCarbon;
 #endif
-  
+
 public: //TODO: make this private
   void* mHostNSWindow;
 };
@@ -137,6 +141,7 @@ inline CFStringRef MakeCFString(const char* cStr)
   return CFStringCreateWithCString(0, cStr, kCFStringEncodingUTF8);
 }
 
+/// UTF8 char* to CFStringRef string converter structure
 struct CFStrLocal
 {
   CFStringRef mCFStr;
@@ -150,6 +155,7 @@ struct CFStrLocal
   }
 };
 
+/// CFStringRef to UTF8 char* string converter structure
 struct CStrLocal
 {
   char* mCStr;

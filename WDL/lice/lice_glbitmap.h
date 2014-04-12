@@ -14,7 +14,7 @@ public:
   int getWidth();
   int getHeight();
   int getRowSpan();
-  
+
   bool resize(int w, int h);
 
   virtual HDC getDC() = 0;  // re-virtualize this to prevent instantiating LICE_GLBitmap directly
@@ -25,7 +25,7 @@ private:
 
   bool Clear_accel(LICE_pixel* color);
   bool Line_accel(LICE_Ext_Line_acceldata* p);
-  bool FillRect_accel(LICE_Ext_FillRect_acceldata* p);  
+  bool FillRect_accel(LICE_Ext_FillRect_acceldata* p);
   bool DrawCBezier_accel(LICE_Ext_DrawCBezier_acceldata* p);
   bool DrawGlyph_accel(LICE_Ext_DrawGlyph_acceldata* p);
   bool Blit_accel(LICE_Ext_Blit_acceldata* p);
@@ -35,7 +35,7 @@ private:
   bool PutPixel_accel(LICE_Ext_PutPixel_acceldata* p);
   bool SetClip_ext(LICE_Ext_SetClip_data* p);
   bool DrawTriangle_accel(LICE_Ext_DrawTriangle_acceldata *p);
-  // etc 
+  // etc
 
   bool WindowBlit(LICE_Ext_WindowBlit_data* p);
 
@@ -96,7 +96,7 @@ public:
   int getWidth() { return m_w; }
   int getHeight() { return m_h; }
   int getRowSpan() { return (m_parent ? m_parent->getRowSpan() : 0); }
-  
+
   bool resize(int w, int h);
 
   HDC getDC() { return (m_parent ? m_parent->getDC() : 0); }

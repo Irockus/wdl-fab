@@ -5,13 +5,15 @@ win32CursesCtx g_curses_context; // we only need the one instance
 #endif
 
 #ifdef _WIN32
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+{
   g_curses_context.want_getch_runmsgpump = 1;  // non-block
 
   curses_registerChildClass(hInstance);
   curses_CreateWindow(hInstance,&g_curses_context,"Sample Test App");
 #else
-int main() {
+int main()
+{
 #endif
 
 
@@ -24,14 +26,14 @@ int main() {
   nodelay(stdscr,TRUE);
   raw();
 #if !defined(_WIN32) && !defined(MAC_NATIVE)
-	ESCDELAY=0; // dont wait--at least on the console this seems to work.
+  ESCDELAY=0; // dont wait--at least on the console this seems to work.
 #endif
 
   if (has_colors()) // we don't use color yet, but we could
   {
-	start_color();
-	init_pair(1, COLOR_WHITE, COLOR_BLUE); // normal status lines
-	init_pair(2, COLOR_BLACK, COLOR_CYAN); // value
+    start_color();
+    init_pair(1, COLOR_WHITE, COLOR_BLUE); // normal status lines
+    init_pair(2, COLOR_BLACK, COLOR_CYAN); // value
   }
 
   erase();
@@ -57,10 +59,10 @@ int main() {
 
     Sleep(10);
 #ifdef _WIN32
-	if (!g_curses_context.m_hwnd) break;
+    if (!g_curses_context.m_hwnd) break;
 #endif
   }
-  
+
 
   erase();
   refresh();

@@ -8,7 +8,7 @@ LICE_GLBitmap::LICE_GLBitmap()
   m_bmp = 0;
   m_fbo = 0;
   m_tex = 0;
-  m_bufloc = EMPTY;  
+  m_bufloc = EMPTY;
 }
 
 // This is separate from the constructor for initialization order reasons
@@ -21,7 +21,7 @@ void LICE_GLBitmap::Init(LICE_IBitmap* bmp, int w, int h)
 bool LICE_GLBitmap::CreateFBO(int w, int h)
 {
   if (LICE_GL_IsValid())
-  {   
+  {
     if (m_fbo) ReleaseFBO();
     glGenFramebuffersEXT(1, &m_fbo);  // create a new empty FBO
     if (m_fbo)
@@ -39,20 +39,20 @@ bool LICE_GLBitmap::CreateFBO(int w, int h)
       }
       glDisable(GL_TEXTURE_RECTANGLE_ARB);  // done texturing
     }
-  
+
     return BindFBO();  // this tests the FBO for validity
-  } 
+  }
   return false;
 }
 
 LICE_GL_SysBitmap::LICE_GL_SysBitmap(int w, int h)
-: m_sysbmp(w, h)
+  : m_sysbmp(w, h)
 {
   Init(&m_sysbmp, w, h);
 }
 
 LICE_GL_MemBitmap::LICE_GL_MemBitmap(int w, int h)
-: m_membmp(w, h)
+  : m_membmp(w, h)
 {
   Init(&m_membmp, w, h);
 }
@@ -62,7 +62,7 @@ HDC LICE_GL_SysBitmap::getDC()
   // no known way to get a DC directly from an offscreen openGL render context, sadly
   FramebufferFromGPU();
   OutputDebugString("GL to screen");
-  return m_sysbmp.getDC();  
+  return m_sysbmp.getDC();
 }
 
 
@@ -74,7 +74,7 @@ LICE_GL_SubBitmap::LICE_GL_SubBitmap(LICE_IBitmap *parent, int x, int y, int w, 
   m_w = w;
   m_h = h;
 }
-  
+
 LICE_pixel* LICE_GL_SubBitmap::getBits()
 {
   if (!m_parent) return 0;
@@ -85,7 +85,7 @@ bool LICE_GL_SubBitmap::resize(int w, int h)
 {
   if (w == m_w && h == m_h) return false;
   m_w = w;
-  m_h = h; 
+  m_h = h;
   return true;
 }
 
@@ -165,14 +165,14 @@ bool LICE_GLBitmap::resize(int w, int h)
   int oldh = getHeight();
   if (w == oldw && h == oldh) return false;
 
-  if (oldw == 0 && oldh == 0 && w > 0 && h > 0) 
+  if (oldw == 0 && oldh == 0 && w > 0 && h > 0)
   {
     m_bmp->resize(w, h);
     CreateFBO(w, h);
     return true;
   }
-    
-  if (!m_fbo || !m_tex) return m_bmp->resize(w, h);  
+
+  if (!m_fbo || !m_tex) return m_bmp->resize(w, h);
 
   OutputDebugString("GL resizing");
 
@@ -190,7 +190,7 @@ bool LICE_GLBitmap::resize(int w, int h)
   glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);  // size the texture
   glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_RECTANGLE_ARB, m_tex, 0);  // attach the texture as the backing store for the FBO
   glDisable(GL_TEXTURE_RECTANGLE_ARB);  // done texturing
-    
+
   if (!BindFBO()) return m_bmp->resize(w, h); // this tests the FBO for validity
 
   static LICE_MemBitmap tmpbmp;
@@ -200,7 +200,7 @@ bool LICE_GLBitmap::resize(int w, int h)
   LICE_Copy(m_bmp, &tmpbmp);
 
   if (oldloc == EMPTY) m_bufloc = EMPTY;  // else bufloc remains INMEM
-  
+
   return true;
 }
 
@@ -226,7 +226,7 @@ bool LICE_GLBitmap::BindFBO()
       LICE_GL_CloseCtx(); // if we fail once we're done with GL
     }
   }
-  return valid; 
+  return valid;
 }
 
 void LICE_GLBitmap::ReleaseFBO()
@@ -247,21 +247,21 @@ bool LICE_GLBitmap::FramebufferToGPU()
 {
   if (BindFBO())
   {
-    if (m_bufloc == INMEM) 
+    if (m_bufloc == INMEM)
     {
       OutputDebugString("GL to GPU");
       glDisable(GL_BLEND);
       glRasterPos2i(0, 0);
       glDrawPixels(getWidth(), getHeight(), GL_RGBA, GL_UNSIGNED_BYTE, m_bmp->getBits());
     }
-    m_bufloc = INGPU;      
+    m_bufloc = INGPU;
   }
   return (m_bufloc == INGPU);
 }
 
 void LICE_GLBitmap::FramebufferFromGPU()
 {
-  if (m_bufloc == INGPU && BindFBO()) 
+  if (m_bufloc == INGPU && BindFBO())
   {
     OutputDebugString("GL to mem");
     glFinish();
@@ -305,7 +305,7 @@ INT_PTR LICE_GLBitmap::Extended(int id, void* data)
   if (id == LICE_EXT_PUTPIXEL_ACCEL) return PutPixel_accel((LICE_Ext_PutPixel_acceldata*)data);
   if (id == LICE_EXT_SETCLIP) return SetClip_ext((LICE_Ext_SetClip_data*)data);
   if (id == LICE_EXT_DRAWTRIANGLE_ACCEL) return DrawTriangle_accel((LICE_Ext_DrawTriangle_acceldata*)data);
-  if (id == LICE_EXT_WINDOW_BLIT) return WindowBlit((LICE_Ext_WindowBlit_data*)data);  
+  if (id == LICE_EXT_WINDOW_BLIT) return WindowBlit((LICE_Ext_WindowBlit_data*)data);
 
   if (id == LICE_EXT_FORGET)
   {
@@ -313,14 +313,14 @@ INT_PTR LICE_GLBitmap::Extended(int id, void* data)
     return 1;
   }
 
-  if (id == LICE_EXT_GETFBOTEX_ACCEL) 
+  if (id == LICE_EXT_GETFBOTEX_ACCEL)
   {
-    if (FramebufferToGPU()) return m_tex;  
+    if (FramebufferToGPU()) return m_tex;
     return 0;
   }
 
   return 0;
-}  
+}
 
 static void SetGLAliasing(bool aa)
 {
@@ -436,17 +436,17 @@ bool LICE_GLBitmap::DrawCBezier_accel(LICE_Ext_DrawCBezier_acceldata* p)
   GLUnurbsObj* nurbs = LICE_GL_GetNurbsObj();
   if (!nurbs) return false;
 
-p->color = LICE_RGBA(255,255,255,255);  // temp for easy ID of GL rendering
+  p->color = LICE_RGBA(255,255,255,255);  // temp for easy ID of GL rendering
 
   SetGLColor(p->color, p->alpha, p->mode);
   SetGLAliasing(p->aa);
 
-  float ctlpts[] = 
+  float ctlpts[] =
   {
-    p->xstart, p->ystart, 0.0f, 
+    p->xstart, p->ystart, 0.0f,
     p->xctl1, p->yctl1, 0.0f,
     p->xctl2, p->yctl2, 0.0f,
-    p->xend, p->yend, 0.0f 
+    p->xend, p->yend, 0.0f
   };
   float knots[] = { 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f };
 
@@ -466,7 +466,7 @@ bool LICE_GLBitmap::DrawGlyph_accel(LICE_Ext_DrawGlyph_acceldata* p)
 
   int texID = LICE_GL_GetTexFromGlyph(p->alphas, p->glyph_w, p->glyph_h);
   if (!texID) return false;
-  
+
   SetGLColor(p->color, p->alpha, p->mode);
 
   glBindTexture(GL_TEXTURE_RECTANGLE_ARB, texID);
@@ -502,7 +502,7 @@ bool LICE_GLBitmap::Blit_accel(LICE_Ext_Blit_acceldata* p)
     if (!BindFBO()) return false; // re-bind dest FBO
 
     glEnable(GL_TEXTURE_RECTANGLE_ARB);
-    
+
     glBindTexture(GL_TEXTURE_RECTANGLE_ARB, src_tex);
     glBegin(GL_POLYGON);
 
@@ -521,7 +521,7 @@ bool LICE_GLBitmap::Blit_accel(LICE_Ext_Blit_acceldata* p)
 
     return true;
   }
-    
+
   int srcspan = p->src->getRowSpan();
   if (p->srcx == 0 && p->srcy == 0 && p->srcw == srcspan)
   {
@@ -560,7 +560,7 @@ bool LICE_GLBitmap::ScaledBlit_accel(LICE_Ext_ScaledBlit_acceldata* p)
   else
   {
     // create texture from src bits
-    glGenTextures(1, &src_tex); 
+    glGenTextures(1, &src_tex);
     glBindTexture(GL_TEXTURE_RECTANGLE_ARB, src_tex);
 
     int srcspan = p->src->getRowSpan();
@@ -581,7 +581,7 @@ bool LICE_GLBitmap::ScaledBlit_accel(LICE_Ext_ScaledBlit_acceldata* p)
   }
 
   if (!src_tex) return false;
-  
+
   glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // filter
   glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
@@ -647,7 +647,7 @@ bool LICE_GLBitmap::DrawTriangle_accel(LICE_Ext_DrawTriangle_acceldata *p)
   glBegin(GL_TRIANGLES);
 
   int x;
-  for(x=0;x<3;x++)
+  for(x=0; x<3; x++)
   {
     glVertex2i(p->scrx[x], p->scry[x]);
   }
@@ -673,16 +673,16 @@ bool LICE_GLBitmap::WindowBlit(LICE_Ext_WindowBlit_data* p)
 
   glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 
-/*
-  glViewport(0, 0, w, h);
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  gluOrtho2D(0.0, w, 0.0, h);
-*/
+  /*
+    glViewport(0, 0, w, h);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(0.0, w, 0.0, h);
+  */
   glEnable(GL_TEXTURE_RECTANGLE_ARB);
   glBindTexture(GL_TEXTURE_RECTANGLE_ARB, m_tex);
 
-  glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER, GL_NEAREST); 
+  glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
   // the src image is upside down

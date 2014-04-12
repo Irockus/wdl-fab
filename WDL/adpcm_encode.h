@@ -14,17 +14,18 @@ void WDL_adpcm_encode_IMA(PCMFMTCVT_DBL_TYPE *samples, int numsamples, int nch, 
 #ifdef WDL_ADPCM_ENCODE_IMPL
 
 
-static signed char ima_adpcm_index_table[8] = { -1, -1, -1, -1, 2, 4, 6, 8, }; 
-static short ima_adpcm_step_table[89] = { 
-  7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 
-  19, 21, 23, 25, 28, 31, 34, 37, 41, 45, 
-  50, 55, 60, 66, 73, 80, 88, 97, 107, 118, 
+static signed char ima_adpcm_index_table[8] = { -1, -1, -1, -1, 2, 4, 6, 8, };
+static short ima_adpcm_step_table[89] =
+{
+  7, 8, 9, 10, 11, 12, 13, 14, 16, 17,
+  19, 21, 23, 25, 28, 31, 34, 37, 41, 45,
+  50, 55, 60, 66, 73, 80, 88, 97, 107, 118,
   130, 143, 157, 173, 190, 209, 230, 253, 279, 307,
   337, 371, 408, 449, 494, 544, 598, 658, 724, 796,
-  876, 963, 1060, 1166, 1282, 1411, 1552, 1707, 1878, 2066, 
+  876, 963, 1060, 1166, 1282, 1411, 1552, 1707, 1878, 2066,
   2272, 2499, 2749, 3024, 3327, 3660, 4026, 4428, 4871, 5358,
-  5894, 6484, 7132, 7845, 8630, 9493, 10442, 11487, 12635, 13899, 
-  15289, 16818, 18500, 20350, 22385, 24623, 27086, 29794, 32767 
+  5894, 6484, 7132, 7845, 8630, 9493, 10442, 11487, 12635, 13899,
+  15289, 16818, 18500, 20350, 22385, 24623, 27086, 29794, 32767
 };
 
 static char calcBestNibble(int *initial_step_index, int lastSpl, int thisSpl, short *lastsplout, int bps)
@@ -66,7 +67,7 @@ void WDL_adpcm_encode_IMA(PCMFMTCVT_DBL_TYPE *samples, int numsamples, int nch, 
   if (!*predState) *predState=(short *)calloc(nch,sizeof(short));
 
   short *pstate = *predState;
-  for(x=0;x<nch;x++)
+  for(x=0; x<nch; x++)
   {
     int left=numsamples;
     PCMFMTCVT_DBL_TYPE *spl = samples+x;
@@ -85,11 +86,11 @@ void WDL_adpcm_encode_IMA(PCMFMTCVT_DBL_TYPE *samples, int numsamples, int nch, 
 
     wrptr += (nch-1)*4;
 
-    
+
     int outpos=0;
     const int outblocklen = bps == 2 ? 16 : 8;
     unsigned char buildchar=0;
-    
+
     while (left-->0)
     {
       short this_spl;
@@ -108,23 +109,23 @@ void WDL_adpcm_encode_IMA(PCMFMTCVT_DBL_TYPE *samples, int numsamples, int nch, 
           case 1: buildchar |= nib<<2; break;
           case 2: buildchar |= nib<<4; break;
           case 3: *wrptr++ = buildchar | (nib<<6);  break;
-        }        
+        }
       }
       else
       {
         if (!(outpos&1)) buildchar = nib;
-        else *wrptr++ = buildchar | (nib<<4); 
+        else *wrptr++ = buildchar | (nib<<4);
       }
 
       // skip other channels
-      if (++outpos == outblocklen) 
+      if (++outpos == outblocklen)
       {
         wrptr += ((nch-1)*outblocklen*bps)/8;
         outpos=0;
       }
     }
     pstate[x] = step_index;
-  
+
   }
   *bufout_used = (((numsamples-1)*bps)/8 + 4)*nch;
 

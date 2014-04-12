@@ -1,7 +1,7 @@
 #include "IPlugSideChain.h"
+#include "resource.h"
 #include "IPlug_include_in_plug_src.h"
 #include "IControl.h"
-#include "resource.h"
 
 const int kNumPrograms = 1;
 
@@ -61,7 +61,7 @@ IPlugSideChain::IPlugSideChain(IPlugInstanceInfo instanceInfo)
   pGraphics->AttachPanelBackground(&COLOR_RED);
   IBitmap knob = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, kKnobFrames);
   IText text = IText(14);
-  pGraphics->AttachControl(new IKnobMultiControlText(this, IRECT(kGainX, kGainY, kGainX + 48, kGainY + 48 + 20), kGain, &knob, &text));
+  pGraphics->AttachControl(new IKnobMultiControlText(this, kGainX, kGainY, kGain, &knob, &text));
 
   mMeterIdx_L = pGraphics->AttachControl(new IPeakMeterVert(this, MakeIRect(kMeterL)));
   mMeterIdx_R = pGraphics->AttachControl(new IPeakMeterVert(this, MakeIRect(kMeterR)));

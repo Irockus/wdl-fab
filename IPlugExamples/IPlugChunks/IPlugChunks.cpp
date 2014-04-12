@@ -1,7 +1,7 @@
+#include "resource.h"
 #include "IPlugChunks.h"
 #include "IPlug_include_in_plug_src.h"
 #include "IControl.h"
-#include "resource.h"
 #include <math.h>
 
 // The number of presets/programs
@@ -120,7 +120,7 @@ IPlugChunks::IPlugChunks(IPlugInstanceInfo instanceInfo)
   : IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), mGain(1.)
 {
   TRACE;
-  
+
   memset(mSteps, 0, NUM_SLIDERS*sizeof(double));
 
   // Define parameter ranges, display units, labels.
@@ -148,7 +148,7 @@ IPlugChunks::IPlugChunks(IPlugInstanceInfo instanceInfo)
   pGraphics->AttachControl(new PresetFunctionsMenu(this, IRECT(350, 250, 390, 290)));
 
   AttachGraphics(pGraphics);
-  
+
   // call RestorePreset(0) here which will initialize the multislider in the gui and the mSteps array
   RestorePreset(0);
 }
@@ -274,7 +274,7 @@ bool IPlugChunks::CompareState(const unsigned char* incomingState, int startPos)
   startPos = NUM_SLIDERS * sizeof(double);
   isEqual = (memcmp(data, mSteps, startPos) == 0);
   isEqual &= IPlugBase::CompareState(incomingState, startPos); // fuzzy compare regular params
-  
+
   return isEqual;
 }
 

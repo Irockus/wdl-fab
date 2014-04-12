@@ -82,7 +82,7 @@ void IPlugProcess::EffectInit()
         case IParam::kTypeBool:
         {
           std::vector<std::string> displayTexts;
-          
+
           for (int j=0; j<p->GetNDisplayTexts(); j++)
           {
             displayTexts.push_back(p->GetDisplayTextAtIdx(j));
@@ -200,9 +200,9 @@ void IPlugProcess::SetViewPort (GrafPtr aPort)
     if(mCustomUI)
     {
       void *windowPtr = NULL;
-      #if WINDOWS_VERSION
+#if WINDOWS_VERSION
       windowPtr = (void*)ASI_GethWnd((WindowPtr)mMainPort);
-      #elif MAC_VERSION
+#elif MAC_VERSION
       windowPtr = (void*)GetWindowFromPort(mMainPort); // WindowRef for Carbon, not GrafPtr (quickdraw)
 
       Rect portBounds;
@@ -212,12 +212,12 @@ void IPlugProcess::SetViewPort (GrafPtr aPort)
         mLeftOffset = -portBounds.left;
         mTopOffset = -portBounds.top;
       }
-      #endif
+#endif
       mCustomUI->Open(windowPtr, mLeftOffset, mTopOffset);
-      
-      #if WINDOWS_VERSION
+
+#if WINDOWS_VERSION
       mCustomUI->Draw(mPluginWinRect.left, mPluginWinRect.top, mPluginWinRect.right, mPluginWinRect.bottom);
-      #endif
+#endif
     }
   }
   else
@@ -237,7 +237,7 @@ void IPlugProcess::UpdateControlValueInAlgorithm (long idx)
 
   if (!IsValidControlIndex(idx)) return;
   if (idx == mMasterBypassIndex)  return;
-  
+
   mPlug->SetParameter(idx);
 }
 
@@ -311,22 +311,22 @@ void IPlugProcess::DisconnectSidechain(void)
 
 ComponentResult IPlugProcess::GetIndexedChunkID(long index, OSType *chunkID)
 {
-  if (index == 1) 
+  if (index == 1)
   {
     *chunkID = mPluginID;
   }
-  else 
+  else
   {
     return kChunkRangeErr;
   }
 
-	return noErr;
+  return noErr;
 }
 
 ComponentResult IPlugProcess::GetNumChunks(long *numChunks)
 {
-	*numChunks = 1;
-	return noErr;
+  *numChunks = 1;
+  return noErr;
 }
 
 ComponentResult IPlugProcess::GetChunkSize(OSType chunkID, long *size)
@@ -343,7 +343,7 @@ ComponentResult IPlugProcess::GetChunkSize(OSType chunkID, long *size)
       return noErr;
     }
   }
-  
+
   return kChunkRangeErr;
 }
 
@@ -358,12 +358,12 @@ ComponentResult IPlugProcess::SetChunk(OSType chunkID, SFicPlugInChunk *chunk)
     ByteChunk IPlugChunk;
     IPlugChunk.PutBytes(chunk->fData, dataSize);
     mPlug->UnserializeState(&IPlugChunk, 0);
-    
+
     for (int i = 0; i< mPlug->NParams(); i++)
     {
       IParam *p = mPlug->GetParam(i);
       int idx = i+kPTParamIdxOffset;
-      
+
       switch (p->Type())
       {
         case IParam::kTypeDouble:
@@ -384,9 +384,9 @@ ComponentResult IPlugProcess::SetChunk(OSType chunkID, SFicPlugInChunk *chunk)
           break;
       }
     }
-    
+
     fNumPlugInChanges++;
-    
+
     return noErr;
   }
 
@@ -400,7 +400,7 @@ ComponentResult IPlugProcess::GetChunk(OSType chunkID, SFicPlugInChunk *chunk)
   if (chunkID == mPluginID)
   {
     ByteChunk IPlugChunk;
-    
+
     if (mPlug->SerializeState(&IPlugChunk))
     {
       chunk->fSize = IPlugChunk.Size() + sizeof(SFicPlugInChunkHeader);
@@ -416,13 +416,13 @@ ComponentResult IPlugProcess::CompareActiveChunk(SFicPlugInChunk *chunk, Boolean
 {
   TRACE;
 
-	if (chunk->fChunkID != mPluginID)
+  if (chunk->fChunkID != mPluginID)
   {
     return kChunkRangeErr;
-	}
-  
-	*isEqual = mPlug->CompareState((const unsigned char*) chunk->fData, 0);
-  
+  }
+
+  *isEqual = mPlug->CompareState((const unsigned char*) chunk->fData, 0);
+
   return noErr;
 }
 

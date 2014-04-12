@@ -38,7 +38,7 @@
 
 typedef float pl_ZBuffer;              /* z-buffer type (must be float) */
 typedef double pl_Float;               /* General floating point */
-typedef float pl_IEEEFloat32;          /* IEEE 32 bit floating point */ 
+typedef float pl_IEEEFloat32;          /* IEEE 32 bit floating point */
 typedef signed int pl_sInt32;          /* signed 32 bit integer */
 typedef unsigned int pl_uInt32;        /* unsigned 32 bit integer */
 typedef signed short int pl_sInt16;    /* signed 16 bit integer */
@@ -85,7 +85,7 @@ public:
     Diffuse[0]=Diffuse[1]=Diffuse[2]=1.0;
     SolidOpacity=1.0;
     SolidCombineMode= LICE_BLIT_MODE_COPY;
-    
+
     Texture=NULL;
     TexCombineMode = LICE_BLIT_MODE_ADD; //LICE_BLIT_USE_SOURCE_ALPHA?
     TexOpacity=1.0;
@@ -124,7 +124,7 @@ public:
   pl_Float FadeDist WDL_FIXALIGN;            /* For distance fading, distance at which intensity is 0. set to 0.0 for no distance shading */
 
   pl_Bool BackfaceCull;               /* Are backfacing polys drawn? */
-  pl_Float BackfaceIllumination WDL_FIXALIGN;       /* Illuminated by lights behind them, and by how much of a factor? */ 
+  pl_Float BackfaceIllumination WDL_FIXALIGN;       /* Illuminated by lights behind them, and by how much of a factor? */
 
   // colors
   pl_Float Ambient[3];          /* RGB of surface (0-1 is a good range) */
@@ -139,10 +139,10 @@ public:
   int TexCombineMode;           /* Texture combine mode (generally should be additive) */
   int TexMapIdx; // -1 for env
 
-  LICE_IBitmap *Texture2;     
-  pl_Float Tex2Scaling[2] WDL_FIXALIGN;         
+  LICE_IBitmap *Texture2;
+  pl_Float Tex2Scaling[2] WDL_FIXALIGN;
   pl_Float Tex2Opacity;
-  int Tex2CombineMode;             
+  int Tex2CombineMode;
   int Tex2MapIdx; // -1 for env
 
 
@@ -155,22 +155,24 @@ private:
 } WDL_FIXALIGN;
 
 
-class pl_Vertex {
+class pl_Vertex
+{
 public:
   pl_Vertex() { }
   ~pl_Vertex () { }
 
   pl_Float x, y, z;              /* Vertex coordinate (objectspace) */
   pl_Float nx, ny, nz;           /* Unit vertex normal (objectspace) */
-  
+
   pl_Float xformedx, xformedy, xformedz;   /* Transformed vertex  coordinate (cameraspace) */
   pl_Float xformednx, xformedny, xformednz;  /* Transformed unit vertex normal  (cameraspace) */
 };
 
-class pl_Face {
+class pl_Face
+{
 public:
   pl_Face()
-  {    
+  {
   }
   ~pl_Face()
   {
@@ -183,7 +185,7 @@ public:
   pl_Float ny;
   pl_Float nz;         /* Normal of triangle (object space) */
 
-  pl_Float MappingU[PLUSH_MAX_MAPCOORDS][3], MappingV[PLUSH_MAX_MAPCOORDS][3];  /* Texture mapping coordinates */ 
+  pl_Float MappingU[PLUSH_MAX_MAPCOORDS][3], MappingV[PLUSH_MAX_MAPCOORDS][3];  /* Texture mapping coordinates */
 
   pl_Float sLighting[3];          /* Face static lighting. Should usually be 0.0 */
   pl_Float vsLighting[3][3];      /* Vertex static lighting. Should usually be 0.0 */
@@ -197,9 +199,10 @@ public:
 };
 
 
-class pl_Obj {
+class pl_Obj
+{
 public:
-  pl_Obj(int nv=0, int nf=0) 
+  pl_Obj(int nv=0, int nf=0)
   {
     if (nv) memset(Vertices.Resize(nv),0,nv*sizeof(pl_Vertex));
     if (nf) memset(Faces.Resize(nf),0,nf*sizeof(pl_Face));
@@ -222,19 +225,20 @@ public:
   WDL_TypedBuf<pl_Vertex> Vertices;
   WDL_TypedBuf<pl_Face> Faces;
   WDL_PtrList<pl_Obj> Children;
-                                      /* Children */
+  /* Children */
   pl_Bool GenMatrix;                  /* Generate Matrix from the following
                                          if set */
   pl_Float Xp WDL_FIXALIGN;
   pl_Float Yp, Zp, Xa, Ya, Za;    /* Position and rotation of object:
-                                         Note: rotations are around 
+                                         Note: rotations are around
                                          X then Y then Z. Measured in degrees */
   pl_Float Matrix[16];                /* Transformation matrix */
   pl_Float RotMatrix[16];             /* Rotation only matrix (for normals) */
 };
 
 
-class pl_Spline {
+class pl_Spline
+{
 public:
   pl_Spline() { cont=1.0; bias=0.3; tens=0.3; keyWidth=1; }
   ~pl_Spline () { }
@@ -248,19 +252,20 @@ public:
 };
 
 
-class pl_Light {
+class pl_Light
+{
 public:
   pl_Light() { Type = PL_LIGHT_VECTOR; Xp=Yp=0.0; Zp=1.0; Intensity[0]=Intensity[1]=Intensity[2]=1.0; }
   ~pl_Light() { }
 
-/*
-  Set() sets up a light:
-    mode: the mode of the light (PL_LIGHT_*)
-    x,y,z: either the position of the light (PL_LIGHT_POINT*) or the angle
-           in degrees of the light (PL_LIGHT_VECTOR)
-    intensity: the intensity of the light (0.0-1.0)
-    halfDist: the distance at which PL_LIGHT_POINT_DISTANCE is 1/2 intensity
-*/
+  /*
+    Set() sets up a light:
+      mode: the mode of the light (PL_LIGHT_*)
+      x,y,z: either the position of the light (PL_LIGHT_POINT*) or the angle
+             in degrees of the light (PL_LIGHT_VECTOR)
+      intensity: the intensity of the light (0.0-1.0)
+      halfDist: the distance at which PL_LIGHT_POINT_DISTANCE is 1/2 intensity
+  */
   void Set(pl_uChar mode, pl_Float x, pl_Float y, pl_Float z, pl_Float intensity_r, pl_Float intensity_g, pl_Float intensity_b, pl_Float halfDist);
 
 
@@ -272,14 +277,15 @@ public:
                                   otherwise if PL_LIGHT_VECTOR,
                                   Unit vector */
   pl_Float Intensity[3];           /* Intensity. 0.0 is off, 1.0 is full */
-  pl_Float HalfDistSquared;     /* Distance squared at which 
+  pl_Float HalfDistSquared;     /* Distance squared at which
                                    PL_LIGHT_POINT_DISTANCE is 50% */
 };
 
 
-class pl_Cam {
+class pl_Cam
+{
 public:
-  pl_Cam() 
+  pl_Cam()
   {
     frameBuffer=0;
     Fov=90.0;
@@ -296,7 +302,7 @@ public:
   }
 
 
-  void SetTarget(pl_Float x, pl_Float y, pl_Float z); 
+  void SetTarget(pl_Float x, pl_Float y, pl_Float z);
 
 
   pl_Float Fov;                  /* FOV in degrees valid range is 1-179 */
@@ -308,7 +314,7 @@ public:
   pl_Float Y, Z;              /* Camera position in worldspace */
 
   pl_Float Pitch, Pan, Roll;     /* Camera angle in degrees in worldspace */
-  
+
   bool WantZBuffer;
 
   void Begin(LICE_IBitmap *fb, bool want_zbclear=true, pl_ZBuffer zbclear=0.0);
@@ -332,13 +338,13 @@ public:
 private:
   LICE_IBitmap *frameBuffer;         /* Framebuffer  - note this is owned by the camera if you set it */
 
-    // internal use
+  // internal use
   void ClipRenderFace(pl_Face *face, pl_Obj *obj);
   int ClipNeeded(pl_Face *face, pl_Obj *obj); // 0=no draw, 1=drawing (possibly splitting) necessary
-  void RecalcFrustum(); 
+  void RecalcFrustum();
 
 
-  #define PL_NUM_CLIP_PLANES 5
+#define PL_NUM_CLIP_PLANES 5
 
   struct _clipInfo
   {
@@ -352,17 +358,19 @@ private:
   pl_Float  m_clipPlanes[PL_NUM_CLIP_PLANES][4];
   pl_Float  m_fovfactor, m_adj_asp; // recalculated
 
-   /* Returns: 0 if nothing gets in,  1 or 2 if pout1 & pout2 get in */
+  /* Returns: 0 if nothing gets in,  1 or 2 if pout1 & pout2 get in */
   pl_uInt _ClipToPlane(pl_uInt numVerts, pl_Float  *plane);
 
 
-  struct _faceInfo {
+  struct _faceInfo
+  {
     pl_Float zd;
     pl_Face *face;
     pl_Obj *obj;
   } WDL_FIXALIGN;
 
-  struct _lightInfo {
+  struct _lightInfo
+  {
     pl_Float l[3];
     pl_Light *light;
   } WDL_FIXALIGN;
@@ -391,7 +399,7 @@ private:
 ** Object Primitives Code (pl_make.cpp)
 ******************************************************************************/
 
-/* 
+/*
   plMakePlane() makes a plane centered at the origin facing up the y axis.
   Parameters:
     w: width of the plane (along the x axis)
@@ -414,7 +422,7 @@ pl_Obj *plMakePlane(pl_Float w, pl_Float d, pl_uInt res, pl_Mat *m);
 */
 pl_Obj *plMakeBox(pl_Float w, pl_Float d, pl_Float h, pl_Mat *m);
 
-/* 
+/*
   plMakeCone() makes a cone centered at the origin
   Parameters:
     r: radius of the cone (x-z axis)
@@ -439,7 +447,7 @@ pl_Obj *plMakeCone(pl_Float r, pl_Float h, pl_uInt div, pl_Bool cap, pl_Mat *m);
   Returns:
     pointer to object created.
 */
-pl_Obj *plMakeCylinder(pl_Float r, pl_Float h, pl_uInt divr, pl_Bool captop, 
+pl_Obj *plMakeCylinder(pl_Float r, pl_Float h, pl_uInt divr, pl_Bool captop,
                        pl_Bool capbottom, pl_Mat *m);
 
 /*
@@ -465,7 +473,7 @@ pl_Obj *plMakeSphere(pl_Float r, pl_uInt divr, pl_uInt divh, pl_Mat *m);
   Returns:
     pointer to object created.
 */
-pl_Obj *plMakeTorus(pl_Float r1, pl_Float r2, pl_uInt divrot, 
+pl_Obj *plMakeTorus(pl_Float r1, pl_Float r2, pl_uInt divrot,
                     pl_uInt divrad, pl_Mat *m);
 
 
@@ -473,7 +481,7 @@ pl_Obj *plMakeTorus(pl_Float r1, pl_Float r2, pl_uInt divrot,
 ** File Readers (pl_read_*.cpp)
 ******************************************************************************/
 
-/* 
+/*
   plRead3DSObj() reads a 3DS object
   Parameters:
     fn: filename of object to read
@@ -531,7 +539,7 @@ pl_Obj *plReadJAWObj(char *fn, pl_Mat *m);
     matrix: an array of 16 pl_Floats that is a 4x4 matrix
     m: the axis to rotate around, 1=X, 2=Y, 3=Z.
     Deg: the angle in degrees to rotate
-  Returns: 
+  Returns:
     nothing
 */
 void plMatrixRotate(pl_Float matrix[], pl_uChar m, pl_Float Deg);
@@ -546,14 +554,14 @@ void plMatrixRotate(pl_Float matrix[], pl_uChar m, pl_Float Deg);
 */
 void plMatrixTranslate(pl_Float m[], pl_Float x, pl_Float y, pl_Float z);
 
-/* 
+/*
   plMatrixMultiply() multiplies two matrices
   Parameters:
     dest: destination matrix will be multipled by src
     src: source matrix
   Returns:
     nothing
-  Notes: 
+  Notes:
     this is the same as dest = dest*src (since the order *does* matter);
 */
 void plMatrixMultiply(pl_Float *dest, pl_Float src[]);
@@ -566,10 +574,10 @@ void plMatrixMultiply(pl_Float *dest, pl_Float src[]);
     outx,outy,outz: pointers to output coords.
   Returns:
     nothing
-  Notes: 
+  Notes:
     applies the matrix to the 3d point to produce the transformed 3d point
 */
-void plMatrixApply(pl_Float *m, pl_Float x, pl_Float y, pl_Float z, 
+void plMatrixApply(pl_Float *m, pl_Float x, pl_Float y, pl_Float z,
                    pl_Float *outx, pl_Float *outy, pl_Float *outz);
 
 /*

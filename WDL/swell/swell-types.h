@@ -16,7 +16,7 @@
     2. Altered source versions must be plainly marked as such, and must not be
        misrepresented as being the original software.
     3. This notice may not be removed or altered from any source distribution.
-  
+
 
     SWELL provides _EXTREMELY BASIC_ win32 wrapping for OS X and maybe other platforms.
 
@@ -54,7 +54,7 @@ typedef uintptr_t UINT_PTR, *PUINT_PTR, ULONG_PTR, *PULONG_PTR, DWORD_PTR, *PDWO
 #endif
 
 
-// the byte ordering of RGB() etc is different than on win32 
+// the byte ordering of RGB() etc is different than on win32
 #define RGB(r,g,b) (((r)<<16)|((g)<<8)|(b))
 #define GetRValue(x) (((x)>>16)&0xff)
 #define GetGValue(x) (((x)>>8)&0xff)
@@ -96,7 +96,7 @@ typedef uintptr_t UINT_PTR, *PUINT_PTR, ULONG_PTR, *PULONG_PTR, DWORD_PTR, *PDWO
 #define CallWindowProc(A,B,C,D,E) ((WNDPROC)A)(B,C,D,E)
 #define OffsetRect WinOffsetRect  //to avoid OSX's OffsetRect function
 #define SetRect WinSetRect        //to avoid OSX's SetRect function
-#define UnionRect WinUnionRect  
+#define UnionRect WinUnionRect
 #define IntersectRect WinIntersectRect
 
 
@@ -167,16 +167,18 @@ typedef const char *LPCSTR;
 
 typedef unsigned __int64 ULONGLONG;
 
-typedef union { 
-  unsigned long long QuadPart; 
-  struct {
-  #ifdef __ppc__
+typedef union
+{
+  unsigned long long QuadPart;
+  struct
+  {
+#ifdef __ppc__
     DWORD HighPart;
     DWORD LowPart;
-  #else
+#else
     DWORD LowPart;
     DWORD HighPart;
-  #endif
+#endif
   };
 } ULARGE_INTEGER;
 
@@ -188,7 +190,7 @@ typedef void *HGLOBAL;
 
 typedef void (*TIMERPROC)(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
 
-typedef struct 
+typedef struct
 {
   LONG x,y;
 } POINT, *LPPOINT;
@@ -201,31 +203,35 @@ typedef struct
 } POINTS;
 
 
-typedef struct 
+typedef struct
 {
   LONG left,top, right, bottom;
 } RECT, *LPRECT;
 
 
-typedef struct {
+typedef struct
+{
   unsigned char fVirt;
   unsigned short key,cmd;
 } ACCEL, *LPACCEL;
 
 
-typedef struct {
+typedef struct
+{
   DWORD dwLowDateTime;
   DWORD dwHighDateTime;
 } FILETIME;
 
-typedef struct _GUID {
+typedef struct _GUID
+{
   unsigned int Data1;
   unsigned short Data2;
   unsigned short Data3;
   unsigned char  Data4[8];
 } GUID;
 
-typedef struct {
+typedef struct
+{
   HWND hwnd;
   UINT message;
   WPARAM wParam;
@@ -254,7 +260,8 @@ typedef struct
 } NMHDR, *LPNMHDR;
 
 
-typedef struct {
+typedef struct
+{
   NMHDR   hdr;
   DWORD_PTR   dwItemSpec;
   DWORD_PTR   dwItemData;
@@ -264,16 +271,16 @@ typedef struct {
 typedef NMMOUSE NMCLICK;
 typedef LPNMMOUSE LPNMCLICK;
 
-typedef struct 
-{ 
-  int mask, fmt,cx; 
-  char *pszText; 
+typedef struct
+{
+  int mask, fmt,cx;
+  char *pszText;
   int cchTextMax, iSubItem;
 } LVCOLUMN;
-typedef struct 
-{ 
-  int mask, iItem, iSubItem, state, stateMask; 
-  char *pszText; 
+typedef struct
+{
+  int mask, iItem, iSubItem, state, stateMask;
+  char *pszText;
   int cchTextMax, iImage;
   LPARAM lParam;
 } LVITEM;
@@ -323,7 +330,7 @@ typedef struct
   UINT    type;
   void    *pvFilter;
   UINT    state;
-} HDITEM, *LPHDITEM;  
+} HDITEM, *LPHDITEM;
 
 typedef struct TCITEM
 {
@@ -333,23 +340,25 @@ typedef struct TCITEM
   char *pszText;
   int cchTextMax;
   int iImage;
-  
+
   LPARAM lParam;
 } TCITEM, *LPTCITEM;
 
-typedef struct tagDRAWITEMSTRUCT {
-    UINT        CtlType;
-    UINT        CtlID;
-    UINT        itemID;
-    UINT        itemAction;
-    UINT        itemState;
-    HWND        hwndItem;
-    HDC         hDC;
-    RECT        rcItem;
-    DWORD_PTR   itemData;
+typedef struct tagDRAWITEMSTRUCT
+{
+  UINT        CtlType;
+  UINT        CtlID;
+  UINT        itemID;
+  UINT        itemAction;
+  UINT        itemState;
+  HWND        hwndItem;
+  HDC         hDC;
+  RECT        rcItem;
+  DWORD_PTR   itemData;
 } DRAWITEMSTRUCT, *PDRAWITEMSTRUCT, *LPDRAWITEMSTRUCT;
 
-typedef struct tagBITMAP {
+typedef struct tagBITMAP
+{
   LONG bmWidth;
   LONG bmHeight;
 } BITMAP, *PBITMAP, *LPBITMAP;
@@ -363,15 +372,15 @@ typedef struct tagBITMAP {
 
 
 
-typedef struct 
-{  
-        DWORD cbSize;
-        HWND hWnd;
-        UINT uID;
-        UINT uFlags;
-        UINT uCallbackMessage;
-        HICON hIcon;      
-        CHAR   szTip[64];
+typedef struct
+{
+  DWORD cbSize;
+  HWND hWnd;
+  UINT uID;
+  UINT uFlags;
+  UINT uCallbackMessage;
+  HICON hIcon;
+  CHAR   szTip[64];
 } NOTIFYICONDATA,*PNOTIFYICONDATA, *LPNOTIFYICONDATA;
 
 
@@ -426,7 +435,8 @@ typedef struct HTREEITEM__ *HTREEITEM;
 #define TVHT_TORIGHT            0x0400
 #define TVHT_TOLEFT             0x0800
 
-typedef struct {
+typedef struct
+{
   UINT      mask;
   HTREEITEM hItem;
   UINT      state;
@@ -439,19 +449,22 @@ typedef struct {
   LPARAM    lParam;
 } TVITEM, TV_ITEM, *LPTVITEM, *LPTV_ITEM;
 
-typedef struct {
+typedef struct
+{
   HTREEITEM hParent;
   HTREEITEM hInsertAfter;
   TVITEM item;
 } TVINSERTSTRUCT, *LPTVINSERTSTRUCT, TV_INSERTSTRUCT, *LPTV_INSERTSTRUCT;
 
-typedef struct {
+typedef struct
+{
   POINT       pt;
   UINT        flags;
   HTREEITEM   hItem;
 } TVHITTESTINFO, *LPTVHITTESTINFO;
 
-typedef struct {
+typedef struct
+{
   NMHDR       hdr;
   UINT        action;
   TVITEM    itemOld;
@@ -472,7 +485,8 @@ typedef struct
 
 #define SetMenuDefaultItem(a,b,c) (0)
 
-typedef struct {
+typedef struct
+{
   POINT ptReserved, ptMaxSize, ptMaxPosition, ptMinTrackSize, ptMaxTrackSize;
 } MINMAXINFO, *LPMINMAXINFO;
 
@@ -480,21 +494,22 @@ typedef struct {
 typedef struct
 {
   int lfHeight, lfWidth, lfEscapement,lfOrientation, lfWeight;
-  char lfItalic, lfUnderline, lfStrikeOut, lfCharSet, lfOutPrecision, lfClipPrecision, 
-    lfQuality, lfPitchAndFamily;
+  char lfItalic, lfUnderline, lfStrikeOut, lfCharSet, lfOutPrecision, lfClipPrecision,
+       lfQuality, lfPitchAndFamily;
   char lfFaceName[32];
 } LOGFONT;
 typedef struct
 {
-  LONG tmHeight; 
-  LONG tmAscent; 
-  LONG tmDescent; 
-  LONG tmInternalLeading; 
+  LONG tmHeight;
+  LONG tmAscent;
+  LONG tmDescent;
+  LONG tmInternalLeading;
   LONG tmAveCharWidth;
   // todo: implement rest
 } TEXTMETRIC;
 
-typedef struct {
+typedef struct
+{
   HDC         hdc;
   BOOL        fErase;
   RECT        rcPaint;
@@ -517,12 +532,13 @@ typedef struct
   DWORD   styleNew;
 } STYLESTRUCT, *LPSTYLESTRUCT;
 
-typedef struct _DROPFILES {
-   DWORD pFiles;                       // offset of file list
-   POINT pt;                           // drop point (client coords)
-   BOOL fNC;                           // is it on NonClient area
-                                       // and pt is in screen coords
-   BOOL fWide;                         // WIDE character switch
+typedef struct _DROPFILES
+{
+  DWORD pFiles;                       // offset of file list
+  POINT pt;                           // drop point (client coords)
+  BOOL fNC;                           // is it on NonClient area
+  // and pt is in screen coords
+  BOOL fWide;                         // WIDE character switch
 } DROPFILES, *LPDROPFILES;
 
 
@@ -537,7 +553,7 @@ typedef struct
   UINT    flags;
 } WINDOWPOS, *LPWINDOWPOS, *PWINDOWPOS;
 
-typedef struct  
+typedef struct
 {
   RECT       rgrc[3];
   PWINDOWPOS lppos;
@@ -601,10 +617,10 @@ typedef struct tagGESTURECONFIG
 typedef BOOL (*PROPENUMPROCEX)(HWND hwnd, const char *lpszString, HANDLE hData, LPARAM lParam);
 
 // swell specific type
-typedef HWND (*SWELL_ControlCreatorProc)(HWND parent, const char *cname, int idx, const char *classname, int style, int x, int y, int w, int h);                                           
+typedef HWND (*SWELL_ControlCreatorProc)(HWND parent, const char *cname, int idx, const char *classname, int style, int x, int y, int w, int h);
 
-#define DLL_PROCESS_DETACH   0    
-#define DLL_PROCESS_ATTACH   1    
+#define DLL_PROCESS_DETACH   0
+#define DLL_PROCESS_ATTACH   1
 
 // if the user implements this (and links with swell-modstub[-generic], this will get called for DLL_PROCESS_[AT|DE]TACH
 #ifdef __cplusplus
@@ -810,15 +826,15 @@ __attribute__ ((visibility ("default"))) BOOL WINAPI DllMain(HINSTANCE hInstDLL,
 // note: these differ in values from their win32 counterparts, because we got them
 // wrong to begin with, and we'd like to keep backwards compatability for things compiled
 // against an old swell.h (and using the SWELL API via an exported mechanism, i.e. third party
-// plug-ins). 
+// plug-ins).
 #define SW_HIDE 0
 #define SW_SHOWNA 1        // 8 on win32
 #define SW_SHOW 2          // 1 on win32
 #define SW_SHOWMINIMIZED 3 // 2 on win32
 
 // aliases (todo implement these as needed)
-#define SW_SHOWNOACTIVATE SW_SHOWNA 
-#define SW_NORMAL SW_SHOW 
+#define SW_SHOWNOACTIVATE SW_SHOWNA
+#define SW_NORMAL SW_SHOW
 #define SW_SHOWNORMAL SW_SHOW
 #define SW_SHOWMAXIMIZED SW_SHOW
 #define SW_SHOWDEFAULT SW_SHOWNORMAL
@@ -1072,8 +1088,8 @@ __attribute__ ((visibility ("default"))) BOOL WINAPI DllMain(HINSTANCE hInstDLL,
 
 
 #ifndef MAKEINTRESOURCE
-#define MAKEINTRESOURCE(x) ((const char *)(UINT_PTR)(x))         
-#endif                
+#define MAKEINTRESOURCE(x) ((const char *)(UINT_PTR)(x))
+#endif
 
 #ifdef FSHIFT
 #undef FSHIFT

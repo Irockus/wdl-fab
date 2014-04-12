@@ -8,9 +8,9 @@
 **
 ** Usage:
 **   1. Create JNL_AsyncDNS object, optionally with the number of cache entries.
-**   2. call resolve() to resolve a hostname into an address. The return value of 
+**   2. call resolve() to resolve a hostname into an address. The return value of
 **      resolve is 0 on success (host successfully resolved), 1 on wait (meaning
-**      try calling resolve() with the same hostname in a few hundred milliseconds 
+**      try calling resolve() with the same hostname in a few hundred milliseconds
 **      or so), or -1 on error (i.e. the host can't resolve).
 **   3. call reverse() to do reverse dns (ala resolve()).
 **   4. enjoy.
@@ -30,7 +30,7 @@ public:
   virtual int reverse(unsigned int addr, char *hostname)=0; // return 0 on success, 1 on wait, -1 on unresolvable. hostname must be at least 256 bytes.
 };
 #define JNL_AsyncDNS_PARENTDEF : public JNL_IAsyncDNS
-#else 
+#else
 #define JNL_IAsyncDNS JNL_AsyncDNS
 #define JNL_AsyncDNS_PARENTDEF
 #endif
@@ -48,14 +48,14 @@ public:
   int reverse(unsigned int addr, char *hostname); // return 0 on success, 1 on wait, -1 on unresolvable. hostname must be at least 256 bytes.
 
 private:
-  typedef struct 
+  typedef struct
   {
     time_t last_used; // timestamp.
     char resolved;
     char mode; // 1=reverse
     char hostname[256];
     unsigned int addr;
-  } 
+  }
   cache_entry;
 
   cache_entry *m_cache;

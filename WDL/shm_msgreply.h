@@ -16,19 +16,19 @@
 
   type: 0 reply
     call specific return data
-  type: all others user defined 
+  type: all others user defined
 
 */
 // type is user defined, however type=0 is reserved for reply
 class SHM_MsgReplyConnection
 {
-  
+
 public:
 
   class WaitingMessage
   {
   public:
-    WaitingMessage() { } 
+    WaitingMessage() { }
     ~WaitingMessage() { }
 
     WaitingMessage *_next;
@@ -56,7 +56,7 @@ public:
 
   // returns <0 if no reply, otherwise lenght of replybuf used
   // no retbuf = no wait for reply
-  int Send(int type, const void *msg, int msglen,  
+  int Send(int type, const void *msg, int msglen,
            void *replybuf, int maxretbuflen, const int *forceMsgID=NULL,
            const void *secondchunk=NULL, int secondchunklen=0, // allow sending two blocks as one message (for speed in certain instances)
            WDL_HeapBuf *hbreplyout=NULL);  // if hbreplyout is set it will get the full message (replybuf can be NULL then)
@@ -71,7 +71,7 @@ private:
   bool RunInternal(int checkForReplyID=0, WaitingMessage **replyPtr=0); // nonzero on error
 
   char m_uniq[256];
-  WDL_Mutex m_shmmutex; 
+  WDL_Mutex m_shmmutex;
   WDL_SHM_Connection *m_shm;
 
 

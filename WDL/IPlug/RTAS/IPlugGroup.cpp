@@ -1,6 +1,6 @@
 #if WINDOWS_VERSION
-  #include <windows.h>
-  #include "Mac2Win.H"
+#include <windows.h>
+#include "Mac2Win.H"
 #endif
 
 #include "IPlugGroup.h"
@@ -13,7 +13,7 @@
 #include "Resource.h"
 
 #ifndef PLUG_SC_CHANS
-  #define PLUG_SC_CHANS 0
+#define PLUG_SC_CHANS 0
 #endif
 
 static CEffectProcess* NewProcessRTAS()
@@ -27,8 +27,8 @@ static CEffectProcess* NewProcessAS()
 }
 
 #if WINDOWS_VERSION
-  extern void *hInstance;
-  extern HINSTANCE gHInstance;
+extern void *hInstance;
+extern HINSTANCE gHInstance;
 #endif
 
 //TODO: what about ePlugIn_StemFormat_LCRS, ePlugIn_StemFormat_6dot0, ePlugIn_StemFormat_7dot0SDDS, ePlugIn_StemFormat_7dot1SDDS, ePlugIn_StemFormat_7dot0DTS
@@ -61,10 +61,10 @@ static EPlugIn_StemFormat getStemFormatForChans(const int numChans)
 
 IPlugGroup::IPlugGroup(void)
 {
-  #if WINDOWS_VERSION
+#if WINDOWS_VERSION
   hInstance=gThisModule;
   gHInstance = (HINSTANCE)gThisModule;
-  #endif
+#endif
 
   DefineManufacturerNamesAndID (PLUG_MFR_PT, PLUG_MFR_ID);
   DefinePlugInNamesAndVersion(PLUG_NAME_PT, (PLUG_VER & 0xFFFF0000) >> 16);
@@ -130,7 +130,7 @@ void IPlugGroup::CreateEffectTypes(void)
 //       AS->AddGestalt(pluginGestalt_CanBypass);
 //       AS->AddGestalt(pluginGestalt_DoesNotUseDigiUI);
 //       AS->AttachEffectProcessCreator(NewProcessAS);
-// 
+//
 //       AddEffectType (AS);
 //       #endif
       ioConfigIdx++;

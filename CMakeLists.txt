@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 2.8)
 
 if(APPLE)
 	set(CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX10.6.sdk/")
@@ -88,7 +88,7 @@ macro(configure_msvc_runtime)
     set(CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE} -DNDEBUG")
     
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse3 -mssse3")
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-reorder -msse3 -mssse3")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings -Wno-reorder -msse3 -mssse3")
 
   endif()
 endmacro()
@@ -131,10 +131,16 @@ include_directories(
 	${OGG_INCLUDE_DIR}
 	${CMAKE_SOURCE_DIR}/Source
 	${CMAKE_CURRENT_SOURCE_DIR}/WDL/IPlug	
+	${CMAKE_CURRENT_SOURCE_DIR}/WDL	
+	${CMAKE_CURRENT_SOURCE_DIR}/WDL/rtaudiomidi	
 	${CMAKE_CURRENT_SOURCE_DIR}/ASIO_SDK
 	${CMAKE_CURRENT_SOURCE_DIR}/VST_SDK
 	${CMAKE_CURRENT_SOURCE_DIR}/VST3_SDK
 	)
+
+IF (APPLE)
+    include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/WDL/swell	)
+ENDIF(APPLE)
 
 set(IPLUG_LIBS 
 	# ${OPENAL_LIBRARY} 
@@ -157,6 +163,7 @@ set (IPLUG_VERSION_MINOR 9)
 set (IPLUG_VERSION_PATCH "0")
 set(IPLUG_VERSION "${IPLUG_VERSION_MAJOR}.${IPLUG_VERSION_MINOR}")
 set(IPLUG_VERSION_FULL "${IPLUG_VERSION}.${IPLUG_VERSION_PATCH}")
+
 # SET
 	# IPlugAAX.cpp
 	# IPlugAU.cpp

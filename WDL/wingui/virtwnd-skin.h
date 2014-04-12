@@ -8,7 +8,7 @@ class LICE_IBitmap;
 typedef struct // if set these override the default virtualwnd styles for this object
 {
   LICE_IBitmap *bgimage;
-  int bgimage_lt[2],bgimage_rb[2]; // size of 
+  int bgimage_lt[2],bgimage_rb[2]; // size of
   int bgimage_lt_out[2],bgimage_rb_out[2]; // size of outside area (like shadows)
   int bgimage_noalphaflags; // 4x4 flags of "no alpha", so 65535 is image has no alpha whatsoever
 } WDL_VirtualWnd_BGCfg;
@@ -31,7 +31,7 @@ public:
 private:
   WDL_VirtualWnd_BGCfgCache_ar *m_ar;
 
-  
+
   int m_want_size, m_max_size;
 };
 
@@ -41,7 +41,7 @@ void WDL_VirtualWnd_PreprocessBGConfig(WDL_VirtualWnd_BGCfg *a);
 #define WDL_VWND_SCALEDBLITBG_IGNORE_LR 0x40000000
 #define WDL_VWND_SCALEDBLITBG_IGNORE_INSIDE 0x20000000
 #define WDL_VWND_SCALEDBLITBG_IGNORE_OUTSIDE 0x10000000
-void WDL_VirtualWnd_ScaledBlitBG(LICE_IBitmap *dest, 
+void WDL_VirtualWnd_ScaledBlitBG(LICE_IBitmap *dest,
                                  WDL_VirtualWnd_BGCfg *src,
                                  int destx, int desty, int destw, int desth,
                                  int clipx, int clipy, int clipw, int cliph,
@@ -61,7 +61,7 @@ void WDL_VirtualWnd_ScaledBlitSubBG(LICE_IBitmap *dest,
 typedef struct // if set these override the default virtualwnd styles for this object
 {
   WDL_VirtualWnd_BGCfg bgimagecfg[2];
-  LICE_IBitmap *thumbimage[2]; // h,v 
+  LICE_IBitmap *thumbimage[2]; // h,v
   int thumbimage_lt[2],thumbimage_rb[2];
   unsigned int zeroline_color; // needs alpha channel set!
 } WDL_VirtualSlider_SkinConfig;

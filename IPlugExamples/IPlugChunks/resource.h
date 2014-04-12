@@ -29,9 +29,9 @@
 
 // Unique IDs for each configuration of the plug-in
 #if (defined(AAX_API) || defined(RTAS_API)) && !defined(_PIDS_)
-  #define _PIDS_
-  const int PLUG_TYPE_IDS[2] = {'ICN1', 'ICN2'};
-  //const int PLUG_TYPE_IDS_AS[2] = {'ICA1', 'ICA2'}; // AudioSuite
+#define _PIDS_
+const int PLUG_TYPE_IDS[2] = {'ICN1', 'ICN2'};
+//const int PLUG_TYPE_IDS_AS[2] = {'ICA1', 'ICA2'}; // AudioSuite
 #endif
 
 #define PLUG_MFR_PT "AcmeInc\nAcmeInc\nAcme\n"
@@ -39,8 +39,8 @@
 #define PLUG_TYPE_PT "Effect"
 #define PLUG_DOES_AUDIOSUITE 0
 
-/* PLUG_TYPE_PT can be "None", "EQ", "Dynamics", "PitchShift", "Reverb", "Delay", "Modulation", 
-"Harmonic" "NoiseReduction" "Dither" "SoundField" "Effect" 
+/* PLUG_TYPE_PT can be "None", "EQ", "Dynamics", "PitchShift", "Reverb", "Delay", "Modulation",
+"Harmonic" "NoiseReduction" "Dither" "SoundField" "Effect"
 instrument determined by PLUG _IS _INST
 */
 
@@ -66,7 +66,7 @@ instrument determined by PLUG _IS _INST
 // on MSVC, you must define SA_API in the resource editor preprocessor macros as well as the c++ ones
 #ifdef SA_API
 #ifndef OS_IOS
-#include "app_wrapper/app_resource.h"
+#include "app_resource.h"
 #endif
 #endif
 

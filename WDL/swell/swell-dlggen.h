@@ -17,10 +17,10 @@
     2. Altered source versions must be plainly marked as such, and must not be
        misrepresented as being the original software.
     3. This notice may not be removed or altered from any source distribution.
-  
+
   DialogBox emulation is here. To declare the resource at a global level, use (in any source file that includes this file and resource.h):
 
-  
+
   #ifdef MAC
 
 
@@ -68,7 +68,7 @@ struct SWELL_DlgResourceEntry
   const char *str1;
   int flag1;
   const char *str2;
-  
+
   int p1; // often used for ID
 
   // todo: see at runtime if some of these can be short instead of int (p2-p6 probably can, but not completely sure) -- i.e. do we use any
@@ -80,20 +80,20 @@ struct SWELL_DlgResourceEntry
 #define BEGIN {NULL,
 #define END  },
 
-#define PUSHBUTTON     }, { "__SWELL_BUTTON", 0, 
-#define DEFPUSHBUTTON  }, { "__SWELL_BUTTON", 1, 
+#define PUSHBUTTON     }, { "__SWELL_BUTTON", 0,
+#define DEFPUSHBUTTON  }, { "__SWELL_BUTTON", 1,
 #define EDITTEXT       }, { "__SWELL_EDIT", 0, "",
-#define CTEXT          }, { "__SWELL_LABEL", 0, 
-#define LTEXT          }, { "__SWELL_LABEL", -1, 
-#define RTEXT          }, { "__SWELL_LABEL", 1, 
-#define CONTROL        }, { 
-#define COMBOBOX       }, { "__SWELL_COMBO", 0, "", 
-#define GROUPBOX       }, { "__SWELL_GROUP", 0, 
-#define CHECKBOX       }, { "__SWELL_CHECKBOX", 0, 
-#define LISTBOX        }, { "__SWELL_LISTBOX", 0, "", 
+#define CTEXT          }, { "__SWELL_LABEL", 0,
+#define LTEXT          }, { "__SWELL_LABEL", -1,
+#define RTEXT          }, { "__SWELL_LABEL", 1,
+#define CONTROL        }, {
+#define COMBOBOX       }, { "__SWELL_COMBO", 0, "",
+#define GROUPBOX       }, { "__SWELL_GROUP", 0,
+#define CHECKBOX       }, { "__SWELL_CHECKBOX", 0,
+#define LISTBOX        }, { "__SWELL_LISTBOX", 0, "",
 
-#define NOT 
-                                    
+#define NOT
+
 // flags we may use
 #define CBS_DROPDOWNLIST 0x0003L
 #define CBS_DROPDOWN 0x0002L
@@ -102,9 +102,9 @@ struct SWELL_DlgResourceEntry
 #define ES_READONLY 0x0800L
 #define ES_WANTRETURN 0x1000L
 #define ES_NUMBER 0x2000L
-         
+
 #define SS_LEFT 0
-#define SS_CENTER 0x1L                                                                     
+#define SS_CENTER 0x1L
 #define SS_BLACKRECT 0x4L
 #define SS_BLACKFRAME (SS_BLACKRECT)
 #define SS_LEFTNOWORDWRAP 0xCL
@@ -116,25 +116,25 @@ struct SWELL_DlgResourceEntry
 #define BS_GROUPBOX      0x20000000
 #define BS_DEFPUSHBUTTON 0x10000000
 #define BS_PUSHBUTTON    0x8000000
-                                       
+
 #define LVS_LIST 0 /* 0x0003 */
 #define LVS_NOCOLUMNHEADER 0x4000
 #define LVS_NOSORTHEADER   0x8000
 #define LVS_REPORT 0x0001
 #define LVS_TYPEMASK 0x0003
 #define LVS_SINGLESEL 0x0004
-#define LVS_OWNERDATA 0x1000       
+#define LVS_OWNERDATA 0x1000
 #define LVS_SORTASCENDING       0x0010
 #define LVS_SORTDESCENDING      0x0020
-                              
+
 #define LBS_SORT           0x0002L
 #define LBS_OWNERDRAWFIXED 0x0010L
 #define LBS_EXTENDEDSEL 0x0800L
-                                        
+
 #define ES_LEFT 0
 #define ES_CENTER 1
 #define ES_RIGHT 2
-                                    
+
 // flags we ignore
 #define LVS_SHOWSELALWAYS 0
 #define LVS_SHAREIMAGELISTS 0
@@ -161,24 +161,24 @@ struct SWELL_DlgResourceEntry
 #define BS_RIGHT 0
 #define WS_EX_STATICEDGE 0
 #define WS_EX_RIGHT 0
-#define SS_CENTERIMAGE 0                                       
+#define SS_CENTERIMAGE 0
 #define SS_NOPREFIX 0
-                     
-                                       
+
+
 #ifndef IDC_STATIC
 #define IDC_STATIC 0
 #endif
 
-                                     
 
-                                       
+
+
 #define SWELL_DLG_WS_CHILD 1
 #define SWELL_DLG_WS_RESIZABLE 2
 #define SWELL_DLG_WS_FLIPPED 4
 #define SWELL_DLG_WS_NOAUTOSIZE 8
 #define SWELL_DLG_WS_OPAQUE 16
 #define SWELL_DLG_WS_DROPTARGET 32
-     
+
 typedef struct SWELL_DialogResourceIndex
 {
   const char *resid;
@@ -187,7 +187,7 @@ typedef struct SWELL_DialogResourceIndex
   void (*createFunc)(HWND, int);
   int width,height;
   struct SWELL_DialogResourceIndex *_next;
-} SWELL_DialogResourceIndex; 
+} SWELL_DialogResourceIndex;
 
 typedef struct SWELL_CursorResourceIndex
 {
@@ -234,7 +234,7 @@ static inline HWND __SWELL_MakeGroupBox(const char *name, int idx, int x, int y,
 static void SWELL_Register_Cursor_Resource(const char *idx, const char *name, int hotspot_x, int hotspot_y)
 {
   extern SWELL_CursorResourceIndex *SWELL_curmodule_cursorresource_head;
-  
+
   SWELL_CursorResourceIndex *ri = (SWELL_CursorResourceIndex*)malloc(sizeof(SWELL_CursorResourceIndex));
   ri->hotspot.x = hotspot_x;
   ri->hotspot.y = hotspot_y;
@@ -246,23 +246,24 @@ static void SWELL_Register_Cursor_Resource(const char *idx, const char *name, in
 }
 
 
-class SWELL_DialogRegHelper { 
-  public:
-     SWELL_DialogResourceIndex m_rec;
-     SWELL_DialogRegHelper(SWELL_DialogResourceIndex **h, void (*cf)(HWND,int), int recid, int flags, const char *titlestr, int wid, int hei, double scale)
-     {
-       if (recid) 
-       {
-         m_rec.resid=MAKEINTRESOURCE(recid); 
-         m_rec.title=titlestr; 
-         m_rec.windowTypeFlags=flags; 
-         m_rec.createFunc=cf; 
-         m_rec.width=(int)((wid)*(scale)); 
-         m_rec.height=(int)((hei)*(scale)); 
-         m_rec._next=*h;
-         *h = &m_rec;
-       } 
-     }
+class SWELL_DialogRegHelper
+{
+public:
+  SWELL_DialogResourceIndex m_rec;
+  SWELL_DialogRegHelper(SWELL_DialogResourceIndex **h, void (*cf)(HWND,int), int recid, int flags, const char *titlestr, int wid, int hei, double scale)
+  {
+    if (recid)
+    {
+      m_rec.resid=MAKEINTRESOURCE(recid);
+      m_rec.title=titlestr;
+      m_rec.windowTypeFlags=flags;
+      m_rec.createFunc=cf;
+      m_rec.width=(int)((wid)*(scale));
+      m_rec.height=(int)((hei)*(scale));
+      m_rec._next=*h;
+      *h = &m_rec;
+    }
+  }
 };
 
 #define SWELL_DEFINE_DIALOG_RESOURCE_BEGIN(recid, flags, titlestr, wid, hei, scale) \
@@ -272,9 +273,9 @@ class SWELL_DialogRegHelper {
                                               SWELL_MakeSetCurParms(scale,scale,0,0,view,false,!(wflags&SWELL_DLG_WS_NOAUTOSIZE));  \
                                               static const SWELL_DlgResourceEntry list[]={
 
-                                            
+
 #define SWELL_DEFINE_DIALOG_RESOURCE_END(recid ) }; SWELL_GenerateDialogFromList(list+1,sizeof(list)/sizeof(list[0])-1); }
 
-                                       
-                                
+
+
 #endif

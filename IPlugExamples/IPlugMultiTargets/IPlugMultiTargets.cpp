@@ -1,6 +1,6 @@
 #include "IPlugMultiTargets.h"
-#include "IPlug_include_in_plug_src.h"
 #include "resource.h"
+#include "IPlug_include_in_plug_src.h"
 
 #ifndef OS_IOS
 #include "IControl.h"
@@ -60,8 +60,8 @@ IPlugMultiTargets::IPlugMultiTargets(IPlugInstanceInfo instanceInfo)
   IBitmap knob = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, kKnobFrames);
   IText text = IText(14);
 
-  pGraphics->AttachControl(new IKnobMultiControlText(this, IRECT(kGainX, kGainY, kGainX + 48, kGainY + 48 + 20), kGainL, &knob, &text));
-  pGraphics->AttachControl(new IKnobMultiControlText(this, IRECT(kGainX + 75, kGainY, kGainX + 48 + 75, kGainY + 48 + 20), kGainR, &knob, &text));
+  pGraphics->AttachControl(new IKnobMultiControlText(this, kGainX, kGainY, kGainL, &knob, &text));
+  pGraphics->AttachControl(new IKnobMultiControlText(this, kGainX + 75, kGainY, kGainR, &knob, &text));
   pGraphics->AttachControl(new ITempoDisplay(this, IRECT(300, 10, kWidth, 20), &text, &mTimeInfo));
 
   pGraphics->AttachControl(new ITestPopupMenu(this, IRECT(410, 100, 460, 115)));
@@ -286,7 +286,7 @@ void IPlugMultiTargets::ProcessMidiMsg(IMidiMsg* pMsg)
     default:
       return; // if !note message, nothing gets added to the queue
   }
-  
+
   mKeyboard->SetDirty();
   mMidiQueue.Add(pMsg);
 #endif

@@ -9,7 +9,8 @@
 extern "C" {
 #endif
 
-typedef struct {
+typedef struct
+{
   unsigned int P[16 + 2];
   unsigned int S[4*256];
 } BLOWFISH_CTX;

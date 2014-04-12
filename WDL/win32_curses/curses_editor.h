@@ -9,7 +9,7 @@ class WDL_CursesEditor
 public:
   WDL_CursesEditor(void *cursesCtx);
   virtual ~WDL_CursesEditor();
-  
+
   bool IsDirty() const { return m_clean_undopos != m_undoStack_pos; }
 
   virtual int onChar(int c);
@@ -28,7 +28,7 @@ protected:
   class refcntString;
   class editUndoRec;
 
-  int init(const char *fn, const char *init_if_empty=0); 
+  int init(const char *fn, const char *init_if_empty=0);
   virtual void draw(int lineidx=-1);
   void draw_message(const char *str);
   void draw_status_state();
@@ -61,13 +61,13 @@ protected:
   }
 
   int getVisibleLines() const;
-  
+
   WDL_FastString m_filename;
   WDL_PtrList<WDL_FastString> m_text;
   WDL_PtrList<editUndoRec> m_undoStack;
   int m_undoStack_pos;
   int m_clean_undopos;
-  
+
   int m_state; // values >0 used by specific impls, negatives used by builtin funcs
 
   int m_selecting;
@@ -93,12 +93,12 @@ protected:
     int str_len;
     int refcnt;
   public:
-    refcntString(const char *val, int val_len) 
-    { 
+    refcntString(const char *val, int val_len)
+    {
       str_len = val_len;
       str=(char*)malloc(str_len+1);
       if (str) memcpy(str,val,str_len+1);
-      refcnt=0; 
+      refcnt=0;
     }
 
     void AddRef() { refcnt++; }
@@ -109,12 +109,12 @@ protected:
   };
   class editUndoRec
   {
-    public:
-     editUndoRec() { }
-     ~editUndoRec() 
-    { 
+  public:
+    editUndoRec() { }
+    ~editUndoRec()
+    {
       int x;
-      for (x=0;x<m_htext.GetSize();x++) 
+      for (x=0; x<m_htext.GetSize(); x++)
       {
         refcntString *rs=m_htext.Get(x);
         if (rs) rs->Release();

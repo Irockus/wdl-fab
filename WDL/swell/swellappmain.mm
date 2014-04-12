@@ -1,7 +1,7 @@
 #import "swellappmain.h"
 
 #include "swell.h"
-#include "swell-internal.h"
+#include "swell-internal-structs.h"
 
 
 HMENU SWELL_app_stocksysmenu; // exposed to app, simply the contents of the default system menu (as defined in the nib)
@@ -27,129 +27,130 @@ static bool IsMultiLineEditControl(NSView *cv, id fs)
 @implementation SWELLApplication
 - (void)sendEvent:(NSEvent *)anEvent
 {
-    int etype = [anEvent type];
-    if (etype == NSKeyUp)
+  int etype = [anEvent type];
+  if (etype == NSKeyUp)
+  {
+    // toss keyup if next keydown is the same key
+    NSEvent *nextDown = [self nextEventMatchingMask:NSKeyDownMask untilDate:[NSDate dateWithTimeIntervalSinceNow:0.003] inMode:NSDefaultRunLoopMode dequeue:FALSE];
+    if (nextDown && [nextDown keyCode] == [anEvent keyCode]) return;
+  }
+  else if (etype == NSKeyDown)
+  {
+    NSEvent *nextDown = [self nextEventMatchingMask:NSKeyDownMask untilDate:[NSDate dateWithTimeIntervalSinceNow:0.003] inMode:NSDefaultRunLoopMode dequeue:FALSE];
+    if (nextDown && [nextDown keyCode] == [anEvent keyCode])
     {
-        // toss keyup if next keydown is the same key
-        NSEvent *nextDown = [self nextEventMatchingMask:NSKeyDownMask untilDate:[NSDate dateWithTimeIntervalSinceNow:0.003] inMode:NSDefaultRunLoopMode dequeue:FALSE];
-        if (nextDown && [nextDown keyCode] == [anEvent keyCode]) return;
-    }
-    else if (etype == NSKeyDown)
-    {
-        NSEvent *nextDown = [self nextEventMatchingMask:NSKeyDownMask untilDate:[NSDate dateWithTimeIntervalSinceNow:0.003] inMode:NSDefaultRunLoopMode dequeue:FALSE];
-        if (nextDown && [nextDown keyCode] == [anEvent keyCode]) 
-        {
 #if 0
-            // no need to check timestamps -- if a queued key is there, just ignore this one(prevent a backlog)
-            static double sc=0.0;
-            if (sc == 0.0) 
-            { 
-                struct mach_timebase_info inf={0,};
-                mach_timebase_info(&inf); 
-                if (inf.numer && inf.denom)  sc = inf.numer / (inf.denom * 1000.0 * 1000.0 * 1000.0);
-            }
-            
-            if (sc != 0.0 && [anEvent timestamp] < (double) mach_absolute_time() * sc - 0.05)
+      // no need to check timestamps -- if a queued key is there, just ignore this one(prevent a backlog)
+      static double sc=0.0;
+      if (sc == 0.0)
+      {
+        struct mach_timebase_info inf= {0,};
+        mach_timebase_info(&inf);
+        if (inf.numer && inf.denom)  sc = inf.numer / (inf.denom * 1000.0 * 1000.0 * 1000.0);
+      }
+
+      if (sc != 0.0 && [anEvent timestamp] < (double) mach_absolute_time() * sc - 0.05)
 #endif
-                return;
-        }
+        return;
     }
-    
-    
-    NSWindow *modalWindow = [NSApp modalWindow];
-    
-    NSWindow *focwnd=[anEvent window];  
-    NSView *dest_view=NULL;    // only valid when key message
-    
-	if (etype==NSKeyDown||etype==NSKeyUp)
-	{
-        int msgtype = etype==NSKeyDown ? WM_KEYDOWN : WM_KEYUP;
-        int flag,code=SWELL_MacKeyToWindowsKey(anEvent,&flag);
-        
-        if (focwnd)
-        {      
-            if (flag&(FCONTROL|FALT))
-            {
-                NSWindow *f = focwnd;    
-                // handle carbon windows, sending all cmd/alt modified keys to their parent NSView (to be handled later)
-                // perhaps it'd be good to have a flag on these to see if they want it .. i.e. SWELL_SetCarbonHostView_WantKeyFlgs()..
-                while (f)
-                {
-                    if ((dest_view=(NSView *)[f delegate]) && [dest_view respondsToSelector:@selector(swellIsCarbonHostingView)] && [(SWELL_hwndCarbonHost*)dest_view swellIsCarbonHostingView])
-                    {
-                        focwnd = [dest_view window]; 
-                        break;
-                    }
-                    dest_view=0;
-                    f=[f parentWindow];
-                }
-            } 
-            if (!dest_view)  // get default dest_view, and validate it as a NSView
-            {
-                if ((dest_view=(NSView *)[focwnd firstResponder]) && ![dest_view isKindOfClass:[NSView class]]) dest_view=NULL;
-            }       
-        }       
-        if (!modalWindow && (!focwnd || dest_view))
-        {          
-            MSG msg={(HWND)dest_view,msgtype,(WPARAM)code,(LPARAM)flag}; // LPARAM is treated differently (giving modifier flags/FVIRTKEY etc) in sWELL's WM_KEYDOWN than in windows, deal with it
-            
-            if (SWELLAppMain(SWELLAPP_PROCESSMESSAGE,(INT_PTR)&msg,(INT_PTR)anEvent)>0) return; 
-        }  
-    }
-    // default window handling:
-    if (etype == NSKeyDown && focwnd && dest_view)
+  }
+
+
+  NSWindow *modalWindow = [NSApp modalWindow];
+
+  NSWindow *focwnd=[anEvent window];
+  NSView *dest_view=NULL;    // only valid when key message
+
+  if (etype==NSKeyDown||etype==NSKeyUp)
+  {
+    int msgtype = etype==NSKeyDown ? WM_KEYDOWN : WM_KEYUP;
+    int flag,code=SWELL_MacKeyToWindowsKey(anEvent,&flag);
+
+    if (focwnd)
     {
-        NSView *cv = [focwnd contentView];
-        if (cv && [cv respondsToSelector:@selector(onSwellMessage:p1:p2:)]) //only work for swell windows
+      if (flag&(FCONTROL|FALT))
+      {
+        NSWindow *f = focwnd;
+        // handle carbon windows, sending all cmd/alt modified keys to their parent NSView (to be handled later)
+        // perhaps it'd be good to have a flag on these to see if they want it .. i.e. SWELL_SetCarbonHostView_WantKeyFlgs()..
+        while (f)
         {
-            int flag,code=SWELL_MacKeyToWindowsKey(anEvent,&flag);
-            int cmdid=0;
-            
-            // todo: other keys (such as shift+insert?)
-            if (((flag&~FVIRTKEY)==FCONTROL && (code=='V'||code=='C' ||code=='X')) && [dest_view isKindOfClass:[NSText class]])
-            {         
-                if (code=='V') [(NSText *)dest_view paste:(id)cv];
-                else if (code=='C') [(NSText *)dest_view copy:(id)cv];
-                else if (code=='X') [(NSText *)dest_view cut:(id)cv];
-                return;
-            }
-            
-            if ((!(flag&~(FVIRTKEY|FSHIFT)) && code == VK_ESCAPE) ||
-                ((flag&~FVIRTKEY)==FCONTROL && code=='W'))
-            {
-                if (code == 'W') cmdid= IDCANCEL; // cmd+w always idcancel's
-                else if (!dest_view || ![dest_view isKindOfClass:[NSTextView class]]) cmdid=IDCANCEL; // not text view, idcancel
-                else if (!(flag&FSHIFT) && !IsMultiLineEditControl(cv,dest_view)) cmdid=IDCANCEL; // if singleline edit and shift not set, idcancel
-                
-                if (!cmdid) 
-                {
-                    SetFocus((HWND)cv);
-                    return;
-                }
-            }
-            else if (!(flag&~FVIRTKEY) && code == VK_RETURN) 
-            {      
-                // get default button command id, if any, if enabled
-                if (!IsMultiLineEditControl(cv,dest_view))
-                {            
-                    cmdid = SWELL_GetDefaultButtonID((HWND)cv,true); 
-                    
-                    if (!cmdid) // no action, set focus to parent
-                    {
-                        SetFocus((HWND)cv);
-                        return;
-                    }
-                }
-            }
-            
-            if (cmdid)
-            {
-                SendMessage((HWND)cv,WM_COMMAND,cmdid,0);
+          if ((dest_view=(NSView *)[f delegate]) && [dest_view respondsToSelector:@selector(swellIsCarbonHostingView)] &&
+              [dest_view performSelector:@selector(swellIsCarbonHostingView:) ])
+          {
+            focwnd = [dest_view window];
+            break;
+          }
+          dest_view=0;
+          f=[f parentWindow];
+        }
+      }
+      if (!dest_view)  // get default dest_view, and validate it as a NSView
+      {
+        if ((dest_view=(NSView *)[focwnd firstResponder]) && ![dest_view isKindOfClass:[NSView class]]) dest_view=NULL;
+      }
+    }
+    if (!modalWindow && (!focwnd || dest_view))
+    {
+      MSG msg= {(HWND)dest_view,msgtype,(WPARAM)code,(LPARAM)flag}; // LPARAM is treated differently (giving modifier flags/FVIRTKEY etc) in sWELL's WM_KEYDOWN than in windows, deal with it
+
+      if (SWELLAppMain(SWELLAPP_PROCESSMESSAGE,(INT_PTR)&msg,(INT_PTR)anEvent)>0) return;
+    }
+  }
+  // default window handling:
+  if (etype == NSKeyDown && focwnd && dest_view)
+  {
+    NSView *cv = [focwnd contentView];
+    if (cv && [cv respondsToSelector:@selector(onSwellMessage:p1:p2:)]) //only work for swell windows
+    {
+      int flag,code=SWELL_MacKeyToWindowsKey(anEvent,&flag);
+      int cmdid=0;
+
+      // todo: other keys (such as shift+insert?)
+      if (((flag&~FVIRTKEY)==FCONTROL && (code=='V'||code=='C' ||code=='X')) && [dest_view isKindOfClass:[NSText class]])
+      {
+        if (code=='V') [(NSText *)dest_view paste:(id)cv];
+        else if (code=='C') [(NSText *)dest_view copy:(id)cv];
+        else if (code=='X') [(NSText *)dest_view cut:(id)cv];
+        return;
+      }
+
+      if ((!(flag&~(FVIRTKEY|FSHIFT)) && code == VK_ESCAPE) ||
+          ((flag&~FVIRTKEY)==FCONTROL && code=='W'))
+      {
+        if (code == 'W') cmdid= IDCANCEL; // cmd+w always idcancel's
+        else if (!dest_view || ![dest_view isKindOfClass:[NSTextView class]]) cmdid=IDCANCEL; // not text view, idcancel
+        else if (!(flag&FSHIFT) && !IsMultiLineEditControl(cv,dest_view)) cmdid=IDCANCEL; // if singleline edit and shift not set, idcancel
+
+        if (!cmdid)
+        {
+          SetFocus((HWND)cv);
+          return;
+        }
+      }
+      else if (!(flag&~FVIRTKEY) && code == VK_RETURN)
+      {
+        // get default button command id, if any, if enabled
+        if (!IsMultiLineEditControl(cv,dest_view))
+        {
+          cmdid = SWELL_GetDefaultButtonID((HWND)cv,true);
+
+          if (!cmdid) // no action, set focus to parent
+          {
+            SetFocus((HWND)cv);
+            return;
+          }
+        }
+      }
+
+      if (cmdid)
+      {
+        SendMessage((HWND)cv,WM_COMMAND,cmdid,0);
         return;
       }
     } // is swell CV
   } // key down
-  
+
   [super sendEvent:anEvent];
 }
 @end
@@ -157,19 +158,19 @@ static bool IsMultiLineEditControl(NSView *cv, id fs)
 @implementation SWELLAppController
 
 - (void)awakeFromNib
-{      
+{
   SWELL_EnsureMultithreadedCocoa();
   [NSApp setDelegate:self];
 
   SWELL_POSTMESSAGE_INIT
-  
+
   HMENU stockMenu=(HMENU)[NSApp mainMenu];
   if (stockMenu)
   {
     HMENU nf = GetSubMenu(stockMenu,0);
     if (nf) SWELL_app_stocksysmenu = SWELL_DuplicateMenu(nf);
   }
-  
+
   SWELLAppMain(SWELLAPP_ONLOAD,0,0);
 }
 
@@ -188,7 +189,7 @@ static bool IsMultiLineEditControl(NSView *cv, id fs)
 }
 - (BOOL)applicationOpenUntitledFile:(NSApplication *)theApplication
 {
-  return SWELLAppMain(SWELLAPP_NEWFILE,0,0)>0; 
+  return SWELLAppMain(SWELLAPP_NEWFILE,0,0)>0;
 }
 
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender

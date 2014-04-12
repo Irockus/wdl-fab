@@ -1,6 +1,6 @@
 #if WINDOWS_VERSION
-  #include <windows.h>
-  #include "Mac2Win.H"
+#include <windows.h>
+#include "Mac2Win.H"
 #endif
 
 #include "IPlugProcessRTAS.h"
@@ -50,9 +50,9 @@ void IPlugProcessRTAS::RenderAudio(float** inputs, float** outputs, long frames)
   }
   else if (mPlug)
   {
-    #if PLUG_DOES_MIDI
+#if PLUG_DOES_MIDI
     HandleMIDI();
-    #endif
+#endif
 
     mPlug->ProcessAudio(inputs, outputs, frames);
   }

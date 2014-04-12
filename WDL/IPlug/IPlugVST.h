@@ -9,7 +9,9 @@ struct IPlugInstanceInfo
 {
   audioMasterCallback mVSTHostCallback;
 };
-
+/**
+  Steinberg VST (2.4) compliant plugin class.
+*/
 class IPlugVST : public IPlugBase
 {
 public:
@@ -38,14 +40,15 @@ public:
 
   void InformHostOfProgramChange();
 
-  int GetSamplePos();   // Samples since start of project.
+  int GetSamplePos();   //< Samples since start of project.
   double GetTempo();
   void GetTimeSig(int* pNum, int* pDenom);
   void GetTime(ITimeInfo* pTimeInfo);
-  EHost GetHost();  // GetHostVersion() is inherited.
+  EHost GetHost();  //< GetHostVersion() is inherited.
 
-  // Tell the host that the graphics resized.
-  // Should be called only by the graphics object when it resizes itself.
+  /** Tell the host that the graphics resized.
+     Should be called only by the graphics object when it resizes itself.
+   */
   void ResizeGraphics(int w, int h);
 
   bool IsRenderingOffline();
@@ -72,15 +75,15 @@ private:
 
   bool mHostSpecificInitDone;
 
-  enum { VSTEXT_NONE=0, VSTEXT_COCKOS, VSTEXT_COCOA }; // list of VST extensions supported by host
+  enum { VSTEXT_NONE=0, VSTEXT_COCKOS, VSTEXT_COCOA }; //< list of VST extensions supported by host
   int mHasVSTExtensions;
 
-  ByteChunk mState;     // Persistent storage if the host asks for plugin state.
-  ByteChunk mBankState; // Persistent storage if the host asks for bank state.
+  ByteChunk mState;     //< Persistent storage if the host asks for plugin state.
+  ByteChunk mBankState; //< Persistent storage if the host asks for bank state.
 
 public:
   static VstIntPtr VSTCALLBACK VSTDispatcher(AEffect *pEffect, VstInt32 opCode, VstInt32 idx, VstIntPtr value, void *ptr, float opt);
-  static void VSTCALLBACK VSTProcess(AEffect *pEffect, float **inputs, float **outputs, VstInt32 nFrames);  // Deprecated.
+  static void VSTCALLBACK VSTProcess(AEffect *pEffect, float **inputs, float **outputs, VstInt32 nFrames);  //< Deprecated.
   static void VSTCALLBACK VSTProcessReplacing(AEffect *pEffect, float **inputs, float **outputs, VstInt32 nFrames);
   static void VSTCALLBACK VSTProcessDoubleReplacing(AEffect *pEffect, double **inputs, double **outputs, VstInt32 nFrames);
   static float VSTCALLBACK VSTGetParameter(AEffect *pEffect, VstInt32 idx);

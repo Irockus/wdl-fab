@@ -1,6 +1,6 @@
 #ifndef __IPLUGPOLYSYNTH__
 #define __IPLUGPOLYSYNTH__
-
+#include "resource.h"
 #include "IPlug_include_in_plug_hdr.h"
 #include "IMidiQueue.h"
 #include "IPlugPolySynthDSP.h"

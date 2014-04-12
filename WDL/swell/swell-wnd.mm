@@ -16,7 +16,7 @@
     2. Altered source versions must be plainly marked as such, and must not be
        misrepresented as being the original software.
     3. This notice may not be removed or altered from any source distribution.
-  
+
 
     This file provides basic windows APIs for handling windows, as well as the stubs to enable swell-dlggen to work.
 
@@ -112,21 +112,23 @@ static int arr_bsearch_mod(void *key, NSArray *arr, int (*compar)(const void *, 
 {
   size_t nmemb = [arr count];
   int base=0;
-    int lim, cmp;
-    int p;
-  
-    for (lim = nmemb; lim != 0; lim >>= 1) {
-        p = base + (lim >> 1);
-        cmp = compar(key, [arr objectAtIndex:p]);
-        if (cmp == 0) return (p);
-        if (cmp > 0) {    /* key > p: move right */
+  int lim, cmp;
+  int p;
+
+  for (lim = nmemb; lim != 0; lim >>= 1)
+  {
+    p = base + (lim >> 1);
+    cmp = compar(key, [arr objectAtIndex:p]);
+    if (cmp == 0) return (p);
+    if (cmp > 0)      /* key > p: move right */
+    {
       // check to see if key is less than p+1, if it is, we're done
-            base = p + 1;
+      base = p + 1;
       if (base >= nmemb || compar(key,[arr objectAtIndex:base])<=0) return base;
-            lim--;
-        } /* else move left */
-    }
-    return 0;
+      lim--;
+    } /* else move left */
+  }
+  return 0;
 }
 
 
@@ -134,21 +136,23 @@ template<class T> static int ptrlist_bsearch_mod(void *key, WDL_PtrList<T> *arr,
 {
   size_t nmemb = arr->GetSize();
   int base=0;
-    int lim, cmp;
-    int p;
-  
-    for (lim = nmemb; lim != 0; lim >>= 1) {
-        p = base + (lim >> 1);
-        cmp = compar(key, arr->Get(p),ctx);
-        if (cmp == 0) return (p);
-        if (cmp > 0) {    /* key > p: move right */
+  int lim, cmp;
+  int p;
+
+  for (lim = nmemb; lim != 0; lim >>= 1)
+  {
+    p = base + (lim >> 1);
+    cmp = compar(key, arr->Get(p),ctx);
+    if (cmp == 0) return (p);
+    if (cmp > 0)      /* key > p: move right */
+    {
       // check to see if key is less than p+1, if it is, we're done
-            base = p + 1;
+      base = p + 1;
       if (base >= nmemb || compar(key,arr->Get(base),ctx)<=0) return base;
-            lim--;
-        } /* else move left */
-    }
-    return 0;
+      lim--;
+    } /* else move left */
+  }
+  return 0;
 }
 
 
@@ -173,7 +177,7 @@ HTREEITEM__::~HTREEITEM__()
 {
   free(m_value);
   m_children.Empty(true);
-  [m_dh release];
+  [((id)m_dh) release];
 }
 
 
@@ -217,7 +221,7 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
 {
   if (m_dest)
   {
-    NMHDR nm={(HWND)self,[self tag],TCN_SELCHANGE};
+    NMHDR nm= {(HWND)self,[self tag],TCN_SELCHANGE};
     SendMessage((HWND)m_dest,WM_NOTIFY,[self tag],(LPARAM)&nm);
   }
 }
@@ -245,7 +249,7 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
   else if (msg==PBM_SETPOS)
   {
     [self setDoubleValue:(double)wParam];
-    [self stopAnimation:self];    
+    [self stopAnimation:self];
   }
   else if (msg==PBM_DELTAPOS)
   {
@@ -257,7 +261,7 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
 @end
 
 @implementation SWELL_ListViewCell
--(NSColor *)highlightColorWithFrame:(NSRect)cellFrame inView:(NSView *)controlView 
+-(NSColor *)highlightColorWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
 {
   if ([controlView isKindOfClass:[SWELL_ListView class]] && ((SWELL_ListView *)controlView)->m_selColors) return nil;
   if ([controlView isKindOfClass:[SWELL_TreeView class]] && ((SWELL_TreeView *)controlView)->m_selColors) return nil;
@@ -284,14 +288,14 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
   {
 //    [controlView lockFocus];
     [status drawInRect:NSMakeRect(cellFrame.origin.x,cellFrame.origin.y,cellFrame.size.height,cellFrame.size.height) fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1.0];
- //   [controlView unlockFocus];
+//   [controlView unlockFocus];
   }
   cellFrame.origin.x += cellFrame.size.height + 2.0;
   cellFrame.size.width -= cellFrame.size.height + 2.0;
   [super drawWithFrame:cellFrame inView:controlView];
 }
 
--(NSColor *)highlightColorWithFrame:(NSRect)cellFrame inView:(NSView *)controlView 
+-(NSColor *)highlightColorWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
 {
   if ([controlView isKindOfClass:[SWELL_ListView class]] && ((SWELL_ListView *)controlView)->m_selColors) return nil;
   return [super highlightColorWithFrame:cellFrame inView:controlView];
@@ -351,13 +355,13 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
 {
   if (item==nil) return YES;
   HTREEITEM__ *it=(HTREEITEM__ *)[item getValue];
-  
+
   return it && it->m_haschildren;
 }
 
 - (id)outlineView:(NSOutlineView *)outlineView
-            child:(NSInteger)index
-           ofItem:(id)item
+  child:(NSInteger)index
+  ofItem:(id)item
 {
   HTREEITEM__ *row=item ? ((HTREEITEM__*)[item getValue])->m_children.Get(index) : m_items ? m_items->Get(index) : 0;
 
@@ -365,16 +369,16 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
 }
 
 - (id)outlineView:(NSOutlineView *)outlineView
-    objectValueForTableColumn:(NSTableColumn *)tableColumn
-           byItem:(id)item
+  objectValueForTableColumn:(NSTableColumn *)tableColumn
+  byItem:(id)item
 {
   if (!item) return @"";
   HTREEITEM__ *it=(HTREEITEM__ *)[item getValue];
-  
+
   if (!it || !it->m_value) return @"";
- 
-  NSString *str=(NSString *)SWELL_CStringToCFString(it->m_value);    
-  
+
+  NSString *str=(NSString *)SWELL_CStringToCFString(it->m_value);
+
   return [str autorelease];
 }
 
@@ -384,14 +388,14 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
 {
   if (([theEvent modifierFlags] & NSControlKeyMask) && IsRightClickEmulateEnabled())
   {
-    m_fakerightmouse=1;  
+    m_fakerightmouse=1;
   }
-  else 
+  else
   {
-    
-    NMCLICK nmlv={{(HWND)self,[self tag], NM_CLICK},};
+
+    NMCLICK nmlv= {{(HWND)self,[self tag], NM_CLICK},};
     SendMessage((HWND)[self target],WM_NOTIFY,[self tag],(LPARAM)&nmlv);
-    
+
     m_fakerightmouse=0;
     [super mouseDown:theEvent];
   }
@@ -402,7 +406,7 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
 }
 
 -(void)mouseUp:(NSEvent *)theEvent
-{   
+{
   if (m_fakerightmouse||([theEvent modifierFlags] & NSControlKeyMask)) [self rightMouseUp:theEvent];
   else [super mouseUp:theEvent];
 }
@@ -410,16 +414,16 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
 {
   bool wantContext=true;
 
-  NMCLICK nmlv={{(HWND)self,[self tag], NM_RCLICK},};
+  NMCLICK nmlv= {{(HWND)self,[self tag], NM_RCLICK},};
   if (SendMessage((HWND)[self target],WM_NOTIFY,[self tag],(LPARAM)&nmlv)) wantContext=false;
-  
+
   if (wantContext)
   {
     POINT p;
     GetCursorPos(&p);
     SendMessage((HWND)[self target],WM_CONTEXTMENU,(WPARAM)self,(p.x&0xffff)|(p.y<<16));
   }
-  
+
   m_fakerightmouse=0;
 }
 
@@ -442,7 +446,7 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
           r = NSIntersectionRect(r,theClipRect);
           if (r.size.height>0 && r.size.width>0)
           {
-            [c setFill];      
+            [c setFill];
             NSRectFill(r);
           }
         }
@@ -467,7 +471,7 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
 
 -(LONG)getSwellStyle { return style; }
 
--(void)setSwellStyle:(LONG)st 
+-(void)setSwellStyle:(LONG)st
 {
   bool hdrchg= ((style&LVS_NOCOLUMNHEADER) != (st&LVS_NOCOLUMNHEADER));
   style=st;
@@ -543,11 +547,11 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
         int x = [self rowAtPoint:NSMakePoint(0,theClipRect.origin.y)];
         if (x<0)x=0;
         int n = [self numberOfRows];
-        for (;x <n;x++)
+        for (; x <n; x++)
         {
           NSRect r = [self rectOfRow:x];
           if (r.origin.y >= theClipRect.origin.y + theClipRect.size.height) break;
-          
+
           if ([self isRowSelected:x])
           {
             r = NSIntersectionRect(r,theClipRect);
@@ -595,13 +599,13 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
 {
   NSString *str=NULL;
   int image_idx=0;
-  
+
   if (!m_lbMode && (style & LVS_OWNERDATA))
   {
     HWND tgt=(HWND)[self target];
 
     char buf[1024];
-    NMLVDISPINFO nm={{(HWND)self, [self tag], LVN_GETDISPINFO}};
+    NMLVDISPINFO nm= {{(HWND)self, [self tag], LVN_GETDISPINFO}};
     nm.item.mask=LVIF_TEXT;
     if (m_status_imagelist_type==LVSIL_STATE) nm.item.mask |= LVIF_STATE;
     else if (m_status_imagelist_type == LVSIL_SMALL) nm.item.mask |= LVIF_IMAGE;
@@ -612,16 +616,16 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
     nm.item.cchTextMax=sizeof(buf)-1;
     buf[0]=0;
     SendMessage(tgt,WM_NOTIFY,[self tag],(LPARAM)&nm);
-    
+
     if (m_status_imagelist_type == LVSIL_STATE) image_idx=(nm.item.state>>16)&0xff;
     else if (m_status_imagelist_type == LVSIL_SMALL) image_idx = nm.item.iImage + 1;
-    str=(NSString *)SWELL_CStringToCFString(nm.item.pszText); 
+    str=(NSString *)SWELL_CStringToCFString(nm.item.pszText);
   }
   else
   {
     char *p=NULL;
     SWELL_ListView_Row *r=0;
-    if (m_items && m_cols && (r=m_items->Get(rowIndex))) 
+    if (m_items && m_cols && (r=m_items->Get(rowIndex)))
     {
       p=r->m_vals.Get(m_cols->Find(aTableColumn));
       if (m_status_imagelist_type == LVSIL_STATE || m_status_imagelist_type == LVSIL_SMALL)
@@ -629,28 +633,28 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
         image_idx=r->m_imageidx;
       }
     }
-    
-    str=(NSString *)SWELL_CStringToCFString(p);    
-    
+
+    str=(NSString *)SWELL_CStringToCFString(p);
+
     if (style & LBS_OWNERDRAWFIXED)
     {
       SWELL_ODListViewCell *cell=[aTableColumn dataCell];
       if ([cell isKindOfClass:[SWELL_ODListViewCell class]]) [cell setItemIdx:rowIndex];
     }
   }
-  
+
   if (!m_lbMode && m_status_imagelist)
   {
     SWELL_StatusCell *cell=(SWELL_StatusCell*)[aTableColumn dataCell];
     if ([cell isKindOfClass:[SWELL_StatusCell class]])
     {
-      HICON icon=m_status_imagelist->Get(image_idx-1);      
+      HICON icon=m_status_imagelist->Get(image_idx-1);
       NSImage *img=NULL;
       if (icon)  img=(NSImage *)GetNSImageFromHICON(icon);
       [cell setStatusImage:img];
     }
   }
-  
+
   return [str autorelease];
 
 }
@@ -660,26 +664,26 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
 {
   if (([theEvent modifierFlags] & NSControlKeyMask) && IsRightClickEmulateEnabled())
   {
-    m_fakerightmouse=1;  
+    m_fakerightmouse=1;
     m_start_item=-1;
     m_start_subitem=-1;
   }
-  else 
+  else
   {
     m_leftmousemovecnt=0;
     m_fakerightmouse=0;
-    
+
     NSPoint pt=[theEvent locationInWindow];
     pt=[self convertPoint:pt fromView:nil];
     m_start_item=[self rowAtPoint:pt];
     m_start_subitem=[self columnAtPoint:pt];
-    
-    
-    
+
+
+
     m_start_item_clickmode=0;
     if (m_start_item >=0 && (m_fastClickMask&(1<<m_start_subitem)))
     {
-      NMLISTVIEW nmlv={{(HWND)self,[self tag], NM_CLICK}, m_start_item, m_start_subitem, 0, 0, 0, {(int)floor(pt.x), (int)floor(pt.y)}, };
+      NMLISTVIEW nmlv= {{(HWND)self,[self tag], NM_CLICK}, m_start_item, m_start_subitem, 0, 0, 0, {(int)floor(pt.x), (int)floor(pt.y)}, };
       SWELL_ListView_Row *row=m_items->Get(nmlv.iItem);
       if (row)
         nmlv.lParam = row->m_param;
@@ -705,11 +709,11 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
       if (!m_lbMode)
       {
         // if m_start_item isnt selected, change selection to it now
-        if (!(m_start_item_clickmode&4) && ![self isRowSelected:m_start_item]) 
+        if (!(m_start_item_clickmode&4) && ![self isRowSelected:m_start_item])
         {
           [self selectRowIndexes:[NSIndexSet indexSetWithIndex:m_start_item] byExtendingSelection:!!(GetAsyncKeyState(VK_CONTROL)&0x8000)];
         }
-        NMLISTVIEW hdr={{(HWND)self,[self tag],LVN_BEGINDRAG},m_start_item,m_start_subitem,0,};
+        NMLISTVIEW hdr= {{(HWND)self,[self tag],LVN_BEGINDRAG},m_start_item,m_start_subitem,0,};
         SendMessage((HWND)[self target],WM_NOTIFY,[self tag], (LPARAM) &hdr);
         m_start_item_clickmode |= 2;
       }
@@ -721,7 +725,7 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
     POINT p;
     GetCursorPos(&p);
     ScreenToClient(tgt,&p);
-    
+
     SendMessage(tgt,WM_MOUSEMOVE,0,(p.x&0xffff) + (((int)p.y)<<16));
   }
 }
@@ -748,42 +752,42 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
       HWND tgt=(HWND)[self target];
       POINT p;
       GetCursorPos(&p);
-      ScreenToClient(tgt,&p);      
-      SendMessage(tgt,WM_LBUTTONUP,0,(p.x&0xffff) + (((int)p.y)<<16));      
+      ScreenToClient(tgt,&p);
+      SendMessage(tgt,WM_LBUTTONUP,0,(p.x&0xffff) + (((int)p.y)<<16));
     }
   }
-  
+
   if (!m_lbMode && !(m_start_item_clickmode&(2|4)))
   {
     NSPoint pt=[theEvent locationInWindow];
-    pt=[self convertPoint:pt fromView:nil];    
+    pt=[self convertPoint:pt fromView:nil];
     int col = [self columnAtPoint:pt];
-    NMLISTVIEW nmlv={{(HWND)self,[self tag], NM_CLICK}, [self rowAtPoint:pt], col, 0, 0, 0, {(int)floor(pt.x), (int)floor(pt.y)}, };
+    NMLISTVIEW nmlv= {{(HWND)self,[self tag], NM_CLICK}, [self rowAtPoint:pt], col, 0, 0, 0, {(int)floor(pt.x), (int)floor(pt.y)}, };
     SWELL_ListView_Row *row=m_items->Get(nmlv.iItem);
     if (row) nmlv.lParam = row->m_param;
     SendMessage((HWND)[self target],WM_NOTIFY,[self tag],(LPARAM)&nmlv);
-  }  
+  }
 }
 
 - (void)rightMouseUp:(NSEvent *)theEvent
 {
   bool wantContext=true;
-  
-  if (!m_lbMode) 
+
+  if (!m_lbMode)
   {
     NSPoint pt=[theEvent locationInWindow];
     pt=[self convertPoint:pt fromView:nil];
-    
-    // note, windows selects on right mousedown    
+
+    // note, windows selects on right mousedown
     int row=[self rowAtPoint:pt];
     if (row >= 0 && ![self isRowSelected:row])
     {
       NSIndexSet* rows=[NSIndexSet indexSetWithIndex:row];
       [self deselectAll:self];
       [self selectRowIndexes:rows byExtendingSelection:NO];
-    }       
-    
-    NMLISTVIEW nmlv={{(HWND)self,[self tag], NM_RCLICK}, [self rowAtPoint:pt], [self columnAtPoint:pt], 0, 0, 0, {(int)floor(pt.x), (int)floor(pt.y)}, };
+    }
+
+    NMLISTVIEW nmlv= {{(HWND)self,[self tag], NM_RCLICK}, [self rowAtPoint:pt], [self columnAtPoint:pt], 0, 0, 0, {(int)floor(pt.x), (int)floor(pt.y)}, };
     if (SendMessage((HWND)[self target],WM_NOTIFY,nmlv.hdr.idFrom,(LPARAM)&nmlv)) wantContext=false;
   }
   if (wantContext)
@@ -798,84 +802,84 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
 -(LRESULT)onSwellMessage:(UINT)msg p1:(WPARAM)wParam p2:(LPARAM)lParam
 {
   HWND hwnd=(HWND)self;
-    switch (msg)
+  switch (msg)
+  {
+    case LB_RESETCONTENT:
+      ownermode_cnt=0;
+      if (m_items)
+      {
+        m_items->Empty(true);
+        [self reloadData];
+      }
+      return 0;
+    case LB_ADDSTRING:
+    case LB_INSERTSTRING:
     {
-      case LB_RESETCONTENT:
-          ownermode_cnt=0;
-          if (m_items) 
-          {
-            m_items->Empty(true);
-            [self reloadData];
-          }
-      return 0;
-      case LB_ADDSTRING:
-      case LB_INSERTSTRING:
+      int cnt=ListView_GetItemCount(hwnd);
+      if (msg == LB_ADDSTRING && (style & LBS_SORT))
       {
-        int cnt=ListView_GetItemCount(hwnd);
-        if (msg == LB_ADDSTRING && (style & LBS_SORT))
+        SWELL_ListView *tv=(SWELL_ListView*)hwnd;
+        if (tv->m_lbMode && tv->m_items)
         {
-          SWELL_ListView *tv=(SWELL_ListView*)hwnd;
-          if (tv->m_lbMode && tv->m_items)
-          {            
-            cnt=ptrlist_bsearch_mod((char *)lParam,tv->m_items,_listviewrowSearchFunc,NULL);
-          }
-        }
-        if (msg==LB_ADDSTRING) wParam=cnt;
-        else if (wParam > cnt) wParam=cnt;
-        LVITEM lvi={LVIF_TEXT,wParam,0,0,0,(char *)lParam};
-        ListView_InsertItem(hwnd,&lvi);
-      }
-      return wParam;
-      case LB_GETCOUNT: return ListView_GetItemCount(hwnd);
-      case LB_SETSEL:
-        ListView_SetItemState(hwnd, lParam,wParam ? LVIS_SELECTED : 0,LVIS_SELECTED);
-        return 0;
-      case LB_GETTEXT:
-        if (lParam)
-        {
-          ListView_GetItemText(hwnd,wParam,0,(char *)lParam,4096);
-        }
-      return 0;
-      case LB_GETSEL:
-        return !!(ListView_GetItemState(hwnd,wParam,LVIS_SELECTED)&LVIS_SELECTED);
-      case LB_GETCURSEL:
-        return [self selectedRow];
-      case LB_SETCURSEL:
-      {
-        if (wParam<ListView_GetItemCount(hwnd))
-        {
-          [self selectRowIndexes:[NSIndexSet indexSetWithIndex:wParam] byExtendingSelection:NO];        
-        }
-        else
-        {
-          [self deselectAll:self];
+          cnt=ptrlist_bsearch_mod((char *)lParam,tv->m_items,_listviewrowSearchFunc,NULL);
         }
       }
-        return 0;
-      case LB_GETITEMDATA:
-      {
-        if (m_items)
-        {
-          SWELL_ListView_Row *row=m_items->Get(wParam);
-          if (row) return row->m_param;
-        }
-      }
-        return 0;
-      case LB_SETITEMDATA:
-      {
-        if (m_items)
-        {
-          SWELL_ListView_Row *row=m_items->Get(wParam);
-          if (row) row->m_param=lParam;
-        }
-      }
-        return 0;
-      case LB_GETSELCOUNT:
-        return [[self selectedRowIndexes] count];
-      case LB_DELETESTRING:
-        ListView_DeleteItem((HWND)self, wParam);
-        return 0;
+      if (msg==LB_ADDSTRING) wParam=cnt;
+      else if (wParam > cnt) wParam=cnt;
+      LVITEM lvi= {LVIF_TEXT,wParam,0,0,0,(char *)lParam};
+      ListView_InsertItem(hwnd,&lvi);
     }
+    return wParam;
+    case LB_GETCOUNT: return ListView_GetItemCount(hwnd);
+    case LB_SETSEL:
+      ListView_SetItemState(hwnd, lParam,wParam ? LVIS_SELECTED : 0,LVIS_SELECTED);
+      return 0;
+    case LB_GETTEXT:
+      if (lParam)
+      {
+        ListView_GetItemText(hwnd,wParam,0,(char *)lParam,4096);
+      }
+      return 0;
+    case LB_GETSEL:
+      return !!(ListView_GetItemState(hwnd,wParam,LVIS_SELECTED)&LVIS_SELECTED);
+    case LB_GETCURSEL:
+      return [self selectedRow];
+    case LB_SETCURSEL:
+    {
+      if (wParam<ListView_GetItemCount(hwnd))
+      {
+        [self selectRowIndexes:[NSIndexSet indexSetWithIndex:wParam] byExtendingSelection:NO];
+      }
+      else
+      {
+        [self deselectAll:self];
+      }
+    }
+    return 0;
+    case LB_GETITEMDATA:
+    {
+      if (m_items)
+      {
+        SWELL_ListView_Row *row=m_items->Get(wParam);
+        if (row) return row->m_param;
+      }
+    }
+    return 0;
+    case LB_SETITEMDATA:
+    {
+      if (m_items)
+      {
+        SWELL_ListView_Row *row=m_items->Get(wParam);
+        if (row) row->m_param=lParam;
+      }
+    }
+    return 0;
+    case LB_GETSELCOUNT:
+      return [[self selectedRowIndexes] count];
+    case LB_DELETESTRING:
+      ListView_DeleteItem((HWND)self, wParam);
+      return 0;
+  }
   return 0;
 }
 
@@ -910,21 +914,21 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
 {
   NSView *ctl=[self controlView];
   if (!ctl) { [super drawWithFrame:cellFrame inView:controlView]; return; }
-  
+
   HDC hdc=GetDC((HWND)controlView);
   if (hdc)
   {
     HWND notWnd = GetParent((HWND)ctl);
-    RECT r={(int)(cellFrame.origin.x+0.5),(int)(cellFrame.origin.y+0.5)};
+    RECT r= {(int)(cellFrame.origin.x+0.5),(int)(cellFrame.origin.y+0.5)};
     r.right=r.left+(int)(cellFrame.size.width+0.5);
     r.bottom=r.top+(int)(cellFrame.size.height+0.5);
-    DRAWITEMSTRUCT dis={ODT_BUTTON,[ctl tag],0,0,0,(HWND)ctl,hdc,{0,},0};
+    DRAWITEMSTRUCT dis= {ODT_BUTTON,[ctl tag],0,0,0,(HWND)ctl,hdc,{0,},0};
     dis.rcItem = r;
     SendMessage(notWnd,WM_DRAWITEM,dis.CtlID,(LPARAM)&dis);
-  
+
     ReleaseDC((HWND)controlView,hdc);
   }
-  
+
 }
 @end
 
@@ -937,7 +941,7 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
 - (void)drawInteriorWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
 {
   if (!m_ownctl) { [super drawInteriorWithFrame:cellFrame inView:controlView]; return; }
-  
+
   int itemidx=m_lastidx;
   int itemData=0; // todo: get itemData
   SWELL_ListView_Row *row=m_ownctl->m_items->Get(itemidx);
@@ -947,13 +951,13 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
   if (hdc)
   {
     HWND notWnd = GetParent((HWND)m_ownctl);
-    RECT r={(int)(cellFrame.origin.x+0.5),(int)(cellFrame.origin.y+0.5)};
+    RECT r= {(int)(cellFrame.origin.x+0.5),(int)(cellFrame.origin.y+0.5)};
     r.right=r.left+(int)(cellFrame.size.width+0.5);
     r.bottom=r.top+(int)(cellFrame.size.height+0.5);
-    DRAWITEMSTRUCT dis={ODT_LISTBOX,[m_ownctl tag],itemidx,0,0,(HWND)m_ownctl,hdc,{0,},itemData};
+    DRAWITEMSTRUCT dis= {ODT_LISTBOX,[m_ownctl tag],itemidx,0,0,(HWND)m_ownctl,hdc,{0,},itemData};
     dis.rcItem = r;
     SendMessage(notWnd,WM_DRAWITEM,dis.CtlID,(LPARAM)&dis);
-  
+
     ReleaseDC((HWND)controlView,hdc);
   }
 }
@@ -973,15 +977,15 @@ HWND GetDlgItem(HWND hwnd, int idx)
   id pid=(id)hwnd;
   if ([pid isKindOfClass:[NSWindow class]]) v=[((NSWindow *)pid) contentView];
   else if ([pid isKindOfClass:[NSView class]]) v=(NSView *)pid;
-  
+
   if (!idx || !v) return (HWND)v;
-  
+
   SWELL_BEGIN_TRY
 
   NSArray *ar = [v subviews];
   int n=[ar count];
   int x;
-  for (x=0;x<n;x++)
+  for (x=0; x<n; x++)
   {
     NSView *sv = [ar objectAtIndex:x];
     if (sv)
@@ -993,14 +997,14 @@ HWND GetDlgItem(HWND hwnd, int idx)
         sv=[(NSScrollView *)sv documentView];
         if (sv && [sv respondsToSelector:@selector(tag)] && [sv tag] == idx) return (HWND)sv;
       }
-      if (sv && [sv isKindOfClass:[NSClipView class]]) 
+      if (sv && [sv isKindOfClass:[NSClipView class]])
       {
         sv = [(NSClipView *)sv documentView];
         if (sv && [sv respondsToSelector:@selector(tag)] && [sv tag] == idx) return (HWND)sv;
       }
     }
   }
-  // we might want to enable this for max compat with old code, but hopefully not:  return [v viewWithTag:idx]; 
+  // we might want to enable this for max compat with old code, but hopefully not:  return [v viewWithTag:idx];
   SWELL_END_TRY(;)
   return NULL;
 }
@@ -1024,14 +1028,14 @@ LONG_PTR SetWindowLong(HWND hwnd, int idx, LONG_PTR val)
     [(SWELL_hwndChild*)pid setSwellUserData:(LONG_PTR)val];
     return ret;
   }
-    
+
   if (idx==GWL_ID && [pid respondsToSelector:@selector(tag)] && [pid respondsToSelector:@selector(setTag:)])
   {
     int ret=[pid tag];
     [pid setTag:(int)val];
     return (LONG_PTR)ret;
   }
-  
+
   if (idx==GWL_WNDPROC && [pid respondsToSelector:@selector(setSwellWindowProc:)])
   {
     WNDPROC ov=(WNDPROC)[pid getSwellWindowProc];
@@ -1044,7 +1048,7 @@ LONG_PTR SetWindowLong(HWND hwnd, int idx, LONG_PTR val)
     [pid setSwellDialogProc:(DLGPROC)val];
     return (LONG_PTR)ov;
   }
-  
+
   if (idx==GWL_STYLE)
   {
     if ([pid respondsToSelector:@selector(setSwellStyle:)])
@@ -1053,16 +1057,16 @@ LONG_PTR SetWindowLong(HWND hwnd, int idx, LONG_PTR val)
       [pid setSwellStyle:(LONG)val];
       return ov;
     }
-    else if ([pid isKindOfClass:[NSButton class]]) 
+    else if ([pid isKindOfClass:[NSButton class]])
     {
       int ret=GetWindowLong(hwnd,idx);
-      
+
       if ((val&0xf) == BS_AUTO3STATE)
       {
         [pid setButtonType:NSSwitchButton];
         [pid setAllowsMixedState:YES];
         if ([pid isKindOfClass:[SWELL_Button class]]) [pid swellSetRadioFlags:0];
-      }    
+      }
       else if ((val & 0xf) == BS_AUTOCHECKBOX)
       {
         [pid setButtonType:NSSwitchButton];
@@ -1073,11 +1077,11 @@ LONG_PTR SetWindowLong(HWND hwnd, int idx, LONG_PTR val)
       {
         [pid setButtonType:NSRadioButton];
         if ([pid isKindOfClass:[SWELL_Button class]]) [pid swellSetRadioFlags:(val&WS_GROUP)?3:1];
-      }               
-      
+      }
+
       return ret;
     }
-    else 
+    else
     {
       if ([[pid window] contentView] == pid)
       {
@@ -1102,23 +1106,23 @@ LONG_PTR SetWindowLong(HWND hwnd, int idx, LONG_PTR val)
           if ([oldw respondsToSelector:@selector(swellGetOwner)]) oldOwner=(HWND)[(SWELL_ModelessWindow*)oldw swellGetOwner];
           int oldlevel = [oldw level];
 
-          
+
           [tv retain];
-          SWELL_hwndChild *tempview = [[SWELL_hwndChild alloc] initChild:nil Parent:(NSView *)oldw dlgProc:nil Param:0];          
-          [tempview release];          
-          
+          SWELL_hwndChild *tempview = [[SWELL_hwndChild alloc] initChild:nil Parent:(NSView *)oldw dlgProc:nil Param:0];
+          [tempview release];
+
           unsigned int mask=0;
-          
+
           if (val & WS_CAPTION)
           {
             mask|=NSTitledWindowMask;
             if (val & WS_THICKFRAME)
               mask|=NSMiniaturizableWindowMask|NSClosableWindowMask|NSResizableWindowMask;
           }
-      
+
           HWND SWELL_CreateModelessFrameForWindow(HWND childW, HWND ownerW, unsigned int);
           HWND bla=SWELL_CreateModelessFrameForWindow((HWND)tv,(HWND)oldOwner,mask);
-          
+
           if (bla)
           {
             [tv release];
@@ -1129,7 +1133,7 @@ LONG_PTR SetWindowLong(HWND hwnd, int idx, LONG_PTR val)
               if (p && [(id)bla respondsToSelector:@selector(swellGetOwnerWindowHead)])
               {
                 void **p2=(void **)[(SWELL_ModelessWindow*)bla swellGetOwnerWindowHead];
-                if (p && p2) 
+                if (p && p2)
                 {
                   *p2=*p;
                   *p=0;
@@ -1157,44 +1161,44 @@ LONG_PTR SetWindowLong(HWND hwnd, int idx, LONG_PTR val)
                   [oldw removeChildWindow:cw];
                   [(NSWindow *)bla addChildWindow:cw ordered:NSWindowAbove];
                   [cw release];
-                  
-                  
+
+
                 }
               }
             }
-          
+
             if (oldpar) [oldpar addChildWindow:(NSWindow *)bla ordered:NSWindowAbove];
             if (oldtitle[0]) SetWindowText(hwnd,oldtitle);
-            
+
             [(NSWindow *)bla setFrame:fr display:dovis];
             [(NSWindow *)bla setLevel:oldlevel];
             if (dovis) ShowWindow(bla,SW_SHOW);
-      
+
             DestroyWindow((HWND)oldw);
           }
           else
           {
             [oldw setContentView:tv];
             [tv release];
-          }  
-      
+          }
+
         }
       }
     }
     return 0;
   }
 
-  
+
   if ([pid respondsToSelector:@selector(setSwellExtraData:value:)])
   {
     LONG_PTR ov=0;
     if ([pid respondsToSelector:@selector(getSwellExtraData:)]) ov=(LONG_PTR)[pid getSwellExtraData:idx];
 
     [pid setSwellExtraData:idx value:val];
-    
+
     return ov;
   }
-   
+
   SWELL_END_TRY(;)
   return 0;
 }
@@ -1205,12 +1209,12 @@ LONG_PTR GetWindowLong(HWND hwnd, int idx)
   id pid=(id)hwnd;
 
   SWELL_BEGIN_TRY
-  
+
   if (idx==GWL_EXSTYLE && [pid respondsToSelector:@selector(swellGetExtendedStyle)])
   {
     return (LONG_PTR)[pid swellGetExtendedStyle];
   }
-  
+
   if (idx==GWL_USERDATA && [pid respondsToSelector:@selector(getSwellUserData)])
   {
     return (LONG_PTR)[pid getSwellUserData];
@@ -1219,11 +1223,11 @@ LONG_PTR GetWindowLong(HWND hwnd, int idx)
   {
     return 0xdeadf00b;
   }
-  
+
   if (idx==GWL_ID && [pid respondsToSelector:@selector(tag)])
     return [pid tag];
-  
-  
+
+
   if (idx==GWL_WNDPROC && [pid respondsToSelector:@selector(getSwellWindowProc)])
   {
     return (LONG_PTR)[pid getSwellWindowProc];
@@ -1231,16 +1235,16 @@ LONG_PTR GetWindowLong(HWND hwnd, int idx)
   if (idx==DWL_DLGPROC && [pid respondsToSelector:@selector(getSwellDialogProc)])
   {
     return (LONG_PTR)[pid getSwellDialogProc];
-  }  
+  }
   if (idx==GWL_STYLE)
   {
     int ret=0;
     if ([pid respondsToSelector:@selector(getSwellStyle)])
     {
       return (LONG_PTR)[pid getSwellStyle];
-    }    
-    
-    if ([pid isKindOfClass:[NSButton class]]) 
+    }
+
+    if ([pid isKindOfClass:[NSButton class]])
     {
       int tmp;
       if ([pid allowsMixedState]) ret |= BS_AUTO3STATE;
@@ -1249,9 +1253,9 @@ LONG_PTR GetWindowLong(HWND hwnd, int idx)
         ret |= BS_AUTORADIOBUTTON;
         if (tmp&2) ret|=WS_GROUP;
       }
-      else ret |= BS_AUTOCHECKBOX; 
+      else ret |= BS_AUTOCHECKBOX;
     }
-    
+
     if ([pid isKindOfClass:[NSView class]])
     {
       if ([[pid window] contentView] != pid) ret |= WS_CHILDWINDOW;
@@ -1265,14 +1269,14 @@ LONG_PTR GetWindowLong(HWND hwnd, int idx)
         }
       }
     }
-    
+
     return ret;
   }
   if ([pid respondsToSelector:@selector(getSwellExtraData:)])
   {
     return (LONG_PTR)[pid getSwellExtraData:idx];
   }
-  
+
   SWELL_END_TRY(;)
   return 0;
 }
@@ -1285,15 +1289,15 @@ static bool IsWindowImpl(NSView *ch, NSView *par)
   if (!ar) return false;
   [ar retain];
   int x,n=[ar count];
-  for (x=0;x<n;x++)
-    if ([ar objectAtIndex:x] == ch) 
+  for (x=0; x<n; x++)
+    if ([ar objectAtIndex:x] == ch)
     {
       [ar release];
       return true;
     }
 
-  for (x=0;x<n;x++)
-    if (IsWindowImpl(ch,[ar objectAtIndex:x])) 
+  for (x=0; x<n; x++)
+    if (IsWindowImpl(ch,[ar objectAtIndex:x]))
     {
       [ar release];
       return true;
@@ -1311,37 +1315,43 @@ bool IsWindow(HWND hwnd)
   NSArray *ch=[NSApp windows];
   [ch retain];
   int x,n=[ch count];
-  for(x=0;x<n; x ++)
+  for(x=0; x<n; x ++)
   {
-    @try { 
-      NSWindow *w = [ch objectAtIndex:x]; 
-      if (w == (NSWindow *)hwnd || [w contentView] == (NSView *)hwnd) 
+    @try
+    {
+      NSWindow *w = [ch objectAtIndex:x];
+      if (w == (NSWindow *)hwnd || [w contentView] == (NSView *)hwnd)
       {
         [ch release];
         return true;
       }
     }
-    @catch (NSException *ex) { 
+    @catch (NSException *ex)
+    {
     }
-    @catch (id ex) {
+    @catch (id ex)
+    {
     }
   }
-  for(x=0;x<n; x ++)
+  for(x=0; x<n; x ++)
   {
-    @try { 
+    @try
+    {
       NSWindow *w = [ch objectAtIndex:x];
-      if (w && 
+      if (w &&
           // only validate children of our windows (maybe an option for this?)
           ([w isKindOfClass:[SWELL_ModelessWindow class]] || [w isKindOfClass:[SWELL_ModalDialog class]]) &&
-          IsWindowImpl((NSView*)hwnd,[w contentView])) 
+          IsWindowImpl((NSView*)hwnd,[w contentView]))
       {
         [ch release];
         return true;
       }
-    } 
-    @catch (NSException *ex) { 
     }
-    @catch (id ex) {
+    @catch (NSException *ex)
+    {
+    }
+    @catch (id ex)
+    {
     }
   }
   [ch release];
@@ -1360,7 +1370,7 @@ bool IsWindowVisible(HWND hwnd)
   {
     NSWindow *w = [turd window];
     if (w && ![w isVisible]) return false;
-    
+
     return ![turd isHiddenOrHasHiddenAncestor];
   }
   if ([turd isKindOfClass:[NSWindow class]])
@@ -1374,9 +1384,9 @@ bool IsWindowVisible(HWND hwnd)
 void CenterWindow(HWND hwnd)
 {
   if (!hwnd) return;
-  
+
   id turd=(id)hwnd;
-  
+
   if ([turd isKindOfClass:[NSView class]])
   {
     NSWindow *w = [turd window];
@@ -1400,9 +1410,11 @@ static void *__GetNSImageFromHICON(HICON ico) // local copy to not be link depen
 
 STANDARD_CONTROL_NEEDSDISPLAY_IMPL
 
--(id) init {
+-(id) init
+{
   self = [super init];
-  if (self != nil) {
+  if (self != nil)
+  {
     m_userdata=0;
     m_swellGDIimage=0;
     m_radioflags=0;
@@ -1435,7 +1447,7 @@ LRESULT SendMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
   {
     return (LRESULT) [obj onSwellMessage:msg p1:wParam p2:lParam];
   }
-  else 
+  else
   {
     if (msg == BM_GETCHECK && [obj isKindOfClass:[NSButton class]])
     {
@@ -1463,64 +1475,64 @@ LRESULT SendMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     }
     else if (msg >= CB_ADDSTRING && msg <= CB_INITSTORAGE && ([obj isKindOfClass:[NSPopUpButton class]] || [obj isKindOfClass:[NSComboBox class]]))
     {
-        switch (msg)
-        {
-          case CB_ADDSTRING: return SWELL_CB_AddString(hwnd,0,(char*)lParam); 
-          case CB_DELETESTRING: SWELL_CB_DeleteString(hwnd,0,wParam); return 1;
-          case CB_GETCOUNT: return SWELL_CB_GetNumItems(hwnd,0);
-          case CB_GETCURSEL: return SWELL_CB_GetCurSel(hwnd,0);
-          case CB_GETLBTEXT: return SWELL_CB_GetItemText(hwnd,0,wParam,(char *)lParam, 1024);  
-          case CB_INSERTSTRING: return SWELL_CB_InsertString(hwnd,0,wParam,(char *)lParam);
-          case CB_RESETCONTENT: SWELL_CB_Empty(hwnd,0); return 0;
-          case CB_SETCURSEL: SWELL_CB_SetCurSel(hwnd,0,wParam); return 0;
-          case CB_GETITEMDATA: return SWELL_CB_GetItemData(hwnd,0,wParam);
-          case CB_SETITEMDATA: SWELL_CB_SetItemData(hwnd,0,wParam,lParam); return 0;
-          case CB_FINDSTRING:
-          case CB_FINDSTRINGEXACT:
-            if (lParam) return SWELL_CB_FindString(hwnd,0,(int)wParam,(const char *)lParam,msg==CB_FINDSTRINGEXACT);
-            return CB_ERR;
-          case CB_INITSTORAGE: return 0;                                                      
-        }
-        return 0;
+      switch (msg)
+      {
+        case CB_ADDSTRING: return SWELL_CB_AddString(hwnd,0,(char*)lParam);
+        case CB_DELETESTRING: SWELL_CB_DeleteString(hwnd,0,wParam); return 1;
+        case CB_GETCOUNT: return SWELL_CB_GetNumItems(hwnd,0);
+        case CB_GETCURSEL: return SWELL_CB_GetCurSel(hwnd,0);
+        case CB_GETLBTEXT: return SWELL_CB_GetItemText(hwnd,0,wParam,(char *)lParam, 1024);
+        case CB_INSERTSTRING: return SWELL_CB_InsertString(hwnd,0,wParam,(char *)lParam);
+        case CB_RESETCONTENT: SWELL_CB_Empty(hwnd,0); return 0;
+        case CB_SETCURSEL: SWELL_CB_SetCurSel(hwnd,0,wParam); return 0;
+        case CB_GETITEMDATA: return SWELL_CB_GetItemData(hwnd,0,wParam);
+        case CB_SETITEMDATA: SWELL_CB_SetItemData(hwnd,0,wParam,lParam); return 0;
+        case CB_FINDSTRING:
+        case CB_FINDSTRINGEXACT:
+          if (lParam) return SWELL_CB_FindString(hwnd,0,(int)wParam,(const char *)lParam,msg==CB_FINDSTRINGEXACT);
+          return CB_ERR;
+        case CB_INITSTORAGE: return 0;
+      }
+      return 0;
     }
     else if (msg >= TBM_GETPOS && msg <= TBM_SETRANGE && ([obj isKindOfClass:[NSSlider class]]))
     {
-        switch (msg)
-        {
-          case TBM_GETPOS: return SWELL_TB_GetPos(hwnd,0);
-          case TBM_SETTIC: SWELL_TB_SetTic(hwnd,0,lParam); return 1;
-          case TBM_SETPOS: SWELL_TB_SetPos(hwnd,0,lParam); return 1;
-          case TBM_SETRANGE: SWELL_TB_SetRange(hwnd,0,LOWORD(lParam),HIWORD(lParam)); return 1;
-        }
-        return 0;
+      switch (msg)
+      {
+        case TBM_GETPOS: return SWELL_TB_GetPos(hwnd,0);
+        case TBM_SETTIC: SWELL_TB_SetTic(hwnd,0,lParam); return 1;
+        case TBM_SETPOS: SWELL_TB_SetPos(hwnd,0,lParam); return 1;
+        case TBM_SETRANGE: SWELL_TB_SetRange(hwnd,0,LOWORD(lParam),HIWORD(lParam)); return 1;
+      }
+      return 0;
     }
     else if ((msg == EM_SETSEL || msg == EM_GETSEL || msg == EM_SETPASSWORDCHAR) && ([obj isKindOfClass:[NSTextField class]]))
-    { 
+    {
       if (msg == EM_GETSEL)
       {
-        NSRange range={0,};
+        NSRange range= {0,};
         NSResponder *rs = [[obj window] firstResponder];
-        if ([rs isKindOfClass:[NSView class]] && [rs isDescendantOf:obj])
+        if ([rs isKindOfClass:[NSView class]] && [(NSView*)rs isDescendantOf:obj])
         {
-          NSText* text=[[obj window] fieldEditor:YES forObject:(NSTextField*)obj];  
+          NSText* text=[[obj window] fieldEditor:YES forObject:(NSTextField*)obj];
           if (text) range=[text selectedRange];
         }
         if (wParam) *(int*)wParam=range.location;
         if (lParam) *(int*)lParam=range.location+range.length;
-      }      
+      }
       else if (msg == EM_SETSEL)
-      {        
+      {
         //        [(NSTextField*)obj selectText:obj]; // Force the window's text field editor onto this control
         // don't force it, just ignore EM_GETSEL/EM_SETSEL if not in focus
         NSResponder *rs = [[obj window] firstResponder];
-        if ([rs isKindOfClass:[NSView class]] && [rs isDescendantOf:obj])
+        if ([rs isKindOfClass:[NSView class]] && [(NSView*)rs isDescendantOf:obj])
         {
-          NSText* text = [[obj window] fieldEditor:YES forObject:(NSTextField*)obj]; // then get it from the window 
+          NSText* text = [[obj window] fieldEditor:YES forObject:(NSTextField*)obj]; // then get it from the window
           int sl = [[text string] length];
           if (wParam == -1) lParam = wParam = 0;
-          else if (lParam == -1) lParam = sl;        
+          else if (lParam == -1) lParam = sl;
           if (wParam>sl) wParam=sl;
-          if (lParam>sl) lParam=sl;      
+          if (lParam>sl) lParam=sl;
           if (text) [text setSelectedRange:NSMakeRange(wParam, max(lParam-wParam,0))]; // and set the range
         }
       }
@@ -1560,13 +1572,13 @@ void DestroyWindow(HWND hwnd)
   {
     KillTimer(hwnd,~(UINT_PTR)0);
     sendSwellMessage((id)pid,WM_DESTROY,0,0);
-      
+
     NSWindow *pw = [(NSView *)pid window];
     if (pw && [pw contentView] == pid) // destroying contentview should destroy top level window
     {
       DestroyWindow((HWND)pw);
     }
-    else 
+    else
     {
       if (pw && [NSApp keyWindow] == pw)
       {
@@ -1585,10 +1597,10 @@ void DestroyWindow(HWND hwnd)
     KillTimer(hwnd,~(UINT_PTR)0);
     sendSwellMessage([(id)pid contentView],WM_DESTROY,0,0);
     sendSwellMessage((id)pid,WM_DESTROY,0,0);
-      
+
     if ([(id)pid respondsToSelector:@selector(swellDoDestroyStuff)])
       [(id)pid swellDoDestroyStuff];
-      
+
     NSWindow *par=[(NSWindow*)pid parentWindow];
     if (par)
     {
@@ -1605,7 +1617,7 @@ void EnableWindow(HWND hwnd, int enable)
   SWELL_BEGIN_TRY
   id bla=(id)hwnd;
   if ([bla isKindOfClass:[NSWindow class]]) bla = [bla contentView];
-    
+
   if (bla && [bla respondsToSelector:@selector(setEnabled:)])
   {
     [bla setEnabled:(enable?YES:NO)];
@@ -1618,7 +1630,7 @@ void EnableWindow(HWND hwnd, int enable)
         float alpha = (enable ? 1.0f : 0.5f);
         [txt setTextColor:[col colorWithAlphaComponent:alpha]];
       }
-    }    
+    }
   }
   SWELL_END_TRY(;)
 }
@@ -1632,11 +1644,11 @@ void SetFocus(HWND hwnd) // these take NSWindow/NSView, and return NSView *
 {
   id r=(id) hwnd;
   if (!r) return;
-  
+
   SWELL_BEGIN_TRY
   if ([r isKindOfClass:[NSWindow class]])
   {
-    [(NSWindow *)r makeFirstResponder:[(NSWindow *)r contentView]]; 
+    [(NSWindow *)r makeFirstResponder:[(NSWindow *)r contentView]];
     if ([(NSWindow *)r isVisible]) [(NSWindow *)r makeKeyAndOrderFront:nil];
   }
   else if ([r isKindOfClass:[NSView class]])
@@ -1659,7 +1671,7 @@ void SWELL_GetViewPort(RECT *r, RECT *sourcerect, bool wantWork)
   SWELL_BEGIN_TRY
 
   NSArray *ar=[NSScreen screens];
-  
+
   int cnt=[ar count];
   int x;
   int cx=0;
@@ -1676,7 +1688,7 @@ void SWELL_GetViewPort(RECT *r, RECT *sourcerect, bool wantWork)
     {
       NSRect tr=wantWork ? [sc visibleFrame] : [sc frame];
       if (!x || (cx >= tr.origin.x && cx < tr.origin.x+tr.size.width  &&
-                cy >= tr.origin.y && cy < tr.origin.y+tr.size.height))
+                 cy >= tr.origin.y && cy < tr.origin.y+tr.size.height))
       {
         r->left=(int)tr.origin.x;
         r->right=(int)(tr.origin.x+tr.size.width+0.5);
@@ -1698,18 +1710,18 @@ void ScreenToClient(HWND hwnd, POINT *p)
 {
   if (!hwnd) return;
   // no need to try/catch, this should never have an issue *wince*
-  
+
   id ch=(id)hwnd;
   if ([ch isKindOfClass:[NSWindow class]]) ch=[((NSWindow *)ch) contentView];
   if (!ch || ![ch isKindOfClass:[NSView class]]) return;
-  
+
   NSWindow *window=[ch window];
-  
+
   NSPoint wndpt = [window convertScreenToBase:NSMakePoint(p->x,p->y)];
-  
-  // todo : WM_NCCALCSIZE 
+
+  // todo : WM_NCCALCSIZE
   NSPoint po = [ch convertPoint:wndpt fromView:nil];
-  
+
   p->x=(int)(po.x+0.5);
   p->y=(int)(po.y+0.5);
 }
@@ -1717,18 +1729,18 @@ void ScreenToClient(HWND hwnd, POINT *p)
 void ClientToScreen(HWND hwnd, POINT *p)
 {
   if (!hwnd) return;
-  
+
   id ch=(id)hwnd;
   if ([ch isKindOfClass:[NSWindow class]]) ch=[((NSWindow *)ch) contentView];
   if (!ch || ![ch isKindOfClass:[NSView class]]) return;
-  
+
   NSWindow *window=[ch window];
-  
+
   NSPoint wndpt = [ch convertPoint:NSMakePoint(p->x,p->y) toView:nil];
-  
+
   NSPoint po = [window convertBaseToScreen:wndpt];
-  // todo : WM_NCCALCSIZE 
-  
+  // todo : WM_NCCALCSIZE
+
   p->x=(int)(po.x+0.5);
   p->y=(int)(po.y+0.5);
 }
@@ -1736,7 +1748,7 @@ void ClientToScreen(HWND hwnd, POINT *p)
 static NSView *NavigateUpScrollClipViews(NSView *ch)
 {
   NSView *par=[ch superview];
-  if (par && [par isKindOfClass:[NSClipView class]]) 
+  if (par && [par isKindOfClass:[NSClipView class]])
   {
     par=[par superview];
     if (par && [par isKindOfClass:[NSScrollView class]])
@@ -1763,13 +1775,13 @@ bool GetWindowRect(HWND hwnd, RECT *r)
   if (!hwnd) return false;
 
   SWELL_BEGIN_TRY
-  
+
   id ch=(id)hwnd;
   NSWindow *nswnd;
   if ([ch isKindOfClass:[NSView class]] && (nswnd=[(NSView *)ch window]) && [nswnd contentView]==ch)
     ch=nswnd;
-    
-  if ([ch isKindOfClass:[NSWindow class]]) 
+
+  if ([ch isKindOfClass:[NSWindow class]])
   {
     NSRect b=[ch frame];
     r->left=(int)(b.origin.x);
@@ -1798,7 +1810,7 @@ void GetWindowContentViewRect(HWND hwnd, RECT *r)
   NSWindow *nswnd;
   if (hwnd && [(id)hwnd isKindOfClass:[NSView class]] && (nswnd=[(NSView *)hwnd window]) && [nswnd contentView]==(id)hwnd)
     hwnd=(HWND)nswnd;
-    
+
   if (hwnd && [(id)hwnd isKindOfClass:[NSWindow class]])
   {
     NSView *ch=[(id)hwnd contentView];
@@ -1819,13 +1831,13 @@ void GetClientRect(HWND hwnd, RECT *r)
 {
   r->left=r->top=r->right=r->bottom=0;
   if (!hwnd) return;
-  
+
   SWELL_BEGIN_TRY
   id ch=(id)hwnd;
   if ([ch isKindOfClass:[NSWindow class]]) ch=[((NSWindow *)ch) contentView];
   if (!ch || ![ch isKindOfClass:[NSView class]]) return;
   ch=NavigateUpScrollClipViews(ch);
-  
+
   NSRect b=[ch bounds];
   r->left=(int)(b.origin.x);
   r->top=(int)(b.origin.y);
@@ -1833,7 +1845,7 @@ void GetClientRect(HWND hwnd, RECT *r)
   r->bottom= (int)(b.origin.y+b.size.height+0.5);
 
   // todo this may need more attention
-  NCCALCSIZE_PARAMS tr={{*r,},};
+  NCCALCSIZE_PARAMS tr= {{*r,},};
   SendMessage(hwnd,WM_NCCALCSIZE,FALSE,(LPARAM)&tr);
   r->right = r->left + (tr.rgrc[0].right-tr.rgrc[0].left);
   r->bottom = r->top + (tr.rgrc[0].bottom-tr.rgrc[0].top);
@@ -1845,16 +1857,16 @@ void GetClientRect(HWND hwnd, RECT *r)
 void SetWindowPos(HWND hwnd, HWND hwndAfter, int x, int y, int cx, int cy, int flags)
 {
   if (!hwnd) return;
- 
+
   SWELL_BEGIN_TRY
   NSWindow *nswnd; // content views = move window
   if (hwnd && [(id)hwnd isKindOfClass:[NSView class]] && (nswnd=[(NSView *)hwnd window]) && [nswnd contentView]==(id)hwnd)
     hwnd=(HWND)nswnd;
- 
- // todo: handle SWP_SHOWWINDOW
+
+// todo: handle SWP_SHOWWINDOW
   id ch=(id)hwnd;
   bool isview=false;
-  if ([ch isKindOfClass:[NSWindow class]] || (isview=[ch isKindOfClass:[NSView class]])) 
+  if ([ch isKindOfClass:[NSWindow class]] || (isview=[ch isKindOfClass:[NSView class]]))
   {
     if (isview)
     {
@@ -1865,10 +1877,10 @@ void SetWindowPos(HWND hwnd, HWND hwndAfter, int x, int y, int cx, int cy, int f
         NSView *par = [v superview];
         NSArray *subs = [par subviews];
         int idx = [subs indexOfObjectIdenticalTo:v], cnt=[subs count];
-        
-        NSView *viewafter = NULL;            
+
+        NSView *viewafter = NULL;
         NSWindowOrderingMode omode = NSWindowAbove;
-        
+
         if (cnt>1 && hwndAfter != (HWND)ch)
         {
           if (hwndAfter==HWND_TOPMOST||hwndAfter==HWND_NOTOPMOST)
@@ -1883,33 +1895,33 @@ void SetWindowPos(HWND hwnd, HWND hwndAfter, int x, int y, int cx, int cy, int f
             if (idx>0) viewafter = [subs objectAtIndex:0];
             omode = NSWindowBelow;
           }
-          else 
+          else
           {
             NSInteger a=[subs indexOfObjectIdenticalTo:(NSView *)hwndAfter];
             if (a != NSNotFound && a != (idx-1)) viewafter = (NSView *)hwndAfter;
           }
         }
-        
+
         if (viewafter)
-        { 
+        {
           HWND h = GetCapture();
           if (!h || (h!=(HWND)v && !IsChild((HWND)v,h))) // if this window is captured don't reorder!
           {
             NSView *oldfoc = (NSView*)[[v window] firstResponder];
-            if (!oldfoc || ![oldfoc isKindOfClass:[NSView class]] || 
+            if (!oldfoc || ![oldfoc isKindOfClass:[NSView class]] ||
                 (oldfoc != v && ![oldfoc isDescendantOf:v])) oldfoc=NULL;
-          
+
             // better way to do this? maybe :/
             [v retain];
             [v removeFromSuperviewWithoutNeedingDisplay];
             [par addSubview:v positioned:omode relativeTo:viewafter];
             [v release];
-          
+
             if (oldfoc) [[v window] makeFirstResponder:oldfoc];
           }
         }
       }
-    }    
+    }
     NSRect f=[ch frame];
     bool repos=false;
     if (!(flags&SWP_NOMOVE))
@@ -1941,7 +1953,7 @@ void SetWindowPos(HWND hwnd, HWND hwndAfter, int x, int y, int cx, int cy, int f
       else
       {
         // this doesnt seem to actually be a good idea anymore
-  //      if ([[ch window] contentView] != ch && ![[ch superview] isFlipped])
+        //      if ([[ch window] contentView] != ch && ![[ch superview] isFlipped])
 //          f.origin.y -= f.size.height;
         [ch setFrame:f];
         if ([ch isKindOfClass:[NSScrollView class]])
@@ -1958,10 +1970,10 @@ void SetWindowPos(HWND hwnd, HWND hwndAfter, int x, int y, int cx, int cy, int f
           }
         }
       }
-    }    
+    }
     return;
-  }  
-  SWELL_END_TRY(;)  
+  }
+  SWELL_END_TRY(;)
 }
 
 
@@ -1972,7 +1984,7 @@ HWND GetWindow(HWND hwnd, int what)
 
   if ([(id)hwnd isKindOfClass:[NSWindow class]]) hwnd=(HWND)[(id)hwnd contentView];
   if (!hwnd || ![(id)hwnd isKindOfClass:[NSView class]]) return 0;
-  
+
   NSView *v=(NSView *)hwnd;
   if (what == GW_CHILD)
   {
@@ -1996,14 +2008,14 @@ HWND GetWindow(HWND hwnd, int what)
     }
     return (HWND)[v superview];
   }
-  
+
   if (what >= GW_HWNDFIRST && what <= GW_HWNDPREV)
   {
     v=NavigateUpScrollClipViews(v);
     if ([[v window] contentView] == v)
     {
       if (what <= GW_HWNDLAST) return (HWND)hwnd; // content view is only window
-      
+
       return 0; // we're the content view so cant do next/prev
     }
     NSView *par=[v superview];
@@ -2017,15 +2029,15 @@ HWND GetWindow(HWND hwnd, int what)
           return (HWND)[ar objectAtIndex:0];
         if (what == GW_HWNDLAST)
           return (HWND)[ar objectAtIndex:(cnt-1)];
-        
+
         NSInteger idx=[ar indexOfObjectIdenticalTo:v];
         if (idx == NSNotFound) return 0;
 
         if (what==GW_HWNDNEXT) idx++;
         else if (what==GW_HWNDPREV) idx--;
-        
+
         if (idx<0 || idx>=cnt) return 0;
-        
+
         return (HWND)[ar objectAtIndex:idx];
       }
     }
@@ -2037,7 +2049,7 @@ HWND GetWindow(HWND hwnd, int what)
 
 
 HWND GetParent(HWND hwnd)
-{  
+{
   SWELL_BEGIN_TRY
   if (hwnd && [(id)hwnd isKindOfClass:[NSView class]])
   {
@@ -2051,21 +2063,21 @@ HWND GetParent(HWND hwnd)
       return h;
     }
   }
-  
-  if (hwnd && [(id)hwnd isKindOfClass:[NSWindow class]]) 
+
+  if (hwnd && [(id)hwnd isKindOfClass:[NSWindow class]])
   {
     HWND h= (HWND)[(NSWindow *)hwnd parentWindow];
     if (h) h=(HWND)[(NSWindow *)h contentView];
     if (h) return h;
   }
-  
+
   if (hwnd && [(id)hwnd respondsToSelector:@selector(swellGetOwner)])
   {
     HWND h= (HWND)[(SWELL_ModelessWindow *)hwnd swellGetOwner];
     if (h && [(id)h isKindOfClass:[NSWindow class]]) h=(HWND)[(NSWindow *)h contentView];
-    return h;  
+    return h;
   }
-  
+
   SWELL_END_TRY(;)
   return 0;
 }
@@ -2076,36 +2088,36 @@ HWND SetParent(HWND hwnd, HWND newPar)
   NSView *v=(NSView *)hwnd;
   if (!v || ![(id)v isKindOfClass:[NSView class]]) return 0;
   v=NavigateUpScrollClipViews(v);
-  
+
   if ([(id)hwnd isKindOfClass:[NSView class]])
   {
     NSView *tv=(NSView *)hwnd;
     if ([[tv window] contentView] == tv) // if we're reparenting a contentview (aka top level window)
     {
       if (!newPar) return NULL;
-    
+
       NSView *npv = (NSView *)newPar;
       if ([npv isKindOfClass:[NSWindow class]]) npv=[(NSWindow *)npv contentView];
       if (!npv || ![npv isKindOfClass:[NSView class]])
         return NULL;
-    
+
       char oldtitle[2048];
       oldtitle[0]=0;
       GetWindowText(hwnd,oldtitle,sizeof(oldtitle));
-    
+
       NSWindow *oldwnd = [tv window];
       id oldown = NULL;
       if ([oldwnd respondsToSelector:@selector(swellGetOwner)]) oldown=[(SWELL_ModelessWindow*)oldwnd swellGetOwner];
 
       if ([tv isKindOfClass:[SWELL_hwndChild class]]) ((SWELL_hwndChild*)tv)->m_lastTopLevelOwner = oldown;
-    
+
       [tv retain];
-      SWELL_hwndChild *tmpview = [[SWELL_hwndChild alloc] initChild:nil Parent:(NSView *)oldwnd dlgProc:nil Param:0];          
+      SWELL_hwndChild *tmpview = [[SWELL_hwndChild alloc] initChild:nil Parent:(NSView *)oldwnd dlgProc:nil Param:0];
       [tmpview release];
-    
-      [npv addSubview:tv];  
+
+      [npv addSubview:tv];
       [tv release];
-    
+
       DestroyWindow((HWND)oldwnd); // close old window since its no longer used
       if (oldtitle[0]) SetWindowText(hwnd,oldtitle);
       return (HWND)npv;
@@ -2115,11 +2127,11 @@ HWND SetParent(HWND hwnd, HWND newPar)
       char oldtitle[2048];
       oldtitle[0]=0;
       GetWindowText(hwnd,oldtitle,sizeof(oldtitle));
-      
+
       [tv retain];
       [tv removeFromSuperview];
 
-    
+
       unsigned int wf=(NSTitledWindowMask|NSMiniaturizableWindowMask|NSClosableWindowMask|NSResizableWindowMask);
       if ([tv respondsToSelector:@selector(swellCreateWindowFlags)])
         wf=(unsigned int)[(SWELL_hwndChild *)tv swellCreateWindowFlags];
@@ -2127,44 +2139,44 @@ HWND SetParent(HWND hwnd, HWND newPar)
       HWND newOwner=NULL;
       if ([tv isKindOfClass:[SWELL_hwndChild class]])
       {
-         id oldown = ((SWELL_hwndChild*)tv)->m_lastTopLevelOwner;
-         if (oldown)
-         {
-           NSArray *ch=[NSApp windows];
-           int x,n=[ch count];
-           for(x=0;x<n && !newOwner; x ++)
-           {
-             NSWindow *w = [ch objectAtIndex:x];
-             if (w == (NSWindow *)oldown || [w contentView] == (NSView *)oldown) newOwner = (HWND)w;
-           }
-         }
+        id oldown = ((SWELL_hwndChild*)tv)->m_lastTopLevelOwner;
+        if (oldown)
+        {
+          NSArray *ch=[NSApp windows];
+          int x,n=[ch count];
+          for(x=0; x<n && !newOwner; x ++)
+          {
+            NSWindow *w = [ch objectAtIndex:x];
+            if (w == (NSWindow *)oldown || [w contentView] == (NSView *)oldown) newOwner = (HWND)w;
+          }
+        }
       }
 
       HWND SWELL_CreateModelessFrameForWindow(HWND childW, HWND ownerW, unsigned int);
       HWND bla=SWELL_CreateModelessFrameForWindow((HWND)tv,(HWND)newOwner,wf);
-      // create a new modeless frame 
+      // create a new modeless frame
 
-     
-      
+
+
       [(NSWindow *)bla display];
-      
+
       [tv release];
-      
+
       if (oldtitle[0]) SetWindowText(hwnd,oldtitle);
-      
+
       return NULL;
-      
+
     }
   }
   HWND ret=(HWND) [v superview];
-  if (ret) 
+  if (ret)
   {
     [v retain];
     [v removeFromSuperview];
   }
   NSView *np=(NSView *)newPar;
   if (np && [np isKindOfClass:[NSWindow class]]) np=[(NSWindow *)np contentView];
-  
+
   if (np && [np isKindOfClass:[NSView class]])
   {
     [np addSubview:v];
@@ -2201,7 +2213,7 @@ HWND GetForegroundWindow()
   NSWindow *window=[NSApp keyWindow];
   if (!window) return 0;
   id ret=[window firstResponder];
-  if (ret && [ret isKindOfClass:[NSView class]]) 
+  if (ret && [ret isKindOfClass:[NSView class]])
   {
 //    if (ret == [window contentView]) return (HWND) window;
     return (HWND) ret;
@@ -2217,7 +2229,7 @@ HWND GetFocus()
   NSWindow *window=[NSApp keyWindow];
   if (!window) return 0;
   id ret=[window firstResponder];
-  if (ret && [ret isKindOfClass:[NSView class]]) 
+  if (ret && [ret isKindOfClass:[NSView class]])
   {
 //    if (ret == [window contentView]) return (HWND) window;
 
@@ -2253,31 +2265,31 @@ bool IsEquivalentTextView(HWND h1, HWND h2)
   SWELL_END_TRY(;)
   return false;
 }
-  
+
 
 
 BOOL SetDlgItemText(HWND hwnd, int idx, const char *text)
 {
   NSView *obj=(NSView *)(idx ? GetDlgItem(hwnd,idx) : hwnd);
   if (!obj) return false;
-  
+
   SWELL_BEGIN_TRY
   NSWindow *nswnd;
   if ([(id)obj isKindOfClass:[NSView class]] && (nswnd=[(NSView *)obj window]) && [nswnd contentView]==(id)obj)
   {
     SetDlgItemText((HWND)nswnd,0,text); // also set window if setting content view
   }
-  
+
   if ([obj respondsToSelector:@selector(onSwellSetText:)])
   {
     [(SWELL_hwndChild*)obj onSwellSetText:text];
     return TRUE;
   }
-  
-  BOOL rv=TRUE;  
+
+  BOOL rv=TRUE;
   NSString *lbl=(NSString *)SWELL_CStringToCFString(text);
   if ([obj isKindOfClass:[NSWindow class]] || [obj isKindOfClass:[NSButton class]]) [(NSButton*)obj setTitle:lbl];
-  else if ([obj isKindOfClass:[NSControl class]]) 
+  else if ([obj isKindOfClass:[NSControl class]])
   {
     [(NSControl*)obj setStringValue:lbl];
     if ([obj isKindOfClass:[NSTextField class]] && [(NSTextField *)obj isEditable])
@@ -2285,9 +2297,9 @@ BOOL SetDlgItemText(HWND hwnd, int idx, const char *text)
       SendMessage(GetParent((HWND)obj),WM_COMMAND,[(NSControl *)obj tag]|(EN_CHANGE<<16),(LPARAM)obj);
     }
   }
-  else if ([obj isKindOfClass:[NSText class]])  
+  else if ([obj isKindOfClass:[NSText class]])
   {
-    // todo if there is a way to find out that the window's NSTextField is already assigned 
+    // todo if there is a way to find out that the window's NSTextField is already assigned
     // to another field, restore the assignment afterwards
     [(NSText*)obj setString:lbl];
   }
@@ -2299,7 +2311,7 @@ BOOL SetDlgItemText(HWND hwnd, int idx, const char *text)
   {
     rv=FALSE;
   }
-  
+
   [lbl release];
   return rv;
   SWELL_END_TRY(;)
@@ -2313,30 +2325,30 @@ BOOL GetDlgItemText(HWND hwnd, int idx, char *text, int textlen)
   if (!poo) return false;
 
   SWELL_BEGIN_TRY
-  
+
   if ([(id)poo isKindOfClass:[NSView class]] && [[(id)poo window] contentView] == poo)
   {
     poo=(NSView *)[(id)poo window];
   }
-  
+
   if ([(id)poo respondsToSelector:@selector(onSwellGetText)])
-  {  
+  {
     const char *p=(const char *)[(SWELL_hwndChild*)poo onSwellGetText];
     lstrcpyn_safe(text,p?p:"",textlen);
     return TRUE;
   }
-  
+
   NSString *s;
-  
+
   if ([poo isKindOfClass:[NSButton class]]||[poo isKindOfClass:[NSWindow class]]) s=[((NSButton *)poo) title];
   else if ([poo isKindOfClass:[NSControl class]]) s=[((NSControl *)poo) stringValue];
   else if ([poo isKindOfClass:[NSText class]])  s=[(NSText*)poo string];
   else if ([poo isKindOfClass:[NSBox class]]) s=[(NSBox *)poo title];
   else return FALSE;
-  
+
   if (s) SWELL_CFStringToCString(s,text,textlen);
 //    [s getCString:text maxLength:textlen];
-    
+
   return !!s;
   SWELL_END_TRY(;)
   return FALSE;
@@ -2365,13 +2377,13 @@ int IsDlgButtonChecked(HWND hwnd, int idx)
 void SWELL_TB_SetPos(HWND hwnd, int idx, int pos)
 {
   NSSlider *p=(NSSlider *)GetDlgItem(hwnd,idx);
-  if (p  && [p isKindOfClass:[NSSlider class]]) 
+  if (p  && [p isKindOfClass:[NSSlider class]])
   {
     [p setDoubleValue:(double)pos];
   }
-  else 
+  else
   {
-    sendSwellMessage(p,TBM_SETPOS,1,pos); 
+    sendSwellMessage(p,TBM_SETPOS,1,pos);
   }
 }
 
@@ -2383,21 +2395,21 @@ void SWELL_TB_SetRange(HWND hwnd, int idx, int low, int hi)
     [p setMinValue:low];
     [p setMaxValue:hi];
   }
-  else 
+  else
   {
     sendSwellMessage(p,TBM_SETRANGE,1,((low&0xffff)|(hi<<16)));
   }
-  
+
 }
 
 int SWELL_TB_GetPos(HWND hwnd, int idx)
 {
   NSSlider *p=(NSSlider *)GetDlgItem(hwnd,idx);
-  if (p && [p isKindOfClass:[NSSlider class]]) 
+  if (p && [p isKindOfClass:[NSSlider class]])
   {
     return (int) ([p doubleValue]+0.5);
   }
-  else 
+  else
   {
     return (int) sendSwellMessage(p,TBM_GETPOS,0,0);
   }
@@ -2436,19 +2448,19 @@ void SWELL_CB_DeleteString(HWND hwnd, int idx, int wh)
 
 int SWELL_CB_FindString(HWND hwnd, int idx, int startAfter, const char *str, bool exact)
 {
-  NSComboBox *p=(NSComboBox *)GetDlgItem(hwnd,idx);  
+  NSComboBox *p=(NSComboBox *)GetDlgItem(hwnd,idx);
   if (!p) return 0;
-  
+
   int pos = startAfter;
   if (pos<0)pos=0;
   else pos++;
-  
+
   int l1len =strlen(str);
   int ni=[p numberOfItems];
-  
+
   if ([p isKindOfClass:[NSComboBox class]])
   {
-    for(;pos<ni;pos++)
+    for(; pos<ni; pos++)
     {
       NSString *s=[p itemObjectValueAtIndex:pos];
       if (s)
@@ -2460,15 +2472,15 @@ int SWELL_CB_FindString(HWND hwnd, int idx, int startAfter, const char *str, boo
       }
     }
   }
-  else 
+  else
   {
-    for(;pos<ni;pos++)
+    for(; pos<ni; pos++)
     {
       NSMenuItem *i=[(NSPopUpButton *)p itemAtIndex:pos];
       if (i)
       {
         NSString *s=[i title];
-        if (s)          
+        if (s)
         {
           char buf[4096];
           SWELL_CFStringToCString(s,buf,sizeof(buf));
@@ -2489,7 +2501,7 @@ int SWELL_CB_GetItemText(HWND hwnd, int idx, int item, char *buf, int bufsz)
   if (!p) return 0;
   int ni=[p numberOfItems];
   if (item < 0 || item >= ni) return 0;
-  
+
   if ([p isKindOfClass:[NSComboBox class]])
   {
     NSString *s=[p itemObjectValueAtIndex:item];
@@ -2500,7 +2512,7 @@ int SWELL_CB_GetItemText(HWND hwnd, int idx, int item, char *buf, int bufsz)
       return 1;
     }
   }
-  else 
+  else
   {
     NSMenuItem *i=[(NSPopUpButton *)p itemAtIndex:item];
     if (i)
@@ -2523,30 +2535,30 @@ int SWELL_CB_InsertString(HWND hwnd, int idx, int pos, const char *str)
   NSString *label=(NSString *)SWELL_CStringToCFString(str);
   NSComboBox *p=(NSComboBox *)GetDlgItem(hwnd,idx);
   if (!p) return 0;
-  
+
   bool isAppend=false;
   int ni=[p numberOfItems];
-  if (pos == -1000) 
+  if (pos == -1000)
   {
     isAppend=true;
     pos=ni;
   }
   else if (pos < 0) pos=0;
   else if (pos > ni) pos=ni;
-  
-   
+
+
   if ([p isKindOfClass:[SWELL_ComboBox class]])
   {
     if (isAppend && (((int)[(SWELL_ComboBox*)p getSwellStyle]) & CBS_SORT))
     {
       pos=arr_bsearch_mod(label,[p objectValues],_nsStringSearchProc);
     }
-    
+
     if (pos==ni)
       [p addItemWithObjectValue:label];
     else
       [p insertItemWithObjectValue:label atIndex:pos];
-  
+
     if (((SWELL_ComboBox*)p)->m_ids) ((SWELL_ComboBox*)p)->m_ids->Insert(pos,(char*)0);
     [p setNumberOfVisibleItems:(ni+1)];
   }
@@ -2560,12 +2572,12 @@ int SWELL_CB_InsertString(HWND hwnd, int idx, int pos, const char *str)
         pos=arr_bsearch_mod(label,[menu itemArray],_nsMenuSearchProc);
       }
       NSMenuItem *item=[menu insertItemWithTitle:label action:NULL keyEquivalent:@"" atIndex:pos];
-      [item setEnabled:YES];      
+      [item setEnabled:YES];
     }
   }
   [label release];
   return pos;
-  
+
 }
 
 int SWELL_CB_AddString(HWND hwnd, int idx, const char *str)
@@ -2605,8 +2617,8 @@ void SWELL_CB_SetItemData(HWND hwnd, int idx, int item, LONG_PTR data)
     if (item < 0 || item >= [cb numberOfItems]) return;
     NSMenuItem *it=[cb itemAtIndex:item];
     if (!it) return;
-  
-    SWELL_DataHold *p=[[SWELL_DataHold alloc] initWithVal:(void *)data];  
+
+    SWELL_DataHold *p=[[SWELL_DataHold alloc] initWithVal:(void *)data];
     [it setRepresentedObject:p];
     [p release];
   }
@@ -2633,7 +2645,7 @@ LONG_PTR SWELL_CB_GetItemData(HWND hwnd, int idx, int item)
   else if ([cb isKindOfClass:[SWELL_ComboBox class]])
   {
     if (item < 0 || item >= [cb numberOfItems]) return 0;
-    if (((SWELL_ComboBox*)cb)->m_ids) return (LONG_PTR) ((SWELL_ComboBox*)cb)->m_ids->Get(item);    
+    if (((SWELL_ComboBox*)cb)->m_ids) return (LONG_PTR) ((SWELL_ComboBox*)cb)->m_ids->Get(item);
   }
   return 0;
 }
@@ -2641,13 +2653,13 @@ LONG_PTR SWELL_CB_GetItemData(HWND hwnd, int idx, int item)
 void SWELL_CB_Empty(HWND hwnd, int idx)
 {
   id cb=(id)GetDlgItem(hwnd,idx);
-  if (!cb) return;  
+  if (!cb) return;
   if ([cb isKindOfClass:[NSPopUpButton class]] ||
       [cb isKindOfClass:[NSComboBox class]]) [cb removeAllItems];
-  
+
   if ([cb isKindOfClass:[SWELL_ComboBox class]])
   {
-    if (((SWELL_ComboBox*)cb)->m_ids) ((SWELL_ComboBox*)cb)->m_ids->Empty(); 
+    if (((SWELL_ComboBox*)cb)->m_ids) ((SWELL_ComboBox*)cb)->m_ids->Empty();
   }
 }
 
@@ -2687,12 +2699,12 @@ BOOL SWELL_GetGestureInfo(LPARAM lParam, GESTUREINFO* gi)
   memcpy(gi, (GESTUREINFO*)lParam, sizeof(GESTUREINFO));
   return TRUE;
 }
-  
+
 
 void ShowWindow(HWND hwnd, int cmd)
 {
   id pid=(id)hwnd;
-  
+
   if (pid && [pid isKindOfClass:[NSWindow class]])
   {
     if (cmd == SW_SHOWNA && [pid isKindOfClass:[SWELL_ModelessWindow class]])
@@ -2716,7 +2728,7 @@ void ShowWindow(HWND hwnd, int cmd)
       [pid orderOut:pid];
     }
     else if (cmd == SW_SHOWMINIMIZED)
-    {   
+    {
       // this ought to work
       //if ([NSApp mainWindow] == pid)
       //{
@@ -2724,53 +2736,53 @@ void ShowWindow(HWND hwnd, int cmd)
       //}
       //else
       //{
-        [pid miniaturize:pid];
+      [pid miniaturize:pid];
       //}
     }
     return;
   }
   if (!pid || ![pid isKindOfClass:[NSView class]]) return;
-  
+
   pid=NavigateUpScrollClipViews(pid);
-  
+
   switch (cmd)
   {
     case SW_SHOW:
     case SW_SHOWNA:
       [((NSView *)pid) setHidden:NO];
-    break;
+      break;
     case SW_HIDE:
+    {
+      NSWindow *pw=[pid window];
+      if (pw && [NSApp keyWindow] == pw)
       {
-        NSWindow *pw=[pid window];
-        if (pw && [NSApp keyWindow] == pw)
+        id foc=[pw firstResponder];
+        if (foc && (foc == pid || IsChild((HWND)pid,(HWND)foc)))
         {
-          id foc=[pw firstResponder];
-          if (foc && (foc == pid || IsChild((HWND)pid,(HWND)foc)))
+          HWND h=GetParent((HWND)pid);
+          if (h) SetFocus(h);
+        }
+      }
+      if (![((NSView *)pid) isHidden])
+      {
+        if ((NSView *)pid != [pw contentView])
+        {
+          HWND par = (HWND) [(NSView *)pid superview];
+          if (par)
           {
-            HWND h=GetParent((HWND)pid);
-            if (h) SetFocus(h);
+            RECT r;
+            GetWindowRect((HWND)pid,&r);
+            ScreenToClient(par,(LPPOINT)&r);
+            ScreenToClient(par,((LPPOINT)&r)+1);
+            InvalidateRect(par,&r,FALSE);
           }
         }
-        if (![((NSView *)pid) isHidden])
-        {
-          if ((NSView *)pid != [pw contentView])
-          {
-            HWND par = (HWND) [(NSView *)pid superview];
-            if (par)
-            {
-              RECT r;
-              GetWindowRect((HWND)pid,&r);
-              ScreenToClient(par,(LPPOINT)&r);
-              ScreenToClient(par,((LPPOINT)&r)+1);
-              InvalidateRect(par,&r,FALSE);
-            }
-          }
-          [((NSView *)pid) setHidden:YES];
-        }
+        [((NSView *)pid) setHidden:YES];
+      }
     }
     break;
   }
-  
+
   NSWindow *nswnd;
   if ((nswnd=[(NSView *)pid window]) && [nswnd contentView]==(id)pid)
   {
@@ -2796,10 +2808,10 @@ bool SWELL_ModalWindowRun(void *ctx, int *ret) // returns false and puts retval 
 
 void SWELL_ModalWindowEnd(void *ctx)
 {
-  if (ctx) 
+  if (ctx)
   {
     if ([NSApp runModalSession:(NSModalSession)ctx] == NSRunContinuesResponse)
-    {    
+    {
       [NSApp stopModal];
       while ([NSApp runModalSession:(NSModalSession)ctx]==NSRunContinuesResponse) Sleep(10);
     }
@@ -2867,14 +2879,14 @@ static NSRect MakeCoords(int x, int y, int w, int h, bool wantauto, bool ignorev
   float ysc=m_transform.size.height;
   float ysc2 = ignorevscaleheight ? 1.0 : ysc;
   int newx=(int)((x+m_transform.origin.x)*m_transform.size.width + 0.5);
-  int newy=(int)((ysc >= 0.0 ? m_parent_h - ((y+m_transform.origin.y) )*ysc + h*ysc2 : 
-                         ((y+m_transform.origin.y) )*-ysc) + 0.5);
-                         
-  NSRect ret= NSMakeRect(newx,  
-                         newy,                  
-                        (int) (w*m_transform.size.width+0.5),
-                        (int) (h*fabs(ysc2)+0.5));
-                        
+  int newy=(int)((ysc >= 0.0 ? m_parent_h - ((y+m_transform.origin.y) )*ysc + h*ysc2 :
+                  ((y+m_transform.origin.y) )*-ysc) + 0.5);
+
+  NSRect ret= NSMakeRect(newx,
+                         newy,
+                         (int) (w*m_transform.size.width+0.5),
+                         (int) (h*fabs(ysc2)+0.5));
+
   NSRect oret=ret;
   if (wantauto && m_doautoright)
   {
@@ -2883,7 +2895,7 @@ static NSRect MakeCoords(int x, int y, int w, int h, bool wantauto, bool ignorev
     {
       ret.origin.x += (int) m_lastdoauto.size.width;
     }
-    
+
     m_lastdoauto.origin.x = oret.origin.x + oret.size.width;
     m_lastdoauto.origin.y = ret.origin.y + ret.size.height*0.5;
     m_lastdoauto.size.width=0;
@@ -2895,29 +2907,29 @@ static const double minwidfontadjust=1.81;
 #define TRANSFORMFONTSIZE (m_transform.size.width<1?8:m_transform.size.width<2?10:12)
 /// these are for swell-dlggen.h
 HWND SWELL_MakeButton(int def, const char *label, int idx, int x, int y, int w, int h, int flags)
-{  
+{
   UINT_PTR a=(UINT_PTR)label;
   if (a < 65536) label = "ICONTEMP";
   SWELL_Button *button=[[SWELL_Button alloc] init];
-  
+
   if (m_transform.size.width < minwidfontadjust)
   {
     [button setFont:[NSFont systemFontOfSize:TRANSFORMFONTSIZE]];
   }
-  
+
   [button setTag:idx];
   if (g_swell_want_nice_style==1)
     [button setBezelStyle:NSShadowlessSquareBezelStyle ];
   else
     [button setBezelStyle:NSRoundedBezelStyle ];
   NSRect tr=MakeCoords(x,y,w,h,true);
-  
-  
+
+
   if (g_swell_want_nice_style!=1 && tr.size.height >= 18 && tr.size.height<24)
   {
     tr.size.height=24;
   }
-  
+
   [button setFrame:tr];
   NSString *labelstr=(NSString *)SWELL_CStringToCFString_FilterPrefix(label);
   [button setTitle:labelstr];
@@ -2961,20 +2973,20 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
         int len = [[self string] length];
         [self scrollRangeToVisible:NSMakeRange(len, 0)];
       }
-    return 0;
-    
-    case EM_SETSEL:    
+      return 0;
+
+    case EM_SETSEL:
     {
       int sl =  [[self string] length];
       if (wParam == -1) lParam = wParam = 0;
       else if (lParam == -1) lParam = sl;
-      
+
       if (wParam>sl)wParam=sl;
       if (lParam>sl)lParam=sl;
       [self setSelectedRange:NSMakeRange(wParam, max(lParam-wParam,0))];
     }
     return 0;
-    
+
     case EM_GETSEL:
     {
       NSRange r = [self selectedRange];
@@ -2982,7 +2994,7 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
       if (lParam) *(int*)lParam = r.location+r.length;
     }
     return 0;
-      
+
     case WM_SETFONT:
     {
       HGDIOBJ__* obj = (HGDIOBJ__*)wParam;
@@ -2995,14 +3007,14 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
 #ifdef SWELL_ATSUI_TEXT_SUPPORT
         else if (obj->atsui_font_style)
         {
-          ATSUFontID fontid = kATSUInvalidFontID;      
-          Fixed fsize = 0;          
+          ATSUFontID fontid = kATSUInvalidFontID;
+          Fixed fsize = 0;
           Boolean isbold = NO;
           Boolean isital = NO;
-          Boolean isunder = NO;          
+          Boolean isunder = NO;
           if (ATSUGetAttribute(obj->atsui_font_style, kATSUFontTag, sizeof(ATSUFontID), &fontid, 0) == noErr &&
               ATSUGetAttribute(obj->atsui_font_style, kATSUSizeTag, sizeof(Fixed), &fsize, 0) == noErr && fsize &&
-              ATSUGetAttribute(obj->atsui_font_style, kATSUQDBoldfaceTag, sizeof(Boolean), &isbold, 0) == noErr && 
+              ATSUGetAttribute(obj->atsui_font_style, kATSUQDBoldfaceTag, sizeof(Boolean), &isbold, 0) == noErr &&
               ATSUGetAttribute(obj->atsui_font_style, kATSUQDItalicTag, sizeof(Boolean), &isital, 0) == noErr &&
               ATSUGetAttribute(obj->atsui_font_style, kATSUQDUnderlineTag, sizeof(Boolean), &isunder, 0) == noErr)
           {
@@ -3021,12 +3033,12 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
               CGFloat sz = Fix2Long(fsize);
               NSFont* font = [NSFont fontWithName:str size:sz];
               [str release];
-              if (font) 
+              if (font)
               {
                 [self setFont:font];
               }
             }
-          }            
+          }
         }
 #endif
       }
@@ -3046,7 +3058,7 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
 
 
 HWND SWELL_MakeEditField(int idx, int x, int y, int w, int h, int flags)
-{  
+{
   if ((flags&WS_VSCROLL) || (flags&WS_HSCROLL)) // || (flags & ES_READONLY))
   {
     SWELL_TextView *obj=[[SWELL_TextView alloc] init];
@@ -3055,13 +3067,13 @@ HWND SWELL_MakeEditField(int idx, int x, int y, int w, int h, int flags)
       [obj setFont:[NSFont systemFontOfSize:TRANSFORMFONTSIZE]];
     [obj setTag:idx];
     [obj setDelegate:ACTIONTARGET];
-  
+
     [obj setHorizontallyResizable:NO];
-    
+
     if (flags & WS_VSCROLL)
     {
       NSRect fr=MakeCoords(x,y,w,h,true);
-      
+
       [obj setVerticallyResizable:YES];
       NSScrollView *obj2=[[NSScrollView alloc] init];
       [obj2 setFrame:fr];
@@ -3074,12 +3086,12 @@ HWND SWELL_MakeEditField(int idx, int x, int y, int w, int h, int flags)
       if (m_doautoright) UpdateAutoCoords([obj2 frame]);
       if (flags&SWELL_NOT_WS_VISIBLE) [obj2 setHidden:YES];
       [obj2 release];
-      
-      NSRect tr={0,};
+
+      NSRect tr= {0,};
       tr.size = [obj2 contentSize];
       [obj setFrame:tr];
       [obj release];
-      
+
       return (HWND)obj2;
     }
     else
@@ -3091,19 +3103,19 @@ HWND SWELL_MakeEditField(int idx, int x, int y, int w, int h, int flags)
       if (m_doautoright) UpdateAutoCoords([obj frame]);
       [obj release];
       return (HWND)obj;
-    }  
-  }  
-  
+    }
+  }
+
   NSTextField *obj;
-  
+
   if (flags & ES_PASSWORD) obj=[[NSSecureTextField alloc] init];
   else obj=[[SWELL_TextField alloc] init];
   [obj setEditable:(flags & ES_READONLY)?NO:YES];
   if (flags & ES_READONLY) [obj setSelectable:YES];
   if (m_transform.size.width < minwidfontadjust)
     [obj setFont:[NSFont systemFontOfSize:TRANSFORMFONTSIZE]];
-  
-  NSCell* cell = [obj cell];  
+
+  NSCell* cell = [obj cell];
   if (flags&ES_CENTER) [cell setAlignment:NSCenterTextAlignment];
   else if (flags&ES_RIGHT) [cell setAlignment:NSRightTextAlignment];
   if (abs(h) < 20)
@@ -3115,7 +3127,7 @@ HWND SWELL_MakeEditField(int idx, int x, int y, int w, int h, int flags)
   [obj setTarget:ACTIONTARGET];
   [obj setAction:@selector(onSwellCommand:)];
   [obj setDelegate:ACTIONTARGET];
-  
+
   [obj setFrame:MakeCoords(x,y,w,h,true)];
   if (flags&SWELL_NOT_WS_VISIBLE) [obj setHidden:YES];
   [m_make_owner addSubview:obj];
@@ -3141,13 +3153,13 @@ HWND SWELL_MakeLabel( int align, const char *label, int idx, int x, int y, int w
     [obj setTarget:ACTIONTARGET];
     [obj setAction:@selector(onSwellCommand:)];
   }
-  
+
   NSString *labelstr=(NSString *)SWELL_CStringToCFString_FilterPrefix(label);
   [obj setStringValue:labelstr];
   [obj setAlignment:(align<0?NSLeftTextAlignment:align>0?NSRightTextAlignment:NSCenterTextAlignment)];
-  
+
   [[obj cell] setWraps:(h>12 ? YES : NO)];
-  
+
   [obj setTag:idx];
   [obj setFrame:MakeCoords(x,y,w,h,true)];
   if (flags&SWELL_NOT_WS_VISIBLE) [obj setHidden:YES];
@@ -3168,16 +3180,16 @@ HWND SWELL_MakeCheckBox(const char *name, int idx, int x, int y, int w, int h, i
 HWND SWELL_MakeListBox(int idx, int x, int y, int w, int h, int styles)
 {
   HWND hw=SWELL_MakeControl("",idx,"SysListView32_LB",styles,x,y,w,h,0);
-/*  if (hw)
-  {
-    LVCOLUMN lvc={0,};
-    RECT r;
-    GetClientRect(hw,&r);
-    lvc.cx=300;//yer.right-r.left;
-    lvc.pszText="";
-    ListView_InsertColumn(hw,0,&lvc);
-  }
-  */
+  /*  if (hw)
+    {
+      LVCOLUMN lvc={0,};
+      RECT r;
+      GetClientRect(hw,&r);
+      lvc.cx=300;//yer.right-r.left;
+      lvc.pszText="";
+      ListView_InsertColumn(hw,0,&lvc);
+    }
+    */
   return hw;
 }
 
@@ -3194,7 +3206,7 @@ static ccprocrec *m_ccprocs;
 void SWELL_RegisterCustomControlCreator(SWELL_ControlCreatorProc proc)
 {
   if (!proc) return;
-  
+
   ccprocrec *p=m_ccprocs;
   while (p && p->next)
   {
@@ -3209,7 +3221,7 @@ void SWELL_RegisterCustomControlCreator(SWELL_ControlCreatorProc proc)
   ent->proc=proc;
   ent->cnt=1;
   ent->next=0;
-  
+
   if (p) p->next=ent;
   else m_ccprocs=ent;
 }
@@ -3217,7 +3229,7 @@ void SWELL_RegisterCustomControlCreator(SWELL_ControlCreatorProc proc)
 void SWELL_UnregisterCustomControlCreator(SWELL_ControlCreatorProc proc)
 {
   if (!proc) return;
-  
+
   ccprocrec *lp=NULL;
   ccprocrec *p=m_ccprocs;
   while (p)
@@ -3247,7 +3259,7 @@ HWND SWELL_MakeControl(const char *cname, int idx, const char *classname, int st
     while (p)
     {
       HWND h=p->proc((HWND)m_make_owner,cname,idx,classname,style,(int)(poo.origin.x+0.5),(int)(poo.origin.y+0.5),(int)(poo.size.width+0.5),(int)(poo.size.height+0.5));
-      if (h) 
+      if (h)
       {
         if (exstyle) SetWindowLong(h,GWL_EXSTYLE,exstyle);
         return h;
@@ -3284,7 +3296,7 @@ HWND SWELL_MakeControl(const char *cname, int idx, const char *classname, int st
 
     BOOL isLB=!stricmp(classname, "SysListView32_LB");
     [obj setSwellNotificationMode:isLB];
-    
+
     if (isLB)
     {
       [obj setHeaderView:nil];
@@ -3323,10 +3335,10 @@ HWND SWELL_MakeControl(const char *cname, int idx, const char *classname, int st
     if (style&SWELL_NOT_WS_VISIBLE) [obj2 setHidden:YES];
     [m_make_owner addSubview:obj2];
     [obj2 release];
-    
+
     if (isLB || !(style & LVS_REPORT))
     {
-      LVCOLUMN lvc={0,};
+      LVCOLUMN lvc= {0,};
       lvc.cx=(int)ceil(max(tr.size.width,300.0));
       lvc.pszText=(char*)"";
       ListView_InsertColumn((HWND)obj,0,&lvc);
@@ -3343,7 +3355,7 @@ HWND SWELL_MakeControl(const char *cname, int idx, const char *classname, int st
         }
       }
     }
-    
+
     return (HWND)obj;
   }
   else if (!stricmp(classname, "SysTreeView32"))
@@ -3353,7 +3365,7 @@ HWND SWELL_MakeControl(const char *cname, int idx, const char *classname, int st
     [obj setDataSource:(id)obj];
     obj->style=style;
     id target=ACTIONTARGET;
-    [obj setHeaderView:nil];    
+    [obj setHeaderView:nil];
     [obj setDelegate:target];
     [obj setAllowsColumnReordering:NO];
     [obj setAllowsMultipleSelection:NO];
@@ -3386,14 +3398,14 @@ HWND SWELL_MakeControl(const char *cname, int idx, const char *classname, int st
 
       [col setWidth:(int)ceil(max(tr.size.width,300.0))];
       [col setEditable:NO];
-      [[col dataCell] setWraps:NO];     
+      [[col dataCell] setWraps:NO];
       [obj addTableColumn:col];
       [obj setOutlineTableColumn:col];
 
       [col release];
     }
 ///    [obj setIndentationPerLevel:10.0];
-    
+
     return (HWND)obj;
   }
   else if (!stricmp(classname, "msctls_progress32"))
@@ -3429,7 +3441,7 @@ HWND SWELL_MakeControl(const char *cname, int idx, const char *classname, int st
       [obj setStringValue:labelstr];
       [labelstr release];
     }
-    
+
     if ((style&SS_TYPEMASK) == SS_LEFTNOWORDWRAP) [[obj cell] setWraps:NO];
     if ((style&SS_TYPEMASK) == SS_CENTER) [[obj cell] setAlignment:NSCenterTextAlignment];
     [obj setTag:idx];
@@ -3451,11 +3463,11 @@ HWND SWELL_MakeControl(const char *cname, int idx, const char *classname, int st
     }
     if (style & BS_DEFPUSHBUTTON)
     {
-       return SWELL_MakeButton(1, cname, idx, x,y,w,h,style &~BS_DEFPUSHBUTTON);
+      return SWELL_MakeButton(1, cname, idx, x,y,w,h,style &~BS_DEFPUSHBUTTON);
     }
     if (style & BS_PUSHBUTTON)
     {
-       return SWELL_MakeButton(0, cname, idx, x,y,w,h,style &~BS_PUSHBUTTON);
+      return SWELL_MakeButton(0, cname, idx, x,y,w,h,style &~BS_PUSHBUTTON);
     }
     SWELL_Button *button=[[SWELL_Button alloc] init];
     [button setTag:idx];
@@ -3464,7 +3476,7 @@ HWND SWELL_MakeControl(const char *cname, int idx, const char *classname, int st
     {
       [button setButtonType:NSSwitchButton];
       [button setAllowsMixedState:YES];
-    }    
+    }
     else if ((style & 0xf) == BS_AUTOCHECKBOX)
     {
       [button setButtonType:NSSwitchButton];
@@ -3486,7 +3498,7 @@ HWND SWELL_MakeControl(const char *cname, int idx, const char *classname, int st
     {
 //      fr.size.width+=8;
     }
-    
+
     if (m_transform.size.width < minwidfontadjust)
       [button setFont:[NSFont systemFontOfSize:TRANSFORMFONTSIZE]];
     [button setFrame:fr];
@@ -3532,7 +3544,7 @@ HWND SWELL_MakeCombo(int idx, int x, int y, int w, int h, int flags)
     [obj setTag:idx];
     [obj setFont:[NSFont systemFontOfSize:10.0f]];
     NSRect rc=MakeCoords(x,y,w,18,true,true);
-        
+
     [obj setSwellStyle:flags];
     [obj setFrame:rc];
     [obj setAutoenablesItems:NO];
@@ -3587,12 +3599,12 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
 HWND SWELL_MakeGroupBox(const char *name, int idx, int x, int y, int w, int h, int style)
 {
   SWELL_BoxView *obj=[[SWELL_BoxView alloc] init];
-  
-  // this just doesn't work, you can't color the border unless it's NSBoxCustom, 
+
+  // this just doesn't work, you can't color the border unless it's NSBoxCustom,
   // and I can't get it to show the title text if it's NSBoxCustom
-  //[obj setBoxType:(NSBoxType)4];   // NSBoxCustom, so we can color the border 
+  //[obj setBoxType:(NSBoxType)4];   // NSBoxCustom, so we can color the border
   //[obj setTitlePosition:(NSTitlePosition)2];  // NSAtTop, default but NSBoxCustom unsets it
-  
+
 //  [obj setTag:idx];
   if (1) // todo: only if on 10.4 maybe?
   {
@@ -3624,7 +3636,7 @@ int TabCtrl_GetItemCount(HWND hwnd)
 BOOL TabCtrl_AdjustRect(HWND hwnd, BOOL fLarger, RECT *r)
 {
   if (!r || !hwnd || ![(id)hwnd isKindOfClass:[SWELL_TabView class]]) return FALSE;
-  
+
   int sign=fLarger?-1:1;
   r->left+=sign*7; // todo: correct this?
   r->right-=sign*7;
@@ -3650,9 +3662,9 @@ int TabCtrl_InsertItem(HWND hwnd, int idx, TCITEM *item)
   SWELL_TabView *tv=(SWELL_TabView*)hwnd;
   if (idx<0) idx=0;
   else if (idx>[tv numberOfTabViewItems]) idx=[tv numberOfTabViewItems];
-  
+
   NSTabViewItem *tabitem=[[NSTabViewItem alloc] init];
-  NSString *str=(NSString *)SWELL_CStringToCFString(item->pszText);  
+  NSString *str=(NSString *)SWELL_CStringToCFString(item->pszText);
   [tabitem setLabel:str];
   [str release];
   id turd=[tv getNotificationWindow];
@@ -3689,23 +3701,23 @@ void ListView_SetExtendedListViewStyleEx(HWND h, int mask, int style)
   if (!h) return;
   if (![(id)h isKindOfClass:[SWELL_ListView class]]) return;
   SWELL_ListView *tv=(SWELL_ListView*)h;
-  
+
   if (mask&LVS_EX_GRIDLINES)
   {
     int s=0;
-    if (style&LVS_EX_GRIDLINES) 
+    if (style&LVS_EX_GRIDLINES)
     {
       s=NSTableViewSolidVerticalGridLineMask|NSTableViewSolidHorizontalGridLineMask;
     }
     [tv setGridStyleMask:s];
   }
-  
+
   if (mask&LVS_EX_HEADERDRAGDROP)
   {
     [tv setAllowsColumnReordering:!!(style&LVS_EX_HEADERDRAGDROP)];
   }
-  
-  
+
+
   // todo LVS_EX_FULLROWSELECT (enabled by default on OSX)
 }
 
@@ -3721,9 +3733,9 @@ void SWELL_SetListViewFastClickMask(HWND hList, int mask)
 void ListView_SetImageList(HWND h, HIMAGELIST imagelist, int which)
 {
   if (!h) return;
-  
+
   SWELL_ListView *v=(SWELL_ListView *)h;
-  
+
   v->m_status_imagelist_type=which;
   v->m_status_imagelist=(WDL_PtrList<HGDIOBJ__> *)imagelist;
   if (v->m_cols && v->m_cols->GetSize()>0)
@@ -3736,7 +3748,7 @@ void ListView_SetImageList(HWND h, HIMAGELIST imagelist, int which)
       [col setDataCell:cell];
       [cell release];
     }
-  }  
+  }
 }
 
 int ListView_GetColumnWidth(HWND h, int pos)
@@ -3744,10 +3756,10 @@ int ListView_GetColumnWidth(HWND h, int pos)
   if (!h || ![(id)h isKindOfClass:[SWELL_ListView class]]) return 0;
   SWELL_ListView *v=(SWELL_ListView *)h;
   if (!v->m_cols || pos < 0 || pos >= v->m_cols->GetSize()) return 0;
-  
+
   NSTableColumn *col=v->m_cols->Get(pos);
   if (!col) return 0;
-  
+
   if ([col respondsToSelector:@selector(isHidden)] && [(SWELL_TableColumnExtensions*)col isHidden]) return 0;
   return (int) floor(0.5+[col width]);
 }
@@ -3765,21 +3777,21 @@ void ListView_InsertColumn(HWND h, int pos, const LVCOLUMN *lvc)
 
   [col setEditable:NO];
   // [col setResizingMask:2];  // user resizable, this seems to be the default
-  
+
   if (!lvc->cx && [col respondsToSelector:@selector(setHidden:)]) [(SWELL_TableColumnExtensions*)col setHidden:YES];
   else [col setWidth:lvc->cx];
-  
+
   if (lvc->fmt == LVCFMT_CENTER) [[col headerCell] setAlignment:NSCenterTextAlignment];
   else if (lvc->fmt == LVCFMT_RIGHT) [[col headerCell] setAlignment:NSRightTextAlignment];
-  
+
   if (!v->m_lbMode && !(v->style & LVS_NOCOLUMNHEADER))
   {
-    NSString *lbl=(NSString *)SWELL_CStringToCFString(lvc->pszText);  
+    NSString *lbl=(NSString *)SWELL_CStringToCFString(lvc->pszText);
     [[col headerCell] setStringValue:lbl];
     [lbl release];
   }
-  
-  if (!pos && v->m_status_imagelist) 
+
+  if (!pos && v->m_status_imagelist)
   {
     SWELL_StatusCell *cell=[[SWELL_StatusCell alloc] initNewCell];
     [cell setWraps:NO];
@@ -3787,11 +3799,11 @@ void ListView_InsertColumn(HWND h, int pos, const LVCOLUMN *lvc)
     [cell release];
   }
   else
-  {  
+  {
     SWELL_ListViewCell *cell = [[SWELL_ListViewCell alloc] initTextCell:@""];
     [col setDataCell:cell];
     [cell setWraps:NO];
-   
+
     if (lvc->fmt == LVCFMT_CENTER) [cell setAlignment:NSCenterTextAlignment];
     else if (lvc->fmt == LVCFMT_RIGHT) [cell setAlignment:NSRightTextAlignment];
     [cell release];
@@ -3808,10 +3820,10 @@ void ListView_SetColumn(HWND h, int pos, const LVCOLUMN *lvc)
   if (!h || !lvc || ![(id)h isKindOfClass:[SWELL_ListView class]]) return;
   SWELL_ListView *v=(SWELL_ListView *)h;
   if (!v->m_cols || pos < 0 || pos >= v->m_cols->GetSize()) return;
-  
+
   NSTableColumn *col=v->m_cols->Get(pos);
   if (!col) return;
-  
+
   if (lvc->mask&LVCF_FMT)
   {
     if (lvc->fmt == LVCFMT_LEFT) [[col headerCell] setAlignment:NSLeftTextAlignment];
@@ -3824,7 +3836,7 @@ void ListView_SetColumn(HWND h, int pos, const LVCOLUMN *lvc)
     {
       if ([col respondsToSelector:@selector(setHidden:)])  [(SWELL_TableColumnExtensions*)col setHidden:YES];
     }
-    else 
+    else
     {
       if ([col respondsToSelector:@selector(setHidden:)])  [(SWELL_TableColumnExtensions*)col setHidden:NO];
       [col setWidth:lvc->cx];
@@ -3834,27 +3846,27 @@ void ListView_SetColumn(HWND h, int pos, const LVCOLUMN *lvc)
   {
     if (!v->m_lbMode && !(v->style&LVS_NOCOLUMNHEADER))
     {
-      NSString *lbl=(NSString *)SWELL_CStringToCFString(lvc->pszText);  
+      NSString *lbl=(NSString *)SWELL_CStringToCFString(lvc->pszText);
       [[col headerCell] setStringValue:lbl];
-      [lbl release]; 
+      [lbl release];
     }
   }
 }
 
 bool ListView_DeleteColumn(HWND h, int pos)
 {
-    if (!h) return false;
-    if (![(id)h isKindOfClass:[SWELL_ListView class]]) return false;
-    SWELL_ListView *v=(SWELL_ListView *)h;
-    if (!v->m_cols || pos < 0 || pos >= v->m_cols->GetSize()) return false;
-    [v removeTableColumn:v->m_cols->Get(pos)];
-    v->m_cols->Delete(pos);
-    return true;
+  if (!h) return false;
+  if (![(id)h isKindOfClass:[SWELL_ListView class]]) return false;
+  SWELL_ListView *v=(SWELL_ListView *)h;
+  if (!v->m_cols || pos < 0 || pos >= v->m_cols->GetSize()) return false;
+  [v removeTableColumn:v->m_cols->Get(pos)];
+  v->m_cols->Delete(pos);
+  return true;
 }
 
 void ListView_GetItemText(HWND hwnd, int item, int subitem, char *text, int textmax)
 {
-  LVITEM it={LVIF_TEXT,item,subitem,0,0,text,textmax,};
+  LVITEM it= {LVIF_TEXT,item,subitem,0,0,text,textmax,};
   ListView_GetItem(hwnd,&it);
 }
 
@@ -3862,41 +3874,41 @@ int ListView_InsertItem(HWND h, const LVITEM *item)
 {
   if (!h || !item || item->iSubItem) return 0;
   if (![(id)h isKindOfClass:[SWELL_ListView class]]) return 0;
-  
+
   SWELL_ListView *tv=(SWELL_ListView*)h;
   if (!tv->m_lbMode && (tv->style & LVS_OWNERDATA)) return -1;
   if (!tv->m_items) return -1;
-    
+
   int a=item->iItem;
   if (a<0)a=0;
   else if (a > tv->m_items->GetSize()) a=tv->m_items->GetSize();
-  
+
   if (!tv->m_lbMode && (item->mask & LVIF_TEXT))
   {
     if (tv->style & LVS_SORTASCENDING)
     {
-       a=ptrlist_bsearch_mod((char *)item->pszText,tv->m_items,_listviewrowSearchFunc,NULL);
+      a=ptrlist_bsearch_mod((char *)item->pszText,tv->m_items,_listviewrowSearchFunc,NULL);
     }
     else if (tv->style & LVS_SORTDESCENDING)
     {
-       a=ptrlist_bsearch_mod((char *)item->pszText,tv->m_items,_listviewrowSearchFunc2,NULL);
+      a=ptrlist_bsearch_mod((char *)item->pszText,tv->m_items,_listviewrowSearchFunc2,NULL);
     }
   }
-  
+
   SWELL_ListView_Row *nr=new SWELL_ListView_Row;
   nr->m_vals.Add(strdup((item->mask & LVIF_TEXT) ? item->pszText : ""));
   if (item->mask & LVIF_PARAM) nr->m_param = item->lParam;
   tv->m_items->Insert(a,nr);
-  
 
-  
+
+
   if ((item->mask&LVIF_STATE) && (item->stateMask & (0xff<<16)))
   {
     nr->m_imageidx=(item->state>>16)&0xff;
   }
-  
+
   [tv reloadData];
-  
+
   if (a < tv->m_items->GetSize()-1)
   {
     NSIndexSet *sel=[tv selectedRowIndexes];
@@ -3908,7 +3920,7 @@ int ListView_InsertItem(HWND h, const LVITEM *item)
       [ms release];
     }
   }
-  
+
   if (item->mask & LVIF_STATE)
   {
     if (item->stateMask & LVIS_SELECTED)
@@ -3916,11 +3928,11 @@ int ListView_InsertItem(HWND h, const LVITEM *item)
       if (item->state&LVIS_SELECTED)
       {
         bool isSingle = tv->m_lbMode ? !(tv->style & LBS_EXTENDEDSEL) : !!(tv->style&LVS_SINGLESEL);
-        [tv selectRowIndexes:[NSIndexSet indexSetWithIndex:a] byExtendingSelection:isSingle?NO:YES];        
+        [tv selectRowIndexes:[NSIndexSet indexSetWithIndex:a] byExtendingSelection:isSingle?NO:YES];
       }
     }
   }
-  
+
   return a;
 }
 
@@ -3928,11 +3940,11 @@ void ListView_SetItemText(HWND h, int ipos, int cpos, const char *txt)
 {
   if (!h || cpos < 0 || cpos >= 32) return;
   if (![(id)h isKindOfClass:[SWELL_ListView class]]) return;
-  
+
   SWELL_ListView *tv=(SWELL_ListView*)h;
   if (!tv->m_lbMode && (tv->style & LVS_OWNERDATA)) return;
   if (!tv->m_items) return;
-  
+
   SWELL_ListView_Row *p=tv->m_items->Get(ipos);
   if (!p) return;
   int x;
@@ -3946,7 +3958,7 @@ void ListView_SetItemText(HWND h, int ipos, int cpos, const char *txt)
     p->m_vals.Set(cpos,strdup(txt));
   }
   else p->m_vals.Add(strdup(txt));
-    
+
   [tv reloadData];
 }
 
@@ -3956,9 +3968,9 @@ int ListView_GetNextItem(HWND h, int istart, int flags)
   {
     if (!h) return 0;
     if (![(id)h isKindOfClass:[SWELL_ListView class]]) return 0;
-    
+
     SWELL_ListView *tv=(SWELL_ListView*)h;
-    
+
     if (flags==LVNI_SELECTED)
     {
       //int orig_start=istart;
@@ -3971,7 +3983,7 @@ int ListView_GetNextItem(HWND h, int istart, int flags)
       }
       return -1;
     }
-    
+
     return [tv selectedRow];
   }
   return -1;
@@ -3982,19 +3994,19 @@ bool ListView_SetItem(HWND h, LVITEM *item)
   if (!item) return false;
   if (!h) return false;
   if (![(id)h isKindOfClass:[SWELL_ListView class]]) return false;
-    
+
   SWELL_ListView *tv=(SWELL_ListView*)h;
   if (tv->m_lbMode || !(tv->style & LVS_OWNERDATA))
   {
     if (!tv->m_items) return false;
     SWELL_ListView_Row *row=tv->m_items->Get(item->iItem);
-    if (!row) return false;  
-  
-    if (item->mask & LVIF_PARAM) 
+    if (!row) return false;
+
+    if (item->mask & LVIF_PARAM)
     {
       row->m_param=item->lParam;
     }
-    if ((item->mask & LVIF_TEXT) && item->pszText) 
+    if ((item->mask & LVIF_TEXT) && item->pszText)
     {
       ListView_SetItemText(h,item->iItem,item->iSubItem,item->pszText);
     }
@@ -4006,7 +4018,7 @@ bool ListView_SetItem(HWND h, LVITEM *item)
   }
   if ((item->mask & LVIF_STATE) && item->stateMask)
   {
-    ListView_SetItemState(h,item->iItem,item->state,item->stateMask); 
+    ListView_SetItemState(h,item->iItem,item->state,item->stateMask);
   }
 
   return true;
@@ -4019,29 +4031,29 @@ bool ListView_GetItem(HWND h, LVITEM *item)
   item->state=0;
   if (!h) return false;
   if (![(id)h isKindOfClass:[SWELL_ListView class]]) return false;
-  
-  
+
+
   SWELL_ListView *tv=(SWELL_ListView*)h;
   if (tv->m_lbMode || !(tv->style & LVS_OWNERDATA))
   {
     if (!tv->m_items) return false;
-    
+
     SWELL_ListView_Row *row=tv->m_items->Get(item->iItem);
-    if (!row) return false;  
-  
+    if (!row) return false;
+
     if (item->mask & LVIF_PARAM) item->lParam=row->m_param;
     if (item->mask & LVIF_TEXT) if (item->pszText && item->cchTextMax>0)
-    {
-      char *p=row->m_vals.Get(item->iSubItem);
-      lstrcpyn_safe(item->pszText,p?p:"",item->cchTextMax);
-    }
-      if (item->mask & LVIF_STATE)
       {
-        if (item->stateMask & (0xff<<16))
-        {
-          item->state|=row->m_imageidx<<16;
-        }
+        char *p=row->m_vals.Get(item->iSubItem);
+        lstrcpyn_safe(item->pszText,p?p:"",item->cchTextMax);
       }
+    if (item->mask & LVIF_STATE)
+    {
+      if (item->stateMask & (0xff<<16))
+      {
+        item->state|=row->m_imageidx<<16;
+      }
+    }
   }
   else
   {
@@ -4049,8 +4061,8 @@ bool ListView_GetItem(HWND h, LVITEM *item)
   }
   if (item->mask & LVIF_STATE)
   {
-     if ((item->stateMask&LVIS_SELECTED) && [tv isRowSelected:item->iItem]) item->state|=LVIS_SELECTED;
-     if ((item->stateMask&LVIS_FOCUSED) && [tv selectedRow] == item->iItem) item->state|=LVIS_FOCUSED;
+    if ((item->stateMask&LVIS_SELECTED) && [tv isRowSelected:item->iItem]) item->state|=LVIS_SELECTED;
+    if ((item->stateMask&LVIS_FOCUSED) && [tv selectedRow] == item->iItem) item->state|=LVIS_FOCUSED;
   }
 
   return true;
@@ -4064,7 +4076,7 @@ int ListView_GetItemState(HWND h, int ipos, int mask)
   {
     if (!tv->m_items) return 0;
     SWELL_ListView_Row *row=tv->m_items->Get(ipos);
-    if (!row) return 0;  
+    if (!row) return 0;
     if (mask & (0xff<<16))
     {
       flag|=row->m_imageidx<<16;
@@ -4074,10 +4086,10 @@ int ListView_GetItemState(HWND h, int ipos, int mask)
   {
     if (ipos<0 || ipos >= tv->ownermode_cnt) return 0;
   }
-  
+
   if ((mask&LVIS_SELECTED) && [tv isRowSelected:ipos]) flag|=LVIS_SELECTED;
   if ((mask&LVIS_FOCUSED) && [tv selectedRow]==ipos) flag|=LVIS_FOCUSED;
-  return flag;  
+  return flag;
 }
 
 bool ListView_SetItemState(HWND h, int ipos, int state, int statemask)
@@ -4086,7 +4098,7 @@ bool ListView_SetItemState(HWND h, int ipos, int state, int statemask)
   if (!h || ![(id)h isKindOfClass:[SWELL_ListView class]]) return false;
   SWELL_ListView *tv=(SWELL_ListView*)h;
   static int _is_doing_all;
-  
+
   if (ipos == -1)
   {
     int x;
@@ -4103,7 +4115,7 @@ bool ListView_SetItemState(HWND h, int ipos, int state, int statemask)
   {
     if (!tv->m_items) return false;
     SWELL_ListView_Row *row=tv->m_items->Get(ipos);
-    if (!row) return false;  
+    if (!row) return false;
     if (statemask & (0xff<<16))
     {
       if (row->m_imageidx!=((state>>16)&0xff))
@@ -4121,7 +4133,7 @@ bool ListView_SetItemState(HWND h, int ipos, int state, int statemask)
   if (statemask & LVIS_SELECTED)
   {
     if (state & LVIS_SELECTED)
-    {      
+    {
       bool isSingle = tv->m_lbMode ? !(tv->style & LBS_EXTENDEDSEL) : !!(tv->style&LVS_SINGLESEL);
       if (![tv isRowSelected:ipos]) { didsel=true;  [tv selectRowIndexes:[NSIndexSet indexSetWithIndex:ipos] byExtendingSelection:isSingle?NO:YES]; }
     }
@@ -4137,10 +4149,10 @@ bool ListView_SetItemState(HWND h, int ipos, int state, int statemask)
     }
     else
     {
-      
+
     }
   }
-  
+
   if (!_is_doing_all)
   {
     if (didsel)
@@ -4149,8 +4161,8 @@ bool ListView_SetItemState(HWND h, int ipos, int state, int statemask)
       if (!__rent)
       {
         __rent=1;
-        NMLISTVIEW nm={{(HWND)h,[tv tag],LVN_ITEMCHANGED},ipos,0,state,};
-        SendMessage(GetParent(h),WM_NOTIFY,[tv tag],(LPARAM)&nm);      
+        NMLISTVIEW nm= {{(HWND)h,[tv tag],LVN_ITEMCHANGED},ipos,0,state,};
+        SendMessage(GetParent(h),WM_NOTIFY,[tv tag],(LPARAM)&nm);
         __rent=0;
       }
     }
@@ -4172,10 +4184,10 @@ void ListView_DeleteItem(HWND h, int ipos)
 {
   if (!h) return;
   if (![(id)h isKindOfClass:[SWELL_ListView class]]) return;
-  
+
   SWELL_ListView *tv=(SWELL_ListView*)h;
   if (!tv->m_items) return;
-  
+
   if (ipos >=0 && ipos < tv->m_items->GetSize())
   {
     if (ipos != tv->m_items->GetSize()-1)
@@ -4190,9 +4202,9 @@ void ListView_DeleteItem(HWND h, int ipos)
       }
     }
     tv->m_items->Delete(ipos,true);
-    
+
     [tv reloadData];
-    
+
   }
 }
 
@@ -4200,11 +4212,11 @@ void ListView_DeleteAllItems(HWND h)
 {
   if (!h) return;
   if (![(id)h isKindOfClass:[SWELL_ListView class]]) return;
-  
+
   SWELL_ListView *tv=(SWELL_ListView*)h;
   tv->ownermode_cnt=0;
   if (tv->m_items) tv->m_items->Empty(true);
-  
+
   [tv reloadData];
 }
 
@@ -4212,7 +4224,7 @@ int ListView_GetSelectedCount(HWND h)
 {
   if (!h) return 0;
   if (![(id)h isKindOfClass:[SWELL_ListView class]]) return 0;
-  
+
   SWELL_ListView *tv=(SWELL_ListView*)h;
   return [tv numberOfSelectedRows];
 }
@@ -4221,12 +4233,12 @@ int ListView_GetItemCount(HWND h)
 {
   if (!h) return 0;
   if (![(id)h isKindOfClass:[SWELL_ListView class]]) return 0;
-  
+
   SWELL_ListView *tv=(SWELL_ListView*)h;
   if (tv->m_lbMode || !(tv->style & LVS_OWNERDATA))
   {
     if (!tv->m_items) return 0;
-  
+
     return tv->m_items->GetSize();
   }
   return tv->ownermode_cnt;
@@ -4236,7 +4248,7 @@ int ListView_GetSelectionMark(HWND h)
 {
   if (!h) return 0;
   if (![(id)h isKindOfClass:[SWELL_ListView class]]) return 0;
-  
+
   SWELL_ListView *tv=(SWELL_ListView*)h;
   return [tv selectedRow];
 }
@@ -4245,7 +4257,7 @@ int SWELL_GetListViewHeaderHeight(HWND h)
 {
   if (!h) return 0;
   if (![(id)h isKindOfClass:[SWELL_ListView class]]) return 0;
-  
+
   SWELL_ListView* tv=(SWELL_ListView*)h;
   NSTableHeaderView* hv=[tv headerView];
   NSRect r=[hv bounds];
@@ -4257,15 +4269,15 @@ void ListView_SetColumnWidth(HWND h, int pos, int wid)
   if (!h || ![(id)h isKindOfClass:[SWELL_ListView class]]) return;
   SWELL_ListView *v=(SWELL_ListView *)h;
   if (!v->m_cols || pos < 0 || pos >= v->m_cols->GetSize()) return;
-  
+
   NSTableColumn *col=v->m_cols->Get(pos);
   if (!col) return;
-  
+
   if (!wid)
   {
     if ([col respondsToSelector:@selector(setHidden:)])  [(SWELL_TableColumnExtensions*)col setHidden:YES];
   }
-  else 
+  else
   {
     if ([col respondsToSelector:@selector(setHidden:)])  [(SWELL_TableColumnExtensions*)col setHidden:NO];
     [col setWidth:wid];
@@ -4277,7 +4289,7 @@ BOOL ListView_GetColumnOrderArray(HWND h, int cnt, int* arr)
   if (!h || ![(id)h isKindOfClass:[SWELL_ListView class]]) return FALSE;
   SWELL_ListView* lv=(SWELL_ListView*)h;
   if (!lv->m_cols || lv->m_cols->GetSize() != cnt) return FALSE;
-  
+
   int i;
   for (i=0; i < cnt; ++i)
   {
@@ -4292,7 +4304,7 @@ BOOL ListView_SetColumnOrderArray(HWND h, int cnt, int* arr)
   if (!h || ![(id)h isKindOfClass:[SWELL_ListView class]]) return FALSE;
   SWELL_ListView* lv=(SWELL_ListView*)h;
   if (!lv->m_cols || lv->m_cols->GetSize() != cnt) return FALSE;
-  
+
   int i;
   for (i=0; i < cnt; ++i)
   {
@@ -4325,7 +4337,7 @@ BOOL Header_GetItem(HWND h, int col, HDITEM* hi)
   if (!lv->m_cols || col < 0 || col >= lv->m_cols->GetSize()) return FALSE;
   NSTableColumn* hcol=lv->m_cols->Get(col);
   if (!hcol) return FALSE;
-  
+
   if (hi->mask&HDI_FORMAT)
   {
     hi->fmt=0;
@@ -4341,7 +4353,7 @@ BOOL Header_GetItem(HWND h, int col, HDITEM* hi)
     }
   }
   // etc todo
-  
+
   return TRUE;
 }
 
@@ -4352,7 +4364,7 @@ BOOL Header_SetItem(HWND h, int col, HDITEM* hi)
   if (!lv->m_cols || col < 0 || col >= lv->m_cols->GetSize()) return FALSE;
   NSTableColumn* hcol=lv->m_cols->Get(col);
   if (!hcol) return FALSE;
-  
+
   if (hi->mask&HDI_FORMAT)
   {
     NSImage* img=0;
@@ -4361,7 +4373,7 @@ BOOL Header_SetItem(HWND h, int col, HDITEM* hi)
     [lv setIndicatorImage:img inTableColumn:hcol];
   }
   // etc todo
-  
+
   return TRUE;
 }
 
@@ -4369,16 +4381,16 @@ int ListView_HitTest(HWND h, LVHITTESTINFO *pinf)
 {
   if (!h || !pinf) return -1;
   if (![(id)h isKindOfClass:[SWELL_ListView class]]) return -1;
-  
+
   SWELL_ListView *tv=(SWELL_ListView*)h;
   // return index
   pinf->flags=0;
   pinf->iItem=-1;
-  
+
   // rowAtPoint will return a row even if it is scrolled out of the clip view
   NSScrollView* sv=(NSScrollView *)NavigateUpScrollClipViews(tv);
   if (![sv isKindOfClass:[NSScrollView class]] && ![sv isKindOfClass:[NSClipView class]]) sv=NULL;
-  
+
   NSRect r=[sv documentVisibleRect];
   int x=pinf->pt.x-r.origin.x;
   int y=pinf->pt.y-r.origin.y;
@@ -4387,7 +4399,7 @@ int ListView_HitTest(HWND h, LVHITTESTINFO *pinf)
   if (x >= r.size.width) pinf->flags |= LVHT_TORIGHT;
   if (y < 0) pinf->flags |= LVHT_ABOVE;
   if (y >= r.size.height) pinf->flags |= LVHT_BELOW;
-  
+
   if (!pinf->flags)
   {
     NSPoint pt = { pinf->pt.x, pinf->pt.y };
@@ -4398,17 +4410,17 @@ int ListView_HitTest(HWND h, LVHITTESTINFO *pinf)
       {
         pinf->flags=LVHT_ONITEMSTATEICON;
       }
-      else 
+      else
       {
         pinf->flags=LVHT_ONITEMLABEL;
       }
     }
-    else 
+    else
     {
       pinf->flags=LVHT_NOWHERE;
     }
   }
-  
+
   return pinf->iItem;
 }
 
@@ -4416,9 +4428,10 @@ int ListView_SubItemHitTest(HWND h, LVHITTESTINFO *pinf)
 {
   int row = ListView_HitTest(h, pinf);
 
-  NSPoint pt={pinf->pt.x,pinf->pt.y};
+  NSPoint pt= {pinf->pt.x,pinf->pt.y};
   if (row < 0 && pt.y < 0)
-  { // Fake the point in the client area of the listview to get the column # (like win32)
+  {
+    // Fake the point in the client area of the listview to get the column # (like win32)
     pt.y = 0;
   }
   pinf->iSubItem=[(NSTableView *)h columnAtPoint:pt];
@@ -4429,7 +4442,7 @@ void ListView_SetItemCount(HWND h, int cnt)
 {
   if (!h) return;
   if (![(id)h isKindOfClass:[SWELL_ListView class]]) return;
-  
+
   SWELL_ListView *tv=(SWELL_ListView*)h;
   if (!tv->m_lbMode && (tv->style & LVS_OWNERDATA))
   {
@@ -4441,9 +4454,9 @@ void ListView_EnsureVisible(HWND h, int i, BOOL pok)
 {
   if (!h) return;
   if (![(id)h isKindOfClass:[SWELL_ListView class]]) return;
-  
+
   SWELL_ListView *tv=(SWELL_ListView*)h;
-  
+
   if (i<0)i=0;
   if (!tv->m_lbMode && (tv->style & LVS_OWNERDATA))
   {
@@ -4456,7 +4469,7 @@ void ListView_EnsureVisible(HWND h, int i, BOOL pok)
   if (i>=0)
   {
     [tv scrollRowToVisible:i];
-  }  
+  }
 }
 
 static bool ListViewGetRectImpl(HWND h, int item, int subitem, RECT* r) // subitem<0 for full item rect
@@ -4465,20 +4478,20 @@ static bool ListViewGetRectImpl(HWND h, int item, int subitem, RECT* r) // subit
   if (![(id)h isKindOfClass:[SWELL_ListView class]]) return false;
   if (item < 0 || item > ListView_GetItemCount(h)) return false;
   SWELL_ListView *tv=(SWELL_ListView*)h;
-  
+
   if (subitem >= 0 && (!tv->m_cols || subitem >= tv->m_cols->GetSize())) return false;
   subitem=[tv getColumnPos:subitem];
-  
+
   NSRect ar;
   if (subitem < 0) ar = [tv rectOfRow:item];
   else ar=[tv frameOfCellAtColumn:subitem row:item];
   NSSize sp=[tv intercellSpacing];
-  
+
   r->left=(int)ar.origin.x;
   r->top=(int)ar.origin.y;
   r->right=(int)(ar.origin.x+ar.size.width+sp.width);
   r->bottom=(int)(ar.origin.y+ar.size.height+sp.height);
-  
+
   return true;
 }
 
@@ -4497,11 +4510,11 @@ int ListView_GetTopIndex(HWND h)
   NSTableView* tv = (NSTableView*)h;
   if (!tv) return -1;
   NSScrollView* sv = [tv enclosingScrollView];
-  if (!sv) return -1;  
-  
+  if (!sv) return -1;
+
   NSRect tvr = [sv documentVisibleRect];
-  NSPoint pt = { 0, tvr.origin.y };  
-  return [tv rowAtPoint:pt];      
+  NSPoint pt = { 0, tvr.origin.y };
+  return [tv rowAtPoint:pt];
 }
 
 int ListView_GetCountPerPage(HWND h)
@@ -4509,8 +4522,8 @@ int ListView_GetCountPerPage(HWND h)
   NSTableView* tv = (NSTableView*)h;
   if (!tv) return 0;
   NSScrollView* sv = [tv enclosingScrollView];
-  if (!sv) return 0;  
-  
+  if (!sv) return 0;
+
   NSRect tvr = [sv documentVisibleRect];
   int rowh = [tv rowHeight];
   return tvr.size.height/rowh;
@@ -4521,16 +4534,16 @@ bool ListView_Scroll(HWND h, int xscroll, int yscroll)
   NSTableView* tv = (NSTableView*)h;
   NSScrollView* sv = [tv enclosingScrollView];
   if (!sv) return false;
-  
+
   NSRect tvr = [sv documentVisibleRect];
   NSPoint pt = { tvr.origin.x, tvr.origin.y };
   if (xscroll > 0) pt.x += tvr.size.width-1;
   if (yscroll > 0) pt.y += tvr.size.height-1;
-  
+
   int rowidx = [tv rowAtPoint:pt];
   if (rowidx < 0) rowidx=0;
   else if (rowidx >= [tv numberOfRows]) rowidx=[tv numberOfRows]-1;
-  
+
   int colidx = [tv columnAtPoint:pt];
   if (colidx < 0) colidx=0;
   else if (colidx >= [tv numberOfColumns]) colidx = [tv numberOfColumns]-1;
@@ -4540,18 +4553,18 @@ bool ListView_Scroll(HWND h, int xscroll, int yscroll)
   else xscroll = 0;
   if (ir.size.height) yscroll /= ir.size.height;
   else yscroll = 0;
-   
+
   rowidx += yscroll;
   if (rowidx < 0) rowidx=0;
   else if (rowidx >= [tv numberOfRows]) rowidx = [tv numberOfRows]-1;
-  
+
   colidx += xscroll;
   if (colidx < 0) colidx=0;
   else if (colidx >= [tv numberOfColumns]) colidx = [tv numberOfColumns]-1;
-  
+
   [tv scrollRowToVisible:rowidx];
   [tv scrollColumnToVisible:colidx];
-  
+
   return true;
 }
 
@@ -4577,10 +4590,10 @@ static int __listview_sortfunc(void *p1, void *p2, int (*compar)(LPARAM val1, LP
   return compar(a->m_param,b->m_param,userval);
 }
 
-static void __listview_mergesort_internal(void *base, size_t nmemb, size_t size, 
-                                 int (*compar)(LPARAM val1, LPARAM val2, LPARAM userval), 
-                                 LPARAM parm,
-                                 char *tmpspace)
+static void __listview_mergesort_internal(void *base, size_t nmemb, size_t size,
+    int (*compar)(LPARAM val1, LPARAM val2, LPARAM userval),
+    LPARAM parm,
+    char *tmpspace)
 {
   char *b1,*b2;
   size_t n1, n2;
@@ -4602,19 +4615,19 @@ static void __listview_mergesort_internal(void *base, size_t nmemb, size_t size,
 
   do
   {
-      if (__listview_sortfunc(b1, b2, compar,parm) > 0)
-      {
-        memcpy(p, b2, size);
-        b2 += size;
-        n2--;
-      }
-      else
-      {
-        memcpy(p, b1, size);
-        b1 += size;
-        n1--;
-      }
-      p += size;
+    if (__listview_sortfunc(b1, b2, compar,parm) > 0)
+    {
+      memcpy(p, b2, size);
+      b2 += size;
+      n2--;
+    }
+    else
+    {
+      memcpy(p, b1, size);
+      b1 += size;
+      n1--;
+    }
+    p += size;
   }
   while (n1 > 0 && n2 > 0);
 
@@ -4629,15 +4642,15 @@ void ListView_SortItems(HWND hwnd, PFNLVCOMPARE compf, LPARAM parm)
   if (![(id)hwnd isKindOfClass:[SWELL_ListView class]]) return;
   SWELL_ListView *tv=(SWELL_ListView*)hwnd;
   if (tv->m_lbMode || (tv->style & LVS_OWNERDATA) || !tv->m_items) return;
-    
+
   WDL_HeapBuf tmp;
   tmp.Resize(tv->m_items->GetSize()*sizeof(void *));
   int x;
   int sc=0;
-  for(x=0;x<tv->m_items->GetSize();x++)
+  for(x=0; x<tv->m_items->GetSize(); x++)
   {
     SWELL_ListView_Row *r = tv->m_items->Get(x);
-    if (r) 
+    if (r)
     {
       r->m_tmp = !![tv isRowSelected:x];
       sc++;
@@ -4647,8 +4660,8 @@ void ListView_SortItems(HWND hwnd, PFNLVCOMPARE compf, LPARAM parm)
   if (sc)
   {
     NSMutableIndexSet *indexSet = [[NSMutableIndexSet  alloc] init];
-    
-    for(x=0;x<tv->m_items->GetSize();x++)
+
+    for(x=0; x<tv->m_items->GetSize(); x++)
     {
       SWELL_ListView_Row *r = tv->m_items->Get(x);
       if (r && (r->m_tmp&1)) [indexSet addIndex:x];
@@ -4656,7 +4669,7 @@ void ListView_SortItems(HWND hwnd, PFNLVCOMPARE compf, LPARAM parm)
     [tv selectRowIndexes:indexSet byExtendingSelection:NO];
     [indexSet release];
   }
-  
+
   [tv reloadData];
 }
 
@@ -4683,16 +4696,16 @@ HWND WindowFromPoint(POINT p)
       {
         bestwnd=wnd;
         break;
-      }    
+      }
     }
   }
-  
+
   if (!bestwnd) return 0;
-  NSPoint pt={p.x,p.y};
+  NSPoint pt= {p.x,p.y};
   NSPoint lpt=[bestwnd convertScreenToBase:pt];
   NSView *v=[[bestwnd contentView] hitTest:lpt];
   if (v) return (HWND)v;
-  return (HWND)[bestwnd contentView]; 
+  return (HWND)[bestwnd contentView];
 }
 
 void UpdateWindow(HWND hwnd)
@@ -4709,14 +4722,14 @@ void SWELL_FlushWindow(HWND h)
   if (h)
   {
     NSWindow *w=NULL;
-    if ([(id)h isKindOfClass:[NSView class]]) 
+    if ([(id)h isKindOfClass:[NSView class]])
     {
       if ([(NSView *)h needsDisplay]) return;
-      
+
       w = [(NSView *)h window];
     }
     else if ([(id)h isKindOfClass:[NSWindow class]]) w = (NSWindow *)h;
-    
+
     if (w && ![w viewsNeedDisplay])
     {
       [w flushWindow];
@@ -4730,7 +4743,7 @@ static void InvalidateSuperViews(NSView *view)
   view = [view superview];
   while (view)
   {
-    if ([view isKindOfClass:[SWELL_hwndChild class]]) 
+    if ([view isKindOfClass:[SWELL_hwndChild class]])
     {
       if (((SWELL_hwndChild *)view)->m_isdirty&2) break;
       ((SWELL_hwndChild *)view)->m_isdirty|=2;
@@ -4738,17 +4751,17 @@ static void InvalidateSuperViews(NSView *view)
     view = [view superview];
   }
 }
-           
+
 void InvalidateRect(HWND hwnd, RECT *r, int eraseBk)
-{ 
+{
   if (!hwnd) return;
   id view=(id)hwnd;
   if ([view isKindOfClass:[NSWindow class]]) view=[view contentView];
-  if ([view isKindOfClass:[NSView class]]) 
+  if ([view isKindOfClass:[NSView class]])
   {
 
     NSView *sv = view;
-    
+
     bool skip_parent_invalidate=false;
     if ([view isKindOfClass:[SWELL_hwndChild class]])
     {
@@ -4769,10 +4782,10 @@ void InvalidateRect(HWND hwnd, RECT *r, int eraseBk)
       {
         int a = tr.top; tr.top=tr.bottom; tr.bottom=a;
       }
-      [sv setNeedsDisplayInRect:NSMakeRect(tr.left,tr.top,tr.right-tr.left,tr.bottom-tr.top)]; 
+      [sv setNeedsDisplayInRect:NSMakeRect(tr.left,tr.top,tr.right-tr.left,tr.bottom-tr.top)];
     }
     else [sv setNeedsDisplay:YES];
-    
+
   }
 }
 
@@ -4827,8 +4840,8 @@ BOOL EndPaint(HWND hwnd, PAINTSTRUCT *ps)
 LRESULT DefWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
   if (msg==WM_RBUTTONUP||msg==WM_NCRBUTTONUP)
-  {  
-    POINT p={GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam)};
+  {
+    POINT p= {GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam)};
     HWND hwndDest=hwnd;
     if (msg==WM_RBUTTONUP)
     {
@@ -4847,28 +4860,28 @@ LRESULT DefWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       while (h && [[h window] contentView] != h)
       {
         h=[h superview];
-        if (h && [h respondsToSelector:@selector(onSwellMessage:p1:p2:)]) 
+        if (h && [h respondsToSelector:@selector(onSwellMessage:p1:p2:)])
         {
-           return SendMessage((HWND)h,msg,wParam,lParam);    
+          return SendMessage((HWND)h,msg,wParam,lParam);
         }
       }
     }
   }
-  else if (msg==WM_NCHITTEST) 
+  else if (msg==WM_NCHITTEST)
   {
     int rv=HTCLIENT;
     SWELL_BEGIN_TRY
     RECT r;
     GetWindowRect(hwnd,&r);
-    POINT pt={GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam)};
+    POINT pt= {GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam)};
 
-    if (r.top > r.bottom) 
-    { 
+    if (r.top > r.bottom)
+    {
       pt.y = r.bottom + (r.top - pt.y); // translate coordinate into flipped-window
 
-      int a=r.top; r.top=r.bottom; r.bottom=a; 
+      int a=r.top; r.top=r.bottom; r.bottom=a;
     }
-    NCCALCSIZE_PARAMS p={{r,}};
+    NCCALCSIZE_PARAMS p= {{r,}};
     SendMessage(hwnd,WM_NCCALCSIZE,FALSE,(LPARAM)&p);
     if (!PtInRect(&p.rgrc[0],pt)) rv=HTNOWHERE;
     SWELL_END_TRY(;)
@@ -4883,7 +4896,7 @@ LRESULT DefWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       if (ch)
       {
         int x;
-        for(x=0;x<[ch count]; x ++)
+        for(x=0; x<[ch count]; x ++)
         {
           NSView *v = [ch objectAtIndex:x];
           sendSwellMessage(v,WM_DISPLAYCHANGE,wParam,lParam);
@@ -4904,17 +4917,17 @@ void SWELL_BroadcastMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   int x;
   NSArray *ch=[NSApp orderedWindows];
-  for(x=0;x<[ch count]; x ++)
+  for(x=0; x<[ch count]; x ++)
   {
     NSView *v = [[ch objectAtIndex:x] contentView];
     if (v && [v respondsToSelector:@selector(onSwellMessage:p1:p2:)])
     {
       [(SWELL_hwndChild *)v onSwellMessage:uMsg p1:wParam p2:lParam];
-      
+
       if (uMsg == WM_DISPLAYCHANGE)
         InvalidateRect((HWND)v,NULL,FALSE);
     }
-  }  
+  }
 }
 
 
@@ -4975,7 +4988,7 @@ UINT DragQueryFile(HDROP hDrop, UINT wf, char *buf, UINT bufsz)
           rv=strlen(buf);
         }
         else rv=strlen(p);
-          
+
         break;
       }
       p+=strlen(p)+1;
@@ -5020,16 +5033,16 @@ bool OpenClipboard(HWND hwndDlg)
   m_clipsPending.Empty(true);
 
   CF_TEXT; // ensure this type is registered
-  
+
   NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:@"SWELL_APP"];
   m_clip_curfmts.Empty();
   NSArray *ar=[pasteboard types];
 
-  
+
   if (ar && [ar count])
   {
     int x;
-    
+
     for (x = 0; x < [ar count]; x ++)
     {
       NSString *s=[ar objectAtIndex:x];
@@ -5044,7 +5057,7 @@ bool OpenClipboard(HWND hwndDlg)
           break;
         }
       }
-      
+
     }
   }
   return true;
@@ -5053,16 +5066,16 @@ bool OpenClipboard(HWND hwndDlg)
 void CloseClipboard() // frees any remaining items in clipboard
 {
   m_clip_recs.Empty(GlobalFree);
-  
+
   if (m_clipsPending.GetSize())
   {
     int x;
-    for (x=0;x<m_clipsPending.GetSize() && m_clipsPending.Get(x)->type != CF_TEXT;x++);
+    for (x=0; x<m_clipsPending.GetSize() && m_clipsPending.Get(x)->type != CF_TEXT; x++);
     NSPasteboard *pasteboard = x<m_clipsPending.GetSize() ? [NSPasteboard generalPasteboard] : [NSPasteboard pasteboardWithName:@"SWELL_APP"];
-    
+
     NSMutableArray *ar = [[NSMutableArray alloc] initWithCapacity:m_clipsPending.GetSize()];
-    
-    for (x=0;x<m_clipsPending.GetSize();x++)
+
+    for (x=0; x<m_clipsPending.GetSize(); x++)
     {
       swell_pendingClipboardStates *cs=m_clipsPending.Get(x);
       NSString *fmt=m_clip_fmts.Get(cs->type-1);
@@ -5071,12 +5084,12 @@ void CloseClipboard() // frees any remaining items in clipboard
     if ([ar count])
     {
       [pasteboard declareTypes:ar owner:nil];
-      for (x=0;x<m_clipsPending.GetSize();x++)
+      for (x=0; x<m_clipsPending.GetSize(); x++)
       {
         swell_pendingClipboardStates *cs=m_clipsPending.Get(x);
         NSString *fmt=m_clip_fmts.Get(cs->type-1);
         if (!fmt) continue;
-        
+
         void *buf=GlobalLock(cs->h);
         if (buf)
         {
@@ -5105,7 +5118,7 @@ void CloseClipboard() // frees any remaining items in clipboard
     }
     [ar release];
     m_clipsPending.Empty(true);
-  }  
+  }
 }
 
 UINT EnumClipboardFormats(UINT lastfmt) // won't enumerate CF_TEXT (since thats a separate pasteboard)
@@ -5126,7 +5139,7 @@ HANDLE GetClipboardData(UINT type)
   NSString *fmt=m_clip_fmts.Get(type-1);
   if (!fmt) return 0;
   NSPasteboard *pasteboard = type == CF_TEXT ? [NSPasteboard generalPasteboard] : [NSPasteboard pasteboardWithName:@"SWELL_APP"];
-  
+
   HANDLE h=0;
   if (type == CF_TEXT)
   {
@@ -5140,7 +5153,7 @@ HANDLE GetClipboardData(UINT type)
       SWELL_CFStringToCString(str,buf,l);
       buf[l-1]=0;
       l = strlen(buf)+1;
-      h=GlobalAlloc(0,l);  
+      h=GlobalAlloc(0,l);
       memcpy(GlobalLock(h),buf,l);
       GlobalUnlock(h);
       free(buf);
@@ -5148,17 +5161,17 @@ HANDLE GetClipboardData(UINT type)
   }
   else
   {
-    
+
     NSData *data=[pasteboard dataForType:fmt];
-    if (!data) return 0; 
+    if (!data) return 0;
     int l=[data length];
-    h=GlobalAlloc(0,l);  
+    h=GlobalAlloc(0,l);
     memcpy(GlobalLock(h),[data bytes],l);
     GlobalUnlock(h);
   }
-  
+
   if (h) m_clip_recs.Add(h);
-    return h;
+  return h;
 }
 
 void EmptyClipboard()
@@ -5169,13 +5182,13 @@ void EmptyClipboard()
 
 void SetClipboardData(UINT type, HANDLE h)
 {
-  m_clipsPending.Add(new swell_pendingClipboardStates(type,h));    
+  m_clipsPending.Add(new swell_pendingClipboardStates(type,h));
 }
 
 UINT RegisterClipboardFormat(const char *desc)
 {
   NSString *s=NULL;
-  if (!strcmp(desc,"SWELL__CF_TEXT")) 
+  if (!strcmp(desc,"SWELL__CF_TEXT"))
   {
     s=NSStringPboardType;
     [s retain];
@@ -5222,21 +5235,21 @@ HANDLE RemoveProp(HWND hwnd, const char *name)
 
 int GetSystemMetrics(int p)
 {
-switch (p)
-{
-case SM_CXSCREEN:
-case SM_CYSCREEN:
-{
-  NSScreen *s=[NSScreen mainScreen];
-  if (!s) return 1024;
-  return p==SM_CXSCREEN ? [s frame].size.width : [s frame].size.height;
-}
-case SM_CXHSCROLL: return 16;
-case SM_CYHSCROLL: return 16;
-case SM_CXVSCROLL: return 16;
-case SM_CYVSCROLL: return 16;
-}
-return 0;
+  switch (p)
+  {
+    case SM_CXSCREEN:
+    case SM_CYSCREEN:
+    {
+      NSScreen *s=[NSScreen mainScreen];
+      if (!s) return 1024;
+      return p==SM_CXSCREEN ? [s frame].size.width : [s frame].size.height;
+    }
+    case SM_CXHSCROLL: return 16;
+    case SM_CYHSCROLL: return 16;
+    case SM_CXVSCROLL: return 16;
+    case SM_CYVSCROLL: return 16;
+  }
+  return 0;
 }
 
 BOOL ScrollWindow(HWND hwnd, int xamt, int yamt, const RECT *lpRect, const RECT *lpClipRect)
@@ -5245,7 +5258,7 @@ BOOL ScrollWindow(HWND hwnd, int xamt, int yamt, const RECT *lpRect, const RECT 
   if (!hwnd || ![(id)hwnd isKindOfClass:[NSView class]]) return FALSE;
 
   if (!xamt && !yamt) return FALSE;
-  
+
   // move child windows only
   if (1)
   {
@@ -5253,7 +5266,7 @@ BOOL ScrollWindow(HWND hwnd, int xamt, int yamt, const RECT *lpRect, const RECT 
     {
       NSArray *ar=[(NSView*)hwnd subviews];
       int i,c=[ar count];
-      for(i=0;i<c;i++)
+      for(i=0; i<c; i++)
       {
         NSView *v=(NSView *)[ar objectAtIndex:i];
         NSRect r=[v frame];
@@ -5289,21 +5302,21 @@ HWND FindWindowEx(HWND par, HWND lastw, const char *classname, const char *title
     int x=0,n=[ch count];
     if (lastw)
     {
-      for(;x<n; x ++)
+      for(; x<n; x ++)
       {
-        NSWindow *w = [ch objectAtIndex:x]; 
+        NSWindow *w = [ch objectAtIndex:x];
         if ((HWND)w == lastw || (HWND)[w contentView] == lastw) break;
       }
       x++;
     }
 
     NSString *srch=(NSString*)SWELL_CStringToCFString(title);
-    for(;x<n && !rv; x ++)
+    for(; x<n && !rv; x ++)
     {
-      NSWindow *w = [ch objectAtIndex:x]; 
+      NSWindow *w = [ch objectAtIndex:x];
       if ([[w title] isEqualToString:srch]) rv=(HWND)[w contentView];
     }
-    [srch release]; 
+    [srch release];
 
     return rv;
   }
@@ -5323,7 +5336,7 @@ HWND FindWindowEx(HWND par, HWND lastw, const char *classname, const char *title
       if (!stricmp(classname,"Static") && ![(id)h isKindOfClass:[NSTextField class]]) isOk=false;
       // todo: other classname translations
     }
-    
+
     if (isOk) return h;
     h=GetWindow(h,GW_HWNDNEXT);
   }
@@ -5333,8 +5346,8 @@ HWND FindWindowEx(HWND par, HWND lastw, const char *classname, const char *title
 BOOL TreeView_SetIndent(HWND hwnd, int indent)
 {
   if (!hwnd || ![(id)hwnd isKindOfClass:[SWELL_TreeView class]]) return 0;
-  SWELL_TreeView* tv = (SWELL_TreeView*)hwnd;  
-  [tv setIndentationPerLevel:(float)indent];  
+  SWELL_TreeView* tv = (SWELL_TreeView*)hwnd;
+  [tv setIndentationPerLevel:(float)indent];
   return TRUE;
 }
 
@@ -5342,25 +5355,25 @@ HTREEITEM TreeView_InsertItem(HWND hwnd, TV_INSERTSTRUCT *ins)
 {
   if (!hwnd || !ins) return 0;
   if (![(id)hwnd isKindOfClass:[SWELL_TreeView class]]) return 0;
-  
+
   SWELL_TreeView *tv=(SWELL_TreeView*)hwnd;
 
   HTREEITEM__ *par=NULL;
   int inspos=0;
-  
+
   if (ins->hParent && ins->hParent != TVI_ROOT && ins->hParent != TVI_FIRST && ins->hParent != TVI_LAST && ins->hParent != TVI_SORT)
   {
     if ([tv findItem:ins->hParent parOut:&par idxOut:&inspos])
     {
-      par = (HTREEITEM__ *)ins->hParent; 
+      par = (HTREEITEM__ *)ins->hParent;
     }
     else return 0;
   }
-  
+
   if (ins->hInsertAfter == TVI_FIRST) inspos=0;
   else if (ins->hInsertAfter == TVI_LAST || ins->hInsertAfter == TVI_SORT || !ins->hInsertAfter) inspos=par ? par->m_children.GetSize() : tv->m_items ? tv->m_items->GetSize() : 0;
-  else inspos = par ? par->m_children.Find((HTREEITEM__*)ins->hInsertAfter)+1 : tv->m_items ? tv->m_items->Find((HTREEITEM__*)ins->hInsertAfter)+1 : 0;      
-  
+  else inspos = par ? par->m_children.Find((HTREEITEM__*)ins->hInsertAfter)+1 : tv->m_items ? tv->m_items->Find((HTREEITEM__*)ins->hInsertAfter)+1 : 0;
+
   HTREEITEM__ *item=new HTREEITEM__;
   if (ins->item.mask & TVIF_CHILDREN)
     item->m_haschildren = !!ins->item.cChildren;
@@ -5372,7 +5385,7 @@ HTREEITEM TreeView_InsertItem(HWND hwnd, TV_INSERTSTRUCT *ins)
     tv->m_items->Insert(inspos,item);
   }
   else par->m_children.Insert(inspos,item);
-  
+
   [tv reloadData];
   return (HTREEITEM) item;
 }
@@ -5380,17 +5393,17 @@ HTREEITEM TreeView_InsertItem(HWND hwnd, TV_INSERTSTRUCT *ins)
 BOOL TreeView_Expand(HWND hwnd, HTREEITEM item, UINT flag)
 {
   if (!hwnd || !item) return false;
-  
+
   if (![(id)hwnd isKindOfClass:[SWELL_TreeView class]]) return false;
-  
+
   SWELL_TreeView *tv=(SWELL_TreeView*)hwnd;
-  
-  id itemid=((HTREEITEM__*)item)->m_dh;
+
+  id itemid= (id)(((HTREEITEM__*)item)->m_dh);
   bool isExp=!![tv isItemExpanded:itemid];
-  
+
   if (flag == TVE_EXPAND && !isExp) [tv expandItem:itemid];
   else if (flag == TVE_COLLAPSE && isExp) [tv collapseItem:itemid];
-  else if (flag==TVE_TOGGLE) 
+  else if (flag==TVE_TOGGLE)
   {
     if (isExp) [tv collapseItem:itemid];
     else [tv expandItem:itemid];
@@ -5398,31 +5411,31 @@ BOOL TreeView_Expand(HWND hwnd, HTREEITEM item, UINT flag)
   else return FALSE;
 
   return TRUE;
-  
+
 }
 
 HTREEITEM TreeView_GetSelection(HWND hwnd)
-{ 
+{
   if (!hwnd || ![(id)hwnd isKindOfClass:[SWELL_TreeView class]]) return NULL;
-  
+
   SWELL_TreeView *tv=(SWELL_TreeView*)hwnd;
   int idx=[tv selectedRow];
   if (idx<0) return NULL;
-  
+
   SWELL_DataHold *t=[tv itemAtRow:idx];
   if (t) return (HTREEITEM)[t getValue];
   return NULL;
-  
+
 }
 
 void TreeView_DeleteItem(HWND hwnd, HTREEITEM item)
 {
   if (!hwnd || ![(id)hwnd isKindOfClass:[SWELL_TreeView class]]) return;
   SWELL_TreeView *tv=(SWELL_TreeView*)hwnd;
-  
+
   HTREEITEM__ *par=NULL;
   int idx=0;
-  
+
   if ([tv findItem:item parOut:&par idxOut:&idx])
   {
     if (par)
@@ -5440,16 +5453,16 @@ void TreeView_DeleteItem(HWND hwnd, HTREEITEM item)
 void TreeView_SelectItem(HWND hwnd, HTREEITEM item)
 {
   if (!hwnd || ![(id)hwnd isKindOfClass:[SWELL_TreeView class]]) return;
-  
-  int row=[(SWELL_TreeView*)hwnd rowForItem:((HTREEITEM__*)item)->m_dh];
+
+  int row=[(SWELL_TreeView*)hwnd rowForItem: (id) ((HTREEITEM__*)item)->m_dh];
   if (row>=0)
-    [(SWELL_TreeView*)hwnd selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];            
+    [(SWELL_TreeView*)hwnd selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
   static int __rent;
   if (!__rent)
   {
     __rent=1;
-    NMTREEVIEW nm={{(HWND)hwnd,[(SWELL_TreeView*)hwnd tag],TVN_SELCHANGED},};
-    SendMessage(GetParent(hwnd),WM_NOTIFY,[(SWELL_TreeView*)hwnd tag],(LPARAM)&nm);      
+    NMTREEVIEW nm= {{(HWND)hwnd,[(SWELL_TreeView*)hwnd tag],TVN_SELCHANGED},};
+    SendMessage(GetParent(hwnd),WM_NOTIFY,[(SWELL_TreeView*)hwnd tag],(LPARAM)&nm);
     __rent=0;
   }
 }
@@ -5457,7 +5470,7 @@ void TreeView_SelectItem(HWND hwnd, HTREEITEM item)
 BOOL TreeView_GetItem(HWND hwnd, LPTVITEM pitem)
 {
   if (!hwnd || ![(id)hwnd isKindOfClass:[SWELL_TreeView class]] || !pitem || !(pitem->mask & TVIF_HANDLE) || !(pitem->hItem)) return FALSE;
-  
+
   HTREEITEM__ *ti = (HTREEITEM__*)pitem->hItem;
   pitem->cChildren = ti->m_haschildren ? 1:0;
   pitem->lParam = ti->m_param;
@@ -5466,31 +5479,31 @@ BOOL TreeView_GetItem(HWND hwnd, LPTVITEM pitem)
     lstrcpyn_safe(pitem->pszText,ti->m_value?ti->m_value:"",pitem->cchTextMax);
   }
   pitem->state=0;
-  
-  
-  int itemRow = [(SWELL_TreeView*)hwnd rowForItem:ti->m_dh];
+
+
+  int itemRow = [(SWELL_TreeView*)hwnd rowForItem: (id) ti->m_dh];
   if (itemRow >= 0 && [(SWELL_TreeView*)hwnd isRowSelected:itemRow])
-    pitem->state |= TVIS_SELECTED;   
-  if ([(SWELL_TreeView*)hwnd isItemExpanded:ti->m_dh])
-    pitem->state |= TVIS_EXPANDED;   
-  
+    pitem->state |= TVIS_SELECTED;
+  if ([(SWELL_TreeView*)hwnd isItemExpanded: (id) ti->m_dh])
+    pitem->state |= TVIS_EXPANDED;
+
   return TRUE;
 }
 
 BOOL TreeView_SetItem(HWND hwnd, LPTVITEM pitem)
 {
   if (!hwnd || ![(id)hwnd isKindOfClass:[SWELL_TreeView class]] || !pitem || !(pitem->mask & TVIF_HANDLE) || !(pitem->hItem)) return FALSE;
-  
+
   HTREEITEM__ *par=NULL;
   int idx=0;
-  
+
   if (![(SWELL_TreeView*)hwnd findItem:pitem->hItem parOut:&par idxOut:&idx]) return FALSE;
-  
+
   HTREEITEM__ *ti = (HTREEITEM__*)pitem->hItem;
-  
+
   if (pitem->mask & TVIF_CHILDREN) ti->m_haschildren = pitem->cChildren?1:0;
   if (pitem->mask & TVIF_PARAM)  ti->m_param =  pitem->lParam;
-  
+
   if ((pitem->mask&TVIF_TEXT)&&pitem->pszText)
   {
     free(ti->m_value);
@@ -5500,22 +5513,22 @@ BOOL TreeView_SetItem(HWND hwnd, LPTVITEM pitem)
 
   if (pitem->stateMask & TVIS_SELECTED)
   {
-    int itemRow = [(SWELL_TreeView*)hwnd rowForItem:ti->m_dh];
+    int itemRow = [(SWELL_TreeView*)hwnd rowForItem: (id) ti->m_dh];
     if (itemRow >= 0)
     {
       if (pitem->state&TVIS_SELECTED)
       {
         [(SWELL_TreeView*)hwnd selectRowIndexes:[NSIndexSet indexSetWithIndex:itemRow] byExtendingSelection:NO];
-        
+
         static int __rent;
         if (!__rent)
         {
           __rent=1;
-          NMTREEVIEW nm={{(HWND)hwnd,[(SWELL_TreeView*)hwnd tag],TVN_SELCHANGED},};
-          SendMessage(GetParent(hwnd),WM_NOTIFY,[(SWELL_TreeView*)hwnd tag],(LPARAM)&nm);      
+          NMTREEVIEW nm= {{(HWND)hwnd,[(SWELL_TreeView*)hwnd tag],TVN_SELCHANGED},};
+          SendMessage(GetParent(hwnd),WM_NOTIFY,[(SWELL_TreeView*)hwnd tag],(LPARAM)&nm);
           __rent=0;
         }
-        
+
       }
       else
       {
@@ -5524,11 +5537,11 @@ BOOL TreeView_SetItem(HWND hwnd, LPTVITEM pitem)
       }
     }
   }
-  
+
   if (pitem->stateMask & TVIS_EXPANDED)
     TreeView_Expand(hwnd,pitem->hItem,(pitem->state&TVIS_EXPANDED)?TVE_EXPAND:TVE_COLLAPSE);
-    
-  
+
+
   return TRUE;
 }
 
@@ -5538,8 +5551,8 @@ HTREEITEM TreeView_HitTest(HWND hwnd, TVHITTESTINFO *hti)
   SWELL_TreeView* tv = (SWELL_TreeView*)hwnd;
   int x = hti->pt.x;
   int y = hti->pt.y;
-  
-  int i; 
+
+  int i;
   for (i = 0; i < [tv numberOfRows]; ++i)
   {
     NSRect r = [tv rectOfRow:i];
@@ -5550,7 +5563,7 @@ HTREEITEM TreeView_HitTest(HWND hwnd, TVHITTESTINFO *hti)
       return 0;
     }
   }
-  
+
   return NULL; // not hit
 }
 
@@ -5558,7 +5571,7 @@ HTREEITEM TreeView_GetRoot(HWND hwnd)
 {
   if (!hwnd || ![(id)hwnd isKindOfClass:[SWELL_TreeView class]]) return NULL;
   SWELL_TreeView *tv=(SWELL_TreeView*)hwnd;
-  
+
   if (!tv->m_items) return 0;
   return (HTREEITEM) tv->m_items->Get(0);
 }
@@ -5569,7 +5582,7 @@ HTREEITEM TreeView_GetChild(HWND hwnd, HTREEITEM item)
 
   HTREEITEM__ *titem=(HTREEITEM__ *)item;
   if (!titem) return TreeView_GetRoot(hwnd);
-  
+
   return (HTREEITEM) titem->m_children.Get(0);
 }
 HTREEITEM TreeView_GetNextSibling(HWND hwnd, HTREEITEM item)
@@ -5578,15 +5591,15 @@ HTREEITEM TreeView_GetNextSibling(HWND hwnd, HTREEITEM item)
   SWELL_TreeView *tv=(SWELL_TreeView*)hwnd;
 
   if (!item) return TreeView_GetRoot(hwnd);
-  
+
   HTREEITEM__ *par=NULL;
-  int idx=0;  
+  int idx=0;
   if ([tv findItem:item parOut:&par idxOut:&idx])
   {
     if (par)
     {
       return par->m_children.Get(idx+1);
-    }    
+    }
   }
   return 0;
 }
@@ -5594,9 +5607,9 @@ HTREEITEM TreeView_GetNextSibling(HWND hwnd, HTREEITEM item)
 void TreeView_SetBkColor(HWND hwnd, int color)
 {
   if (!hwnd || ![(id)hwnd isKindOfClass:[SWELL_TreeView class]]) return;
-  [(NSOutlineView*)hwnd setBackgroundColor:[NSColor colorWithCalibratedRed:GetRValue(color)/255.0f 
-              green:GetGValue(color)/255.0f 
-              blue:GetBValue(color)/255.0f alpha:1.0f]];
+  [(NSOutlineView*)hwnd setBackgroundColor:[NSColor colorWithCalibratedRed:GetRValue(color)/255.0f
+      green:GetGValue(color)/255.0f
+      blue:GetBValue(color)/255.0f alpha:1.0f]];
 }
 void TreeView_SetTextColor(HWND hwnd, int color)
 {
@@ -5604,45 +5617,45 @@ void TreeView_SetTextColor(HWND hwnd, int color)
 
   SWELL_TreeView *f = (SWELL_TreeView *)hwnd;
   [f->m_fgColor release];
-  f->m_fgColor = [NSColor colorWithCalibratedRed:GetRValue(color)/255.0f 
-              green:GetGValue(color)/255.0f 
-              blue:GetBValue(color)/255.0f alpha:1.0f];
+  f->m_fgColor = [NSColor colorWithCalibratedRed:GetRValue(color)/255.0f
+                  green:GetGValue(color)/255.0f
+                  blue:GetBValue(color)/255.0f alpha:1.0f];
   [f->m_fgColor retain];
 }
 void ListView_SetBkColor(HWND hwnd, int color)
 {
   if (!hwnd || ![(id)hwnd isKindOfClass:[SWELL_ListView class]]) return;
-  [(NSTableView*)hwnd setBackgroundColor:[NSColor colorWithCalibratedRed:GetRValue(color)/255.0f 
-              green:GetGValue(color)/255.0f 
-              blue:GetBValue(color)/255.0f alpha:1.0f]];
+  [(NSTableView*)hwnd setBackgroundColor:[NSColor colorWithCalibratedRed:GetRValue(color)/255.0f
+                                          green:GetGValue(color)/255.0f
+                                          blue:GetBValue(color)/255.0f alpha:1.0f]];
 }
 
 void ListView_SetSelColors(HWND hwnd, int *colors, int ncolors) // this works for SWELL_ListView as well as SWELL_TreeView
 {
   if (!hwnd) return;
   NSMutableArray *ar=[[NSMutableArray alloc] initWithCapacity:ncolors];
-  
+
   while (ncolors-->0)
   {
     const int color = colors ? *colors++ : 0;
     [ar addObject:[NSColor colorWithCalibratedRed:GetRValue(color)/255.0f
-                                              green:GetGValue(color)/255.0f 
-                                               blue:GetBValue(color)/255.0f alpha:1.0f]]; 
+                   green:GetGValue(color)/255.0f
+                   blue:GetBValue(color)/255.0f alpha:1.0f]];
   }
 
-  if ([(id)hwnd isKindOfClass:[SWELL_ListView class]]) 
+  if ([(id)hwnd isKindOfClass:[SWELL_ListView class]])
   {
     SWELL_ListView *lv = (SWELL_ListView*)hwnd;
     [lv->m_selColors release];
     lv->m_selColors=ar;
   }
-  else if ([(id)hwnd isKindOfClass:[SWELL_TreeView class]]) 
+  else if ([(id)hwnd isKindOfClass:[SWELL_TreeView class]])
   {
     SWELL_TreeView *lv = (SWELL_TreeView*)hwnd;
     [lv->m_selColors release];
     lv->m_selColors=ar;
   }
-  else 
+  else
   {
     [ar release];
   }
@@ -5650,9 +5663,9 @@ void ListView_SetSelColors(HWND hwnd, int *colors, int ncolors) // this works fo
 void ListView_SetGridColor(HWND hwnd, int color)
 {
   if (!hwnd || ![(id)hwnd isKindOfClass:[SWELL_ListView class]]) return;
-  [(NSTableView*)hwnd setGridColor:[NSColor colorWithCalibratedRed:GetRValue(color)/255.0f 
-              green:GetGValue(color)/255.0f 
-              blue:GetBValue(color)/255.0f alpha:1.0f]];
+  [(NSTableView*)hwnd setGridColor:[NSColor colorWithCalibratedRed:GetRValue(color)/255.0f
+                                    green:GetGValue(color)/255.0f
+                                    blue:GetBValue(color)/255.0f alpha:1.0f]];
 }
 void ListView_SetTextBkColor(HWND hwnd, int color)
 {
@@ -5665,9 +5678,9 @@ void ListView_SetTextColor(HWND hwnd, int color)
 
   SWELL_ListView *f = (SWELL_ListView *)hwnd;
   [f->m_fgColor release];
-  f->m_fgColor = [NSColor colorWithCalibratedRed:GetRValue(color)/255.0f 
-              green:GetGValue(color)/255.0f 
-              blue:GetBValue(color)/255.0f alpha:1.0f];
+  f->m_fgColor = [NSColor colorWithCalibratedRed:GetRValue(color)/255.0f
+                  green:GetGValue(color)/255.0f
+                  blue:GetBValue(color)/255.0f alpha:1.0f];
   [f->m_fgColor retain];
 }
 
@@ -5676,43 +5689,43 @@ BOOL ShellExecute(HWND hwndDlg, const char *action,  const char *content1, const
 {
   if (content1 && !strnicmp(content1,"http://",7))
   {
-     NSWorkspace *wk = [NSWorkspace sharedWorkspace];
-     if (!wk) return FALSE;
-     NSString *fnstr=(NSString *)SWELL_CStringToCFString(content1);
-     BOOL ret=[wk openURL:[NSURL URLWithString:fnstr]];
-     [fnstr release];
-     return ret;
+    NSWorkspace *wk = [NSWorkspace sharedWorkspace];
+    if (!wk) return FALSE;
+    NSString *fnstr=(NSString *)SWELL_CStringToCFString(content1);
+    BOOL ret=[wk openURL:[NSURL URLWithString:fnstr]];
+    [fnstr release];
+    return ret;
   }
-  
+
   if (content1 && !stricmp(content1,"explorer.exe")) content1="";
   else if (content1 && (!stricmp(content1,"notepad.exe")||!stricmp(content1,"notepad"))) content1="TextEdit.app";
-  
+
   if (content2 && !stricmp(content2,"explorer.exe")) content2="";
 
   if (content1 && content2 && *content1 && *content2)
   {
-      NSWorkspace *wk = [NSWorkspace sharedWorkspace];
-      if (!wk) return FALSE;
-      NSString *appstr=(NSString *)SWELL_CStringToCFString(content1);
-      NSString *fnstr=(NSString *)SWELL_CStringToCFString(content2);
-      BOOL ret=[wk openFile:fnstr withApplication:appstr andDeactivate:YES];
-      [fnstr release];
-      [appstr release];
-      return ret;
+    NSWorkspace *wk = [NSWorkspace sharedWorkspace];
+    if (!wk) return FALSE;
+    NSString *appstr=(NSString *)SWELL_CStringToCFString(content1);
+    NSString *fnstr=(NSString *)SWELL_CStringToCFString(content2);
+    BOOL ret=[wk openFile:fnstr withApplication:appstr andDeactivate:YES];
+    [fnstr release];
+    [appstr release];
+    return ret;
   }
   else if ((content1&&*content1) || (content2&&*content2))
   {
-      const char *fn = (content1 && *content1) ? content1 : content2;
-      NSWorkspace *wk = [NSWorkspace sharedWorkspace];
-      if (!wk) return FALSE;
-      NSString *fnstr=(NSString *)SWELL_CStringToCFString(fn);
-      BOOL ret;
-      
-      if (strlen(fn)>4 && !stricmp(fn+strlen(fn)-4,".app")) ret=[wk launchApplication:fnstr];
-      else ret=[wk openFile:fnstr];
-      
-      [fnstr release];
-      return ret;
+    const char *fn = (content1 && *content1) ? content1 : content2;
+    NSWorkspace *wk = [NSWorkspace sharedWorkspace];
+    if (!wk) return FALSE;
+    NSString *fnstr=(NSString *)SWELL_CStringToCFString(fn);
+    BOOL ret;
+
+    if (strlen(fn)>4 && !stricmp(fn+strlen(fn)-4,".app")) ret=[wk launchApplication:fnstr];
+    else ret=[wk openFile:fnstr];
+
+    [fnstr release];
+    return ret;
   }
   return FALSE;
 }
@@ -5727,13 +5740,13 @@ BOOL ShellExecute(HWND hwndDlg, const char *action,  const char *content1, const
 {
   NSColor *col=[NSColor colorWithCalibratedRed:0.5 green:0.5 blue:0.5 alpha:1.0];
   [col set];
-  
+
   CGRect r = CGRectMake(rect.origin.x,rect.origin.y,rect.size.width,rect.size.height);
-  
+
   CGContextRef ctx = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
-  
-  CGContextFillRect(ctx,r);             
-  
+
+  CGContextFillRect(ctx,r);
+
 }
 @end
 
@@ -5743,7 +5756,7 @@ void SWELL_DrawFocusRect(HWND hwndPar, RECT *rct, void **handle)
 {
   if (!handle) return;
   NSWindow *wnd = (NSWindow *)*handle;
-  
+
   if (!rct)
   {
     if (wnd)
@@ -5755,7 +5768,7 @@ void SWELL_DrawFocusRect(HWND hwndPar, RECT *rct, void **handle)
       *handle=0;
     }
   }
-  else 
+  else
   {
     RECT r=*rct;
     if (hwndPar)
@@ -5767,9 +5780,9 @@ void SWELL_DrawFocusRect(HWND hwndPar, RECT *rct, void **handle)
     {
       // todo: flip?
     }
-    if (r.top>r.bottom) { int a=r.top; r.top=r.bottom;r.bottom=a; }
+    if (r.top>r.bottom) { int a=r.top; r.top=r.bottom; r.bottom=a; }
     NSRect rr=NSMakeRect(r.left,r.top,r.right-r.left,r.bottom-r.top);
-    
+
     NSWindow *par=nil;
     if (hwndPar)
     {
@@ -5777,7 +5790,7 @@ void SWELL_DrawFocusRect(HWND hwndPar, RECT *rct, void **handle)
       else if ([(id)hwndPar isKindOfClass:[NSView class]]) par=[(NSView *)hwndPar window];
       else return;
     }
-    
+
     if (wnd && ([wnd parentWindow] != par))
     {
       NSWindow *ow=[wnd parentWindow];
@@ -5785,9 +5798,9 @@ void SWELL_DrawFocusRect(HWND hwndPar, RECT *rct, void **handle)
       //      [wnd setParentWindow:nil];
       [wnd close];
       *handle=0;
-      wnd=0;    
+      wnd=0;
     }
-    
+
     if (!wnd)
     {
       *handle  = wnd = [[NSWindow alloc] initWithContentRect:rr styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
@@ -5796,9 +5809,9 @@ void SWELL_DrawFocusRect(HWND hwndPar, RECT *rct, void **handle)
       [wnd setExcludedFromWindowsMenu:YES];
       [wnd setIgnoresMouseEvents:YES];
       [wnd setContentView:[[SWELL_FocusRectWnd alloc] init]];
-      
+
       if (par) [par addChildWindow:wnd ordered:NSWindowAbove];
-      else 
+      else
       {
         [wnd setLevel:NSPopUpMenuWindowLevel];
         [wnd orderFront:wnd];
@@ -5806,8 +5819,8 @@ void SWELL_DrawFocusRect(HWND hwndPar, RECT *rct, void **handle)
       //    [wnd setParentWindow:par];
 //      [wnd orderWindow:NSWindowAbove relativeTo:[par windowNumber]];
     }
-    
-    [wnd setFrame:rr display:YES];    
+
+    [wnd setFrame:rr display:YES];
   }
 }
 
@@ -5839,7 +5852,7 @@ bool SWELL_HandleMouseEvent(NSEvent *evt)
   {
   }
   else return false;
-  
+
   NSWindow *w = [evt window];
   if (w)
   {
@@ -5847,13 +5860,13 @@ bool SWELL_HandleMouseEvent(NSEvent *evt)
     NSView *besthit=NULL;
     if (cview)
     {
-      NSPoint lpt = [evt locationInWindow];    
+      NSPoint lpt = [evt locationInWindow];
       NSView *hitv=[cview hitTest:lpt];
       lpt = [w convertBaseToScreen:lpt];
-      
+
       int xpos=(int)floor(lpt.x);
       int ypos=(int)floor(lpt.y);
-      
+
       while (hitv)
       {
         int ht=(int)sendSwellMessage(hitv,WM_NCHITTEST,0,MAKELPARAM(xpos,ypos));
@@ -5873,7 +5886,7 @@ bool SWELL_HandleMouseEvent(NSEvent *evt)
       else if (etype == NSRightMouseDragged) [besthit rightMouseDragged:evt];
       else if (etype == NSMouseMoved) [besthit mouseMoved:evt];
       else return false;
-      
+
       return true;
     }
   }
@@ -5895,8 +5908,8 @@ int SWELL_GetWindowWantRaiseAmt(HWND h)
       mw=(SWELL_ModelessWindow*)wnd;
     }
   }
-  if (mw) return mw->m_wantraiseamt;  
-  return 0; 
+  if (mw) return mw->m_wantraiseamt;
+  return 0;
 }
 
 void SWELL_SetWindowWantRaiseAmt(HWND h, int  amt)
@@ -5908,7 +5921,7 @@ void SWELL_SetWindowWantRaiseAmt(HWND h, int  amt)
     NSWindow *w = [(NSView *)h window];
     if (w && [w isKindOfClass:[SWELL_ModelessWindow class]]) mw = (SWELL_ModelessWindow*)w;
   }
-  if (mw) 
+  if (mw)
   {
     int diff = amt - mw->m_wantraiseamt;
     mw->m_wantraiseamt = amt;
@@ -5921,7 +5934,7 @@ int SWELL_SetWindowLevel(HWND hwnd, int newlevel)
 {
   NSWindow *w = (NSWindow *)hwnd;
   if (w && [w isKindOfClass:[NSView class]]) w= [(NSView *)w window];
-  
+
   if (w && [w isKindOfClass:[NSWindow class]])
   {
     int ol = [w level];
@@ -5944,11 +5957,11 @@ void SetTransparent(HWND h)
   NSWindow* wnd=0;
   if ([(id)h isKindOfClass:[NSWindow class]]) wnd=(NSWindow*)h;
   else if ([(id)h isKindOfClass:[NSView class]]) wnd=[(NSView*)h window];
-  if (wnd) 
+  if (wnd)
   {
     [wnd setBackgroundColor:[NSColor clearColor]];
     [wnd setOpaque:NO];
-  }  
+  }
 }
 
 int SWELL_GetDefaultButtonID(HWND hwndDlg, bool onlyIfEnabled)
@@ -5973,13 +5986,13 @@ void SWELL_SetWindowRepre(HWND hwnd, const char *fn, bool isDirty)
   NSWindow *w = NULL;
   if ([(id)hwnd isKindOfClass:[NSWindow class]]) w=(NSWindow *)hwnd;
   if ([(id)hwnd isKindOfClass:[NSView class]]) w=[(NSView *)hwnd window];
-  
+
   if (w)
   {
     if (GetProp((HWND)[w contentView],"SWELL_DisableWindowRepre")) return;
-    
+
     [w setDocumentEdited:isDirty];
-    
+
     if (!fn || !*fn) [w setRepresentedFilename:@""];
     else
     {
@@ -6027,7 +6040,7 @@ void SWELL_GenerateDialogFromList(const void *_list, int listsz)
     if (!strcmp(list->str1,"__SWELL_BUTTON"))
     {
       SWELL_MakeButton(list->flag1,list->str2, SIXFROMLIST);
-    } 
+    }
     else if (!strcmp(list->str1,"__SWELL_EDIT"))
     {
       SWELL_MakeEditField(SIXFROMLIST);
@@ -6069,12 +6082,12 @@ BOOL EnumChildWindows(HWND hwnd, BOOL (*cwEnumFunc)(HWND,LPARAM),LPARAM lParam)
   {
     [ar retain];
     int x,n=[ar count];
-    for (x=0;x<n;x++)
+    for (x=0; x<n; x++)
     {
       NSView *v = [ar objectAtIndex:x];
       if (v)
       {
-        if (!cwEnumFunc((HWND)v,lParam) || !EnumChildWindows((HWND)v,cwEnumFunc,lParam)) 
+        if (!cwEnumFunc((HWND)v,lParam) || !EnumChildWindows((HWND)v,cwEnumFunc,lParam))
         {
           [ar release];
           return FALSE;
@@ -6119,7 +6132,7 @@ BOOL SWELL_IsStaticText(HWND hwnd)
 }
 
 
-bool SWELL_SetAppAutoHideMenuAndDock(int ah) 
+bool SWELL_SetAppAutoHideMenuAndDock(int ah)
 {
   static char _init;
   static NSUInteger _defpres;

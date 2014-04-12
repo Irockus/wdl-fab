@@ -25,11 +25,11 @@
           // %5s means exactly 5 chars
           // %5-s means 5 or more chars
           // %-10s means 1-10 chars
-          // %3-5s means 3-5 chars. 
-          // %0-5s means 0-5 chars. 
+          // %3-5s means 3-5 chars.
+          // %0-5s means 0-5 chars.
 
    strcpy(str, srcstr);                  -- replaces str with srcstr
-   strcat(str, srcstr);                  -- appends srcstr to str 
+   strcat(str, srcstr);                  -- appends srcstr to str
    strcmp(str, str2)                     -- compares strings
    stricmp(str, str2)                    -- compares strings (ignoring case)
    strncmp(str, str2, maxlen)            -- compares strings up to maxlen bytes
@@ -75,15 +75,15 @@ also recommended, for the PHP fans:
 #define EEL_STRING_MAX_USER_STRINGS 1024
 #endif
 
-#ifndef EEL_STRING_STORAGECLASS 
+#ifndef EEL_STRING_STORAGECLASS
 #define EEL_STRING_STORAGECLASS WDL_FastString
 #endif
 
-static int eel_validate_format_specifier(const char *fmt_in, char *typeOut, 
-                                         char *fmtOut, int fmtOut_sz, 
-                                         char *varOut, int varOut_sz, 
-                                         int *varOut_used
-                                         )
+static int eel_validate_format_specifier(const char *fmt_in, char *typeOut,
+    char *fmtOut, int fmtOut_sz,
+    char *varOut, int varOut_sz,
+    int *varOut_used
+                                        )
 {
   const char *fmt = fmt_in+1;
   int state=0;
@@ -100,39 +100,39 @@ static int eel_validate_format_specifier(const char *fmt_in, char *typeOut,
     const char c = *fmt++;
     if (fmtOut_sz < 2) return 0;
 
-    if (c == 'f'|| c=='e' || c=='E' || c=='g' || c=='G' || c == 'd' || c == 'u' || 
-        c == 'x' || c == 'X' || c == 'c' || c =='s' || c=='S') 
+    if (c == 'f'|| c=='e' || c=='E' || c=='g' || c=='G' || c == 'd' || c == 'u' ||
+        c == 'x' || c == 'X' || c == 'c' || c =='s' || c=='S')
     {
       *typeOut = c;
       fmtOut[0] = c;
       fmtOut[1] = 0;
       return (int) (fmt - fmt_in);
     }
-    else if (c == '.') 
+    else if (c == '.')
     {
       *fmtOut++ = c; fmtOut_sz--;
       if (state&(2|64)) break;
       state |= 2;
     }
-    else if (c == '+') 
+    else if (c == '+')
     {
       *fmtOut++ = c; fmtOut_sz--;
       if (state&(64|32|16|8|4)) break;
       state |= 8;
     }
-    else if (c == '-') 
+    else if (c == '-')
     {
       *fmtOut++ = c; fmtOut_sz--;
       if (state&(64|32|16|8|4)) break;
       state |= 16;
     }
-    else if (c == ' ') 
+    else if (c == ' ')
     {
       *fmtOut++ = c; fmtOut_sz--;
       if (state&(64|32|16|8|4)) break;
       state |= 32;
     }
-    else if (c >= '0' && c <= '9') 
+    else if (c >= '0' && c <= '9')
     {
       *fmtOut++ = c; fmtOut_sz--;
       state|=4;
@@ -179,7 +179,7 @@ static int eel_format_strings(void *opaque, const char *fmt, char *buf, int buf_
   char *op = buf;
   while (*fmt && op < buf+buf_sz-128)
   {
-    if (fmt[0] == '%' && fmt[1] == '%') 
+    if (fmt[0] == '%' && fmt[1] == '%')
     {
       *op++ = '%';
       fmt+=2;
@@ -191,7 +191,7 @@ static int eel_format_strings(void *opaque, const char *fmt, char *buf, int buf_
       char varname[128];
       int varname_used=0;
       const int l=eel_validate_format_specifier(fmt,&ct,fs,sizeof(fs),varname,sizeof(varname),&varname_used);
-      if (!l || !ct) 
+      if (!l || !ct)
       {
         *op=0;
         return -1;
@@ -246,7 +246,7 @@ static int eel_format_strings(void *opaque, const char *fmt, char *buf, int buf_
 
       fmt += l;
     }
-    else 
+    else
     {
       *op++ = *fmt++;
     }
@@ -303,180 +303,180 @@ static int eel_string_match(void *opaque, const char *fmt, const char *msg, int 
           while (len >= 0 && !eel_string_match(opaque,fmt, msg+len,match_fmt_pos,ignorecase,fmt_endptr, msg_endptr)) len--;
           return len >= 0;
         }
-      break;
+        break;
       case '?':
         fmt++;
         msg++;
-      break;
+        break;
       case '%':
+      {
+        fmt++;
+        unsigned short fmt_minlen = 1, fmt_maxlen = 0;
+        if (*fmt >= '0' && *fmt <= '9')
+        {
+          fmt_minlen = *fmt++ - '0';
+          while (*fmt >= '0' && *fmt <= '9') fmt_minlen = fmt_minlen * 10 + (*fmt++ - '0');
+          fmt_maxlen = fmt_minlen;
+        }
+        if (*fmt == '-')
         {
           fmt++;
-          unsigned short fmt_minlen = 1, fmt_maxlen = 0;
-          if (*fmt >= '0' && *fmt <= '9')
-          {
-            fmt_minlen = *fmt++ - '0';
-            while (*fmt >= '0' && *fmt <= '9') fmt_minlen = fmt_minlen * 10 + (*fmt++ - '0');
-            fmt_maxlen = fmt_minlen;
-          }
-          if (*fmt == '-')
-          {
-            fmt++;
-            fmt_maxlen = 0;
-            while (*fmt >= '0' && *fmt <= '9') fmt_maxlen = fmt_maxlen * 10 + (*fmt++ - '0');
-          }
-          const char *dest_varname=NULL;
-          if (*fmt == '{')
-          {
-            dest_varname=++fmt;
-            while (*fmt && fmt < fmt_endptr && *fmt != '}') fmt++;
-            if (fmt >= fmt_endptr-1 || *fmt != '}') return 0; // malformed %{var}s
-            fmt++; // skip '}'
-          }
+          fmt_maxlen = 0;
+          while (*fmt >= '0' && *fmt <= '9') fmt_maxlen = fmt_maxlen * 10 + (*fmt++ - '0');
+        }
+        const char *dest_varname=NULL;
+        if (*fmt == '{')
+        {
+          dest_varname=++fmt;
+          while (*fmt && fmt < fmt_endptr && *fmt != '}') fmt++;
+          if (fmt >= fmt_endptr-1 || *fmt != '}') return 0; // malformed %{var}s
+          fmt++; // skip '}'
+        }
 
-          const char fmt_char = *fmt++;
-          if (!fmt_char) return 0; // malformed
+        const char fmt_char = *fmt++;
+        if (!fmt_char) return 0; // malformed
 
-          if (fmt_char == '*' || 
-              fmt_char == '?' || 
-              fmt_char == '+' || 
-              fmt_char == '%')
+        if (fmt_char == '*' ||
+            fmt_char == '?' ||
+            fmt_char == '+' ||
+            fmt_char == '%')
+        {
+          if (*msg++ != fmt_char) return 0;
+        }
+        else if (fmt_char == 'c')
+        {
+          EEL_F *varOut = NULL;
+          if (!dest_varname)
           {
-            if (*msg++ != fmt_char) return 0;
-          }
-          else if (fmt_char == 'c')
-          {
-            EEL_F *varOut = NULL;
-            if (!dest_varname) 
-            {
 #ifdef EEL_STRING_GETFMTVAR
-              varOut = EEL_STRING_GETFMTVAR(match_fmt_pos++);
+            varOut = EEL_STRING_GETFMTVAR(match_fmt_pos++);
 #endif
-            }
-            else
-            {
-#ifdef EEL_STRING_GETNAMEDVAR 
-              char tmp[128];
-              int idx=0;
-              while (dest_varname < fmt_endptr && *dest_varname && *dest_varname != '}' && idx<sizeof(tmp)-1) tmp[idx++] = *dest_varname++;
-              tmp[idx]=0;
-              if (idx>0) varOut = EEL_STRING_GETNAMEDVAR(tmp,1);
-#endif
-            }
-            if (msg >= msg_endptr) return 0; // out of chars
-
-            const unsigned char c =  *(unsigned char *)msg++;
-            if (varOut) *varOut = (EEL_F)c;
           }
-          else 
+          else
           {
-            int len=0;
+#ifdef EEL_STRING_GETNAMEDVAR
+            char tmp[128];
+            int idx=0;
+            while (dest_varname < fmt_endptr && *dest_varname && *dest_varname != '}' && idx<sizeof(tmp)-1) tmp[idx++] = *dest_varname++;
+            tmp[idx]=0;
+            if (idx>0) varOut = EEL_STRING_GETNAMEDVAR(tmp,1);
+#endif
+          }
+          if (msg >= msg_endptr) return 0; // out of chars
+
+          const unsigned char c =  *(unsigned char *)msg++;
+          if (varOut) *varOut = (EEL_F)c;
+        }
+        else
+        {
+          int len=0;
+          if (fmt_char == 's')
+          {
+            len = msg_endptr-msg;
+          }
+          else if (fmt_char == 'x' || fmt_char == 'X')
+          {
+            while ((msg[len] >= '0' && msg[len] <= '9') ||
+                   (msg[len] >= 'A' && msg[len] <= 'F') ||
+                   (msg[len] >= 'a' && msg[len] <= 'f')) len++;
+          }
+          else if (fmt_char == 'f')
+          {
+            while (msg[len] >= '0' && msg[len] <= '9') len++;
+            if (msg[len] == '.')
+            {
+              len++;
+              while (msg[len] >= '0' && msg[len] <= '9') len++;
+            }
+          }
+          else if (fmt_char == 'd' || fmt_char == 'u')
+          {
+            while (msg[len] >= '0' && msg[len] <= '9') len++;
+          }
+          else
+          {
+            // bad format
+            return 0;
+          }
+
+          if (fmt_maxlen>0 && len > fmt_maxlen) len = fmt_maxlen;
+
+          if (!dest_varname) match_fmt_pos++;
+
+          while (len >= fmt_minlen && !eel_string_match(opaque,fmt, msg+len,match_fmt_pos,ignorecase,fmt_endptr, msg_endptr)) len--;
+          if (len < fmt_minlen) return 0;
+
+          EEL_F *varOut = NULL;
+          if (!dest_varname)
+          {
+#ifdef EEL_STRING_GETFMTVAR
+            varOut = EEL_STRING_GETFMTVAR(match_fmt_pos-1);
+#endif
+          }
+          else
+          {
+#ifdef EEL_STRING_GETNAMEDVAR
+            char tmp[128];
+            int idx=0;
+            while (dest_varname < fmt_endptr && *dest_varname  && *dest_varname != '}' && idx<sizeof(tmp)-1) tmp[idx++] = *dest_varname++;
+            tmp[idx]=0;
+            if (idx>0) varOut = EEL_STRING_GETNAMEDVAR(tmp,1);
+#endif
+          }
+          if (varOut)
+          {
             if (fmt_char == 's')
             {
-              len = msg_endptr-msg;
-            }
-            else if (fmt_char == 'x' || fmt_char == 'X')
-            {
-              while ((msg[len] >= '0' && msg[len] <= '9') ||
-                     (msg[len] >= 'A' && msg[len] <= 'F') ||
-                     (msg[len] >= 'a' && msg[len] <= 'f')) len++;
-            }
-            else if (fmt_char == 'f')
-            {
-              while (msg[len] >= '0' && msg[len] <= '9') len++;
-              if (msg[len] == '.') 
-              { 
-                len++; 
-                while (msg[len] >= '0' && msg[len] <= '9') len++;
-              }
-            }
-            else if (fmt_char == 'd' || fmt_char == 'u')
-            {
-              while (msg[len] >= '0' && msg[len] <= '9') len++;
-            }
-            else 
-            {
-              // bad format
-              return 0;
-            }
-
-            if (fmt_maxlen>0 && len > fmt_maxlen) len = fmt_maxlen;
-
-            if (!dest_varname) match_fmt_pos++;
-
-            while (len >= fmt_minlen && !eel_string_match(opaque,fmt, msg+len,match_fmt_pos,ignorecase,fmt_endptr, msg_endptr)) len--;
-            if (len < fmt_minlen) return 0;
-
-            EEL_F *varOut = NULL;
-            if (!dest_varname) 
-            {
-#ifdef EEL_STRING_GETFMTVAR
-              varOut = EEL_STRING_GETFMTVAR(match_fmt_pos-1);
-#endif
-            }
-            else
-            {
-#ifdef EEL_STRING_GETNAMEDVAR 
-              char tmp[128];
-              int idx=0;
-              while (dest_varname < fmt_endptr && *dest_varname  && *dest_varname != '}' && idx<sizeof(tmp)-1) tmp[idx++] = *dest_varname++;
-              tmp[idx]=0;
-              if (idx>0) varOut = EEL_STRING_GETNAMEDVAR(tmp,1);
-#endif
-            }
-            if (varOut)
-            {
-              if (fmt_char == 's')
+              EEL_STRING_STORAGECLASS *wr=NULL;
+              EEL_STRING_GET_FOR_INDEX(*varOut, &wr);
+              if (wr)
               {
-                EEL_STRING_STORAGECLASS *wr=NULL;
-                EEL_STRING_GET_FOR_INDEX(*varOut, &wr);
-                if (wr)
+                if (msg_endptr >= wr->Get() && msg_endptr <= wr->Get() + wr->GetLength())
                 {
-                  if (msg_endptr >= wr->Get() && msg_endptr <= wr->Get() + wr->GetLength())
-                  {
 #ifdef EEL_STRING_DEBUGOUT
-                    EEL_STRING_DEBUGOUT("match: destination specifier passed is also haystack, will not update");
+                  EEL_STRING_DEBUGOUT("match: destination specifier passed is also haystack, will not update");
 #endif
-                  }
-                  else if (fmt_endptr >= wr->Get() && fmt_endptr <= wr->Get() + wr->GetLength())
-                  {
+                }
+                else if (fmt_endptr >= wr->Get() && fmt_endptr <= wr->Get() + wr->GetLength())
+                {
 #ifdef EEL_STRING_DEBUGOUT
-                    EEL_STRING_DEBUGOUT("match: destination specifier passed is also format, will not update");
+                  EEL_STRING_DEBUGOUT("match: destination specifier passed is also format, will not update");
 #endif
-                  }
-                  else 
-                  {
-                    wr->SetRaw(msg,len);
-                  }
                 }
                 else
                 {
-#ifdef EEL_STRING_DEBUGOUT
-                   EEL_STRING_DEBUGOUT("match: bad destination specifier passed as %d: %f",match_fmt_pos,*varOut);
-#endif
+                  wr->SetRaw(msg,len);
                 }
               }
               else
               {
-                char tmp[128];
-                lstrcpyn_safe(tmp,msg,min(len+1,sizeof(tmp)));
-                char *bl=(char*)msg;
-                if (fmt_char == 'u')
-                  *varOut = (EEL_F)strtoul(tmp,&bl,10);
-                else if (fmt_char == 'x' || fmt_char == 'X')
-                  *varOut = (EEL_F)strtoul(msg,&bl,16);
-                else
-                  *varOut = (EEL_F)atof(tmp);
+#ifdef EEL_STRING_DEBUGOUT
+                EEL_STRING_DEBUGOUT("match: bad destination specifier passed as %d: %f",match_fmt_pos,*varOut);
+#endif
               }
             }
-            return 1;
+            else
+            {
+              char tmp[128];
+              lstrcpyn_safe(tmp,msg,min(len+1,sizeof(tmp)));
+              char *bl=(char*)msg;
+              if (fmt_char == 'u')
+                *varOut = (EEL_F)strtoul(tmp,&bl,10);
+              else if (fmt_char == 'x' || fmt_char == 'X')
+                *varOut = (EEL_F)strtoul(msg,&bl,16);
+              else
+                *varOut = (EEL_F)atof(tmp);
+            }
           }
+          return 1;
         }
+      }
       break;
       default:
         if (ignorecase ? (toupper(*fmt) != toupper(*msg)) : (*fmt!= *msg)) return 0;
         fmt++;
         msg++;
-      break;
+        break;
     }
   }
 }
@@ -595,11 +595,11 @@ static EEL_F NSEEL_CGEN_CALL _eel_strcpyfrom(void *opaque, EEL_F *strOut, EEL_F 
         int o = (int) *offs;
         if (o < 0) o=0;
         if (o >= fmt_len) wr->Set("");
-        else 
+        else
         {
-          if (wr_src) 
+          if (wr_src)
           {
-            if (wr_src == wr)  
+            if (wr_src == wr)
               wr->DeleteSub(0,o);
             else
               wr->SetRaw(wr_src->Get() + o, fmt_len - o);
@@ -639,10 +639,10 @@ static EEL_F NSEEL_CGEN_CALL _eel_strncpy(void *opaque, EEL_F *strOut, EEL_F *fm
         int ml=-1;
         if (maxlen && *maxlen >= 0) ml = (int)*maxlen;
 
-        if (wr_src == wr) 
+        if (wr_src == wr)
         {
           if (ml>=0 && ml < wr->GetLength()) wr->SetLen(ml); // shorten string if strncpy(x,x,len) and len >=0
-          return *strOut; 
+          return *strOut;
         }
 
         if (wr_src) wr->SetRaw(wr_src->Get(), ml>0 && ml < wr_src->GetLength() ? ml : wr_src->GetLength());
@@ -671,12 +671,12 @@ static EEL_F _eel_strcmp_int(const char *a, int a_len, const char *b, int b_len,
     if (a_end || b_end)
     {
       if (!b_end) return -1.0; // b[pos] is nonzero, a[pos] is zero
-      if (!a_end) return 1.0;  
+      if (!a_end) return 1.0;
       return 0.0;
     }
     char av = a[pos];
     char bv = b[pos];
-    if (ignorecase) 
+    if (ignorecase)
     {
       av=toupper(av);
       bv=toupper(bv);
@@ -804,7 +804,7 @@ static EEL_F NSEEL_CGEN_CALL _eel_strsetchar(void *opaque, EEL_F *strOut, EEL_F 
     else
     {
       const int l = (int) *idx;
-      if (l >= 0 && l < wr->GetLength()) 
+      if (l >= 0 && l < wr->GetLength())
       {
         ((unsigned char *)wr->Get())[l]=((int)*val)&255; // allow putting nulls in string, strlen() will still get the full size
       }
@@ -836,7 +836,7 @@ static EEL_F NSEEL_CGEN_CALL _eel_strinsert(void *opaque, EEL_F *strOut, EEL_F *
         // if wr_src, fmt is guaranteed to be wr_src.Get()
         int p = (int)*pos;
         int insert_l = wr_src ? wr_src->GetLength() : (int)strlen(fmt);
-        if (p < 0) 
+        if (p < 0)
         {
           insert_l += p; // decrease insert_l
           fmt -= p; // advance fmt -- if fmt gets advanced past NULL term, insert_l will be < 0 anyway
@@ -853,9 +853,9 @@ static EEL_F NSEEL_CGEN_CALL _eel_strinsert(void *opaque, EEL_F *strOut, EEL_F *
           }
           else
           {
-            if (wr_src) 
+            if (wr_src)
             {
-              wr->InsertRaw(fmt,p, insert_l); 
+              wr->InsertRaw(fmt,p, insert_l);
             }
             else
             {
@@ -922,7 +922,7 @@ static EEL_F NSEEL_CGEN_CALL _eel_strsetlen(void *opaque, EEL_F *strOut, EEL_F *
       if (l > EEL_STRING_MAXUSERSTRING_LENGTH_HINT)
       {
 #ifdef EEL_STRING_DEBUGOUT
-         EEL_STRING_DEBUGOUT("str_setlen: clamping requested length of %d to %d",l,EEL_STRING_MAXUSERSTRING_LENGTH_HINT);
+        EEL_STRING_DEBUGOUT("str_setlen: clamping requested length of %d to %d",l,EEL_STRING_MAXUSERSTRING_LENGTH_HINT);
 #endif
         l=EEL_STRING_MAXUSERSTRING_LENGTH_HINT;
       }
@@ -1043,7 +1043,7 @@ void eel_preprocess_strings(void *opaque, EEL_STRING_STORAGECLASS &procOut, cons
 {
   EEL_STRING_STORAGECLASS newstr;
   // preprocess to get strings from "", and replace with an index of someconstant+m_strings.GetSize()
-  int comment_state=0; 
+  int comment_state=0;
   // states:
   // 1 = comment to end of line
   // 2=comment til */
@@ -1072,11 +1072,11 @@ void eel_preprocess_strings(void *opaque, EEL_STRING_STORAGECLASS &procOut, cons
           newstr.Set("");
           const char *rdptr_start = rdptr;
 
-          rdptr++; 
+          rdptr++;
 
           while (*rdptr)
           {
-            if (*rdptr == '\\') 
+            if (*rdptr == '\\')
             {
               const char nc = rdptr[1];
               if (nc == 'r' || nc == 'R') { newstr.Append("\r"); rdptr += 2; }
@@ -1102,14 +1102,14 @@ void eel_preprocess_strings(void *opaque, EEL_STRING_STORAGECLASS &procOut, cons
                 }
                 newstr.AppendRaw((char*)&c,1);
               }
-              else 
+              else
               {
                 const int n=rdptr[1] ? 2 :1;
                 newstr.Append(rdptr,n);
                 rdptr+=n;
               }
             }
-            else 
+            else
             {
               if (*rdptr == tc)
               {
@@ -1124,7 +1124,7 @@ void eel_preprocess_strings(void *opaque, EEL_STRING_STORAGECLASS &procOut, cons
           if (*rdptr) rdptr++; // skip trailing quote
 
           char t[128];
-          if (tc == '\"') 
+          if (tc == '\"')
           {
             snprintf(t,sizeof(t),"(%u",EEL_STRING_ADDTOTABLE(newstr));
           }
@@ -1166,7 +1166,7 @@ void eel_preprocess_strings(void *opaque, EEL_STRING_STORAGECLASS &procOut, cons
             }
             procOut.Append("*/");
           }
-          else 
+          else
           {
             // pad with blanks
             while (pad_len-- > 0) procOut.Append(" ");
@@ -1176,19 +1176,19 @@ void eel_preprocess_strings(void *opaque, EEL_STRING_STORAGECLASS &procOut, cons
         else
           procOut.Append(rdptr++,1);
 
-      break;
+        break;
       case 1:
         if (tc == '\n') comment_state=0;
         procOut.Append(rdptr++,1);
-      break;
+        break;
       case 2:
-        if (tc == '*' && rdptr[1] == '/') 
+        if (tc == '*' && rdptr[1] == '/')
         {
           procOut.Append(rdptr++,1);
           comment_state=0;
         }
         procOut.Append(rdptr++,1);
-      break;
+        break;
     }
   }
 }

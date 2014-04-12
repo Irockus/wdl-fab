@@ -1,7 +1,7 @@
 #include "IPlugGUIResize.h"
+#include "resource.h"
 #include "IPlug_include_in_plug_src.h"
 #include "IControl.h"
-#include "resource.h"
 
 const int kNumPrograms = 1;
 

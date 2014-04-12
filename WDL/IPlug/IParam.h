@@ -9,20 +9,23 @@
 #define MAX_PARAM_DISPLAY_LEN 32 // e.g. "100" / "Mute"
 #define MAX_PARAM_DISPLAY_PRECISION 6
 
+/// Convert a double value to a value in the [0,1] range. if shape is 1.0 the curve is linear
 inline double ToNormalizedParam(double nonNormalizedValue, double min, double max, double shape)
 {
   return pow((nonNormalizedValue - min) / (max - min), 1.0 / shape);
 }
 
+/// Convert a normalized [0,1] value to its original value within the [min, max] range. if shape is 1.0 the curve is linear
 inline double FromNormalizedParam(double normalizedValue, double min, double max, double shape)
 {
   return min + pow((double) normalizedValue, shape) * (max - min);
 }
 
+/// Defines any plugin parameter
 class IParam
 {
 public:
-  enum EParamType { kTypeNone, kTypeBool, kTypeInt, kTypeEnum, kTypeDouble };
+  enum EParamType { kTypeNone, kTypeBool, kTypeInt, kTypeEnum, kTypeDouble }; ///< none, bool, int, enum and double param types enumeration
 
   IParam();
   ~IParam();
@@ -37,16 +40,16 @@ public:
   void Set(double value) { mValue = BOUNDED(value, mMin, mMax); }
   void SetDisplayText(int value, const char* text);
   void SetCanAutomate(bool canAutomate) { mCanAutomate = canAutomate; }
-  // The higher the shape, the more resolution around host value zero.
+  /// The higher the shape, the more resolution around host value zero.
   void SetShape(double shape);
-  
+
   void SetToDefault() { mValue = mDefault; }
 
-  // Call this if your param is (x, y) but you want to always display (-x, -y).
+  /// Call this if your param is (x, y) but you want to always display (-x, -y).
   void NegateDisplay() { mNegateDisplay = true; }
   bool DisplayIsNegated() const { return mNegateDisplay; }
 
-  //call this to make sure the param display text allways has a sign
+  ///call this to make sure the param display text allways has a sign
   void SignDisplay() { mSignDisplay = true; }
 
   // Accessors / converters.
@@ -65,11 +68,11 @@ public:
   const char* GetNameForHost();
   const char* GetLabelForHost();
   const char* GetParamGroupForHost();
-  
+
   int GetNDisplayTexts();
   const char* GetDisplayText(int value);
   const char* GetDisplayTextAtIdx(int idx, int* value = 0);
-  bool MapDisplayText(char* str, int* pValue);  // Reverse map back to value.
+  bool MapDisplayText(char* str, int* pValue);  ///< Reverse map back to value.
   void GetBounds(double* pMin, double* pMax);
   const double GetShape() {return mShape;}
   const double GetStep() {return mStep;}
@@ -94,13 +97,13 @@ private:
   bool mNegateDisplay;
   bool mSignDisplay;
   bool mCanAutomate;
-
+  /// defines a {text, int value} pair structure. text is of max length MAX_PARAM_DISPLAY_LEN
   struct DisplayText
   {
     int mValue;
     char mText[MAX_PARAM_DISPLAY_LEN];
   };
-  
+
   WDL_TypedBuf<DisplayText> mDisplayTexts;
 };
 

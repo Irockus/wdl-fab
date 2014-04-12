@@ -17,7 +17,7 @@
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
-  
+
 
 
   This file defines a template class for hosting lists of referenced count, string-identified objects.
@@ -60,7 +60,7 @@ public:
   ~WDL_PoolList()
   {
     int x;
-    for (x = 0; x < pool.GetSize(); x ++) 
+    for (x = 0; x < pool.GetSize(); x ++)
     {
       DATATYPE *p = pool.Get(x);
       free(p->WDL_POOLLIST_identstr);
@@ -83,7 +83,7 @@ public:
     t->WDL_POOLLIST_refcnt=1;
 
     int x;
-    for(x=0;x<pool.GetSize();x++) if (stricmp(pool.Get(x)->WDL_POOLLIST_identstr,filename)>0) break;
+    for(x=0; x<pool.GetSize(); x++) if (stricmp(pool.Get(x)->WDL_POOLLIST_identstr,filename)>0) break;
 
     pool.Insert(x,t);
 
@@ -119,13 +119,13 @@ public:
     {
       if (!isFull)
       {
-        tp->Clear();        
+        tp->Clear();
       }
       else
       {
         int x;
         for (x = 0; x < pool.GetSize() && pool.Get(x) != tp; x ++);
-        if (x<pool.GetSize()) 
+        if (x<pool.GetSize())
         {
           pool.Delete(x);
         }

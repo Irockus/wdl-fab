@@ -15,7 +15,7 @@ class WDL_FastQueue;
 class ProjectStateContext // this is also defined in reaper_plugin.h (keep them identical, thx)
 {
 public:
-  virtual ~ProjectStateContext(){};
+  virtual ~ProjectStateContext() {};
 
   virtual void WDL_VARARG_WARN(printf,2,3) AddLine(const char *fmt, ...) = 0;
   virtual int GetLine(char *buf, int buflen)=0; // returns -1 on eof
@@ -31,7 +31,7 @@ public:
 ProjectStateContext *ProjectCreateFileRead(const char *fn);
 ProjectStateContext *ProjectCreateFileWrite(const char *fn);
 ProjectStateContext *ProjectCreateMemCtx(WDL_HeapBuf *hb); // read or write (ugh, deprecated), be sure to delete it before accessing hb
-ProjectStateContext *ProjectCreateMemCtx_Read(const WDL_HeapBuf *hb); // read only 
+ProjectStateContext *ProjectCreateMemCtx_Read(const WDL_HeapBuf *hb); // read only
 ProjectStateContext *ProjectCreateMemCtx_Write(WDL_HeapBuf *hb); // write only, be sure to delete it before accessing hb
 ProjectStateContext *ProjectCreateMemWriteFastQueue(WDL_FastQueue *fq); // only write! no need to do anything at all before accessing (can clear/reuse as necessary)
 
@@ -54,30 +54,30 @@ void makeEscapedConfigString(const char *in, WDL_String *out);
 
 class ProjectStateContext_GenericRead : public ProjectStateContext
 {
-   const char *m_ptr;
-   const char *m_endptr;
-   int m_tmpflag;
-  
-  public:
-    ProjectStateContext_GenericRead(const void *buf, int sz) : m_tmpflag(0) 
-    { 
-      m_ptr = (const char *)buf;
-      m_endptr = m_ptr ? m_ptr+sz : NULL;
-    }
-    virtual ~ProjectStateContext_GenericRead() {} 
+  const char *m_ptr;
+  const char *m_endptr;
+  int m_tmpflag;
 
-    virtual void WDL_VARARG_WARN(printf,2,3) AddLine(const char *fmt, ...) { }
-    virtual int GetLine(char *buf, int buflen) // returns -1 on eof  
-    {
-      while (m_ptr < m_endptr && (!*m_ptr || *m_ptr == '\t' || *m_ptr == '\r' || *m_ptr == '\n' || *m_ptr == ' ')) m_ptr++;
-      if (m_ptr >= m_endptr) return -1;
-      lstrcpyn_safe(buf,m_ptr,buflen);
-      m_ptr += strlen(m_ptr)+1;
-      return 0;
-    }
-    virtual int GetTempFlag() { return m_tmpflag; }
-    virtual void SetTempFlag(int flag) { m_tmpflag=flag; }
-    virtual WDL_INT64 GetOutputSize() { return 0; }
+public:
+  ProjectStateContext_GenericRead(const void *buf, int sz) : m_tmpflag(0)
+  {
+    m_ptr = (const char *)buf;
+    m_endptr = m_ptr ? m_ptr+sz : NULL;
+  }
+  virtual ~ProjectStateContext_GenericRead() {}
+
+  virtual void WDL_VARARG_WARN(printf,2,3) AddLine(const char *fmt, ...) { }
+  virtual int GetLine(char *buf, int buflen) // returns -1 on eof
+  {
+    while (m_ptr < m_endptr && (!*m_ptr || *m_ptr == '\t' || *m_ptr == '\r' || *m_ptr == '\n' || *m_ptr == ' ')) m_ptr++;
+    if (m_ptr >= m_endptr) return -1;
+    lstrcpyn_safe(buf,m_ptr,buflen);
+    m_ptr += strlen(m_ptr)+1;
+    return 0;
+  }
+  virtual int GetTempFlag() { return m_tmpflag; }
+  virtual void SetTempFlag(int flag) { m_tmpflag=flag; }
+  virtual WDL_INT64 GetOutputSize() { return 0; }
 };
 
 

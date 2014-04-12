@@ -159,7 +159,7 @@ void audioSessionInterruptListener(void *inClientData, UInt32 inInterruption)
 }
 
 - (id)initWithIPlugInstance:(IPlug*)pluginInstance andSampleRate:(float)newSampleRate andTicksPerBuffer:(int)ticks
-   andNumberOfInputChannels:(int)inputChannels andNumberOfOutputChannels:(int)outputChannels
+  andNumberOfInputChannels:(int)inputChannels andNumberOfOutputChannels:(int)outputChannels
 {
 
   // this version of init uses PlayAndRecord audio session
@@ -167,13 +167,13 @@ void audioSessionInterruptListener(void *inClientData, UInt32 inInterruption)
   UInt32 audioCategory = kAudioSessionCategory_PlayAndRecord;
 
   return [self initWithIPlugInstance:pluginInstance andSampleRate:newSampleRate andTicksPerBuffer:ticks
-            andNumberOfInputChannels:inputChannels andNumberOfOutputChannels:outputChannels
-             andAudioSessionCategory:audioCategory];
+          andNumberOfInputChannels:inputChannels andNumberOfOutputChannels:outputChannels
+          andAudioSessionCategory:audioCategory];
 }
 
 - (id)initWithIPlugInstance:(IPlug*)pluginInstance andSampleRate:(float)newSampleRate andTicksPerBuffer:(int)ticks
-   andNumberOfInputChannels:(int)inputChannels andNumberOfOutputChannels:(int)outputChannels
-    andAudioSessionCategory:(UInt32)audioSessionCategory
+  andNumberOfInputChannels:(int)inputChannels andNumberOfOutputChannels:(int)outputChannels
+  andAudioSessionCategory:(UInt32)audioSessionCategory
 {
   self = [super init];
   if (self != nil)
@@ -250,7 +250,7 @@ void audioSessionInterruptListener(void *inClientData, UInt32 inInterruption)
   //Float32 bufferSize = (Float32) [PdBase getBlockSize] * ticks; // requested buffer size
   Float32 bufferDuration = (bufferSize + 0.5) / sampleRate; // buffer duration in seconds - add 0.5 due to differences in armv6 and armv7 fp
   AudioSessionSetProperty(kAudioSessionProperty_PreferredHardwareIOBufferDuration,
-  sizeof(bufferDuration), &bufferDuration);
+                          sizeof(bufferDuration), &bufferDuration);
   NSLog(@"AudioSession === setting PreferredHardwareIOBufferDuration to %3.2fms.", bufferDuration*1000.0);
 
   // NOTE: note that round-off errors make it hard to determine whether the requested buffersize
@@ -265,12 +265,12 @@ void audioSessionInterruptListener(void *inClientData, UInt32 inInterruption)
   UInt32 audioSessionPropertySize64 = sizeof(audioSessionProperty64);
   UInt32 audioSessionPropertySize32 = sizeof(audioSessionProperty32);
   AudioSessionGetProperty(kAudioSessionProperty_CurrentHardwareSampleRate,
-  &audioSessionPropertySize64, &audioSessionProperty64);
+                          &audioSessionPropertySize64, &audioSessionProperty64);
   NSLog(@"AudioSession === CurrentHardwareSampleRate: %.0fHz", audioSessionProperty64);
   sampleRate = audioSessionProperty64;
 
   AudioSessionGetProperty(kAudioSessionProperty_CurrentHardwareIOBufferDuration,
-  &audioSessionPropertySize32, &audioSessionProperty32);
+                          &audioSessionPropertySize32, &audioSessionProperty32);
   int blockSize = lrint(audioSessionProperty32 * audioSessionProperty64);
   NSLog(@"AudioSession === CurrentHardwareIOBufferDuration: %3.2fms", audioSessionProperty32*1000.0f);
   NSLog(@"AudioSession === block size: %i", blockSize);
@@ -302,16 +302,16 @@ void audioSessionInterruptListener(void *inClientData, UInt32 inInterruption)
   AudioUnitElement outputBus = 0;
   // connect the AU to the microphone
   AudioUnitSetProperty(audioUnit, kAudioOutputUnitProperty_EnableIO, kAudioUnitScope_Input,
-  inputBus, &doSetProperty, sizeof(doSetProperty));
+                       inputBus, &doSetProperty, sizeof(doSetProperty));
   // connect the AU to the soundout
   AudioUnitSetProperty(audioUnit, kAudioOutputUnitProperty_EnableIO, kAudioUnitScope_Output,
-  outputBus, &doSetProperty, sizeof(doSetProperty));
+                       outputBus, &doSetProperty, sizeof(doSetProperty));
 
   // set the sample rate on the input and output busses
   AudioUnitSetProperty(audioUnit, kAudioUnitProperty_SampleRate, kAudioUnitScope_Input, outputBus,
-  &sampleRate, sizeof(sampleRate));
+                       &sampleRate, sizeof(sampleRate));
   AudioUnitSetProperty(audioUnit, kAudioUnitProperty_SampleRate, kAudioUnitScope_Output, inputBus,
-  &sampleRate, sizeof(sampleRate));
+                       &sampleRate, sizeof(sampleRate));
 
   AudioStreamBasicDescription toneStreamFormatInput;
   memset (&toneStreamFormatInput, 0, sizeof (toneStreamFormatInput)); // clear all fields
@@ -327,7 +327,7 @@ void audioSessionInterruptListener(void *inClientData, UInt32 inInterruption)
   // apply the audio data stream format to bus 0 of the input scope of the Remote I/O AU. This is
   // actually the OUTPUT to the system.
   err = AudioUnitSetProperty(audioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, outputBus,
-  &toneStreamFormatInput, sizeof(toneStreamFormatInput));
+                             &toneStreamFormatInput, sizeof(toneStreamFormatInput));
 
   AudioStreamBasicDescription toneStreamFormatOutput;
   memset (&toneStreamFormatOutput, 0, sizeof(toneStreamFormatOutput));
@@ -341,7 +341,7 @@ void audioSessionInterruptListener(void *inClientData, UInt32 inInterruption)
   toneStreamFormatOutput.mFormatFlags |= kAudioFormatFlagIsNonInterleaved;
 
   AudioUnitSetProperty(audioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, inputBus,
-  &toneStreamFormatOutput, sizeof(toneStreamFormatOutput));
+                       &toneStreamFormatOutput, sizeof(toneStreamFormatOutput));
 
   // register the render callback. This is the function that the audio unit calls when it needs audio
   // the callback function (renderCallback()) is defined at the top of the page.
@@ -351,13 +351,13 @@ void audioSessionInterruptListener(void *inClientData, UInt32 inInterruption)
   // pass the AudioController object
 
   AudioUnitSetProperty(audioUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Input,
-  outputBus, &renderCallbackStruct, sizeof(renderCallbackStruct));
+                       outputBus, &renderCallbackStruct, sizeof(renderCallbackStruct));
 
   // disable buffer allocation on output (necessary?)
   // http://developer.apple.com/iphone/library/documentation/Audio/Conceptual/AudioUnitLoadingGuide_iPhoneOS/AccessingAudioUnits/LoadingIndividualAudioUnits.html#//apple_ref/doc/uid/TP40008781-CH103-SW19
   doSetProperty = 0;
   AudioUnitSetProperty(audioUnit, kAudioUnitProperty_ShouldAllocateBuffer, kAudioUnitScope_Output,
-  outputBus, &doSetProperty, sizeof(doSetProperty));
+                       outputBus, &doSetProperty, sizeof(doSetProperty));
 
   // finally, initialise the audio unit. It is ready to go.
   AudioUnitInitialize(audioUnit);
@@ -367,7 +367,7 @@ void audioSessionInterruptListener(void *inClientData, UInt32 inInterruption)
   memset(&toneStreamFormatInputTest, 0, sizeof(toneStreamFormatInputTest));
   UInt32 toneStreamFormatSize = sizeof(AudioStreamBasicDescription);
   AudioUnitGetProperty(audioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input,
-  outputBus, &toneStreamFormatInputTest, &toneStreamFormatSize);
+                       outputBus, &toneStreamFormatInputTest, &toneStreamFormatSize);
   NSLog(@"=== input stream format:");
   NSLog(@"  mSampleRate: %.0fHz", toneStreamFormatInputTest.mSampleRate);
   NSLog(@"  mFormatID: %i", toneStreamFormatInputTest.mFormatID);
@@ -381,7 +381,7 @@ void audioSessionInterruptListener(void *inClientData, UInt32 inInterruption)
   AudioStreamBasicDescription toneStreamFormatOutputTest;
   memset (&toneStreamFormatOutputTest, 0, sizeof(toneStreamFormatOutputTest));
   AudioUnitGetProperty(audioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output,
-  inputBus, &toneStreamFormatOutputTest, &toneStreamFormatSize);
+                       inputBus, &toneStreamFormatOutputTest, &toneStreamFormatSize);
 
   NSLog(@"=== output stream format:");
   NSLog(@"  mSampleRate: %.0fHz", toneStreamFormatOutputTest.mSampleRate);

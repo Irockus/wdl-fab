@@ -1,6 +1,6 @@
 #if WINDOWS_VERSION
-  #include <windows.h>
-  #include "Mac2Win.H"
+#include <windows.h>
+#include "Mac2Win.H"
 #endif
 
 #include "IPlugProcessAS.h"
@@ -9,10 +9,10 @@ IPlugProcessAS::IPlugProcessAS(OSType type)
   : IPlugProcess(type)
 {
   mPlug->Created(this);
-  
+
   inputAudioStreams = (float**) malloc(GetNumOutputs() * sizeof(float*)); // getNumOutputs correct
   outputAudioStreams = (float**) malloc(GetNumOutputs() * sizeof(float*));
-  
+
   for (int ch=0; ch < GetNumOutputs(); ch++)
   {
     if (inputAudioStreams != NULL)
@@ -24,14 +24,14 @@ IPlugProcessAS::IPlugProcessAS(OSType type)
 
 IPlugProcessAS::~IPlugProcessAS(void)
 {
-	if (inputAudioStreams != NULL)
+  if (inputAudioStreams != NULL)
     free(inputAudioStreams);
 
-	inputAudioStreams = NULL;
-	
+  inputAudioStreams = NULL;
+
   if (outputAudioStreams != NULL)
     free(outputAudioStreams);
-	
+
   outputAudioStreams = NULL;
 }
 
@@ -41,32 +41,32 @@ UInt32 IPlugProcessAS::ProcessAudio(bool isMasterBypassed)
 
   if (GetInputConnection(0) != NULL)
     totalInputSamples = GetInputConnection(0)->mNumSamplesInBuf;
-  
+
   for(int ch = 0; ch < GetNumOutputs(); ch++) // for each output channel.
   {
     inputAudioStreams[ch] = NULL;
-		outputAudioStreams[ch] = NULL;
-    
+    outputAudioStreams[ch] = NULL;
+
     DAEConnectionPtr outputConnection = GetOutputConnection(ch);
-    
+
     if (outputConnection != NULL)	// if no valid connection, don't do anything
-		{
+    {
       outputAudioStreams[ch] = (float*)(outputConnection->mBuffer);
 
       DAEConnectionPtr inputConnection = GetInputConnection(ch);
-      
-			if (inputConnection != NULL)	// have a valid input connection
+
+      if (inputConnection != NULL)	// have a valid input connection
         inputAudioStreams[ch] = (float*)(inputConnection->mBuffer);
-     
+
       // do the sample number adjustment
       outputConnection->mNumSamplesInBuf = totalInputSamples;
       if (inputConnection != NULL)
         inputConnection->mNumSamplesInBuf = 0;
     }
   }
-  
+
   mPlug->SetIO(GetNumInputs(), GetNumOutputs());
-    
+
   if (isMasterBypassed)
   {
     mPlug->ProcessAudioBypassed(inputAudioStreams, outputAudioStreams, totalInputSamples);
@@ -75,7 +75,7 @@ UInt32 IPlugProcessAS::ProcessAudio(bool isMasterBypassed)
   {
     mPlug->ProcessAudio(inputAudioStreams, outputAudioStreams, totalInputSamples);
   }
-  
+
   return totalInputSamples;
 }
 

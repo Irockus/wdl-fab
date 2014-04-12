@@ -10,12 +10,12 @@
 #include "../base64encdec.h"
 
 #ifndef VstInt32
-  #ifdef WIN32
-    typedef int VstInt32;
-  #else
-    #include <stdint.h>
-    typedef int32_t VstInt32;
-  #endif
+#ifdef WIN32
+typedef int VstInt32;
+#else
+#include <stdint.h>
+typedef int32_t VstInt32;
+#endif
 #endif
 
 const double DEFAULT_SAMPLE_RATE = 44100.0;
@@ -51,7 +51,7 @@ void GetVersionStr(int version, char* str, size_t maxSize)
 }
 
 #ifndef MAX_PATH
-  #define MAX_PATH 1024
+#define MAX_PATH 1024
 #endif
 
 IPlugBase::IPlugBase(int nParams,
@@ -118,7 +118,7 @@ IPlugBase::IPlugBase(int nParams,
     nOutputs = IPMAX(nOutputs, nOut);
     mChannelIO.Add(new ChannelIO(nIn, nOut));
     channelIOStr = strstr(channelIOStr, " ");
-    
+
     if (channelIOStr)
     {
       ++channelIOStr;
@@ -127,7 +127,7 @@ IPlugBase::IPlugBase(int nParams,
 
   mInData.Resize(nInputs);
   mOutData.Resize(nOutputs);
-  
+
   double** ppInData = mInData.Get();
 
   for (int i = 0; i < nInputs; ++i, ++ppInData)
@@ -153,9 +153,9 @@ IPlugBase::IPlugBase(int nParams,
 IPlugBase::~IPlugBase()
 {
   TRACE;
-  #ifndef OS_IOS
+#ifndef OS_IOS
   DELETE_NULL(mGraphics);
-  #endif
+#endif
   mParams.Empty(true);
   mPresets.Empty(true);
   mInChannels.Empty(true);
@@ -163,8 +163,8 @@ IPlugBase::~IPlugBase()
   mChannelIO.Empty(true);
   mInputBusLabels.Empty(true);
   mOutputBusLabels.Empty(true);
- 
-  if (mDelay) 
+
+  if (mDelay)
   {
     DELETE_NULL(mDelay);
   }
@@ -190,13 +190,13 @@ bool IPlugBase::LegalIO(int nIn, int nOut)
 {
   bool legal = false;
   int i, n = mChannelIO.GetSize();
-  
+
   for (i = 0; i < n && !legal; ++i)
   {
     ChannelIO* pIO = mChannelIO.Get(i);
     legal = ((nIn < 0 || nIn == pIO->mIn) && (nOut < 0 || nOut == pIO->mOut));
   }
-  
+
   Trace(TRACELOC, "%d:%d:%s", nIn, nOut, (legal ? "legal" : "illegal"));
   return legal;
 }
@@ -204,12 +204,12 @@ bool IPlugBase::LegalIO(int nIn, int nOut)
 void IPlugBase::LimitToStereoIO()
 {
   int nIn = NInChannels(), nOut = NOutChannels();
-  
+
   if (nIn > 2)
   {
     SetInputChannelConnections(2, nIn - 2, false);
   }
-  
+
   if (nOut > 2)
   {
     SetOutputChannelConnections(2, nOut - 2, true);
@@ -232,12 +232,12 @@ void IPlugBase::AttachGraphics(IGraphics* pGraphics)
   {
     WDL_MutexLock lock(&mMutex);
     int i, n = mParams.GetSize();
-    
+
     for (i = 0; i < n; ++i)
     {
       pGraphics->SetParameterFromPlug(i, GetParam(i)->GetNormalized(), true);
     }
-    
+
     pGraphics->PrepDraw();
     mGraphics = pGraphics;
   }
@@ -269,7 +269,7 @@ void IPlugBase::GetEffectVersionStr(char* str, size_t len)
 
 const char* IPlugBase::GetAPIString()
 {
-  switch (GetAPI()) 
+  switch (GetAPI())
   {
     case kAPIVST2: return "VST2";
     case kAPIVST3: return "VST3";
@@ -293,12 +293,12 @@ const char* IPlugBase::GetArchString()
 double IPlugBase::GetSamplesPerBeat()
 {
   double tempo = GetTempo();
-  
+
   if (tempo > 0.0)
   {
     return GetSampleRate() * 60.0 / tempo;
   }
-  
+
   return 0.0;
 }
 
@@ -312,21 +312,21 @@ void IPlugBase::SetBlockSize(int blockSize)
   if (blockSize != mBlockSize)
   {
     int i, nIn = NInChannels(), nOut = NOutChannels();
-    
+
     for (i = 0; i < nIn; ++i)
     {
       InChannel* pInChannel = mInChannels.Get(i);
       pInChannel->mScratchBuf.Resize(blockSize);
       memset(pInChannel->mScratchBuf.Get(), 0, blockSize * sizeof(double));
     }
-    
+
     for (i = 0; i < nOut; ++i)
     {
       OutChannel* pOutChannel = mOutChannels.Get(i);
       pOutChannel->mScratchBuf.Resize(blockSize);
       memset(pOutChannel->mScratchBuf.Get(), 0, blockSize * sizeof(double));
     }
-    
+
     mBlockSize = blockSize;
   }
 }
@@ -334,12 +334,12 @@ void IPlugBase::SetBlockSize(int blockSize)
 void IPlugBase::SetInputChannelConnections(int idx, int n, bool connected)
 {
   int iEnd = IPMIN(idx + n, mInChannels.GetSize());
-  
+
   for (int i = idx; i < iEnd; ++i)
   {
     InChannel* pInChannel = mInChannels.Get(i);
     pInChannel->mConnected = connected;
-    
+
     if (!connected)
     {
       *(pInChannel->mSrc) = pInChannel->mScratchBuf.Get();
@@ -350,12 +350,12 @@ void IPlugBase::SetInputChannelConnections(int idx, int n, bool connected)
 void IPlugBase::SetOutputChannelConnections(int idx, int n, bool connected)
 {
   int iEnd = IPMIN(idx + n, mOutChannels.GetSize());
-  
+
   for (int i = idx; i < iEnd; ++i)
   {
     OutChannel* pOutChannel = mOutChannels.Get(i);
     pOutChannel->mConnected = connected;
-    
+
     if (!connected)
     {
       *(pOutChannel->mDest) = pOutChannel->mScratchBuf.Get();
@@ -376,7 +376,7 @@ bool IPlugBase::IsOutChannelConnected(int chIdx)
 void IPlugBase::AttachInputBuffers(int idx, int n, double** ppData, int nFrames)
 {
   int iEnd = IPMIN(idx + n, mInChannels.GetSize());
-  
+
   for (int i = idx; i < iEnd; ++i)
   {
     InChannel* pInChannel = mInChannels.Get(i);
@@ -431,11 +431,11 @@ void IPlugBase::AttachOutputBuffers(int idx, int n, float** ppData)
 
 void IPlugBase::PassThroughBuffers(double sampleType, int nFrames)
 {
-  if (mLatency && mDelay) 
+  if (mLatency && mDelay)
   {
     mDelay->ProcessBlock(mInData.Get(), mOutData.Get(), nFrames);
   }
-  else 
+  else
   {
     IPlugBase::ProcessDoubleReplacing(mInData.Get(), mOutData.Get(), nFrames);
   }
@@ -445,10 +445,10 @@ void IPlugBase::PassThroughBuffers(float sampleType, int nFrames)
 {
   // for 32 bit buffers, first run the delay (if mLatency) on the 64bit IPlug buffers
   PassThroughBuffers(0., nFrames);
-  
+
   int i, n = NOutChannels();
   OutChannel** ppOutChannel = mOutChannels.GetList();
-  
+
   for (i = 0; i < n; ++i, ++ppOutChannel)
   {
     OutChannel* pOutChannel = *ppOutChannel;
@@ -469,11 +469,11 @@ void IPlugBase::ProcessBuffers(float sampleType, int nFrames)
   ProcessDoubleReplacing(mInData.Get(), mOutData.Get(), nFrames);
   int i, n = NOutChannels();
   OutChannel** ppOutChannel = mOutChannels.GetList();
-  
+
   for (i = 0; i < n; ++i, ++ppOutChannel)
   {
     OutChannel* pOutChannel = *ppOutChannel;
-    
+
     if (pOutChannel->mConnected)
     {
       CastCopy(pOutChannel->mFDest, *(pOutChannel->mDest), nFrames);
@@ -486,7 +486,7 @@ void IPlugBase::ProcessBuffersAccumulating(float sampleType, int nFrames)
   ProcessDoubleReplacing(mInData.Get(), mOutData.Get(), nFrames);
   int i, n = NOutChannels();
   OutChannel** ppOutChannel = mOutChannels.GetList();
-  
+
   for (i = 0; i < n; ++i, ++ppOutChannel)
   {
     OutChannel* pOutChannel = *ppOutChannel;
@@ -494,7 +494,7 @@ void IPlugBase::ProcessBuffersAccumulating(float sampleType, int nFrames)
     {
       float* pDest = pOutChannel->mFDest;
       double* pSrc = *(pOutChannel->mDest);
-      
+
       for (int j = 0; j < nFrames; ++j, ++pDest, ++pSrc)
       {
         *pDest += (float) *pSrc;
@@ -524,8 +524,8 @@ void IPlugBase::ZeroScratchBuffers()
 void IPlugBase::SetLatency(int samples)
 {
   mLatency = samples;
-  
-  if (mDelay) 
+
+  if (mDelay)
   {
     mDelay->SetDelayTime(mLatency);
   }
@@ -777,7 +777,7 @@ bool IPlugBase::RestorePreset(int idx)
     if (!(pPreset->mInitialized))
     {
       pPreset->mInitialized = true;
-        MakeDefaultUserPresetName(&mPresets, pPreset->mName, MAX_PRESET_NAME_LEN);
+      MakeDefaultUserPresetName(&mPresets, pPreset->mName, MAX_PRESET_NAME_LEN);
       restoredOK = SerializeState(&(pPreset->mChunk));
     }
     else
@@ -789,9 +789,9 @@ bool IPlugBase::RestorePreset(int idx)
     {
       mCurrentPresetIdx = idx;
       PresetsChangedByHost();
-      #ifndef OS_IOS
+#ifndef OS_IOS
       RedrawParamControls();
-      #endif
+#endif
     }
   }
   return restoredOK;
@@ -928,19 +928,19 @@ int IPlugBase::UnserializeParams(ByteChunk* pChunk, int startPos)
 bool IPlugBase::CompareState(const unsigned char* incomingState, int startPos)
 {
   bool isEqual = true;
-  
+
   const double* data = (const double*) incomingState + startPos;
-  
+
   // dirty hack here because protools treats param values as 32 bit int and in IPlug they are 64bit float
   // if we memcmp() the incoming state with the current they may have tiny differences due to the quantization
   for (int i = 0; i < NParams(); i++)
   {
     float v = (float) GetParam(i)->Value();
     float vi = (float) *(data++);
-    
+
     isEqual &= (fabsf(v - vi) < 0.00001);
   }
-  
+
   return isEqual;
 }
 
@@ -1526,7 +1526,8 @@ bool IPlugBase::SendMidiMsgs(WDL_TypedBuf<IMidiMsg>* pMsgs)
   bool rc = true;
   int n = pMsgs->GetSize();
   IMidiMsg* pMsg = pMsgs->Get();
-  for (int i = 0; i < n; ++i, ++pMsg) {
+  for (int i = 0; i < n; ++i, ++pMsg)
+  {
     rc &= SendMidiMsg(pMsg);
   }
   return rc;

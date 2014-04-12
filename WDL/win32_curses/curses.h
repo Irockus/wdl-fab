@@ -2,24 +2,24 @@
 #define _CURSES_WIN32SIM_H_
 
 #if !defined(_WIN32) && !defined(MAC_NATIVE) && !defined(FORCE_WIN32_CURSES)
-  #ifdef MAC
-  #include <ncurses.h>
-  #else
-  #include <curses.h>
-  #endif
+#ifdef MAC
+#include <ncurses.h>
+#else
+#include <curses.h>
+#endif
 #else
 
-  #ifdef _WIN32
-  #include <windows.h>
-  #else
-  #include "../swell/swell.h"
-  #endif
-  #include "../queue.h"
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include "../swell/swell.h"
+#endif
+#include "../queue.h"
 
 /*
 ** this implements a tiny subset of curses on win32.
-** It creates a window (Resizeable by user), and gives you a callback to run 
-** your UI. 
+** It creates a window (Resizeable by user), and gives you a callback to run
+** your UI.
 */
 
 
@@ -69,7 +69,7 @@ typedef struct win32CursesCtx
   char m_cur_attr, m_cur_erase_attr;
   unsigned char *m_framebuffer;
   HFONT mOurFont;
-  
+
   bool m_need_fontcalc;
   int m_font_w, m_font_h;
   int m_need_redraw;

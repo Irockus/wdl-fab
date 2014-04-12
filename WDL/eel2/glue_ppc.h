@@ -6,7 +6,7 @@
 
 
 // endOfInstruction is end of jump with relative offset, offset passed in is offset from end of dest instruction.
-// on PPC the offset needs to be from the start of the instruction (hence +4), and also the low two bits are flags so 
+// on PPC the offset needs to be from the start of the instruction (hence +4), and also the low two bits are flags so
 // we make sure they are clear (they should always be clear, anyway, since we always generate 4 byte instructions)
 #define GLUE_JMP_SET_OFFSET(endOfInstruction,offset) (((short *)(endOfInstruction))[-1] = ((offset) + 4) & 0xFFFC)
 
@@ -25,20 +25,21 @@ static const unsigned int GLUE_JMP_IF_P1_NZ[]=
 
 
 #define GLUE_MOV_PX_DIRECTVALUE_SIZE 8
-static void GLUE_MOV_PX_DIRECTVALUE_GEN(void *b, INT_PTR v, int wv) 
-{   
-  static const unsigned short tab[3][2] = {
+static void GLUE_MOV_PX_DIRECTVALUE_GEN(void *b, INT_PTR v, int wv)
+{
+  static const unsigned short tab[3][2] =
+  {
     {0x3C60, 0x6063}, // addis r3, r0, hw -- ori r3,r3, lw
     {0x3DC0, 0x61CE}, // addis r14, r0, hw -- ori r14, r14, lw
     {0x3DE0, 0x61EF}, // addis r15, r0, hw -- oris r15, r15, lw
   };
   unsigned int uv=(unsigned int)v;
-	unsigned short *p=(unsigned short *)b;
+  unsigned short *p=(unsigned short *)b;
 
   *p++ = tab[wv][0]; // addis rX, r0, hw
-	*p++ = (uv>>16)&0xffff;
+  *p++ = (uv>>16)&0xffff;
   *p++ = tab[wv][1]; // ori rX, rX, lw
-	*p++ = uv&0xffff;
+  *p++ = uv&0xffff;
 }
 
 
@@ -53,7 +54,7 @@ const static unsigned int GLUE_FUNC_ENTER[2] = { 0x7CA802A6, 0x94A1FFF0 };
 const static unsigned int GLUE_FUNC_LEAVE[3] = { 0x80A10000, 0x38210010, 0x7CA803A6 };
 #define GLUE_FUNC_LEAVE_SIZE 12
 
-const static unsigned int GLUE_RET[]={0x4E800020}; // blr
+const static unsigned int GLUE_RET[]= {0x4E800020}; // blr
 
 static int GLUE_RESET_WTP(unsigned char *out, void *ptr)
 {
@@ -66,16 +67,17 @@ static int GLUE_RESET_WTP(unsigned char *out, void *ptr)
 
 
 // stwu r3, -16(r1)
-const static unsigned int GLUE_PUSH_P1[1]={ 0x9461FFF0};
+const static unsigned int GLUE_PUSH_P1[1]= { 0x9461FFF0};
 
 
 #define GLUE_POP_PX_SIZE 8
 static void GLUE_POP_PX(void *b, int wv)
 {
-  static const unsigned int tab[3] ={
-      0x80610000, // lwz r3, 0(r1)
-      0x81c10000, // lwz r14, 0(r1)
-      0x81e10000, // lwz r15, 0(r1)
+  static const unsigned int tab[3] =
+  {
+    0x80610000, // lwz r3, 0(r1)
+    0x81c10000, // lwz r14, 0(r1)
+    0x81e10000, // lwz r15, 0(r1)
   };
   ((unsigned int *)b)[0] = tab[wv];
   ((unsigned int *)b)[1] = 0x38210010; // addi r1,r1, 16
@@ -84,7 +86,8 @@ static void GLUE_POP_PX(void *b, int wv)
 #define GLUE_SET_PX_FROM_P1_SIZE 4
 static void GLUE_SET_PX_FROM_P1(void *b, int wv)
 {
-  static const unsigned int tab[3]={
+  static const unsigned int tab[3]=
+  {
     0x7c631b78, // never used: mr r3, r3
     0x7c6e1b78, // mr r14, r3
     0x7c6f1b78, // mr r15, r3
@@ -99,7 +102,7 @@ static void GLUE_SET_PX_FROM_P1(void *b, int wv)
 static const unsigned int GLUE_PUSH_P1PTR_AS_VALUE[] = { 0xC8430000, 0xDC41FFF0 };
 
 static int GLUE_POP_VALUE_TO_ADDR(unsigned char *buf, void *destptr)
-{    
+{
   // lfd f2, 0(r1)
   // addi r1,r1,16
   // GLUE_MOV_PX_DIRECTVALUE_GEN / GLUE_MOV_PX_DIRECTVALUE_SIZE (r3)
@@ -108,7 +111,7 @@ static int GLUE_POP_VALUE_TO_ADDR(unsigned char *buf, void *destptr)
   {
     unsigned int *bufptr = (unsigned int *)buf;
     *bufptr++ = 0xC8410000;
-    *bufptr++ = 0x38210010;    
+    *bufptr++ = 0x38210010;
     GLUE_MOV_PX_DIRECTVALUE_GEN(bufptr, (INT_PTR)destptr,0);
     bufptr += GLUE_MOV_PX_DIRECTVALUE_SIZE/4;
     *bufptr++ = 0xd8430000;
@@ -117,7 +120,7 @@ static int GLUE_POP_VALUE_TO_ADDR(unsigned char *buf, void *destptr)
 }
 
 static int GLUE_COPY_VALUE_AT_P1_TO_PTR(unsigned char *buf, void *destptr)
-{    
+{
   // lfd f2, 0(r3)
   // GLUE_MOV_PX_DIRECTVALUE_GEN / GLUE_MOV_PX_DIRECTVALUE_SIZE (r3)
   // stfd f2, 0(r3)
@@ -130,46 +133,47 @@ static int GLUE_COPY_VALUE_AT_P1_TO_PTR(unsigned char *buf, void *destptr)
     bufptr += GLUE_MOV_PX_DIRECTVALUE_SIZE/4;
     *bufptr++ = 0xd8430000;
   }
-  
+
   return 4 + GLUE_MOV_PX_DIRECTVALUE_SIZE + 4;
 }
 
 
-static void GLUE_CALL_CODE(INT_PTR bp, INT_PTR cp, INT_PTR rt) 
+static void GLUE_CALL_CODE(INT_PTR bp, INT_PTR cp, INT_PTR rt)
 {
-  static const double consttab[] = { 
-    NSEEL_CLOSEFACTOR, 
-    4503601774854144.0 /* 0x43300000, 0x80000000, used for integer conversion*/, 
+  static const double consttab[] =
+  {
+    NSEEL_CLOSEFACTOR,
+    4503601774854144.0 /* 0x43300000, 0x80000000, used for integer conversion*/,
   };
   // we could have r18 refer to the current user-stack pointer, someday, perhaps
   __asm__(
-          "subi r1, r1, 128\n"
-          "stfd f31, 8(r1)\n"
-          "stfd f30, 16(r1)\n"
-          "stmw r13, 32(r1)\n"
-          "mtctr %0\n"
-          "mr r17, %1\n" 
-          "mr r13, %2\n"
-          "lfd f31, 0(%3)\n"
-          "lfd f30, 8(%3)\n"
-      	  "subi r17, r17, 8\n"
-          "mflr r0\n" 
-          "stw r0, 24(r1)\n"
-          "bctrl\n"
-          "lwz r0, 24(r1)\n"
-          "mtlr r0\n"
-          "lmw r13, 32(r1)\n"
-          "lfd f31, 8(r1)\n"
-          "lfd f30, 16(r1)\n"
-          "addi r1, r1, 128\n"
-            ::"r" (cp), "r" (bp), "r" (rt), "r" (consttab));
+    "subi r1, r1, 128\n"
+    "stfd f31, 8(r1)\n"
+    "stfd f30, 16(r1)\n"
+    "stmw r13, 32(r1)\n"
+    "mtctr %0\n"
+    "mr r17, %1\n"
+    "mr r13, %2\n"
+    "lfd f31, 0(%3)\n"
+    "lfd f30, 8(%3)\n"
+    "subi r17, r17, 8\n"
+    "mflr r0\n"
+    "stw r0, 24(r1)\n"
+    "bctrl\n"
+    "lwz r0, 24(r1)\n"
+    "mtlr r0\n"
+    "lmw r13, 32(r1)\n"
+    "lfd f31, 8(r1)\n"
+    "lfd f30, 16(r1)\n"
+    "addi r1, r1, 128\n"
+    ::"r" (cp), "r" (bp), "r" (rt), "r" (consttab));
 };
 
 static unsigned char *EEL_GLUE_set_immediate(void *_p, INT_PTR newv)
 {
   // 64 bit ppc would take some work
   unsigned int *p=(unsigned int *)_p;
-  while ((p[0]&0x0000FFFF) != 0x0000dead && 
+  while ((p[0]&0x0000FFFF) != 0x0000dead &&
          (p[1]&0x0000FFFF) != 0x0000beef) p++;
   p[0] = (p[0]&0xFFFF0000) | (((newv)>>16)&0xFFFF);
   p[1] = (p[1]&0xFFFF0000) | ((newv)&0xFFFF);
@@ -177,51 +181,55 @@ static unsigned char *EEL_GLUE_set_immediate(void *_p, INT_PTR newv)
   return (unsigned char *)(p+1);
 }
 
-  #define GLUE_SET_PX_FROM_WTP_SIZE sizeof(int)
-  static void GLUE_SET_PX_FROM_WTP(void *b, int wv)
+#define GLUE_SET_PX_FROM_WTP_SIZE sizeof(int)
+static void GLUE_SET_PX_FROM_WTP(void *b, int wv)
+{
+  static const unsigned int tab[3]=
   {
-    static const unsigned int tab[3]={
-      0x7e038378, // mr r3, r16
-      0x7e0e8378, // mr r14, r16
-      0x7e0f8378, // mr r15, r16
-    };
-    *(unsigned int *)b = tab[wv];
-  }
-  static int GLUE_POP_FPSTACK_TO_PTR(unsigned char *buf, void *destptr)
-  {
-    // set r3 to destptr
-    // stfd f1, 0(r3)
-    if (buf)
-    {
-      unsigned int *bufptr = (unsigned int *)buf;
-      GLUE_MOV_PX_DIRECTVALUE_GEN(bufptr, (INT_PTR)destptr,0);
-      bufptr += GLUE_MOV_PX_DIRECTVALUE_SIZE/4;
-
-      *bufptr++ = 0xD8230000; // stfd f1, 0(r3)
-    }
-    return GLUE_MOV_PX_DIRECTVALUE_SIZE + sizeof(int);
-  }
-  #define GLUE_POP_FPSTACK_SIZE 0
-  static const unsigned int GLUE_POP_FPSTACK[1] = { 0 }; // no need to pop, not a stack
-
-  static const unsigned int GLUE_POP_FPSTACK_TOSTACK[] = {
-    0xdc21fff0, // stfdu f1, -16(r1)
+    0x7e038378, // mr r3, r16
+    0x7e0e8378, // mr r14, r16
+    0x7e0f8378, // mr r15, r16
   };
-
-  static const unsigned int GLUE_POP_FPSTACK_TO_WTP[] = { 
-    0xdc300008, // stfdu f1, 8(r16)
-  };
-
-  #define GLUE_PUSH_VAL_AT_PX_TO_FPSTACK_SIZE 4
-  static void GLUE_PUSH_VAL_AT_PX_TO_FPSTACK(void *b, int wv)
+  *(unsigned int *)b = tab[wv];
+}
+static int GLUE_POP_FPSTACK_TO_PTR(unsigned char *buf, void *destptr)
+{
+  // set r3 to destptr
+  // stfd f1, 0(r3)
+  if (buf)
   {
-    static const unsigned int tab[3] = {
-      0xC8230000, // lfd f1, 0(r3)
-      0xC82E0000, // lfd f1, 0(r14)
-      0xC82F0000, // lfd f1, 0(r15)
-    };
-    *(unsigned int *)b = tab[wv];
+    unsigned int *bufptr = (unsigned int *)buf;
+    GLUE_MOV_PX_DIRECTVALUE_GEN(bufptr, (INT_PTR)destptr,0);
+    bufptr += GLUE_MOV_PX_DIRECTVALUE_SIZE/4;
+
+    *bufptr++ = 0xD8230000; // stfd f1, 0(r3)
   }
+  return GLUE_MOV_PX_DIRECTVALUE_SIZE + sizeof(int);
+}
+#define GLUE_POP_FPSTACK_SIZE 0
+static const unsigned int GLUE_POP_FPSTACK[1] = { 0 }; // no need to pop, not a stack
+
+static const unsigned int GLUE_POP_FPSTACK_TOSTACK[] =
+{
+  0xdc21fff0, // stfdu f1, -16(r1)
+};
+
+static const unsigned int GLUE_POP_FPSTACK_TO_WTP[] =
+{
+  0xdc300008, // stfdu f1, 8(r16)
+};
+
+#define GLUE_PUSH_VAL_AT_PX_TO_FPSTACK_SIZE 4
+static void GLUE_PUSH_VAL_AT_PX_TO_FPSTACK(void *b, int wv)
+{
+  static const unsigned int tab[3] =
+  {
+    0xC8230000, // lfd f1, 0(r3)
+    0xC82E0000, // lfd f1, 0(r14)
+    0xC82F0000, // lfd f1, 0(r15)
+  };
+  *(unsigned int *)b = tab[wv];
+}
 
 #define GLUE_POP_FPSTACK_TO_WTP_TO_PX_SIZE (sizeof(GLUE_POP_FPSTACK_TO_WTP) + GLUE_SET_PX_FROM_WTP_SIZE)
 static void GLUE_POP_FPSTACK_TO_WTP_TO_PX(unsigned char *buf, int wv)

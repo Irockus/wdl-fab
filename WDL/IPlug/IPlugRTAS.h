@@ -12,6 +12,7 @@ struct IPlugInstanceInfo
   // not used
 };
 
+/// Protools RTAS compliant plugin
 class IPlugRTAS : public IPlugBase
 {
 public:
@@ -43,18 +44,18 @@ public:
 
   void ResizeGraphics(int w, int h);
   EHost GetHost();  // GetHostVersion() is inherited.
-  
+
   void Created(class IPlugProcess* pProcess);
 
   void ProcessAudio(float** inputs, float** outputs, int nFrames);
   void ProcessAudioBypassed(float** inputs, float** outputs, int nFrames);
 
   void SetIO(int nInputs, int nOutputs);
-  
+
   void SetSideChainConnected(bool connected);
 
-  void SetParameter(int idx); // Locks mutex first
-  
+  void SetParameter(int idx); //! Locks mutex first
+
   void DirtyPTCompareState();
 
 protected:

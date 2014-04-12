@@ -8,12 +8,13 @@
 #include "../swell/swell.h"
 #include "../lice/lice_text.h"
 
-enum EFileAction { kFileOpen, kFileSave };
+enum EFileAction { kFileOpen, kFileSave }; ///< File Dialog action (Load or save)
 
+/// Define a Bitmap to associate with IControl derived controls
 struct IBitmap
 {
   void* mData;
-  int W, H, N;    // N = number of states (for multibitmaps).
+  int W, H, N;    ///< N = number of states (for multibitmaps).
   bool mFramesAreHorizontal;
   IBitmap(void* pData = 0, int w = 0, int h = 0, int n = 1, bool framesAreHorizontal = false)
     : mData(pData)
@@ -26,6 +27,7 @@ struct IBitmap
   inline int frameHeight() const { return H / N; }
 };
 
+/// Define an RGBA color
 struct IColor
 {
   int A, R, G, B;
@@ -46,12 +48,14 @@ const IColor COLOR_BLUE(255, 0, 0, 255);
 const IColor COLOR_YELLOW(255, 255, 255, 0);
 const IColor COLOR_ORANGE(255, 255, 127, 0);
 
+/// Define color blending operations and amount for IControl derived classes.
 struct IChannelBlend
 {
+  /// Enumerates color blending operations for IControl derived classes.
   enum EBlendMethod
   {
-    kBlendNone,   // Copy over whatever is already there, but look at src alpha.
-    kBlendClobber,  // Copy completely over whatever is already there.
+    kBlendNone,///< Copy over whatever is already there, but look at src alpha.
+    kBlendClobber,///< Copy completely over whatever is already there.
     kBlendAdd,
     kBlendColorDodge,
     // etc
@@ -67,15 +71,18 @@ const IColor DEFAULT_TEXT_ENTRY_BGCOLOR = COLOR_WHITE;
 const IColor DEFAULT_TEXT_ENTRY_FGCOLOR = COLOR_BLACK;
 
 #ifdef OS_WIN
-  const char* const DEFAULT_FONT = "Verdana";
-  const int DEFAULT_TEXT_SIZE = 12;
+const char* const DEFAULT_FONT = "Verdana";
+const int DEFAULT_TEXT_SIZE = 12;
 #elif defined OS_OSX
-  const char* const DEFAULT_FONT = "Monaco";
-  const int DEFAULT_TEXT_SIZE = 10;
+const char* const DEFAULT_FONT = "Monaco";
+const int DEFAULT_TEXT_SIZE = 10;
 #endif
 
 const int FONT_LEN = 32;
 
+/**
+	Define text color, style, alignment and orientation
+*/
 struct IText
 {
   char mFont[FONT_LEN];
@@ -133,46 +140,52 @@ struct IText
 #define MakeIRectVOffset(a, yoffs) IRECT(a##_X, a##_Y + yoffs, a##_X + a##_W, a##_Y + a##_H + yoffs)
 #define MakeIRectHVOffset(a, xoffs, yoffs) IRECT(a##_X + xoffs, a##_Y + yoffs, a##_X + a##_W + xoffs, a##_Y + a##_H + yoffs)
 
+/// Define a 2D rectangle area structure and operations
 struct IRECT
 {
+  /// left, top, right and bottom coordinates
   int L, T, R, B;
 
-  IRECT() { L = T = R = B = 0; }
-  IRECT(int l, int t, int r, int b) : L(l), R(r), T(t), B(b) {}
-  IRECT(int x, int y, IBitmap* pBitmap) : L(x), T(y), R(x + pBitmap->W), B(y + pBitmap->H / pBitmap->N) {}
+  IRECT() { L = T = R = B = 0; } ///< Default constructor, creates an 'empty' rectangle
+  IRECT(int l, int t, int r, int b) : L(l), R(r), T(t), B(b) {} ///< Creates a rectangle from left, top, right and bottom coordinates
+  IRECT(int x, int y, IBitmap* pBitmap) : L(x), T(y), R(x + pBitmap->W), B(y + pBitmap->H / pBitmap->N) {} ///< creates a rectangle at position L,T and matching bitmap W and (H/N)
 
+  /// Return true if the rectangle fields are all 0 (init value)
   bool Empty() const
   {
     return (L == 0 && T == 0 && R == 0 && B == 0);
   }
 
+  /// Set all rectangle attributes to zero
   void Clear()
   {
     L = T = R = B = 0;
   }
-
+  /// Two rectangles are equals if all their attributes are matching
   bool operator==(const IRECT& rhs) const
   {
     return (L == rhs.L && T == rhs.T && R == rhs.R && B == rhs.B);
   }
 
+  /// Two rectangles are not equal if at least one of their attributes is not matching
   bool operator!=(const IRECT& rhs) const
   {
     return !(*this == rhs);
   }
 
-  inline int W() const { return R - L; }
-  inline int H() const { return B - T; }
-  inline float MW() const { return 0.5f * (float) (L + R); }
-  inline float MH() const { return 0.5f * (float) (T + B); }
+  inline int W() const { return R - L; } ///< Rectangle width
+  inline int H() const { return B - T; } ///< Rectangle Height
+  inline float MW() const { return 0.5f * (float) (L + R); } ///< horizontal middle position
+  inline float MH() const { return 0.5f * (float) (T + B); } ///< vertical middle position
 
+  /// Grow a rectangle to the union of this rectangle with another rectangle
   inline IRECT Union(IRECT* pRHS)
   {
     if (Empty()) { return *pRHS; }
     if (pRHS->Empty()) { return *this; }
     return IRECT(IPMIN(L, pRHS->L), IPMIN(T, pRHS->T), IPMAX(R, pRHS->R), IPMAX(B, pRHS->B));
   }
-
+  /// Intersect this rectangle with another rectangle, return Empty() rect if no intersection.
   inline IRECT Intersect(IRECT* pRHS)
   {
     if (Intersects(pRHS))
@@ -181,22 +194,22 @@ struct IRECT
     }
     return IRECT();
   }
-
+  /// Return true if this intersects pRHS rect
   inline bool Intersects(IRECT* pRHS)
   {
     return (!Empty() && !pRHS->Empty() && R >= pRHS->L && L < pRHS->R && B >= pRHS->T && T < pRHS->B);
   }
-
+  /// Return true if if pRHS if fully contained in this rectangle
   inline bool Contains(IRECT* pRHS)
   {
     return (!Empty() && !pRHS->Empty() && pRHS->L >= L && pRHS->R <= R && pRHS->T >= T && pRHS->B <= B);
   }
-
+  /// Return true if x,y point coordinate inside or on the edge of a rectangle
   inline bool Contains(int x, int y)
   {
     return (!Empty() && x >= L && x < R && y >= T && y < B);
   }
-
+  /// Constrain a x,y coordinate point to fit inside this rectangle
   inline void Constrain(int* x, int* y)
   {
     if (*x < L)
@@ -218,6 +231,7 @@ struct IRECT
     }
   }
 
+  /// Return the sliceIdx-th rectangle that is a vertical fraction of numSlices from this rectangle
   inline IRECT SubRectVertical(int numSlices, int sliceIdx)
   {
     int heightOfSubRect = (H() / numSlices);
@@ -226,6 +240,7 @@ struct IRECT
     return IRECT(L, T + t, R, T + t + heightOfSubRect);
   }
 
+  /// Return the sliceIdx-th rectangle that is a horizontal fraction of numSlices from this rectangle
   inline IRECT SubRectHorizontal(int numSlices, int sliceIdx)
   {
     int widthOfSubRect = (W() / numSlices);
@@ -233,27 +248,31 @@ struct IRECT
 
     return IRECT(L + l, T, L + l + widthOfSubRect, B);
   }
-  
+
+  /// Add a padding number of pixels all around the rectangle. Grows if padding is positive, shrinks otherwise
   inline IRECT GetPadded(int padding)
   {
     return IRECT(L-padding, T-padding, R+padding, B+padding);
   }
-  
+
+  /// Add custom padding numbers of pixels all around the rectangle.
   inline IRECT GetPadded(int padL, int padT, int padR, int padB)
   {
     return IRECT(L+padL, T+padT, R+padR, B+padB);
   }
-  
+  /// Add an horizontal padding number of pixels to L and R coord. Grows if padding is positive, shrinks otherwise
   inline IRECT GetHPadded(int padding)
   {
     return IRECT(L-padding, T, R+padding, B);
   }
 
+  /// Add a vertical padding number of pixels to T and B coord. Grows if padding is positive, shrinks otherwise
   inline IRECT GetVPadded(int padding)
   {
     return IRECT(L, T-padding, R, B+padding);
   }
-  
+
+  /// Clip any outside edge of this rectangle to match the other rect. edge
   void Clank(IRECT* pRHS)
   {
     if (L < pRHS->L)
@@ -279,6 +298,7 @@ struct IRECT
   }
 };
 
+/// Define mouse modifier states in a structure
 struct IMouseMod
 {
   bool L, R, S, C, A;
@@ -288,11 +308,13 @@ struct IMouseMod
 
 #endif // !OS_IOS
 
+/// Define a  MIDI message structure and related enums
 struct IMidiMsg
 {
   int mOffset;
   BYTE mStatus, mData1, mData2;
 
+  /// MIDI status MSB enum
   enum EStatusMsg
   {
     kNone = 0,
@@ -305,6 +327,7 @@ struct IMidiMsg
     kPitchWheel = 14
   };
 
+  /// MIDI ControlChange MSB enum
   enum EControlChangeMsg
   {
     kModWheel = 1,
@@ -387,24 +410,25 @@ struct IMidiMsg
 
   void MakeNoteOnMsg(int noteNumber, int velocity, int offset, int channel=0);
   void MakeNoteOffMsg(int noteNumber, int offset, int channel=0);
-  void MakePitchWheelMsg(double value, int channel=0);  // Value in [-1, 1], converts to [0, 16384) where 8192 = no pitch change.
-  void MakeControlChangeMsg(EControlChangeMsg idx, double value, int channel=0);           //  Value in [0, 1].
-  int Channel(); // returns [0, 15] for midi channels 1 ... 16
+  void MakePitchWheelMsg(double value, int channel=0);///< Value in [-1, 1], converts to [0, 16384) where 8192 = no pitch change.
+  void MakeControlChangeMsg(EControlChangeMsg idx, double value, int channel=0);///<  Value in [0, 1].
+  int Channel();///< returns [0, 15] for midi channels 1 ... 16
 
   EStatusMsg StatusMsg() const;
-  int NoteNumber() const;     // Returns [0, 127), -1 if NA.
-  int Velocity() const;       // Returns [0, 127), -1 if NA.
-  int PolyAfterTouch() const;       // Returns [0, 127), -1 if NA.
-  int ChannelAfterTouch() const;       // Returns [0, 127), -1 if NA.
-  int Program() const;        // Returns [0, 127), -1 if NA.
-  double PitchWheel() const;  // Returns [-1.0, 1.0], zero if NA.
+  int NoteNumber() const;///< Returns [0, 127), -1 if NA.
+  int Velocity() const;///< Returns [0, 127), -1 if NA.
+  int PolyAfterTouch() const;///< Returns [0, 127), -1 if NA.
+  int ChannelAfterTouch() const;///< Returns [0, 127), -1 if NA.
+  int Program() const;///< Returns [0, 127), -1 if NA.
+  double PitchWheel() const;///< Returns [-1.0, 1.0], zero if NA.
   EControlChangeMsg ControlChangeIdx() const;
-  double ControlChange(EControlChangeMsg idx) const;      // return [0, 1], -1 if NA.
-  static bool ControlChangeOnOff(double msgValue) { return (msgValue >= 0.5); }  // true = on.
+  double ControlChange(EControlChangeMsg idx) const;///< return [0, 1], -1 if NA.
+  static bool ControlChangeOnOff(double msgValue) { return (msgValue >= 0.5); } ///< true = on.
   void Clear();
   void LogMsg();
 };
 
+/// Song Timing info sdtructure.Contains tempo, signature, sample and ppq position, cycle and last bar information.
 struct ITimeInfo
 {
   double mTempo;
@@ -429,6 +453,7 @@ struct ITimeInfo
   }
 };
 
+/// MIDI SysEx buffer structure
 struct ISysEx
 {
   int mOffset, mSize;
@@ -443,6 +468,7 @@ struct ISysEx
 const int MAX_PRESET_NAME_LEN = 256;
 #define UNUSED_PRESET_NAME "empty"
 
+/// Preset chunk data structure
 struct IPreset
 {
   bool mInitialized;
@@ -457,6 +483,7 @@ struct IPreset
   }
 };
 
+/// Convenient key enums
 enum
 {
   KEY_SPACE,

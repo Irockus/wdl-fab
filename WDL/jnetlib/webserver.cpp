@@ -13,19 +13,19 @@
 #include "jnetlib.h"
 #include "webserver.h"
 
-class WS_ItemList 
+class WS_ItemList
 {
-  public:
-    WS_ItemList() { m_size=0; m_list=0; }
-    ~WS_ItemList() { ::free(m_list); }
+public:
+  WS_ItemList() { m_size=0; m_list=0; }
+  ~WS_ItemList() { ::free(m_list); }
 
-    void *Add(void *i);
-    void *Get(int w);
-    void Del(int idx);
-    int GetSize(void) { return m_size; }
-  protected:
-    void **m_list;
-    int m_size;
+  void *Add(void *i);
+  void *Get(int w);
+  void Del(int idx);
+  int GetSize(void) { return m_size; }
+protected:
+  void **m_list;
+  int m_size;
 };
 
 class WS_conInst
@@ -191,7 +191,7 @@ void WebServerBaseClass::run(void)
     if (rv<0)
     {
       JNL_IConnection *c=ci->m_serv.steal_con();
-      if (c) 
+      if (c)
       {
         if (c->get_state() == JNL_Connection::STATE_CONNECTED)
           attachConnection(c,ci->m_port);
@@ -218,7 +218,7 @@ int WebServerBaseClass::run_connection(WS_conInst *con)
   if (s < 2)
   {
     // return 1 if we timed out
-    return time(NULL)-con->m_connect_time > m_timeout_s;    
+    return time(NULL)-con->m_connect_time > m_timeout_s;
   }
   if (s < 3)
   {
@@ -227,7 +227,7 @@ int WebServerBaseClass::run_connection(WS_conInst *con)
   }
   if (s < 4)
   {
-    if (!con->m_pagegen) 
+    if (!con->m_pagegen)
     {
       if (con->m_serv.canKeepAlive()) return -1;
 
@@ -260,15 +260,15 @@ void WebServerBaseClass::url_encode(const char *in, char *out, int max_out)
   while (*in && max_out > 4)
   {
     if ((*in >= 'A' && *in <= 'Z')||
-	      (*in >= 'a' && *in <= 'z')||
-	      (*in >= '0' && *in <= '9')|| *in == '.' || *in == '_' || *in == '-') 
+        (*in >= 'a' && *in <= 'z')||
+        (*in >= '0' && *in <= '9')|| *in == '.' || *in == '_' || *in == '-')
     {
       *out++=*in++;
       max_out--;
     }
     else
-	  {
-  	  int i=*in++;
+    {
+      int i=*in++;
       *out++ = '%';
       int b=(i>>4)&15;
       if (b < 10) *out++='0'+b;
@@ -277,7 +277,7 @@ void WebServerBaseClass::url_encode(const char *in, char *out, int max_out)
       if (b < 10) *out++='0'+b;
       else *out++='A'+b-10;
       max_out-=3;
-	  }
+    }
   }
   *out=0;
 }
@@ -287,30 +287,30 @@ void WebServerBaseClass::url_decode(const char *in, char *out, int maxlen)
 {
   while (*in && maxlen>1)
   {
-    if (*in == '+') 
+    if (*in == '+')
     {
       in++;
       *out++=' ';
     }
-	  else if (*in == '%' && in[1] != '%' && in[1])
-	  {
-		  int a=0;
-		  int b=0;
-		  for ( b = 0; b < 2; b ++)
-		  {
-			  int r=in[1+b];
-			  if (r>='0'&&r<='9') r-='0';
-			  else if (r>='a'&&r<='z') r-='a'-10;
-			  else if (r>='A'&&r<='Z') r-='A'-10;
-			  else break;
-			  a*=16;
-			  a+=r;
-		  }
-		  if (b < 2) *out++=*in++;
-		  else { *out++=a; in += 3;}
-	  }
-	  else *out++=*in++;
-	  maxlen--;
+    else if (*in == '%' && in[1] != '%' && in[1])
+    {
+      int a=0;
+      int b=0;
+      for ( b = 0; b < 2; b ++)
+      {
+        int r=in[1+b];
+        if (r>='0'&&r<='9') r-='0';
+        else if (r>='a'&&r<='z') r-='a'-10;
+        else if (r>='A'&&r<='Z') r-='A'-10;
+        else break;
+        a*=16;
+        a+=r;
+      }
+      if (b < 2) *out++=*in++;
+      else { *out++=a; in += 3;}
+    }
+    else *out++=*in++;
+    maxlen--;
   }
   *out=0;
 }
@@ -336,7 +336,7 @@ void WebServerBaseClass::base64decode(const char *src, char *dest, int destsize)
 
     accum <<= 6;
     accum |= x;
-    nbits += 6;   
+    nbits += 6;
 
     while (nbits >= 8)
     {
@@ -372,13 +372,13 @@ void WebServerBaseClass::base64encode(const char *in, char *out)
   if (shift == 4)
   {
     *out++ = alphabet[(accum & 0xF)<<2];
-    *out++='=';  
+    *out++='=';
   }
   else if (shift == 2)
   {
     *out++ = alphabet[(accum & 0x3)<<4];
-    *out++='=';  
-    *out++='=';  
+    *out++='=';
+    *out++='=';
   }
 
   *out++=0;

@@ -7,6 +7,7 @@
 #include <windowsx.h>
 #include <winuser.h>
 
+/// Concrete IGraphics implementation for Windows
 class IGraphicsWin : public IGraphics
 {
 public:
@@ -28,7 +29,7 @@ public:
   void* OpenWindow(void* pParentWnd);
   void CloseWindow();
   bool WindowIsOpen() { return (mPlugWnd); }
-  
+
   void UpdateTooltips() {}
 
   void HostPath(WDL_String* pPath);

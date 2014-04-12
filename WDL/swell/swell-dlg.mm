@@ -28,7 +28,7 @@ bool SWELL_owned_windows_levelincrease=false;
 #define NSColorFromCol(a) [NSColor colorWithCalibratedRed:GetRValue(a)/255.0f green:GetGValue(a)/255.0f blue:GetBValue(a)/255.0f alpha:1.0f]
 extern int g_swell_terminating;
 
-static LRESULT sendSwellMessage(id obj, UINT uMsg, WPARAM wParam, LPARAM lParam)
+static LRESULT sendSwellDlgMessage(id obj, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   if (obj && [obj respondsToSelector:@selector(onSwellMessage:p1:p2:)])
     return [(SWELL_hwndChild *)obj onSwellMessage:uMsg p1:wParam p2:lParam];
@@ -42,7 +42,7 @@ static BOOL Is105Plus()
   {
     SInt32 v=0x1040;
     Gestalt(gestaltSystemVersion,&v);
-    is105 = v>=0x1050 ? 1 : -1;    
+    is105 = v>=0x1050 ? 1 : -1;
   }
   return is105>0;
 }
@@ -71,41 +71,41 @@ static void swellRenderOptimizely(int passflags, SWELL_hwndChild *view, HDC hdc,
 static LRESULT SWELL_SendMouseMessage(NSView *slf, int msg, NSEvent *event);
 static LRESULT SWELL_SendMouseMessageImpl(SWELL_hwndChild *slf, int msg, NSEvent *theEvent)
 {
- 
+
   NSView *capv=(NSView *)GetCapture();
   if (capv && capv != slf && [capv window] == [slf window] && [capv isKindOfClass:[SWELL_hwndChild class]])
     return SWELL_SendMouseMessage((SWELL_hwndChild*)capv,msg,theEvent);
-  
+
   if (slf->m_hashaddestroy||!slf->m_wndproc) return -1;
-  
+
   NSPoint swellProcessMouseEvent(int msg, NSView *view, NSEvent *event);
-  
+
   NSPoint p = swellProcessMouseEvent(msg,slf,theEvent);
-  unsigned short xpos=(int)floor(p.x); 
+  unsigned short xpos=(int)floor(p.x);
   unsigned short ypos=(int)floor(p.y);
-  
+
   LRESULT htc=HTCLIENT;
-  if (msg != WM_MOUSEWHEEL && msg != WM_MOUSEHWHEEL && !capv) 
-  { 
-    DWORD p=GetMessagePos(); 
-    htc=slf->m_wndproc((HWND)slf,WM_NCHITTEST,0,p); 
+  if (msg != WM_MOUSEWHEEL && msg != WM_MOUSEHWHEEL && !capv)
+  {
+    DWORD p=GetMessagePos();
+    htc=slf->m_wndproc((HWND)slf,WM_NCHITTEST,0,p);
     if (slf->m_hashaddestroy||!slf->m_wndproc) return -1; // if somehow WM_NCHITTEST destroyed us, bail
-    
-    if (htc!=HTCLIENT) 
-    { 
-      if (msg==WM_MOUSEMOVE) return slf->m_wndproc((HWND)slf,WM_NCMOUSEMOVE,htc,p); 
-      if (msg==WM_LBUTTONUP) return slf->m_wndproc((HWND)slf,WM_NCLBUTTONUP,htc,p); 
-      if (msg==WM_LBUTTONDOWN) return slf->m_wndproc((HWND)slf,WM_NCLBUTTONDOWN,htc,p); 
-      if (msg==WM_LBUTTONDBLCLK) return slf->m_wndproc((HWND)slf,WM_NCLBUTTONDBLCLK,htc,p); 
-      if (msg==WM_RBUTTONUP) return slf->m_wndproc((HWND)slf,WM_NCRBUTTONUP,htc,p); 
-      if (msg==WM_RBUTTONDOWN) return slf->m_wndproc((HWND)slf,WM_NCRBUTTONDOWN,htc,p); 
-      if (msg==WM_RBUTTONDBLCLK) return slf->m_wndproc((HWND)slf,WM_NCRBUTTONDBLCLK,htc,p); 
-      if (msg==WM_MBUTTONUP) return slf->m_wndproc((HWND)slf,WM_NCMBUTTONUP,htc,p); 
-      if (msg==WM_MBUTTONDOWN) return slf->m_wndproc((HWND)slf,WM_NCMBUTTONDOWN,htc,p); 
-      if (msg==WM_MBUTTONDBLCLK) return slf->m_wndproc((HWND)slf,WM_NCMBUTTONDBLCLK,htc,p); 
-    } 
-  } 
-  
+
+    if (htc!=HTCLIENT)
+    {
+      if (msg==WM_MOUSEMOVE) return slf->m_wndproc((HWND)slf,WM_NCMOUSEMOVE,htc,p);
+      if (msg==WM_LBUTTONUP) return slf->m_wndproc((HWND)slf,WM_NCLBUTTONUP,htc,p);
+      if (msg==WM_LBUTTONDOWN) return slf->m_wndproc((HWND)slf,WM_NCLBUTTONDOWN,htc,p);
+      if (msg==WM_LBUTTONDBLCLK) return slf->m_wndproc((HWND)slf,WM_NCLBUTTONDBLCLK,htc,p);
+      if (msg==WM_RBUTTONUP) return slf->m_wndproc((HWND)slf,WM_NCRBUTTONUP,htc,p);
+      if (msg==WM_RBUTTONDOWN) return slf->m_wndproc((HWND)slf,WM_NCRBUTTONDOWN,htc,p);
+      if (msg==WM_RBUTTONDBLCLK) return slf->m_wndproc((HWND)slf,WM_NCRBUTTONDBLCLK,htc,p);
+      if (msg==WM_MBUTTONUP) return slf->m_wndproc((HWND)slf,WM_NCMBUTTONUP,htc,p);
+      if (msg==WM_MBUTTONDOWN) return slf->m_wndproc((HWND)slf,WM_NCMBUTTONDOWN,htc,p);
+      if (msg==WM_MBUTTONDBLCLK) return slf->m_wndproc((HWND)slf,WM_NCMBUTTONDBLCLK,htc,p);
+    }
+  }
+
   int l=0;
   if (msg == WM_MOUSEWHEEL || msg == WM_MOUSEHWHEEL)
   {
@@ -113,23 +113,25 @@ static LRESULT SWELL_SendMouseMessageImpl(SWELL_hwndChild *slf, int msg, NSEvent
     //if (!dy) dy=[theEvent deltaX]; // shift+mousewheel sends deltaX instead of deltaY
     l = (int)(dw*60.0);
     l <<= 16;
-    
+
     // put todo: modifiers into low word of l?
-    
+
     POINT p;
     GetCursorPos(&p);
     return slf->m_wndproc((HWND)slf,msg,l,(p.x&0xffff) + (p.y<<16));
   }
-  
+
   LRESULT ret=slf->m_wndproc((HWND)slf,msg,l,(xpos&0xffff) + (ypos<<16));
-  
-  if (msg==WM_LBUTTONUP || msg==WM_RBUTTONUP || msg==WM_MOUSEMOVE || msg==WM_MBUTTONUP) {
-    if (!GetCapture() && (slf->m_hashaddestroy || !slf->m_wndproc || !slf->m_wndproc((HWND)slf,WM_SETCURSOR,(WPARAM)slf,htc | (msg<<16)))) {
+
+  if (msg==WM_LBUTTONUP || msg==WM_RBUTTONUP || msg==WM_MOUSEMOVE || msg==WM_MBUTTONUP)
+  {
+    if (!GetCapture() && (slf->m_hashaddestroy || !slf->m_wndproc || !slf->m_wndproc((HWND)slf,WM_SETCURSOR,(WPARAM)slf,htc | (msg<<16))))
+    {
       NSCursor *arr= [NSCursor arrowCursor];
       if (GetCursor() != (HCURSOR)arr) SetCursor((HCURSOR)arr);
     }
   }
-  return ret;  
+  return ret;
 }
 static LRESULT SWELL_SendMouseMessage(NSView *slf, int msg, NSEvent *event)
 {
@@ -144,7 +146,7 @@ void SWELL_DoDialogColorUpdates(HWND hwnd, DLGPROC d, bool isUpdate)
 {
   extern HDC__ *SWELL_GDP_CTX_NEW();
   NSArray *children = [(NSView *)hwnd subviews];
-  
+
   if (!d || !children || ![children count]) return;
 
   int had_flags=0;
@@ -152,7 +154,7 @@ void SWELL_DoDialogColorUpdates(HWND hwnd, DLGPROC d, bool isUpdate)
   NSColor *staticFg=NULL; // had_flags&1, WM_CTLCOLORSTATIC
 //  NSColor *editFg=NULL, *editBg=NULL; // had_flags&2, WM_CTLCOLOREDIT
   NSColor *buttonFg=NULL; // had_flags&4, WM_CTLCOLORBTN
-      
+
   int x;
   for (x = 0; x < [children count]; x ++)
   {
@@ -169,7 +171,7 @@ void SWELL_DoDialogColorUpdates(HWND hwnd, DLGPROC d, bool isUpdate)
           {
             d(hwnd,WM_CTLCOLORBTN,(WPARAM)c,(LPARAM)ch);
             if (c->curtextcol) buttonFg=NSColorFromCol(c->cur_text_color_int);
-            else if (isUpdate) buttonFg = [NSColor textColor]; // todo some other col?              
+            else if (isUpdate) buttonFg = [NSColor textColor]; // todo some other col?
             if (buttonFg) [buttonFg retain];
 
             SWELL_DeleteGfxContext((HDC)c);
@@ -179,7 +181,7 @@ void SWELL_DoDialogColorUpdates(HWND hwnd, DLGPROC d, bool isUpdate)
       }
       else if ([ch isKindOfClass:[NSTextField class]] || [ch isKindOfClass:[NSBox class]])
       {
-        bool isbox = ([ch isKindOfClass:[NSBox class]]);        
+        bool isbox = ([ch isKindOfClass:[NSBox class]]);
         if (!isbox && [(NSTextField *)ch isEditable])
         {
 #if 0 // no color overrides for editable text fields
@@ -195,9 +197,9 @@ void SWELL_DoDialogColorUpdates(HWND hwnd, DLGPROC d, bool isUpdate)
                 editFg=NSColorFromCol(c->cur_text_color_int);
                 editBg=[NSColor colorWithCalibratedRed:GetRValue(c->curbkcol)/255.0f green:GetGValue(c->curbkcol)/255.0f blue:GetBValue(c->curbkcol)/255.0f alpha:1.0f];
               }
-              else if (isUpdate) 
+              else if (isUpdate)
               {
-                editFg = [NSColor textColor]; 
+                editFg = [NSColor textColor];
                 editBg = [NSColor textBackgroundColor];
               }
               if (editFg) [editFg retain];
@@ -205,7 +207,7 @@ void SWELL_DoDialogColorUpdates(HWND hwnd, DLGPROC d, bool isUpdate)
               SWELL_DeleteGfxContext((HDC)c);
             }
           }
-          if (editFg) [(NSTextField*)ch setTextColor:editFg]; 
+          if (editFg) [(NSTextField*)ch setTextColor:editFg];
           if (editBg) [(NSTextField*)ch setBackgroundColor:editBg];
 #endif
         }
@@ -219,9 +221,9 @@ void SWELL_DoDialogColorUpdates(HWND hwnd, DLGPROC d, bool isUpdate)
             {
               d(hwnd,WM_CTLCOLORSTATIC,(WPARAM)c,(LPARAM)ch);
               if (c->curtextcol) staticFg=NSColorFromCol(c->cur_text_color_int);
-              else if (isUpdate) 
+              else if (isUpdate)
               {
-                staticFg = [NSColor textColor]; 
+                staticFg = [NSColor textColor];
               }
               if (staticFg) [staticFg retain];
               SWELL_DeleteGfxContext((HDC)c);
@@ -229,17 +231,17 @@ void SWELL_DoDialogColorUpdates(HWND hwnd, DLGPROC d, bool isUpdate)
           }
           if (staticFg)
           {
-            if (isbox) 
+            if (isbox)
             {
               [[(NSBox*)ch titleCell] setTextColor:staticFg];
               //[(NSBox*)ch setBorderColor:staticFg]; // see comment at SWELL_MakeGroupBox
             }
             else
             {
-              [(NSTextField*)ch setTextColor:staticFg]; 
+              [(NSTextField*)ch setTextColor:staticFg];
             }
           }
-        } // noneditable           
+        } // noneditable
       }  //nstextfield
     } // child
   }     // children
@@ -247,12 +249,12 @@ void SWELL_DoDialogColorUpdates(HWND hwnd, DLGPROC d, bool isUpdate)
   if (staticFg) [staticFg release];
 //  if (editFg) [editFg release];
 //  if (editBg) [editBg release];
-}  
+}
 
 static LRESULT SwellDialogDefaultWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   DLGPROC d=(DLGPROC)GetWindowLong(hwnd,DWL_DLGPROC);
-  if (d) 
+  if (d)
   {
     if (uMsg == WM_PAINT)
     {
@@ -266,12 +268,12 @@ static LRESULT SwellDialogDefaultWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam,
           PAINTSTRUCT ps;
           if (BeginPaint(hwnd,&ps))
           {
-            RECT r=ps.rcPaint;          
+            RECT r=ps.rcPaint;
             if (!nommc && !(((SWELL_hwndChild*)hwnd)->m_isdirty&1))
             {
               NSArray *ar = [(NSView *)hwnd subviews];
               int x,n=[ar count];
-              for (x=0;x<n;x++)
+              for (x=0; x<n; x++)
               {
                 NSView *v = [ar objectAtIndex:x];
                 if (![v isOpaque])
@@ -279,17 +281,17 @@ static LRESULT SwellDialogDefaultWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam,
                   NSRect f = [v frame];
                   if (NSIntersectsRect(f,NSMakeRect(r.left,r.top,r.right-r.left,r.bottom-r.top))) break;
                 }
-              }     
+              }
               if (x>=n) r.right=r.left; // disable drawing
             }
-            
+
             if (r.right > r.left && r.bottom > r.top)
             {
               HBRUSH hbrush = (HBRUSH) d(hwnd,WM_CTLCOLORDLG,(WPARAM)ps.hdc,(LPARAM)hwnd);
               if (hbrush && hbrush != (HBRUSH)1)
               {
-    //            char bf[512];
-  //              GetWindowText(hwnd,bf,sizeof(bf));
+                //            char bf[512];
+                //              GetWindowText(hwnd,bf,sizeof(bf));
 //                static int a;
                 //  printf("%d filled custom bg, (%p %s) %d %d %d %d\n",a++,hwnd,bf,r.left,r.top,r.right-r.left,r.bottom-r.top);
                 FillRect(ps.hdc,&r,hbrush);
@@ -304,14 +306,14 @@ static LRESULT SwellDialogDefaultWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam,
               }
             }
             EndPaint(hwnd,&ps);
-          }        
+          }
         }
       }
     }
-    
-    LRESULT r=(LRESULT) d(hwnd,uMsg,wParam,lParam);   
-   
-    if (r) return r; 
+
+    LRESULT r=(LRESULT) d(hwnd,uMsg,wParam,lParam);
+
+    if (r) return r;
   }
   return DefWindowProc(hwnd,uMsg,wParam,lParam);
 }
@@ -332,7 +334,7 @@ static void DoPaintStuff(WNDPROC wndproc, HWND hwnd, HDC hdc, NSRect *modrect)
   RECT r;
   GetWindowRect(hwnd,&r);
   if (r.top>r.bottom) { int tmp=r.top; r.top=r.bottom; r.bottom=tmp; }
-  NCCALCSIZE_PARAMS p={{r,},};
+  NCCALCSIZE_PARAMS p= {{r,},};
   wndproc(hwnd,WM_NCCALCSIZE,FALSE,(LPARAM)&p);
   RECT r2=r;
   r=p.rgrc[0];
@@ -340,7 +342,7 @@ static void DoPaintStuff(WNDPROC wndproc, HWND hwnd, HDC hdc, NSRect *modrect)
   wndproc(hwnd,WM_NCPAINT,(WPARAM)1,0);
   modrect->origin.x += r.left-r2.left;
   modrect->origin.y += r.top-r2.top;
-    
+
   if (modrect->size.width >= 1 && modrect->size.height >= 1)
   {
     int a=0;
@@ -392,7 +394,7 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
         {
           bestwnd=wnd;
           break;
-        }    
+        }
       }
     }
   }
@@ -416,15 +418,15 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
     NSView *v=[cv hitTest:p];
     if (v)
     {
-      theEvent = [NSEvent mouseEventWithType:[theEvent type] 
-                            location:p 
-                            modifierFlags:[theEvent modifierFlags]
-                            timestamp:[theEvent timestamp]
-                            windowNumber:[bestwnd windowNumber] 
-                            context:[bestwnd graphicsContext] 
-                            eventNumber:[theEvent eventNumber] 
-                            clickCount:[theEvent clickCount]
-                            pressure:[theEvent pressure]];
+      theEvent = [NSEvent mouseEventWithType:[theEvent type]
+                  location:p
+                  modifierFlags:[theEvent modifierFlags]
+                  timestamp:[theEvent timestamp]
+                  windowNumber:[bestwnd windowNumber]
+                  context:[bestwnd graphicsContext]
+                  eventNumber:[theEvent eventNumber]
+                  clickCount:[theEvent clickCount]
+                  pressure:[theEvent pressure]];
       __nofwd=1;
       [v mouseMoved:theEvent];
       __nofwd=0;
@@ -444,7 +446,7 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
 
 
 
-@implementation SWELL_hwndChild : NSView 
+@implementation SWELL_hwndChild : NSView
 
 -(void)viewDidHide
 {
@@ -456,12 +458,12 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
 }
 
 - (void)SWELL_Timer:(id)sender
-{ 
+{
   extern HWND g_swell_only_timerhwnd;
   if (g_swell_only_timerhwnd && (HWND)self != g_swell_only_timerhwnd) return;
-  
+
   id uinfo=[sender userInfo];
-  if ([uinfo respondsToSelector:@selector(getValue)]) 
+  if ([uinfo respondsToSelector:@selector(getValue)])
   {
     WPARAM idx=(WPARAM)[(SWELL_DataHold*)uinfo getValue];
     if (m_wndproc&&!m_hashaddestroy) m_wndproc((HWND)self,WM_TIMER,idx,0);
@@ -476,38 +478,38 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
   {
     if (m_hashaddestroy==2 || msg == WM_DESTROY || msg == WM_CAPTURECHANGED) return 0;
   }
-  
-  
+
+
   if (msg==WM_DESTROY) // only ever called once per window
-  { 
-    m_hashaddestroy=1; 
-    if (GetCapture()==(HWND)self) ReleaseCapture(); 
-    SWELL_MessageQueue_Clear((HWND)self); 
+  {
+    m_hashaddestroy=1;
+    if (GetCapture()==(HWND)self) ReleaseCapture();
+    SWELL_MessageQueue_Clear((HWND)self);
 
     LRESULT ret=m_wndproc ? m_wndproc((HWND)self,msg,wParam,lParam) : 0;
 
     if ([[self window] contentView] == self && [[self window] respondsToSelector:@selector(swellDestroyAllOwnedWindows)])
       [(SWELL_ModelessWindow*)[self window] swellDestroyAllOwnedWindows];
 
-    if (GetCapture()==(HWND)self) ReleaseCapture(); 
-    SWELL_MessageQueue_Clear((HWND)self); 
-    
-    if (m_menu) 
+    if (GetCapture()==(HWND)self) ReleaseCapture();
+    SWELL_MessageQueue_Clear((HWND)self);
+
+    if (m_menu)
     {
       if ((HMENU)[NSApp mainMenu] == m_menu && !g_swell_terminating) [NSApp setMainMenu:nil];
       SWELL_SetMenuDestination(m_menu,NULL);
-      [(NSMenu *)m_menu release]; 
+      [(NSMenu *)m_menu release];
       m_menu=0;
     }
     NSView *v=self;
     NSArray *ar;
-    if (v && [v isKindOfClass:[NSView class]] && (ar=[v subviews]) && [ar count]>0) 
+    if (v && [v isKindOfClass:[NSView class]] && (ar=[v subviews]) && [ar count]>0)
     {
-      int x; 
-      for (x = 0; x < [ar count]; x ++) 
+      int x;
+      for (x = 0; x < [ar count]; x ++)
       {
-        NSView *sv=[ar objectAtIndex:x]; 
-        sendSwellMessage(sv,WM_DESTROY,0,0);
+        NSView *sv=[ar objectAtIndex:x];
+        sendSwellDlgMessage(sv,WM_DESTROY,0,0);
       }
     }
     KillTimer((HWND)self,~(UINT_PTR)0);
@@ -515,21 +517,21 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
 
     return ret;
   }
-  
+
   return m_wndproc ? m_wndproc((HWND)self,msg,wParam,lParam) : 0;
 }
 
 - (void) setEnabled:(BOOL)en
-{ 
-  m_enabled=en; 
-} 
+{
+  m_enabled=en;
+}
 
-- (void)tableView:(NSTableView *)aTableView willDisplayCell:(id)aCell forTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex 
+- (void)tableView:(NSTableView *)aTableView willDisplayCell:(id)aCell forTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex
 {
   if ([aTableView isKindOfClass:[SWELL_ListView class]])
   {
     SWELL_ListView *f = (SWELL_ListView *)aTableView;
-    if (f->m_selColors&&[aTableView isRowSelected:rowIndex]) 
+    if (f->m_selColors&&[aTableView isRowSelected:rowIndex])
     {
       int cnt = [f->m_selColors count];
       int offs = GetFocus() == (HWND)aTableView ? 0 : 2;
@@ -607,8 +609,8 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
 -(void) swellOnControlDoubleClick:(id)sender
 {
   if (!m_wndproc||m_hashaddestroy) return;
-  
-  if ([sender isKindOfClass:[NSTableView class]] && 
+
+  if ([sender isKindOfClass:[NSTableView class]] &&
       [sender respondsToSelector:@selector(getSwellNotificationMode)])
   {
     if ([(SWELL_ListView*)sender getSwellNotificationMode])
@@ -616,16 +618,16 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
     else
     {
       SWELL_ListView* v = (SWELL_ListView*)sender;
-      NMLISTVIEW nmlv={{(HWND)sender,[(NSControl*)sender tag], NM_DBLCLK}, [v clickedRow], [sender clickedColumn], };
+      NMLISTVIEW nmlv= {{(HWND)sender,[(NSControl*)sender tag], NM_DBLCLK}, [v clickedRow], [sender clickedColumn], };
       SWELL_ListView_Row *row=v->m_items->Get(nmlv.iItem);
       if (row)
-       nmlv.lParam = row->m_param;
+        nmlv.lParam = row->m_param;
       m_wndproc((HWND)self,WM_NOTIFY,[(NSControl*)sender tag],(LPARAM)&nmlv);
     }
   }
   else
-  {   
-    NMCLICK nm={{(HWND)sender,[(NSControl*)sender tag],NM_DBLCLK}, }; 
+  {
+    NMCLICK nm= {{(HWND)sender,[(NSControl*)sender tag],NM_DBLCLK}, };
     m_wndproc((HWND)self,WM_NOTIFY,[(NSControl*)sender tag],(LPARAM)&nm);
   }
 }
@@ -633,35 +635,35 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification
 {
   NSOutlineView *sender=[notification object];
-  NMTREEVIEW nmhdr={{(HWND)sender,(int)[sender tag],TVN_SELCHANGED},0,};  // todo: better treeview notifications
+  NMTREEVIEW nmhdr= {{(HWND)sender,(int)[sender tag],TVN_SELCHANGED},0,}; // todo: better treeview notifications
   if (m_wndproc&&!m_hashaddestroy) m_wndproc((HWND)self,WM_NOTIFY,(int)[sender tag],(LPARAM)&nmhdr);
 }
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification
 {
   NSTableView *sender=[aNotification object];
-      if ([sender respondsToSelector:@selector(getSwellNotificationMode)] && [(SWELL_ListView*)sender getSwellNotificationMode])
-      {
-        if (m_wndproc&&!m_hashaddestroy) m_wndproc((HWND)self,WM_COMMAND,(int)[sender tag] | (LBN_SELCHANGE<<16),(LPARAM)sender);
-      }
-      else
-      {
-        NMLISTVIEW nmhdr={{(HWND)sender,(int)[sender tag],LVN_ITEMCHANGED},(int)[sender selectedRow],0}; 
-        if (m_wndproc&&!m_hashaddestroy) m_wndproc((HWND)self,WM_NOTIFY,(int)[sender tag],(LPARAM)&nmhdr);
-        
-      }
+  if ([sender respondsToSelector:@selector(getSwellNotificationMode)] && [(SWELL_ListView*)sender getSwellNotificationMode])
+  {
+    if (m_wndproc&&!m_hashaddestroy) m_wndproc((HWND)self,WM_COMMAND,(int)[sender tag] | (LBN_SELCHANGE<<16),(LPARAM)sender);
+  }
+  else
+  {
+    NMLISTVIEW nmhdr= {{(HWND)sender,(int)[sender tag],LVN_ITEMCHANGED},(int)[sender selectedRow],0};
+    if (m_wndproc&&!m_hashaddestroy) m_wndproc((HWND)self,WM_NOTIFY,(int)[sender tag],(LPARAM)&nmhdr);
+
+  }
 }
 
 - (void)tableView:(NSTableView *)tableView didClickTableColumn:(NSTableColumn *)tableColumn
 {
-  if ([tableView isKindOfClass:[SWELL_ListView class]] && 
-      ((SWELL_ListView *)tableView)->m_cols && 
+  if ([tableView isKindOfClass:[SWELL_ListView class]] &&
+      ((SWELL_ListView *)tableView)->m_cols &&
       !((SWELL_ListView *)tableView)->m_lbMode &&
       !(((SWELL_ListView *)tableView)->style & LVS_NOSORTHEADER)
-      )
+     )
   {
     int col=((SWELL_ListView *)tableView)->m_cols->Find(tableColumn);
 
-    NMLISTVIEW hdr={{(HWND)tableView,[tableView tag],LVN_COLUMNCLICK},-1,col};
+    NMLISTVIEW hdr= {{(HWND)tableView,[tableView tag],LVN_COLUMNCLICK},-1,col};
     if (m_wndproc&&!m_hashaddestroy) m_wndproc((HWND)self,WM_NOTIFY,[tableView tag], (LPARAM) &hdr);
   }
 }
@@ -669,7 +671,7 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
 -(void) onSwellCommand:(id)sender
 {
   if (!m_wndproc || m_hashaddestroy) return;
-  
+
   if ([sender isKindOfClass:[NSSlider class]])
   {
     m_wndproc((HWND)self,WM_HSCROLL,0,(LPARAM)sender);
@@ -677,32 +679,32 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
   }
   else if ([sender isKindOfClass:[NSTableView class]])
   {
-  #if 0
+#if 0
     if ([sender isKindOfClass:[NSOutlineView class]])
     {
 //      NMTREEVIEW nmhdr={{(HWND)sender,(int)[sender tag],TVN_SELCHANGED},0,};  // todo: better treeview notifications
-  //    m_wndproc((HWND)self,WM_NOTIFY,(int)[sender tag],(LPARAM)&nmhdr);
+      //    m_wndproc((HWND)self,WM_NOTIFY,(int)[sender tag],(LPARAM)&nmhdr);
     }
     else
     {
-    
+
       if ([sender respondsToSelector:@selector(getSwellNotificationMode)] && [(SWELL_ListView*)sender getSwellNotificationMode])
       {
         m_wndproc((HWND)self,WM_COMMAND,(int)[sender tag] | (LBN_SELCHANGE<<16),(LPARAM)sender);
       }
       else
       {
-        NMLISTVIEW nmhdr={{(HWND)sender,(int)[sender tag],LVN_ITEMCHANGED},(int)[sender clickedRow],0}; 
+        NMLISTVIEW nmhdr= {{(HWND)sender,(int)[sender tag],LVN_ITEMCHANGED},(int)[sender clickedRow],0};
         m_wndproc((HWND)self,WM_NOTIFY,(int)[sender tag],(LPARAM)&nmhdr);
       }
     }
-    #endif
+#endif
   }
   else
   {
     int cw=0;
     if ([sender isKindOfClass:[NSComboBox class]]) return; // combo boxes will use delegate messages
-    else if ([sender isKindOfClass:[NSPopUpButton class]]) 
+    else if ([sender isKindOfClass:[NSPopUpButton class]])
     {
       cw=CBN_SELCHANGE;
     }
@@ -724,21 +726,21 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
               int n=[ar count];
               int a=x;
               if (!(rf&2)) while (--a >= 0)
-              {
-                NSView *item=[ar objectAtIndex:a];
-                if (!item || ![item isKindOfClass:[SWELL_Button class]]) break; // we may want to allow other controls in there, but for now if it's non-button we're done
-                int bla=(int)[(SWELL_Button*)item swellGetRadioFlags]; 
-                if (bla&1) if ([(NSButton *)item state]!=NSOffState) [(NSButton *)item setState:NSOffState];                
-                if (bla&2) break;
-              }
+                {
+                  NSView *item=[ar objectAtIndex:a];
+                  if (!item || ![item isKindOfClass:[SWELL_Button class]]) break; // we may want to allow other controls in there, but for now if it's non-button we're done
+                  int bla=(int)[(SWELL_Button*)item swellGetRadioFlags];
+                  if (bla&1) if ([(NSButton *)item state]!=NSOffState) [(NSButton *)item setState:NSOffState];
+                  if (bla&2) break;
+                }
               a=x;
               while (++a < n)
               {
                 NSView *item=[ar objectAtIndex:a];
                 if (!item || ![item isKindOfClass:[SWELL_Button class]]) break; // we may want to allow other controls in there, but for now if it's non-button we're done
                 int bla=(int)[(SWELL_Button*)item swellGetRadioFlags];
-                if (bla&2) break;              
-                if (bla&1) if ([(NSButton *)item state]!=NSOffState) [(NSButton *)item setState:NSOffState];                
+                if (bla&2) break;
+                if (bla&1) if ([(NSButton *)item state]!=NSOffState) [(NSButton *)item setState:NSOffState];
               }
             }
           }
@@ -764,7 +766,7 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
 {
 
   int x;
-  for (x=0;x<sizeof(m_access_cacheptrs)/sizeof(m_access_cacheptrs[0]);x ++)
+  for (x=0; x<sizeof(m_access_cacheptrs)/sizeof(m_access_cacheptrs[0]); x ++)
   {
     if (m_access_cacheptrs[x]) [m_access_cacheptrs[x] release];
     m_access_cacheptrs[x]=0;
@@ -806,11 +808,11 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
 }
 
 -(bool)swellCanPostMessage { return !m_hashaddestroy; }
--(int)swellEnumProps:(PROPENUMPROCEX)proc lp:(LPARAM)lParam 
+-(int)swellEnumProps:(PROPENUMPROCEX)proc lp:(LPARAM)lParam
 {
   WindowPropRec *p=m_props;
   if (!p) return -1;
-  while (p) 
+  while (p)
   {
     WindowPropRec *ps=p;
     p=p->_next;
@@ -819,16 +821,16 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
   return 1;
 }
 
--(void *)swellGetProp:(const char *)name wantRemove:(BOOL)rem 
+-(void *)swellGetProp:(const char *)name wantRemove:(BOOL)rem
 {
   WindowPropRec *p=m_props, *lp=NULL;
-  while (p) 
+  while (p)
   {
-    if (p->name < (void *)65536) 
+    if (p->name < (void *)65536)
     {
       if (name==p->name) break;
     }
-    else if (name >= (void *)65536) 
+    else if (name >= (void *)65536)
     {
       if (!strcmp(name,p->name)) break;
     }
@@ -836,24 +838,24 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
   }
   if (!p) return NULL;
   void *ret=p->data;
-  if (rem) 
+  if (rem)
   {
-    if (lp) lp->_next=p->_next; else m_props=p->_next; 
+    if (lp) lp->_next=p->_next; else m_props=p->_next;
     free(p);
   }
   return ret;
 }
 
--(int)swellSetProp:(const char *)name value:(void *)val 
+-(int)swellSetProp:(const char *)name value:(void *)val
 {
   WindowPropRec *p=m_props;
-  while (p) 
+  while (p)
   {
-    if (p->name < (void *)65536) 
+    if (p->name < (void *)65536)
     {
       if (name==p->name) { p->data=val; return TRUE; };
     }
-    else if (name >= (void *)65536) 
+    else if (name >= (void *)65536)
     {
       if (!strcmp(name,p->name)) { p->data=val; return TRUE; };
     }
@@ -879,9 +881,10 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
 
 -(HMENU)swellGetMenu {   return m_menu; }
 -(BOOL)swellHasBeenDestroyed { return !!m_hashaddestroy; }
--(void)swellSetMenu:(HMENU)menu {   
+-(void)swellSetMenu:(HMENU)menu
+{
   if (m_menu) SWELL_SetMenuDestination(m_menu,NULL); // don't free m_menu, but at least make it not point to us anymore
-  m_menu=menu; 
+  m_menu=menu;
   if (m_menu) SWELL_SetMenuDestination(m_menu,(HWND)self);
 }
 
@@ -909,18 +912,18 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
   m_paintctx_used=0;
   m_paintctx_hdc=0;
   m_props=0;
-  
+
   m_titlestr[0]=0;
-  
+
   m_wndproc=SwellDialogDefaultWindowProc;
-  
+
   m_isopaque = !resstate || (resstate->windowTypeFlags&SWELL_DLG_WS_OPAQUE);
   m_flip = !resstate || (resstate->windowTypeFlags&SWELL_DLG_WS_FLIPPED);
   m_supports_ddrop = resstate && (resstate->windowTypeFlags&SWELL_DLG_WS_DROPTARGET);
-  
+
   [self setHidden:YES];
-  
-  
+
+
   if ([parent isKindOfClass:[NSSavePanel class]]||[parent isKindOfClass:[NSOpenPanel class]])
   {
     [(NSSavePanel *)parent setAccessoryView:self];
@@ -930,12 +933,12 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
   {
     [(NSColorPanel *)parent setAccessoryView:self];
     [self setHidden:NO];
-  }  
+  }
   else if ([parent isKindOfClass:[NSFontPanel class]])
   {
     [(NSFontPanel *)parent setAccessoryView:self];
     [self setHidden:NO];
-  }    
+  }
   else if ([parent isKindOfClass:[NSWindow class]])
   {
     [(NSWindow *)parent setContentView:self];
@@ -945,18 +948,18 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
     [parent addSubview:self];
   }
   if (resstate) resstate->createFunc((HWND)self,resstate->windowTypeFlags);
-  
-  if (resstate) m_dlgproc=dlgproc;  
+
+  if (resstate) m_dlgproc=dlgproc;
   else if (dlgproc) m_wndproc=(WNDPROC)dlgproc;
-  
+
   if (resstate && (resstate->windowTypeFlags&SWELL_DLG_WS_DROPTARGET))
   {
     [self registerForDraggedTypes:[NSArray arrayWithObjects:NSFilenamesPboardType, NSFilesPromisePboardType, nil]];
   }
-  
+
   if (!resstate)
     m_wndproc((HWND)self,WM_CREATE,0,par);
-    
+
   if (m_dlgproc)
   {
     HWND hFoc=0;
@@ -971,13 +974,13 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
         if (v && [v acceptsFirstResponder]) hFoc=(HWND)v;
       }
     }
-    
+
     INT_PTR a;
     if ((a=m_dlgproc((HWND)self,WM_INITDIALOG,(WPARAM)hFoc,par)))
     {
       // set first responder to first item in window
       if (a == 0xbeef) hFoc = (HWND)self; // ret 0xbeef overrides to make the window itself focused (argh, need a cleaner way)
-      if (hFoc) 
+      if (hFoc)
       {
         id wnd = [self window];
         if (wnd && [wnd firstResponder] != (id)hFoc) [wnd makeFirstResponder:(id)hFoc];
@@ -996,20 +999,20 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
       // if top level dialog,always set default focus if it wasn't set
       // if this causes problems, change NSWindow to be SWELL_ModalDialog, as that would
       // only affect DialogBox() and not CreateDialog(), which might be preferable.
-      if (hFoc && parent && [self window] == (NSWindow *)parent && [(id)parent isKindOfClass:[NSWindow class]]) 
+      if (hFoc && parent && [self window] == (NSWindow *)parent && [(id)parent isKindOfClass:[NSWindow class]])
       {
         id fr = [(NSWindow *)parent firstResponder];
         if (!fr || fr == self || fr == (id)parent) [(NSWindow *)parent makeFirstResponder:(id)hFoc];
-        
+
       }
     }
-    
+
     SWELL_DoDialogColorUpdates((HWND)self,m_dlgproc,false);
   }
-  
+
 //  if (!wasHid)
   //  [self setHidden:NO];
-  
+
   return self;
 }
 
@@ -1023,17 +1026,17 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
   return m_isopaque;
 }
 
-- (void)setFrame:(NSRect)frameRect 
+- (void)setFrame:(NSRect)frameRect
 {
   [super setFrame:frameRect];
-  if (m_wndproc&&!m_hashaddestroy) m_wndproc((HWND)self,WM_SIZE,0,0); 
+  if (m_wndproc&&!m_hashaddestroy) m_wndproc((HWND)self,WM_SIZE,0,0);
   InvalidateRect(GetParent((HWND)self),NULL,FALSE);
-} 
+}
 
 - (void)keyDown:(NSEvent *)theEvent
 {
   int flag,code=SWELL_MacKeyToWindowsKey(theEvent,&flag);
-  if (!m_wndproc || m_hashaddestroy || m_wndproc((HWND)self,WM_KEYDOWN,code,flag)==69) 
+  if (!m_wndproc || m_hashaddestroy || m_wndproc((HWND)self,WM_KEYDOWN,code,flag)==69)
   {
     [super keyDown:theEvent];
   }
@@ -1042,7 +1045,7 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
 - (void)keyUp:(NSEvent *)theEvent
 {
   int flag,code=SWELL_MacKeyToWindowsKey(theEvent,&flag);
-  if (!m_wndproc || m_hashaddestroy || m_wndproc((HWND)self,WM_KEYUP,code,flag)==69) 
+  if (!m_wndproc || m_hashaddestroy || m_wndproc((HWND)self,WM_KEYUP,code,flag)==69)
   {
     [super keyUp:theEvent];
   }
@@ -1056,7 +1059,7 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
   NSView *view = [self superview];
   while (view)
   {
-    if ([view isKindOfClass:[SWELL_hwndChild class]]) 
+    if ([view isKindOfClass:[SWELL_hwndChild class]])
     {
       if (((SWELL_hwndChild *)view)->m_isdirty&2) break;
       ((SWELL_hwndChild *)view)->m_isdirty|=2;
@@ -1071,7 +1074,7 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
   NSView *view = [self superview];
   while (view)
   {
-    if ([view isKindOfClass:[SWELL_hwndChild class]]) 
+    if ([view isKindOfClass:[SWELL_hwndChild class]])
     {
       if ((((SWELL_hwndChild *)view)->m_isdirty&3)==3) break;
       ((SWELL_hwndChild *)view)->m_isdirty|=3;
@@ -1084,36 +1087,36 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
 -(void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)vr rectIsVisibleRectForView:(NSView*)v topView:(NSView *)v2
 {
 
-  
-  
+
+
   // once we figure out how to get other controls to notify their parents that the view is dirty, we can enable this for 10.4
   // 10.5+ has some nice property where it goes up the hierarchy
-  
+
 //  NSLog(@"r:%@ vr:%d v=%p tv=%p self=%p %p\n",NSStringFromRect(rect),vr,v,v2,self, [[self window] contentView]);
   if (!useNoMiddleManCocoa() || ![self isOpaque] || [[self window] contentView] != self || [self isHiddenOrHasHiddenAncestor])
   {
     [super _recursiveDisplayRectIfNeededIgnoringOpacity:rect isVisibleRect:vr rectIsVisibleRectForView:v topView:v2];
     return;
   }
-  
+
   if (!m_isdirty && ![self needsDisplay]) return;
-  
+
   const NSRect *rlist=NULL;
   NSInteger rlistcnt=0;
   [self getRectsBeingDrawn:&rlist count:&rlistcnt];
 
-  
+
   [self lockFocus];
   HDC hdc=SWELL_CreateGfxContext([NSGraphicsContext currentContext]);
-  
+
 
   const bool twoPassMode = false; // true makes it draw non-opaque items over all window backgrounds, but opaque children going last (so native controls over groups, etc)
-                                  // this is probably slower
-  
+  // this is probably slower
+
   static WDL_PtrList<void> ndlist;
   int ndlist_oldsz=ndlist.GetSize();
   swellRenderOptimizely(twoPassMode?1:3,self,hdc,false,&ndlist,rlist,rlistcnt,0,0,true);
-    
+
   while (ndlist.GetSize()>ndlist_oldsz+1)
   {
     NSView *v = (NSView *)ndlist.Get(ndlist.GetSize()-1);
@@ -1121,13 +1124,13 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
 
     int flag = (int)(INT_PTR) ndlist.Get(ndlist.GetSize()-1);
     ndlist.Delete(ndlist.GetSize()-1);
-    
+
     NSRect b = [v bounds];
-    
+
     if (rlistcnt && !(flag&1))
     {
       int x;
-      for(x=0;x<rlistcnt;x++)
+      for(x=0; x<rlistcnt; x++)
       {
         NSRect r = rlist[x];
         r.origin.x--;
@@ -1145,13 +1148,13 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
     [v setNeedsDisplay:NO];
     [v release];
   }
-  
-  
+
+
   if (twoPassMode) swellRenderOptimizely(2,self,hdc,false,&ndlist,rlist,rlistcnt,0,0,true);
   SWELL_DeleteGfxContext(hdc);
   [self unlockFocus];
   [self setNeedsDisplay:NO];
-  
+
 }
 #endif
 
@@ -1176,8 +1179,8 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
 }
 
 - (void)mouseDragged:(NSEvent *)theEvent
-{ 
-  if (!m_enabled) return;  
+{
+  if (!m_enabled) return;
 
   SWELL_SendMouseMessage(self,WM_MOUSEMOVE,theEvent);
   if (SWELL_GetLastSetCursor()!=GetCursor()) SetCursor(SWELL_GetLastSetCursor());
@@ -1185,16 +1188,17 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
 - (void)mouseMoved:(NSEvent *)theEvent
 {
   if (DelegateMouseMove(self,theEvent)) return;
-  
-  if (m_enabled) if (!GetCapture() || GetCapture()==(HWND)self) { 
-    SWELL_SendMouseMessage(self,WM_MOUSEMOVE, theEvent);
-  }
+
+  if (m_enabled) if (!GetCapture() || GetCapture()==(HWND)self)
+    {
+      SWELL_SendMouseMessage(self,WM_MOUSEMOVE, theEvent);
+    }
 //  [super mouseMoved:theEvent];
 }
 - (void)mouseUp:(NSEvent *)theEvent
 {
   if (!m_enabled) return;
-    if (m_isfakerightmouse) [self rightMouseUp:theEvent];
+  if (m_isfakerightmouse) [self rightMouseUp:theEvent];
   else SWELL_SendMouseMessage(self,WM_LBUTTONUP,theEvent);
 }
 - (void)scrollWheel:(NSEvent *)theEvent
@@ -1203,8 +1207,8 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
   if ([theEvent deltaY] != 0.0f)
   {
     SWELL_SendMouseMessage(self,WM_MOUSEWHEEL,theEvent);
-  }  
-  if ([theEvent deltaX] != 0.0f) 
+  }
+  if ([theEvent deltaX] != 0.0f)
   {
     SWELL_SendMouseMessage(self,WM_MOUSEHWHEEL,theEvent);
   }
@@ -1212,14 +1216,14 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
 - (void)mouseDown:(NSEvent *)theEvent
 {
   SWELL_FinishDragDrop();
-  if (!m_enabled) return;  
-  
+  if (!m_enabled) return;
+
   m_isfakerightmouse=0;
   if (([theEvent modifierFlags] & NSControlKeyMask) && IsRightClickEmulateEnabled())
   {
     [self rightMouseDown:theEvent];
     if ([theEvent clickCount]<2) m_isfakerightmouse=1;
-        return;
+    return;
   }
 
   SWELL_SendMouseMessage(self,([theEvent clickCount]>1 ? WM_LBUTTONDBLCLK : WM_LBUTTONDOWN) ,theEvent);
@@ -1228,7 +1232,7 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
 {
   if (!m_enabled) return;
   m_isfakerightmouse=0;
-  SWELL_SendMouseMessage(self,WM_RBUTTONUP,theEvent);  
+  SWELL_SendMouseMessage(self,WM_RBUTTONUP,theEvent);
 }
 - (void)rightMouseDown:(NSEvent *)theEvent
 {
@@ -1237,12 +1241,12 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
   {
     SetFocus((HWND)[self window]);
   }
-  SWELL_SendMouseMessage(self,([theEvent clickCount]>1 ? WM_RBUTTONDBLCLK : WM_RBUTTONDOWN),theEvent); 
-}  
+  SWELL_SendMouseMessage(self,([theEvent clickCount]>1 ? WM_RBUTTONDBLCLK : WM_RBUTTONDOWN),theEvent);
+}
 - (void)otherMouseUp:(NSEvent *)theEvent
 {
   if (!m_enabled) return;
-  SWELL_SendMouseMessage(self,WM_MBUTTONUP,theEvent);  
+  SWELL_SendMouseMessage(self,WM_MBUTTONUP,theEvent);
 }
 - (void)otherMouseDown:(NSEvent *)theEvent
 {
@@ -1250,8 +1254,8 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
   {
     SetFocus((HWND)[self window]);
   }
-  SWELL_SendMouseMessage(self,([theEvent clickCount]>1 ? WM_MBUTTONDBLCLK : WM_MBUTTONDOWN),theEvent); 
-}  
+  SWELL_SendMouseMessage(self,([theEvent clickCount]>1 ? WM_MBUTTONDBLCLK : WM_MBUTTONDOWN),theEvent);
+}
 
 // multitouch support
 
@@ -1259,15 +1263,15 @@ static void MakeGestureInfo(NSEvent* evt, GESTUREINFO* gi, HWND hwnd, int type)
 {
   memset(gi, 0, sizeof(GESTUREINFO));
   gi->cbSize = sizeof(GESTUREINFO);
-  
+
   gi->hwndTarget = hwnd;
   gi->dwID = type;
-  
-  NSWindow* wnd = [evt window];  
+
+  NSWindow* wnd = [evt window];
   NSPoint pt = [evt locationInWindow];
-  pt = [wnd convertBaseToScreen:pt];  
+  pt = [wnd convertBaseToScreen:pt];
   gi->ptsLocation.x = pt.x;
-  gi->ptsLocation.y = pt.y; 
+  gi->ptsLocation.y = pt.y;
 }
 
 - (void)magnifyWithEvent:(NSEvent*)evt
@@ -1279,61 +1283,61 @@ static void MakeGestureInfo(NSEvent* evt, GESTUREINFO* gi, HWND hwnd, int type)
   gi.ullArguments = 1024;  // arbitrary
   SendMessage((HWND)self, WM_GESTURE, 0, (LPARAM)&gi);
 
-  gi.dwFlags = GF_END;    
-  float z = [evt deltaZ]; // should be the same as 10.6 [evt magnification] 
+  gi.dwFlags = GF_END;
+  float z = [evt deltaZ]; // should be the same as 10.6 [evt magnification]
   int a = (int)(1024.0f*z+0.5);
   if (!a) a = (z >= 0.0f ? 1 : -1);
   a += 1024;
   if (a < 512) a=512;
   else if (a > 2048) a=2048;
   gi.ullArguments = a;
-  SendMessage((HWND)self, WM_GESTURE, gi.ullArguments, (LPARAM)&gi);      
+  SendMessage((HWND)self, WM_GESTURE, gi.ullArguments, (LPARAM)&gi);
 }
 
 - (void)swipeWithEvent:(NSEvent*)evt
 {
   GESTUREINFO gi;
   MakeGestureInfo(evt, &gi, (HWND) self, GID_PAN);
-  
+
   gi.dwFlags = GF_BEGIN;
   gi.ullArguments = 0; // for this gesture we only care about ptsLocation
   SendMessage((HWND)self, WM_GESTURE, 0, (LPARAM)&gi);
-  
-  gi.dwFlags = GF_END;    
+
+  gi.dwFlags = GF_END;
   NSRect r = [self bounds];
   int dx=0;
   int dy=0;
-  
+
   // for swipe events, deltaX/Y is either -1 or +1, convert to "one page"
   if ([evt deltaX] < 0.0f) dx = -r.size.width;
   else if ([evt deltaX] > 0.0f) dx = r.size.width;
   else if ([evt deltaY] < 0.0f) dy = r.size.height;
-  else if ([evt deltaY] > 0.0f) dy = -r.size.height;  
-  
+  else if ([evt deltaY] > 0.0f) dy = -r.size.height;
+
   gi.ptsLocation.x += dx;
   gi.ptsLocation.y += dy;
-  
-  SendMessage((HWND)self, WM_GESTURE, gi.ullArguments, (LPARAM)&gi);   
+
+  SendMessage((HWND)self, WM_GESTURE, gi.ullArguments, (LPARAM)&gi);
 }
 
 -(void) rotateWithEvent:(NSEvent*)evt
 {
   GESTUREINFO gi;
   MakeGestureInfo(evt, &gi, (HWND) self, GID_ROTATE);
-  
+
   gi.dwFlags = GF_BEGIN;
   gi.ullArguments = 0;  // Windows sends the absolute starting rotation as the first message, Mac doesn't
   SendMessage((HWND)self, WM_GESTURE, 0, (LPARAM)&gi);
-  
-  gi.dwFlags = GF_END;    
+
+  gi.dwFlags = GF_END;
   float z = [evt rotation];
   int i = (int)32767.0f*z/60.0f;
   if (!i) i = (z >= 0.0f ? 1 : -1);
   i += 32767;
   if (i < 0) i=0;
   else if (i > 65535) i=65535;
-  gi.ullArguments = i;  
-  SendMessage((HWND)self, WM_GESTURE, i, (LPARAM)&gi);   
+  gi.ullArguments = i;
+  SendMessage((HWND)self, WM_GESTURE, i, (LPARAM)&gi);
 }
 
 
@@ -1345,12 +1349,12 @@ static void MakeGestureInfo(NSEvent* evt, GESTUREINFO* gi, HWND hwnd, int type)
 - (NSArray*) namesOfPromisedFilesDroppedAtDestination:(NSURL*) dropdestination
 {
   NSArray* SWELL_DoDragDrop(NSURL*);
-  return SWELL_DoDragDrop(dropdestination); 
+  return SWELL_DoDragDrop(dropdestination);
 }
 
 
 /*
-- (BOOL)becomeFirstResponder 
+- (BOOL)becomeFirstResponder
 {
   if (!m_enabled) return NO;
   HWND foc=GetFocus();
@@ -1368,7 +1372,7 @@ static void MakeGestureInfo(NSEvent* evt, GESTUREINFO* gi, HWND hwnd, int type)
 }
 */
 
-- (BOOL)acceptsFirstResponder 
+- (BOOL)acceptsFirstResponder
 {
   if (m_enabled)
   {
@@ -1393,7 +1397,7 @@ static void MakeGestureInfo(NSEvent* evt, GESTUREINFO* gi, HWND hwnd, int type)
   return ret;
 }
 
-- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender 
+- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
 {
   if (!m_supports_ddrop) return NSDragOperationNone;
 
@@ -1403,32 +1407,32 @@ static void MakeGestureInfo(NSEvent* evt, GESTUREINFO* gi, HWND hwnd, int type)
     if (h)
     {
       NSPoint p=[[self window] convertBaseToScreen:[sender draggingLocation]];
-      POINT pt={(int)(p.x+0.5),(int)(p.y+0.5)};
+      POINT pt= {(int)(p.x+0.5),(int)(p.y+0.5)};
       SWELL_DDrop_onDragEnter(h,pt);
       GlobalFree(h);
     }
   }
-    
+
   return NSDragOperationGeneric;
 }
 - (BOOL) wantsPeriodicDraggingUpdates
 {
   return NO;
 }
-- (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)sender 
+- (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)sender
 {
   if (!m_supports_ddrop) return NSDragOperationNone;
 
   if (SWELL_DDrop_onDragOver)
   {
     NSPoint p=[[self window] convertBaseToScreen:[sender draggingLocation]];
-    POINT pt={(int)(p.x+0.5),(int)(p.y+0.5)};
+    POINT pt= {(int)(p.x+0.5),(int)(p.y+0.5)};
     SWELL_DDrop_onDragOver(pt);
   }
-  
+
   return NSDragOperationGeneric;
-  
-} 
+
+}
 - (void)draggingExited:(id <NSDraggingInfo>)sender
 {
   if (m_supports_ddrop && SWELL_DDrop_onDragLeave) SWELL_DDrop_onDragLeave();
@@ -1437,30 +1441,30 @@ static void MakeGestureInfo(NSEvent* evt, GESTUREINFO* gi, HWND hwnd, int type)
 -(HANDLE)swellExtendedDragOp:(id <NSDraggingInfo>)sender retGlob:(BOOL)retG
 {
   if (!m_supports_ddrop) return 0;
-  
+
   NSPasteboard *pboard;
   NSDragOperation sourceDragMask;
   sourceDragMask = [sender draggingSourceOperationMask];
   pboard = [sender draggingPasteboard];
- 
+
   enum { PB_FILEREF=1, PB_FILEPROMISE };
   int pbtype = 0;
   if ([[pboard types] containsObject:NSFilenamesPboardType]) pbtype |= PB_FILEREF;
   if ([[pboard types] containsObject:NSFilesPromisePboardType]) pbtype |= PB_FILEPROMISE;
-  if (!pbtype) return 0; 
- 
+  if (!pbtype) return 0;
+
   int sz=sizeof(DROPFILES);
 
   bool maketmpfn = false;
   NSArray *files = 0;
-  if (pbtype&PB_FILEREF) 
+  if (pbtype&PB_FILEREF)
   {
-    files = [pboard propertyListForType:NSFilenamesPboardType]; 
+    files = [pboard propertyListForType:NSFilenamesPboardType];
   }
-  else if (pbtype&PB_FILEPROMISE) 
+  else if (pbtype&PB_FILEPROMISE)
   {
     NSArray* exts = [pboard propertyListForType:NSFilesPromisePboardType];  // just the file extensions
-    if (retG) 
+    if (retG)
     {
       files = exts;
       maketmpfn = true;
@@ -1475,9 +1479,9 @@ static void MakeGestureInfo(NSEvent* evt, GESTUREINFO* gi, HWND hwnd, int type)
       if (!droppath || !droppath[0]) droppath = "/tmp/";
       NSString* pathstr = (NSString*)SWELL_CStringToCFString(droppath);
       NSURL* dest = [NSURL fileURLWithPath:pathstr];
-      
+
       files = [sender namesOfPromisedFilesDroppedAtDestination:dest]; // tells the drag source to create the files
-      
+
       if ([files count])
       {
         NSMutableArray* paths=[NSMutableArray arrayWithCapacity:[files count]];
@@ -1485,23 +1489,23 @@ static void MakeGestureInfo(NSEvent* evt, GESTUREINFO* gi, HWND hwnd, int type)
         for (i=0; i < [files count]; ++i)
         {
           NSString* fn=[files objectAtIndex:i];
-          if (fn) 
+          if (fn)
           {
             [paths addObject:[pathstr stringByAppendingPathComponent:fn]];
           }
         }
         files=paths;
       }
-      
+
       [pathstr release];
-    }      
+    }
   }
   if (!files) return 0;
-  
+
   int x;
   for (x = 0; x < [files count]; x ++)
   {
-    NSString *sv=[files objectAtIndex:x]; 
+    NSString *sv=[files objectAtIndex:x];
     if (sv)
     {
       char text[4096];
@@ -1512,8 +1516,8 @@ static void MakeGestureInfo(NSEvent* evt, GESTUREINFO* gi, HWND hwnd, int type)
     }
   }
 
-  NSPoint tpt = [self convertPoint:[sender draggingLocation] fromView:nil];  
-  
+  NSPoint tpt = [self convertPoint:[sender draggingLocation] fromView:nil];
+
   HANDLE gobj=GlobalAlloc(0,sz+1);
   DROPFILES *df=(DROPFILES*)gobj;
   df->pFiles=sizeof(DROPFILES);
@@ -1524,12 +1528,12 @@ static void MakeGestureInfo(NSEvent* evt, GESTUREINFO* gi, HWND hwnd, int type)
   char *pout = (char *)(df+1);
   for (x = 0; x < [files count]; x ++)
   {
-    NSString *sv=[files objectAtIndex:x]; 
+    NSString *sv=[files objectAtIndex:x];
     if (sv)
     {
       char text[4096];
-      text[0]=0;      
-      SWELL_CFStringToCString(sv,text,sizeof(text));      
+      text[0]=0;
+      SWELL_CFStringToCString(sv,text,sizeof(text));
       if (maketmpfn)
       {
         strcpy(pout, "tmp.");
@@ -1540,13 +1544,13 @@ static void MakeGestureInfo(NSEvent* evt, GESTUREINFO* gi, HWND hwnd, int type)
     }
   }
   *pout=0;
-  
+
   if (!retG)
   {
     [self onSwellMessage:WM_DROPFILES p1:(WPARAM)gobj p2:0];
     GlobalFree(gobj);
   }
-  
+
   return gobj;
 }
 
@@ -1555,7 +1559,7 @@ static void MakeGestureInfo(NSEvent* evt, GESTUREINFO* gi, HWND hwnd, int type)
   if (m_supports_ddrop && SWELL_DDrop_onDragLeave) SWELL_DDrop_onDragLeave();
 
   HWND cv = NULL; // view to disable "setwindowrepre()" for
-  
+
   id dragsrc = [sender draggingSource];
   if ([dragsrc isKindOfClass:[NSView class]])
   {
@@ -1564,16 +1568,16 @@ static void MakeGestureInfo(NSEvent* evt, GESTUREINFO* gi, HWND hwnd, int type)
       cv = (HWND) [[self window] contentView];
     }
   }
-   
+
   if (cv) SetProp(cv,"SWELL_DisableWindowRepre",(HANDLE)TRUE);
-  
+
   NSView *v=[self hitTest:[[self superview] convertPoint:[sender draggingLocation] fromView:nil]];
   if (v && [v isDescendantOf:self])
   {
     while (v && v!=self)
     {
       if ([v respondsToSelector:@selector(swellExtendedDragOp:retGlob:)])
-        if ([(SWELL_hwndChild *)v swellExtendedDragOp:sender retGlob:NO]) 
+        if ([(SWELL_hwndChild *)v swellExtendedDragOp:sender retGlob:NO])
         {
           if (cv) RemoveProp(cv,"SWELL_DisableWindowRepre");
           return YES;
@@ -1581,7 +1585,7 @@ static void MakeGestureInfo(NSEvent* evt, GESTUREINFO* gi, HWND hwnd, int type)
       v=[v superview];
     }
   }
-  
+
   BOOL ret=!![self swellExtendedDragOp:sender retGlob:NO];
   if (cv) RemoveProp(cv,"SWELL_DisableWindowRepre");
   return ret;
@@ -1642,12 +1646,12 @@ static void MakeGestureInfo(NSEvent* evt, GESTUREINFO* gi, HWND hwnd, int type)
       if (ret && [ret count])
       {
         ar = [NSMutableArray arrayWithArray:ret];
-        [(NSMutableArray *)ar addObject:use_obj];        
+        [(NSMutableArray *)ar addObject:use_obj];
       }
       else ar = [NSArray arrayWithObject:use_obj];
-      
+
       int x;
-      for (x=0;x<3;x++) if (cp[x]) { [cp[x] release]; cp[x]=0; }
+      for (x=0; x<3; x++) if (cp[x]) { [cp[x] release]; cp[x]=0; }
 
       //cp[1]=ret;
       //cp[2]=use_obj;
@@ -1655,14 +1659,14 @@ static void MakeGestureInfo(NSEvent* evt, GESTUREINFO* gi, HWND hwnd, int type)
       ret = NSAccessibilityUnignoredChildren(ar);
       //cp[0]=ret;
 
-      for (x=0;x<3;x++) if (cp[x]) [cp[x] retain];
+      for (x=0; x<3; x++) if (cp[x]) [cp[x] retain];
 
       return ret;
-    }  
+    }
     int x;
-    for (x=0;x<3;x++) if (cp[x]) { [cp[x] release]; cp[x]=0; }
+    for (x=0; x<3; x++) if (cp[x]) { [cp[x] release]; cp[x]=0; }
   }
-  
+
   return ret;
 }
 // Return YES if the UIElement doesn't show up to the outside world - i.e. its parent should return the UIElement's children as its own - cutting the UIElement out. E.g. NSControls are ignored when they are single-celled.
@@ -1672,7 +1676,7 @@ static void MakeGestureInfo(NSEvent* evt, GESTUREINFO* gi, HWND hwnd, int type)
   {
     id use_obj = NULL;
     SendMessage((HWND)self,WM_GETOBJECT,0x1001,(LPARAM)&use_obj);
-  
+
     if (use_obj)
     {
       return YES;
@@ -1703,14 +1707,14 @@ static HWND last_key_window;
   [super setFrame:frameRect display:displayFlag]; \
   if((int)frameRect.size.width != (int)lastFrameSize.width || (int)frameRect.size.height != (int)lastFrameSize.height) { \
     SWELL_hwndChild *hc = (SWELL_hwndChild*)[self contentView]; \
-    sendSwellMessage(hc,WM_SIZE,0,0); \
+    sendSwellDlgMessage(hc,WM_SIZE,0,0); \
     if ([hc isOpaque]) InvalidateRect((HWND)hc,NULL,FALSE); \
     lastFrameSize=frameRect.size; \
    } \
 } \
 - (void)windowDidMove:(NSNotification *)aNotification { \
     NSRect f=[self frame]; \
-    sendSwellMessage([self contentView], WM_MOVE,0, MAKELPARAM((int)f.origin.x,(int)f.origin.y)); \
+    sendSwellDlgMessage([self contentView], WM_MOVE,0, MAKELPARAM((int)f.origin.x,(int)f.origin.y)); \
 } \
 - (BOOL)accessibilityIsIgnored \
 { \
@@ -1752,7 +1756,7 @@ static HWND last_key_window;
 - (void)resignKeyWindow { \
   [super resignKeyWindow]; \
   if (g_swell_terminating) return; \
-  sendSwellMessage([self contentView],WM_ACTIVATE,WA_INACTIVE,0); \
+  sendSwellDlgMessage([self contentView],WM_ACTIVATE,WA_INACTIVE,0); \
   last_key_window=(HWND)self; \
 } \
 -(void)becomeKeyWindow \
@@ -1767,8 +1771,8 @@ static HWND last_key_window;
     if ([cv respondsToSelector:@selector(swellGetMenu)]) menu = [(SWELL_hwndChild*)cv swellGetMenu]; \
     if (!menu) menu=ISMODAL && g_swell_defaultmenumodal ? g_swell_defaultmenumodal : g_swell_defaultmenu; \
     if (menu && menu != (HMENU)[NSApp mainMenu] && !g_swell_terminating) [NSApp setMainMenu:(NSMenu *)menu]; \
-    sendSwellMessage(cv,WM_ACTIVATE,WA_ACTIVE,(LPARAM)foc); \
-    sendSwellMessage(cv,WM_MOUSEACTIVATE,0,0); \
+    sendSwellDlgMessage(cv,WM_ACTIVATE,WA_ACTIVE,(LPARAM)foc); \
+    sendSwellDlgMessage(cv,WM_MOUSEACTIVATE,0,0); \
   } \
 } \
 -(BOOL)windowShouldClose:(id)sender \
@@ -1833,7 +1837,7 @@ static HWND last_key_window;
   MINMAXINFO mmi={0}; \
   NSSize minsz=(NSSize)[super minSize]; \
   mmi.ptMinTrackSize.x=(int)minsz.width; mmi.ptMinTrackSize.y=(int)minsz.height; \
-  sendSwellMessage([self contentView],WM_GETMINMAXINFO,0,(LPARAM)&mmi); \
+  sendSwellDlgMessage([self contentView],WM_GETMINMAXINFO,0,(LPARAM)&mmi); \
   minsz.width=mmi.ptMinTrackSize.x; minsz.height=mmi.ptMinTrackSize.y; \
   return minsz; \
 } \
@@ -1844,18 +1848,18 @@ static HWND last_key_window;
   if (tmp.width<1)tmp.width=1; else if (tmp.width > 1000000.0) tmp.width=1000000.0; \
   if (tmp.height<1)tmp.height=1; else if (tmp.height > 1000000.0) tmp.height=1000000.0; \
   mmi.ptMaxTrackSize.x=(int)tmp.width; mmi.ptMaxTrackSize.y=(int)tmp.height; \
-  sendSwellMessage([self contentView], WM_GETMINMAXINFO, 0, (LPARAM)&mmi); \
+  sendSwellDlgMessage([self contentView], WM_GETMINMAXINFO, 0, (LPARAM)&mmi); \
   if (mmi.ptMaxTrackSize.x < 1000000) maxsz.width=mmi.ptMaxTrackSize.x; \
   if (mmi.ptMaxTrackSize.y < 1000000) maxsz.height=mmi.ptMaxTrackSize.y; \
   return maxsz; \
 } \
-
+ 
 
 
 #define INIT_COMMON_VARS \
   m_enabled=TRUE; \
   m_owner=0; \
-  m_ownedwnds=0; 
+  m_ownedwnds=0;
 
 
 #if 0
@@ -1864,7 +1868,7 @@ static HWND last_key_window;
   MINMAXINFO mmi={0}; \
     NSSize minsz=(NSSize)[super contentMinSize]; \
       mmi.ptMinTrackSize.x=(int)minsz.width; mmi.ptMinTrackSize.y=(int)minsz.height; \
-        sendSwellMessage(ch,WM_GETMINMAXINFO,0,(LPARAM)&mmi); \
+        sendSwellDlgMessage(ch,WM_GETMINMAXINFO,0,(LPARAM)&mmi); \
           minsz.width=mmi.ptMinTrackSize.x; minsz.height=mmi.ptMinTrackSize.y; \
             [super setContentMinSize:minsz];  \
 }
@@ -1892,11 +1896,11 @@ SWELLDIALOGCOMMONIMPLEMENTS_WND(0)
   m_wantInitialKeyWindowOnShow=0;
   m_wantraiseamt=0;
   lastFrameSize.width=lastFrameSize.height=0.0f;
-    
+
   NSRect cr=[(NSView *)child bounds];
-  
+
   int wx, wy;
-  GetInitialWndPos(owner, cr.size.height, &wx, &wy); 
+  GetInitialWndPos(owner, cr.size.height, &wx, &wy);
   NSRect contentRect=NSMakeRect(wx,wy,cr.size.width,cr.size.height);
   if (!(self = [super initWithContentRect:contentRect styleMask:smask backing:NSBackingStoreBuffered defer:NO])) return self;
 
@@ -1906,20 +1910,20 @@ SWELLDIALOGCOMMONIMPLEMENTS_WND(0)
   [self setContentView:(NSView *)child];
   [self useOptimizedDrawing:YES];
   updateWindowCollection(self);
-    
+
   if (owner && [(id)owner respondsToSelector:@selector(swellAddOwnedWindow:)])
   {
-    [(id)owner swellAddOwnedWindow:self]; 
+    [(id)owner swellAddOwnedWindow:self];
   }
   else if (owner && [(id)owner isKindOfClass:[NSView class]])
   {
     NSWindow *w=[(id)owner window];
     if (w && [w respondsToSelector:@selector(swellAddOwnedWindow:)])
     {
-      [(SWELL_ModelessWindow*)w swellAddOwnedWindow:self]; 
+      [(SWELL_ModelessWindow*)w swellAddOwnedWindow:self];
     }
   }
-    
+
   [self display];
   return self;
 }
@@ -1931,56 +1935,56 @@ SWELLDIALOGCOMMONIMPLEMENTS_WND(0)
   m_wantraiseamt=0;
 
   lastFrameSize.width=lastFrameSize.height=0.0f;
-  
+
   int w = (resstate ? resstate->width : 10);
   int h = (resstate ? resstate->height : 10);
-  
+
   int wx, wy;
-  GetInitialWndPos(parent, h, &wx, &wy);  
+  GetInitialWndPos(parent, h, &wx, &wy);
   NSRect contentRect=NSMakeRect(wx,wy,w,h);
   int sf=smask;
-  
+
   if (resstate)
   {
     sf |= NSTitledWindowMask|NSMiniaturizableWindowMask|NSClosableWindowMask;
     if (resstate->windowTypeFlags&SWELL_DLG_WS_RESIZABLE) sf |= NSResizableWindowMask;
   }
-  
+
   if (!(self = [super initWithContentRect:contentRect styleMask:sf backing:NSBackingStoreBuffered defer:NO])) return self;
-  
+
   [self disableCursorRects];
   [self setAcceptsMouseMovedEvents:YES];
   [self useOptimizedDrawing:YES];
   [self setDelegate:(id)self];
   updateWindowCollection(self);
-  
+
   if (resstate&&resstate->title) SetWindowText((HWND)self, resstate->title);
-  
-  
+
+
   if (parent && [(id)parent respondsToSelector:@selector(swellAddOwnedWindow:)])
   {
-    [(id)parent swellAddOwnedWindow:self]; 
+    [(id)parent swellAddOwnedWindow:self];
   }
   else if (parent && [(id)parent isKindOfClass:[NSView class]])
   {
     NSWindow *w=[(id)parent window];
     if (w && [w respondsToSelector:@selector(swellAddOwnedWindow:)])
     {
-      [(SWELL_ModelessWindow*)w swellAddOwnedWindow:self]; 
+      [(SWELL_ModelessWindow*)w swellAddOwnedWindow:self];
     }
   }
-  
+
   [self retain]; // in case WM_INITDIALOG goes and releases us
-  
+
   SWELL_hwndChild *ch=[[SWELL_hwndChild alloc] initChild:resstate Parent:(NSView *)self dlgProc:dlgproc Param:par];       // create a new child view class
   ch->m_create_windowflags=sf;
   *hwndOut = (HWND)ch;
- 
+
   [ch release];
 
   [self display];
   [self release]; // matching retain above
-  
+
   return self;
 }
 -(NSInteger)level
@@ -1998,7 +2002,7 @@ SWELLDIALOGCOMMONIMPLEMENTS_WND(0)
   }
   else
   {
-  //  NSThemeFrame
+    //  NSThemeFrame
     if ([self viewsNeedDisplay])
     {
       [[self contentView] _recursiveDisplayRectIfNeededIgnoringOpacity:NSMakeRect(0,0,0,0) isVisibleRect:YES rectIsVisibleRectForView:[self contentView] topView:[self contentView]];
@@ -2026,7 +2030,7 @@ SWELLDIALOGCOMMONIMPLEMENTS_WND(1)
   m_rv=0;
   m_hasrv=false;
   INIT_COMMON_VARS
-  
+
   NSRect contentRect=NSMakeRect(0,0,resstate->width,resstate->height);
   unsigned int sf=(NSTitledWindowMask|NSClosableWindowMask|((resstate->windowTypeFlags&SWELL_DLG_WS_RESIZABLE)? NSResizableWindowMask : 0));
   if (!(self = [super initWithContentRect:contentRect styleMask:sf backing:NSBackingStoreBuffered defer:NO])) return self;
@@ -2039,18 +2043,18 @@ SWELLDIALOGCOMMONIMPLEMENTS_WND(1)
 
   if (parent && [(id)parent respondsToSelector:@selector(swellAddOwnedWindow:)])
   {
-    [(id)parent swellAddOwnedWindow:self]; 
+    [(id)parent swellAddOwnedWindow:self];
   }
   else if (parent && [(id)parent isKindOfClass:[NSView class]])
   {
     NSWindow *w=[(id)parent window];
     if (w && [w respondsToSelector:@selector(swellAddOwnedWindow:)])
     {
-      [(SWELL_ModelessWindow*)w swellAddOwnedWindow:self]; 
+      [(SWELL_ModelessWindow*)w swellAddOwnedWindow:self];
     }
   }
   if (resstate&&resstate->title) SetWindowText((HWND)self, resstate->title);
-  
+
   SWELL_hwndChild *ch=[[SWELL_hwndChild alloc] initChild:resstate Parent:(NSView *)self dlgProc:dlgproc Param:par];       // create a new child view class
   ch->m_create_windowflags=sf;
   [ch setHidden:NO];
@@ -2059,7 +2063,7 @@ SWELLDIALOGCOMMONIMPLEMENTS_WND(1)
 
   [self setHidesOnDeactivate:NO];
   [self display];
-  
+
   return self;
 }
 
@@ -2081,9 +2085,9 @@ SWELLDIALOGCOMMONIMPLEMENTS_WND(1)
 @end
 
 void EndDialog(HWND wnd, int ret)
-{   
+{
   if (!wnd) return;
-  
+
   NSWindow *nswnd=NULL;
   NSView *nsview = NULL;
   if ([(id)wnd isKindOfClass:[NSView class]])
@@ -2097,22 +2101,22 @@ void EndDialog(HWND wnd, int ret)
     nsview = [nswnd contentView];
   }
   if (!nswnd) return;
-   
+
   if ([nswnd respondsToSelector:@selector(swellSetModalRetVal:)])
     [(SWELL_ModalDialog*)nswnd swellSetModalRetVal:ret];
 
   if ([NSApp modalWindow] == nswnd)
-  {   
-    sendSwellMessage(nsview,WM_DESTROY,0,0);
-    
+  {
+    sendSwellDlgMessage(nsview,WM_DESTROY,0,0);
+
     NSEvent *evt=[NSApp currentEvent];
     if (evt && [evt window] == nswnd)
     {
       [NSApp stopModal];
     }
-    
+
     [NSApp abortModal]; // always call this, otherwise if running in runModalForWindow: it can often require another even tto come through before things continue
-    
+
     [nswnd close];
   }
 }
@@ -2122,23 +2126,23 @@ int SWELL_DialogBox(SWELL_DialogResourceIndex *reshead, const char *resid, HWND 
 {
   SWELL_DialogResourceIndex *p=resById(reshead,resid);
   if (!p||(p->windowTypeFlags&SWELL_DLG_WS_CHILD)) return -1;
-  SWELL_ModalDialog *box = [[SWELL_ModalDialog alloc] initDialogBox:p Parent:parent dlgProc:dlgproc Param:param];      
-     
+  SWELL_ModalDialog *box = [[SWELL_ModalDialog alloc] initDialogBox:p Parent:parent dlgProc:dlgproc Param:param];
+
   if (!box) return -1;
-  
+
   if ([box swellHasModalRetVal]) // detect EndDialog() in WM_INITDIALOG
   {
     int ret=[box swellGetModalRetVal];
-    sendSwellMessage([box contentView],WM_DESTROY,0,0);
+    sendSwellDlgMessage([box contentView],WM_DESTROY,0,0);
     [box release];
     return ret;
   }
-    
+
   if (0 && ![NSApp isActive]) // using this enables better background processing (i.e. if the app isnt active it still runs)
   {
     [NSApp activateIgnoringOtherApps:YES];
     NSModalSession session = [NSApp beginModalSessionForWindow:box];
-    for (;;) 
+    for (;;)
     {
       if ([NSApp runModalSession:session] != NSRunContinuesResponse) break;
       Sleep(1);
@@ -2156,8 +2160,8 @@ int SWELL_DialogBox(SWELL_DialogResourceIndex *reshead, const char *resid, HWND 
 
 HWND SWELL_CreateModelessFrameForWindow(HWND childW, HWND ownerW, unsigned int windowFlags)
 {
-    SWELL_ModelessWindow *ch=[[SWELL_ModelessWindow alloc] initModelessForChild:childW owner:ownerW styleMask:windowFlags];
-    return (HWND)ch;
+  SWELL_ModelessWindow *ch=[[SWELL_ModelessWindow alloc] initModelessForChild:childW owner:ownerW styleMask:windowFlags];
+  return (HWND)ch;
 }
 
 
@@ -2175,16 +2179,16 @@ HWND SWELL_CreateDialog(SWELL_DialogResourceIndex *reshead, const char *resid, H
   }
   SWELL_DialogResourceIndex *p=resById(reshead,resid);
   if (!p&&resid) return 0;
-  
+
   NSView *parview=NULL;
-  if (parent && ([(id)parent isKindOfClass:[NSView class]] || 
-                 [(id)parent isKindOfClass:[NSSavePanel class]] || 
+  if (parent && ([(id)parent isKindOfClass:[NSView class]] ||
+                 [(id)parent isKindOfClass:[NSSavePanel class]] ||
                  [(id)parent isKindOfClass:[NSOpenPanel class]] ||
-                 [(id)parent isKindOfClass:[NSColorPanel class]] || 
+                 [(id)parent isKindOfClass:[NSColorPanel class]] ||
                  [(id)parent isKindOfClass:[NSFontPanel class]]
-                 )) parview=(NSView *)parent;
+                )) parview=(NSView *)parent;
   else if (parent && [(id)parent isKindOfClass:[NSWindow class]])  parview=(NSView *)[(id)parent contentView];
-  
+
   if ((!p || (p->windowTypeFlags&SWELL_DLG_WS_CHILD)) && parview)
   {
     SWELL_hwndChild *ch=[[SWELL_hwndChild alloc] initChild:p Parent:parview dlgProc:dlgproc Param:param];       // create a new child view class
@@ -2198,7 +2202,7 @@ HWND SWELL_CreateDialog(SWELL_DialogResourceIndex *reshead, const char *resid, H
     [[SWELL_ModelessWindow alloc] initModeless:p Parent:parent dlgProc:dlgproc Param:param outputHwnd:&h forceStyles:forceStyles];
     return h;
   }
-  
+
   return 0;
 }
 
@@ -2208,9 +2212,9 @@ void SWELL_SetDefaultWindowMenu(HMENU menu)
 {
   g_swell_defaultmenu=menu;
 }
-HMENU SWELL_GetDefaultModalWindowMenu() 
-{ 
-  return g_swell_defaultmenumodal; 
+HMENU SWELL_GetDefaultModalWindowMenu()
+{
+  return g_swell_defaultmenumodal;
 }
 void SWELL_SetDefaultModalWindowMenu(HMENU menu)
 {
@@ -2230,7 +2234,7 @@ static void PrintAllHIViews(HIViewRef f, const char *bla)
 {
   char tmp[4096];
   snprintf(tmp,sizeof(tmp), "%s:%08x",bla,f);
-  
+
   HIRect r;
   HIViewGetFrame(f,&r);
   printf("%s beg %f %f %f %f\n",tmp,r.origin.x,r.origin.y,r.size.width, r.size.height);
@@ -2238,7 +2242,7 @@ static void PrintAllHIViews(HIViewRef f, const char *bla)
   while (a)
   {
     PrintAllHIViews(a,tmp);
-    a=HIViewGetNextView(a);  
+    a=HIViewGetNextView(a);
   }
   printf("%s end\n",tmp);
 }
@@ -2255,15 +2259,15 @@ OSStatus CarbonEvtHandler(EventHandlerCallRef nextHandlerRef, EventRef event, vo
   {
     case kEventWindowActivated:
       if (!g_swell_terminating) [NSApp setMainMenu:nil];
-    break;
-    
-    case kEventWindowGetClickActivation: 
+      break;
+
+    case kEventWindowGetClickActivation:
     {
       ClickActivationResult car = kActivateAndHandleClick;
       SetEventParameter(event, kEventParamClickActivation, typeClickActivationResult, sizeof(ClickActivationResult), &car);
     }
     break;
-    
+
     case kEventWindowHandleDeactivate:
     {
       if (_this)
@@ -2273,7 +2277,7 @@ OSStatus CarbonEvtHandler(EventHandlerCallRef nextHandlerRef, EventRef event, vo
       }
     }
     break;
-  
+
     case kEventControlBoundsChanged:
     {
       if (_this && !_this->m_whileresizing)
@@ -2287,64 +2291,64 @@ OSStatus CarbonEvtHandler(EventHandlerCallRef nextHandlerRef, EventRef event, vo
         parr.left += curr.left-prevr.left;
         parr.top += curr.top-prevr.top;
         parr.right += curr.right-prevr.right;
-        parr.bottom += curr.bottom-prevr.bottom;        
+        parr.bottom += curr.bottom-prevr.bottom;
         _this->m_whileresizing = true;
         SetWindowPos((HWND)_this, 0, parr.left, parr.right, parr.right-parr.left, parr.bottom-parr.top, SWP_NOZORDER|SWP_NOACTIVATE);
         _this->m_whileresizing = false;
       }
     }
     break;
-    
+
     case kEventRawKeyDown:
     case kEventRawKeyUp:
     case kEventRawKeyModifiersChanged:
     {
       if (_this->m_wantallkeys) return eventNotHandledErr;
-      
-      WindowRef wndref = (WindowRef)[_this->m_cwnd windowRef];      
-      if (wndref) 
+
+      WindowRef wndref = (WindowRef)[_this->m_cwnd windowRef];
+      if (wndref)
       {
         ControlRef ctlref=0;
-        GetKeyboardFocus(wndref, &ctlref);                
+        GetKeyboardFocus(wndref, &ctlref);
         if (ctlref)
         {
-          ControlKind ctlkind = { 0, 0 };          
+          ControlKind ctlkind = { 0, 0 };
           GetControlKind(ctlref, &ctlkind);
-          if (ctlkind.kind == kControlKindEditText || 
+          if (ctlkind.kind == kControlKindEditText ||
               ctlkind.kind == kControlKindEditUnicodeText ||
-              ctlkind.kind == kControlKindHITextView) 
+              ctlkind.kind == kControlKindHITextView)
           {
             // ControlDefinitions.h, HITextViews.h, etc list control types,
             // we may want to pass on some other types too
-            return eventNotHandledErr; 
+            return eventNotHandledErr;
           }
-        } 
-      }             
- 
+        }
+      }
+
       UInt32 keycode;
       UInt32 modifiers;
       char c[2] = { 0, 0 };
       GetEventParameter(event, kEventParamKeyCode, typeUInt32, 0, sizeof(UInt32), 0, &keycode);
       GetEventParameter(event, kEventParamKeyModifiers, typeUInt32, 0, sizeof(UInt32), 0, &modifiers);
       GetEventParameter(event, kEventParamKeyMacCharCodes, typeChar, 0, sizeof(char), 0, &c[0]);
-      
+
       NSEventType type;
       if (evtkind == kEventRawKeyDown) type = NSKeyDown;
       else if (evtkind == kEventRawKeyUp) type = NSKeyUp;
-      else if (evtkind == kEventRawKeyModifiersChanged) type = NSFlagsChanged;      
+      else if (evtkind == kEventRawKeyModifiersChanged) type = NSFlagsChanged;
 
       NSString* str = (NSString*)SWELL_CStringToCFString(c);
       NSTimeInterval ts = 0; // [[NSApp currentevent] timestamp];
       NSEvent* evt = [NSEvent keyEventWithType:type location:NSMakePoint(0,0)
-                                modifierFlags:modifiers 
-                                timestamp:ts windowNumber:0
-                                context:[NSGraphicsContext currentContext]
-                                characters:str charactersIgnoringModifiers:str 
-                                isARepeat:NO keyCode:keycode];      
+                      modifierFlags:modifiers
+                      timestamp:ts windowNumber:0
+                      context:[NSGraphicsContext currentContext]
+                      characters:str charactersIgnoringModifiers:str
+                      isARepeat:NO keyCode:keycode];
       [str release];
       if (evt) [NSApp sendEvent:evt];
-      return noErr;         
-    }   
+      return noErr;
+    }
   }
   return noErr;
 }
@@ -2364,46 +2368,46 @@ void SWELL_CarbonWndHost_SetWantAllKeys(void* carbonhost, bool want)
   if (!(self = [super initChild:nil Parent:parent dlgProc:nil Param:nil])) return self;
 
   m_wantallkeys=false;
-  
+
 #ifndef __LP64__
   WindowRef wndref=0;
   CreateNewWindow (kPlainWindowClass, (wantComp ? kWindowCompositingAttribute : 0) |  kWindowStandardHandlerAttribute|kWindowNoShadowAttribute, r, &wndref);
   if (wndref)
   {
     // eventually we should set this and have the real NSWindow parent call ActivateWindow when activated/deactivated
-    // SetWindowActivationScope( m_wndref, kWindowActivationScopeNone);    
+    // SetWindowActivationScope( m_wndref, kWindowActivationScopeNone);
 
     // adding a Carbon event handler to catch special stuff that NSWindow::initWithWindowRef
     // doesn't automatically redirect to a standard Cocoa window method
-    
+
     ControlRef ctl=0;
     if (!wantComp) CreateRootControl(wndref, &ctl);  // creating root control here so callers must use GetRootControl
 
-    EventTypeSpec winevts[] = 
+    EventTypeSpec winevts[] =
     {
       { kEventClassWindow, kEventWindowActivated },
       { kEventClassWindow, kEventWindowGetClickActivation },
       { kEventClassWindow, kEventWindowHandleDeactivate },
       { kEventClassKeyboard, kEventRawKeyDown },
-      { kEventClassKeyboard, kEventRawKeyUp },      
-      { kEventClassKeyboard, kEventRawKeyModifiersChanged },        
+      { kEventClassKeyboard, kEventRawKeyUp },
+      { kEventClassKeyboard, kEventRawKeyModifiersChanged },
     };
     int nwinevts = sizeof(winevts)/sizeof(EventTypeSpec);
-          
-    EventTypeSpec ctlevts[] = 
+
+    EventTypeSpec ctlevts[] =
     {
       //{ kEventClassControl, kEventControlInitialize },
-      //{ kEventClassControl, kEventControlDraw },            
+      //{ kEventClassControl, kEventControlDraw },
       { kEventClassControl, kEventControlBoundsChanged },
     };
-    int nctlevts = sizeof(ctlevts)/sizeof(EventTypeSpec);  
-          
+    int nctlevts = sizeof(ctlevts)/sizeof(EventTypeSpec);
+
     EventHandlerRef wndhandler=0, ctlhandler=0;
-    InstallWindowEventHandler(wndref, CarbonEvtHandler, nwinevts, winevts, self, &wndhandler);        
+    InstallWindowEventHandler(wndref, CarbonEvtHandler, nwinevts, winevts, self, &wndhandler);
     if (!wantComp) InstallControlEventHandler(ctl, CarbonEvtHandler, nctlevts, ctlevts, self, &ctlhandler);
     m_wndhandler = wndhandler;
     m_ctlhandler = ctlhandler;
-                    
+
     // initWithWindowRef does not retain // MAKE SURE THIS IS NOT BAD TO DO
     //CFRetain(wndref);
 
@@ -2414,11 +2418,11 @@ void SWELL_CarbonWndHost_SetWantAllKeys(void* carbonhost, bool want)
     [m_cwnd setDelegate: self];
 #endif
     ShowWindow(wndref);
-    
+
     //[[parent window] addChildWindow:m_cwnd ordered:NSWindowAbove];
-    //[self swellDoRepos]; 
+    //[self swellDoRepos];
     SetTimer((HWND)self,1,10,NULL);
-  }  
+  }
 #endif
   return self;
 }
@@ -2429,7 +2433,7 @@ void SWELL_CarbonWndHost_SetWantAllKeys(void* carbonhost, bool want)
 -(void)close
 {
   KillTimer((HWND)self,1);
-  
+
 #ifndef __LP64__
   if (m_wndhandler)
   {
@@ -2443,8 +2447,8 @@ void SWELL_CarbonWndHost_SetWantAllKeys(void* carbonhost, bool want)
     RemoveEventHandler(ctlhandler);
     m_ctlhandler = 0;
   }
-  
-  if (m_cwnd) 
+
+  if (m_cwnd)
   {
     if ([m_cwnd parentWindow]) [[m_cwnd parentWindow] removeChildWindow:m_cwnd];
     [m_cwnd orderOut:self];
@@ -2464,7 +2468,7 @@ void SWELL_CarbonWndHost_SetWantAllKeys(void* carbonhost, bool want)
 {
 #ifndef __LP64__
   id uinfo=[sender userInfo];
-  if ([uinfo respondsToSelector:@selector(getValue)]) 
+  if ([uinfo respondsToSelector:@selector(getValue)])
   {
     int idx=(int)(INT_PTR)[(SWELL_DataHold*)uinfo getValue];
     if (idx==1)
@@ -2481,16 +2485,16 @@ void SWELL_CarbonWndHost_SetWantAllKeys(void* carbonhost, bool want)
       else
       {
         if (![m_cwnd parentWindow])
-        {                
+        {
           NSWindow *par = [self window];
-          if (par) 
-          { 
+          if (par)
+          {
             [par addChildWindow:m_cwnd ordered:NSWindowAbove];
-            [self swellDoRepos];    
-          }          
+            [self swellDoRepos];
+          }
         }
-        else 
-        { 
+        else
+        {
           if (GetCurrentEventButtonState()&7)
           {
             if ([NSApp keyWindow] == [self window])
@@ -2524,7 +2528,7 @@ void SWELL_CarbonWndHost_SetWantAllKeys(void* carbonhost, bool want)
 {
   if (msg == WM_DESTROY)
   {
-    if (m_cwnd) 
+    if (m_cwnd)
     {
       if ([NSApp keyWindow] == m_cwnd) // restore focus to highest window that is not us!
       {
@@ -2536,7 +2540,7 @@ void SWELL_CarbonWndHost_SetWantAllKeys(void* carbonhost, bool want)
           if (w && w != m_cwnd && [w isVisible]) { [w makeKeyWindow]; break; }
         }
       }
-      
+
       [self close];
     }
   }
@@ -2577,9 +2581,9 @@ void SWELL_CarbonWndHost_SetWantAllKeys(void* carbonhost, bool want)
       r.top=r.bottom;
       r.bottom=a;
     }
-    
+
     // [m_cwnd setFrameOrigin:NSMakePoint(r.left,r.top)];
-    
+
     {
       Rect bounds;
       bounds.left = r.left;
@@ -2587,49 +2591,49 @@ void SWELL_CarbonWndHost_SetWantAllKeys(void* carbonhost, bool want)
       // GetWindowBounds (m_wndref, kWindowContentRgn, &bounds);
       bounds.right = bounds.left + (r.right-r.left);
       bounds.bottom = bounds.top + (r.bottom-r.top);
-      
+
       WindowRef wndref = (WindowRef)[m_cwnd windowRef];
-      SetWindowBounds (wndref, kWindowContentRgn, &bounds); 
+      SetWindowBounds (wndref, kWindowContentRgn, &bounds);
 
       // might make sense to only do this on initial show, but doesnt seem to hurt to do it often
       WindowAttributes wa=0;
       GetWindowAttributes(wndref,&wa);
-      
+
       if (wa&kWindowCompositingAttribute)
       {
 //         [[m_cwnd contentView] setNeedsDisplay:YES];
-         HIViewRef ref = HIViewGetRoot(wndref);
-         if (ref)
-         {
-            // PrintAllHIViews(ref,"");
-         
-            HIViewRef ref2=HIViewGetFirstSubview(ref);
-            while  (ref2)
-            {                              
+        HIViewRef ref = HIViewGetRoot(wndref);
+        if (ref)
+        {
+          // PrintAllHIViews(ref,"");
+
+          HIViewRef ref2=HIViewGetFirstSubview(ref);
+          while  (ref2)
+          {
             /*
               HIRect r3=CGRectMake(0,0,bounds.right-bounds.left,bounds.bottom-bounds.top);
              HIViewRef ref3=HIViewGetFirstSubview(ref2);
              while (ref3)
              {
-              HIViewSetVisible(ref3,true);            
+              HIViewSetVisible(ref3,true);
               HIViewSetNeedsDisplay(ref3,true);
               HIViewSetFrame(ref3,&r3);
               ref3=HIViewGetNextView(ref3);
              }
              */
 
-            //  HIViewSetVisible(ref2,true);            
-              HIViewSetNeedsDisplay(ref2,true);
-              ref2=HIViewGetNextView(ref2);
-            }
-            //HIViewSetVisible(ref,true);            
-            HIViewSetNeedsDisplay(ref,true);
-            HIViewRender(ref);
-         }
+            //  HIViewSetVisible(ref2,true);
+            HIViewSetNeedsDisplay(ref2,true);
+            ref2=HIViewGetNextView(ref2);
+          }
+          //HIViewSetVisible(ref,true);
+          HIViewSetNeedsDisplay(ref,true);
+          HIViewRender(ref);
+        }
       }
       else
       {
-      
+
 #if 0
         ControlRef rc=NULL;
         GetRootControl(m_wndref,&rc);
@@ -2643,8 +2647,8 @@ void SWELL_CarbonWndHost_SetWantAllKeys(void* carbonhost, bool want)
 #endif
         // Rect r={0,0,bounds.bottom-bounds.top,bounds.right-bounds.left};
         // InvalWindowRect(m_wndref,&r);
-        
-        // or we could just do: 
+
+        // or we could just do:
         DrawControls(wndref);
       }
     }
@@ -2685,17 +2689,17 @@ HWND SWELL_GetAudioUnitCocoaView(HWND parent, AudioUnit aunit, AudioUnitCocoaVie
 {
   NSString* classname = (NSString*)(viewinfo->mCocoaAUViewClass[0]);
   if (!classname) return 0;
-  
+
   NSBundle* bundle=0;
   if ([NSBundle respondsToSelector:@selector(bundleWithURL:)])
   {
-    bundle=[NSBundle bundleWithURL:(NSURL*)viewinfo->mCocoaAUViewBundleLocation];    
+    bundle=[NSBundle bundleWithURL:(NSURL*)viewinfo->mCocoaAUViewBundleLocation];
   }
 
   if (!bundle)
   {
     NSString* path = (NSString*)(CFURLCopyFileSystemPath(viewinfo->mCocoaAUViewBundleLocation,kCFURLPOSIXPathStyle));
-    if (path) 
+    if (path)
     {
       bundle = [NSBundle bundleWithPath:path];
       [path release];
@@ -2703,19 +2707,19 @@ HWND SWELL_GetAudioUnitCocoaView(HWND parent, AudioUnit aunit, AudioUnitCocoaVie
   }
 
   if (!bundle) return 0;
-    
+
   Class factoryclass = [bundle classNamed:classname];
   if (![factoryclass conformsToProtocol: @protocol(AUCocoaUIBase)]) return 0;
   if (![factoryclass instancesRespondToSelector: @selector(uiViewForAudioUnit:withSize:)]) return 0;
   id viewfactory = [[factoryclass alloc] init];
   if (!viewfactory) return 0;
   NSView* view = [viewfactory uiViewForAudioUnit:aunit withSize:NSMakeSize(r->right-r->left, r->bottom-r->top)];
-  if (!view) 
+  if (!view)
   {
     [viewfactory release];
     return 0;
   }
-  
+
   [(NSView*)parent addSubview:view];
   NSRect bounds = [view bounds];
   r->left = r->top = 0;
@@ -2755,15 +2759,15 @@ void SWELL_AddCarbonPaneToView(HWND cwv, void* pane)  // not currently used
     WindowRef wndref = (WindowRef)[w->m_cwnd windowRef];
     if (wndref)
     {
-      EventTypeSpec ctlevts[] = 
+      EventTypeSpec ctlevts[] =
       {
         //{ kEventClassControl, kEventControlInitialize },
-        //{ kEventClassControl, kEventControlDraw },            
+        //{ kEventClassControl, kEventControlDraw },
         { kEventClassControl, kEventControlBoundsChanged },
       };
-      int nctlevts = sizeof(ctlevts)/sizeof(EventTypeSpec);  
-          
-      EventHandlerRef ctlhandler = (EventHandlerRef)w->m_ctlhandler;   
+      int nctlevts = sizeof(ctlevts)/sizeof(EventTypeSpec);
+
+      EventHandlerRef ctlhandler = (EventHandlerRef)w->m_ctlhandler;
       InstallControlEventHandler((ControlRef)pane, CarbonEvtHandler, nctlevts, ctlevts, w, &ctlhandler);
     }
   }
@@ -2787,7 +2791,8 @@ void SWELL_AddCarbonPaneToView(HWND cwv, void* pane)  // not currently used
   NSRange range = NSMakeRange(0, MIN(len, 1)); // take color from first char
   NSDictionary *attrs = [attrTitle fontAttributesInRange:range];
   NSColor *textColor = [NSColor controlTextColor];
-  if (attrs) {
+  if (attrs)
+  {
     textColor = [attrs objectForKey:NSForegroundColorAttributeName];
   }
   return textColor;
@@ -2795,13 +2800,13 @@ void SWELL_AddCarbonPaneToView(HWND cwv, void* pane)  // not currently used
 
 - (void)setTextColor:(NSColor *)textColor
 {
-  NSMutableAttributedString *attrTitle = [[NSMutableAttributedString alloc] 
+  NSMutableAttributedString *attrTitle = [[NSMutableAttributedString alloc]
                                           initWithAttributedString:[self attributedTitle]];
   int len = [attrTitle length];
   NSRange range = NSMakeRange(0, len);
-  [attrTitle addAttribute:NSForegroundColorAttributeName 
-                    value:textColor 
-                    range:range];
+  [attrTitle addAttribute:NSForegroundColorAttributeName
+   value:textColor
+   range:range];
   [attrTitle fixAttributesInRange:range];
   [self setAttributedTitle:attrTitle];
   [attrTitle release];
@@ -2821,17 +2826,17 @@ void SWELL_InitiateDragDrop(HWND hwnd, RECT* srcrect, const char* srcfn, void (*
 
   s_dragdropsrcfn = strdup(srcfn);
   s_dragdropsrccallback = callback;
-  
+
   char* p = s_dragdropsrcfn+strlen(s_dragdropsrcfn)-1;
   while (p >= s_dragdropsrcfn && *p != '.') --p;
   ++p;
-  
-  NSString* str = (NSString*)SWELL_CStringToCFString(p);  
+
+  NSString* str = (NSString*)SWELL_CStringToCFString(p);
   NSRect r = NSMakeRect(srcrect->left, srcrect->top, srcrect->right-srcrect->left, srcrect->bottom-srcrect->top);
   NSEvent* evt = [NSApp currentEvent];
   [(NSView*)hwnd dragPromisedFilesOfTypes:[NSArray arrayWithObject:str] fromRect:r source:(NSView*)hwnd slideBack:YES event:evt];
   [str release];
-} 
+}
 
 // owner owns srclist, make copies here etc
 void SWELL_InitiateDragDropOfFileList(HWND hwnd, RECT *srcrect, const char **srclist, int srccount, HICON icon)
@@ -2839,11 +2844,11 @@ void SWELL_InitiateDragDropOfFileList(HWND hwnd, RECT *srcrect, const char **src
   SWELL_FinishDragDrop();
 
   if (![(id)hwnd isKindOfClass:[SWELL_hwndChild class]]) return;
-  
+
   NSMutableArray *ar = [[NSMutableArray alloc] initWithCapacity:srccount];
   int x;
-  
-  for(x=0;x<srccount;x++)
+
+  for(x=0; x<srccount; x++)
   {
     NSString *s = (NSString*)SWELL_CStringToCFString(srclist[x]);
     [ar addObject:s];
@@ -2852,9 +2857,9 @@ void SWELL_InitiateDragDropOfFileList(HWND hwnd, RECT *srcrect, const char **src
   NSPasteboard *pb= [NSPasteboard pasteboardWithName:NSDragPboard];
   [pb declareTypes:[NSArray arrayWithObject:NSFilenamesPboardType]  owner:(id)hwnd];
   [pb setPropertyList:ar forType:NSFilenamesPboardType];
-  
+
   NSImage *img=NULL;// = [NSImage imageNamed:@"readoc"]; // todo!
-  if (!img && icon) 
+  if (!img && icon)
   {
     img = (NSImage *)GetNSImageFromHICON(icon);
     if (img)
@@ -2864,7 +2869,7 @@ void SWELL_InitiateDragDropOfFileList(HWND hwnd, RECT *srcrect, const char **src
       [img autorelease];
     }
   }
-  
+
   if (!img)
   {
     NSWorkspace *ws = [NSWorkspace sharedWorkspace];
@@ -2876,7 +2881,7 @@ void SWELL_InitiateDragDropOfFileList(HWND hwnd, RECT *srcrect, const char **src
     // default image?
   }
   [(NSView *)hwnd dragImage:img at:NSMakePoint(srcrect->left,srcrect->top) offset:NSMakeSize(0,0) event:[NSApp currentEvent] pasteboard:pb source:(id)hwnd slideBack:YES];
-  
+
   [ar release];
 }
 
@@ -2888,26 +2893,26 @@ static bool _file_exists(const char* fn)
 }
 
 NSArray* SWELL_DoDragDrop(NSURL* droplocation)
-{  
+{
   NSArray* fnarr=0;
   if (s_dragdropsrcfn && s_dragdropsrccallback && droplocation)
-  {  
+  {
     const char* srcpath=s_dragdropsrcfn;
-    
+
     const char* fn = srcpath+strlen(srcpath)-1;
     while (fn >= srcpath && *fn != '/') --fn;
     ++fn;
-    
+
     WDL_String destpath;
     destpath.SetFormatted(4096, "%s/%s", [[droplocation path] UTF8String], fn);
-    
+
     bool ok=!_file_exists(destpath.Get());
     if (!ok)
     {
       int ret=NSRunAlertPanel(@"Copy",
-            @"An item named \"%s\" already exists in this location. Do you want to replace it with the one you're moving?",
-            @"Keep Both Files", @"Stop", @"Replace", fn);
-      
+                              @"An item named \"%s\" already exists in this location. Do you want to replace it with the one you're moving?",
+                              @"Keep Both Files", @"Stop", @"Replace", fn);
+
       if (ret == -1) // replace
       {
         ok=true;
@@ -2918,30 +2923,30 @@ NSArray* SWELL_DoDragDrop(NSURL* droplocation)
         char* p=base.Get();
         int len=strlen(p);
         const char* ext="";
-        int incr=0;   
-        
+        int incr=0;
+
         const char* q=fn+strlen(fn)-1;
         while (q > fn && *q != '.') --q;
-        if (*q == '.') 
+        if (*q == '.')
         {
           ext=q;
           len -= strlen(ext);
           p[len]=0;
         }
-        
+
         int digits=0;
         int i;
         for (i=0; i < 3 && len > i+1 && isdigit(p[len-i-1]); ++i) ++digits;
-        if (len > digits+1 && (p[len-digits-1] == ' ' || p[len-digits-1] == '-' || p[len-digits-1] == '_'))         
+        if (len > digits+1 && (p[len-digits-1] == ' ' || p[len-digits-1] == '-' || p[len-digits-1] == '_'))
         {
           incr=atoi(p+len-digits);
           p[len-digits]=0;
         }
-        else 
+        else
         {
           base.Append(" ");
         }
- 
+
         WDL_String trypath;
         while (!ok && ++incr < 1000)
         {
@@ -2952,35 +2957,35 @@ NSArray* SWELL_DoDragDrop(NSURL* droplocation)
         if (ok) destpath.Set(trypath.Get());
       }
     }
-    
+
     if (ok)
     {
       s_dragdropsrccallback(destpath.Get());
       ok=_file_exists(destpath.Get());
     }
-  
+
     if (ok)
     {
       fn=destpath.Get();
       fn += strlen(fn)-1;
       while (fn >= destpath.Get() && *fn != '/') --fn;
       ++fn;
-            
+
       NSString* nfn=(NSString*)SWELL_CStringToCFString(fn);
       fnarr=[NSArray arrayWithObject:nfn];
       [nfn release];
     }
   }
-  
-  SWELL_FinishDragDrop();  
+
+  SWELL_FinishDragDrop();
   return fnarr;
-}  
+}
 
 void SWELL_FinishDragDrop()
 {
   free(s_dragdropsrcfn);
   s_dragdropsrcfn = 0;
-  s_dragdropsrccallback = 0;  
+  s_dragdropsrccallback = 0;
 }
 
 bool SWELL_SetGLContextToView(HWND h)
@@ -3005,16 +3010,17 @@ void SWELL_SetViewGL(HWND h, bool wantGL)
     SWELL_hwndChild *hc = (SWELL_hwndChild*)h;
     if (wantGL != !!hc->m_glctx)
     {
-      if (wantGL) 
+      if (wantGL)
       {
-        NSOpenGLPixelFormatAttribute atr[] = { 
-            96/*NSOpenGLPFAAllowOfflineRenderers*/, // allows use of NSSupportsAutomaticGraphicsSwitching and no gpu-forcing
-            (NSOpenGLPixelFormatAttribute)0
+        NSOpenGLPixelFormatAttribute atr[] =
+        {
+          96/*NSOpenGLPFAAllowOfflineRenderers*/, // allows use of NSSupportsAutomaticGraphicsSwitching and no gpu-forcing
+          (NSOpenGLPixelFormatAttribute)0
         }; // todo: optionally add any attributes before the 0
         if (!Is105Plus()) atr[0]=0; // 10.4 can't use offline renderers and will fail trying
 
         NSOpenGLPixelFormat *fmt  = [[NSOpenGLPixelFormat alloc] initWithAttributes:atr];
-        
+
         hc->m_glctx = [[NSOpenGLContext alloc] initWithFormat:fmt shareContext:nil];
         [fmt release];
       }
@@ -3025,7 +3031,7 @@ void SWELL_SetViewGL(HWND h, bool wantGL)
         hc->m_glctx=0;
       }
     }
-    
+
   }
 }
 
@@ -3035,15 +3041,15 @@ bool SWELL_GetViewGL(HWND h)
 }
 void DrawSwellViewRectImpl(SWELL_hwndChild *view, NSRect rect, HDC hdc)
 {
-  if (view->m_hashaddestroy) 
+  if (view->m_hashaddestroy)
   {
     return;
-  }    
+  }
   view->m_paintctx_hdc=hdc;
   if (view->m_paintctx_hdc && view->m_glctx)
   {
     view->m_paintctx_hdc->GLgfxctx = view->m_glctx;
-    
+
     [view->m_glctx setView:view];
     [view->m_glctx makeCurrentContext];
     [view->m_glctx update];
@@ -3051,42 +3057,43 @@ void DrawSwellViewRectImpl(SWELL_hwndChild *view, NSRect rect, HDC hdc)
   view->m_paintctx_rect=rect;
   view->m_paintctx_used=false;
   DoPaintStuff(view->m_wndproc,(HWND)view,view->m_paintctx_hdc,&view->m_paintctx_rect);
-  
+
   if (view->m_paintctx_hdc && view->m_glctx && [NSOpenGLContext currentContext] == view->m_glctx)
   {
-    [NSOpenGLContext clearCurrentContext]; 
+    [NSOpenGLContext clearCurrentContext];
   }
   view->m_paintctx_hdc=0;
-  if (!view->m_paintctx_used) {
+  if (!view->m_paintctx_used)
+  {
     /*[super drawRect:rect];*/
   }
-  
+
 #if 0
   // debug: show everything
   static CGColorSpaceRef cspace;
   if (!cspace) cspace=CGColorSpaceCreateDeviceRGB();
-  float cols[4]={0.0f,1.0f,0.0f,0.8f};
+  float cols[4]= {0.0f,1.0f,0.0f,0.8f};
   CGColorRef color=CGColorCreate(cspace,cols);
-  
+
   CGContextRef ctx = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
   CGContextSetStrokeColorWithColor(ctx,color);
   CGContextStrokeRectWithWidth(ctx, CGRectMake(rect.origin.x,rect.origin.y,rect.size.width,rect.size.height), 1);
-  
+
   CGColorRelease(color);
-  
+
   cols[0]=1.0f;
   cols[1]=0.0f;
   cols[2]=0.0f;
   cols[3]=1.0f;
   color=CGColorCreate(cspace,cols);
-  
+
   NSRect rect2=[view bounds];
   CGContextSetStrokeColorWithColor(ctx,color);
   CGContextStrokeRectWithWidth(ctx, CGRectMake(rect2.origin.x,rect2.origin.y,rect2.size.width,rect2.size.height), 1);
-  
-  
+
+
   CGColorRelease(color);
-  
+
   cols[0]=0.0f;
   cols[1]=0.0f;
   cols[2]=1.0f;
@@ -3095,12 +3102,12 @@ void DrawSwellViewRectImpl(SWELL_hwndChild *view, NSRect rect, HDC hdc)
   cols[3]=0.25;
   cols[2]=0.5;
   CGColorRef color2=CGColorCreate(cspace,cols);
-  
+
   NSArray *ar = [view subviews];
   if (ar)
   {
     int x;
-    for(x=0;x<[ar count];x++)  
+    for(x=0; x<[ar count]; x++)
     {
       NSView *v = [ar objectAtIndex:x];
       if (v && ![v isHidden])
@@ -3112,16 +3119,16 @@ void DrawSwellViewRectImpl(SWELL_hwndChild *view, NSRect rect, HDC hdc)
         CGContextFillRect(ctx, CGRectMake(rect.origin.x,rect.origin.y,rect.size.width,rect.size.height));
       }
     }
-    
+
     // draw children
   }
   CGColorRelease(color);
   CGColorRelease(color2);
-  
+
 #endif
-  
-  
-  
+
+
+
 }
 
 void swellRenderOptimizely(int passflags, SWELL_hwndChild *view, HDC hdc, BOOL doforce, WDL_PtrList<void> *needdraws, const NSRect *rlist, int rlistcnt, int draw_xlate_x, int draw_xlate_y, bool iscv)
@@ -3130,20 +3137,20 @@ void swellRenderOptimizely(int passflags, SWELL_hwndChild *view, HDC hdc, BOOL d
   NSArray *sv = [view subviews];
   if (doforce&&(passflags & ([sv count]?1:2)))
     DrawSwellViewRectImpl(view,[view bounds], hdc);
-  
+
   if (sv)
   {
     [sv retain];
     int x,n=[sv count];
     HBRUSH bgbr=0;
     bool bgbr_valid=false;
-    for(x=0;x<n;x++)
+    for(x=0; x<n; x++)
     {
       NSView *v = (NSView *)[sv objectAtIndex:x];
       if (v && ![v isHidden])
-      {          
+      {
         bool isSwellChild = !![v isKindOfClass:[SWELL_hwndChild class]];
-        
+
         if (doforce||(isSwellChild && ((SWELL_hwndChild*)v)->m_isdirty)|| [v needsDisplay])
         {
           if (isSwellChild)
@@ -3151,7 +3158,7 @@ void swellRenderOptimizely(int passflags, SWELL_hwndChild *view, HDC hdc, BOOL d
             NSRect fr = [v frame];
             CGContextSaveGState(hdc->ctx);
             CGContextClipToRect(hdc->ctx,CGRectMake(fr.origin.x,fr.origin.y,fr.size.width,fr.size.height));
-            CGContextTranslateCTM(hdc->ctx, fr.origin.x,fr.origin.y);            
+            CGContextTranslateCTM(hdc->ctx, fr.origin.x,fr.origin.y);
             swellRenderOptimizely(passflags,(SWELL_hwndChild*)v,hdc,doforce,needdraws,rlist,rlistcnt,draw_xlate_x-(int)fr.origin.x,draw_xlate_y-(int)fr.origin.y,false);
             CGContextRestoreGState(hdc->ctx);
             if (passflags&2) [v setNeedsDisplay:NO];
@@ -3171,33 +3178,33 @@ void swellRenderOptimizely(int passflags, SWELL_hwndChild *view, HDC hdc, BOOL d
               }
             }
             [v retain];
-            if (!doforce && ![v isOpaque]) 
+            if (!doforce && ![v isOpaque])
             {
-              
+
               NSRect fr=  [v frame];
-              
-              // we could recursively go up looking for WM_CTLCOLORDLG, but actually we just need to use the current window            
+
+              // we could recursively go up looking for WM_CTLCOLORDLG, but actually we just need to use the current window
               if (!bgbr_valid) // note that any code in this loop that does anything that could trigger messages might invalidate bgbr, so it should clear bgbr_checked here
               {
                 bgbr=(HGDIOBJ)SendMessage((HWND)view,WM_CTLCOLORDLG,(WPARAM)hdc,(LPARAM)view);
                 bgbr_valid=true;
               }
-                   
+
               if (!iscv) fr = [view convertRect:fr toView:[[view window] contentView]];
-                    
+
               int ri;
-              for(ri=0;ri<rlistcnt;ri++)
+              for(ri=0; ri<rlistcnt; ri++)
               {
                 NSRect r=rlist[ri];
                 r.origin.x--;
                 r.origin.y--;
                 r.size.width+=2;
                 r.size.height+=2;
-                
+
                 NSRect ff = NSIntersectionRect(fr,r);
                 if (ff.size.width>0 && ff.size.height>0)
                 {
-                  RECT r={(int)ff.origin.x,(int)ff.origin.y,(int)(ff.origin.x+ff.size.width),(int)(ff.origin.y+ff.size.height)};                    
+                  RECT r= {(int)ff.origin.x,(int)ff.origin.y,(int)(ff.origin.x+ff.size.width),(int)(ff.origin.y+ff.size.height)};
                   r.left+=draw_xlate_x;
                   r.right+=draw_xlate_x;
                   r.top+=draw_xlate_y;
@@ -3208,7 +3215,7 @@ void swellRenderOptimizely(int passflags, SWELL_hwndChild *view, HDC hdc, BOOL d
               }
             }
             needdraws->Add((void*)(INT_PTR)(doforce?1:0));
-            needdraws->Add(v);     
+            needdraws->Add(v);
           }
         }
       }
@@ -3216,7 +3223,7 @@ void swellRenderOptimizely(int passflags, SWELL_hwndChild *view, HDC hdc, BOOL d
     [sv release];
   }
   if (passflags&2)
-     view->m_isdirty=0;
+    view->m_isdirty=0;
 }
 
 #endif

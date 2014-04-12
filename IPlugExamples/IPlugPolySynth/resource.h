@@ -25,15 +25,15 @@
 
 // ProTools stuff
 #if (defined(AAX_API) || defined(RTAS_API)) && !defined(_PIDS_)
-  #define _PIDS_
-  const int PLUG_TYPE_IDS[2] = {'PSN1', 'PSN2'};
+#define _PIDS_
+const int PLUG_TYPE_IDS[2] = {'PSN1', 'PSN2'};
 #endif
 #define PLUG_MFR_PT "AcmeInc\nAcmeInc\nAcme\n"
 #define PLUG_NAME_PT "IPlugPolySynth\nIPPS"
 #define PLUG_TYPE_PT "Effect" // valid options "None" "EQ" "Dynamics" "PitchShift" "Reverb" "Delay" "Modulation" "Harmonic" "NoiseReduction" "Dither" "SoundField" "Effect" instrument determined by PLUG _IS _INST
 #define PLUG_DOES_AUDIOSUITE 0
 
-#if (defined(AAX_API) || defined(RTAS_API)) 
+#if (defined(AAX_API) || defined(RTAS_API))
 #define PLUG_CHANNEL_IO "1-1 2-2"
 #else
 #define PLUG_CHANNEL_IO "0-1 0-2"
@@ -67,7 +67,7 @@
 
 // on MSVC, you must define SA_API in the resource editor preprocessor macros as well as the c++ ones
 #if defined(SA_API) && !defined(OS_IOS)
-#include "app_wrapper/app_resource.h"
+#include "app_resource.h"
 #endif
 
 // vst3 stuff

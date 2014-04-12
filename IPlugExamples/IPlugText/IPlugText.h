@@ -1,5 +1,6 @@
 #ifndef __IPLUGTEXT__
 #define __IPLUGTEXT__
+#include "resource.h"
 
 #include "IPlug_include_in_plug_hdr.h"
 

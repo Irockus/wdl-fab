@@ -2,7 +2,7 @@
 #define _IPLUGCUSTOMUI_H_
 
 #if WINDOWS_VERSION
-  #define VC_EXTRALEAN // Exclude rarely-used stuff from Windows headers
+#define VC_EXTRALEAN // Exclude rarely-used stuff from Windows headers
 #endif
 
 #include "EditorInterface.h"
@@ -14,6 +14,7 @@
 extern void* attachSubWindow (void* hostWindowRef, IGraphics* pGraphics);
 extern void removeSubWindow (void* cocoaHostWindow, IGraphics* pGraphics);
 
+/// RTAS IPlug custom UI
 class IPlugCustomUI : public EditorInterface
 {
 public:
@@ -40,6 +41,7 @@ protected:
 // Callback to Win32 Plug-in window - processes Windows messages.
 LRESULT CALLBACK IPlugMainWindow( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
 
+/// RTAS IPlug custom UI
 class IPlugCustomUI : public EditorInterface
 {
   friend LRESULT CALLBACK IPlugMainWindow(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

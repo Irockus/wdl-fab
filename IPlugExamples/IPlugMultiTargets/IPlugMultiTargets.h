@@ -1,6 +1,6 @@
 #ifndef __IPLUGMULTITARGETS__
 #define __IPLUGMULTITARGETS__
-
+#include "resource.h"
 #include "IPlug_include_in_plug_hdr.h"
 #include "IMidiQueue.h"
 

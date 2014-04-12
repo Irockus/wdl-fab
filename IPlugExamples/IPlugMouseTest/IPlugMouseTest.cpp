@@ -1,8 +1,8 @@
+#include "resource.h"
 #include "IPlugMouseTest.h"
 #include "IPlug_include_in_plug_src.h"
 #include "IControl.h"
 #include "IPlugMouseTestControls.h"
-#include "resource.h"
 
 const int kNumPrograms = 1;
 
@@ -31,13 +31,13 @@ IPlugMouseTest::IPlugMouseTest(IPlugInstanceInfo instanceInfo)
   TRACE;
 
   mTable = new double[TABLE_SIZE];
-  
+
   for (int i = 0; i < TABLE_SIZE; i++)
   {
     mTable[i] = sin( i/double(TABLE_SIZE) * 2. * M_PI);
     //printf("mTable[%i] %f\n", i, mTable[i]);
   }
-  
+
   mOsc = new CWTOsc(mTable, TABLE_SIZE);
 
   //arguments are: name, defaultVal, minVal, maxVal, step, label
@@ -56,7 +56,7 @@ IPlugMouseTest::IPlugMouseTest(IPlugInstanceInfo instanceInfo)
   MakeDefaultPreset((char *) "-", kNumPrograms);
 }
 
-IPlugMouseTest::~IPlugMouseTest() 
+IPlugMouseTest::~IPlugMouseTest()
 {
   delete mOsc;
   delete [] mTable;

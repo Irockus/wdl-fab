@@ -16,7 +16,7 @@
     2. Altered source versions must be plainly marked as such, and must not be
        misrepresented as being the original software.
     3. This notice may not be removed or altered from any source distribution.
-  
+
 
     SWELL provides _EXTREMELY BASIC_ win32 wrapping for OS X and maybe other platforms.
 
@@ -47,7 +47,7 @@
 #endif
 
 // IF YOU ADD TO SWELL:
-// Adding types, defines, etc: add to swell-types.h 
+// Adding types, defines, etc: add to swell-types.h
 // Adding functions: put them in swell-functions.h
 
 
@@ -60,7 +60,7 @@
 #define _WDL_SWELL_H_UTIL_DEFINED_
 
 // these should never be called directly!!! put SWELL_POSTMESSAGE_DELEGATE_IMPL in your nsapp delegate, and call SWELL_POSTMESSAGE_INIT at some point from there too
-                 
+
 #define SWELL_POSTMESSAGE_INIT SWELL_Internal_PostMessage_Init();
 #define SWELL_POSTMESSAGE_DELEGATE_IMPL \
                  -(bool)swellPostMessage:(HWND)dest msg:(int)message wp:(WPARAM)wParam lp:(LPARAM)lParam { \
@@ -71,8 +71,8 @@
                  } \
                  -(void)swellPostMessageTick:(id)sender { \
                    SWELL_MessageQueue_Flush(); \
-                 } 
-                 
+                 }
+
 BOOL SWELL_Internal_PostMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 void SWELL_Internal_PMQ_ClearAllMessages(HWND hwnd);
 

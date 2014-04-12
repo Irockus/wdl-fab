@@ -4,7 +4,7 @@
 #include "Log.h"
 #import "IGraphicsCocoa.h"
 #ifndef IPLUG_NO_CARBON_SUPPORT
-  #include "IGraphicsCarbon.h"
+#include "IGraphicsCarbon.h"
 #endif
 #include "../swell/swell-internal.h"
 
@@ -34,10 +34,10 @@ struct CocoaAutoReleasePool
 
 IGraphicsMac::IGraphicsMac(IPlugBase* pPlug, int w, int h, int refreshFPS)
   :    IGraphics(pPlug, w, h, refreshFPS),
-    #ifndef IPLUG_NO_CARBON_SUPPORT
-    mGraphicsCarbon(0),
-    #endif
-    mGraphicsCocoa(0)
+#ifndef IPLUG_NO_CARBON_SUPPORT
+       mGraphicsCarbon(0),
+#endif
+       mGraphicsCocoa(0)
 {
   NSApplicationLoad();
 }
@@ -57,23 +57,23 @@ LICE_IBitmap* LoadImgFromResourceOSX(const char* bundleID, const char* filename)
   ++ext;
 
   bool ispng = !stricmp(ext, "png");
-  #ifndef IPLUG_JPEG_SUPPORT
+#ifndef IPLUG_JPEG_SUPPORT
   if (!ispng) return 0;
-  #else
+#else
   bool isjpg = !stricmp(ext, "jpg");
   if (!isjpg && !ispng) return 0;
-  #endif
+#endif
 
   NSBundle* pBundle = [NSBundle bundleWithIdentifier:ToNSString(bundleID)];
   NSString* pFile = [[[NSString stringWithCString:filename] lastPathComponent] stringByDeletingPathExtension];
-  
+
   if (pBundle && pFile)
   {
     NSString* pPath = 0;
     if (ispng) pPath = [pBundle pathForResource:pFile ofType:@"png"];
-    #ifdef IPLUG_JPEG_SUPPORT
+#ifdef IPLUG_JPEG_SUPPORT
     if (isjpg) pPath = [pBundle pathForResource:pFile ofType:@"jpg"];
-    #endif
+#endif
 
     if (pPath)
     {
@@ -81,9 +81,9 @@ LICE_IBitmap* LoadImgFromResourceOSX(const char* bundleID, const char* filename)
       if (CSTR_NOT_EMPTY(resourceFileName))
       {
         if (ispng) return LICE_LoadPNG(resourceFileName);
-        #ifdef IPLUG_JPEG_SUPPORT
+#ifdef IPLUG_JPEG_SUPPORT
         if (isjpg) return LICE_LoadJPG(resourceFileName);
-        #endif
+#endif
       }
     }
   }
@@ -106,19 +106,19 @@ bool IGraphicsMac::DrawScreen(IRECT* pR)
     NSGraphicsContext* gc = [NSGraphicsContext graphicsContextWithGraphicsPort: pCGC flipped: YES];
     pCGC = (CGContextRef) [gc graphicsPort];
   }
-  #ifndef IPLUG_NO_CARBON_SUPPORT
+#ifndef IPLUG_NO_CARBON_SUPPORT
   else if (mGraphicsCarbon)
   {
     pCGC = mGraphicsCarbon->GetCGContext();
   }
-  #endif
+#endif
   if (!pCGC)
   {
     return false;
   }
 
   HDC__ * srcCtx = (HDC__*) mDrawBitmap->getDC();
-  CGImageRef img = CGBitmapContextCreateImage(srcCtx->ctx); 
+  CGImageRef img = CGBitmapContextCreateImage(srcCtx->ctx);
   r.size.width = mDrawBitmap->getRowSpan();
   CGContextDrawImage(pCGC, r, img);
   CGImageRelease(img);
@@ -149,14 +149,14 @@ void* IGraphicsMac::OpenCocoaWindow(void* pParentView)
   TRACE;
   CloseWindow();
   mGraphicsCocoa = (IGRAPHICS_COCOA*) [[IGRAPHICS_COCOA alloc] initWithIGraphics: this];
-  
+
   if (pParentView) // Cocoa VST host.
   {
     [(NSView*) pParentView addSubview: (IGRAPHICS_COCOA*) mGraphicsCocoa];
   }
-    
+
   UpdateTooltips();
-  
+
   // Else we are being called by IGraphicsCocoaFactory, which is being called by a Cocoa AU host,
   // and the host will take care of attaching the view to the window.
   return mGraphicsCocoa;
@@ -194,8 +194,8 @@ void IGraphicsMac::AttachSubWindow(void* hostWindowRef)
 
   NSRect windowRect = NSMakeRect(w.origin.x + xOffset, w.origin.y, Width(), Height());
   CUSTOM_COCOA_WINDOW *childWindow = [[CUSTOM_COCOA_WINDOW alloc] initWithContentRect:windowRect
-                                                                            styleMask:( NSBorderlessWindowMask )
-                                                                              backing:NSBackingStoreBuffered defer:NO];
+                                      styleMask:( NSBorderlessWindowMask )
+                                      backing:NSBackingStoreBuffered defer:NO];
   [childWindow retain];
   [childWindow setOpaque:YES];
   [childWindow setCanHide: YES];
@@ -233,35 +233,35 @@ void IGraphicsMac::RemoveSubWindow()
 
 void IGraphicsMac::CloseWindow()
 {
-  #ifndef IPLUG_NO_CARBON_SUPPORT
+#ifndef IPLUG_NO_CARBON_SUPPORT
   if (mGraphicsCarbon)
   {
     DELETE_NULL(mGraphicsCarbon);
   }
   else
-  #endif
-  if (mGraphicsCocoa)
-  {
-    IGRAPHICS_COCOA* graphicscocoa = (IGRAPHICS_COCOA*)mGraphicsCocoa;
-    [graphicscocoa removeAllToolTips];
-    [graphicscocoa killTimer];
-    mGraphicsCocoa = 0;
-
-    if (graphicscocoa->mGraphics)
+#endif
+    if (mGraphicsCocoa)
     {
-      graphicscocoa->mGraphics = 0;
-      [graphicscocoa removeFromSuperview];   // Releases.
+      IGRAPHICS_COCOA* graphicscocoa = (IGRAPHICS_COCOA*)mGraphicsCocoa;
+      [graphicscocoa removeAllToolTips];
+      [graphicscocoa killTimer];
+      mGraphicsCocoa = 0;
+
+      if (graphicscocoa->mGraphics)
+      {
+        graphicscocoa->mGraphics = 0;
+        [graphicscocoa removeFromSuperview];   // Releases.
+      }
     }
-  }
 }
 
 bool IGraphicsMac::WindowIsOpen()
 {
-  #ifndef IPLUG_NO_CARBON_SUPPORT
+#ifndef IPLUG_NO_CARBON_SUPPORT
   return (mGraphicsCarbon || mGraphicsCocoa);
-  #else
+#else
   return mGraphicsCocoa;
-  #endif
+#endif
 }
 
 void IGraphicsMac::Resize(int w, int h)
@@ -270,18 +270,18 @@ void IGraphicsMac::Resize(int w, int h)
 
   IGraphics::Resize(w, h);
 
-  #ifndef IPLUG_NO_CARBON_SUPPORT
+#ifndef IPLUG_NO_CARBON_SUPPORT
   if (mGraphicsCarbon)
   {
     mGraphicsCarbon->Resize(w, h);
   }
   else
-  #endif
-  if (mGraphicsCocoa)
-  {
-    NSSize size = { w, h };
-    [(IGRAPHICS_COCOA*) mGraphicsCocoa setFrameSize: size ];
-  }
+#endif
+    if (mGraphicsCocoa)
+    {
+      NSSize size = { w, h };
+      [(IGRAPHICS_COCOA*) mGraphicsCocoa setFrameSize: size ];
+    }
 }
 
 void IGraphicsMac::HideMouseCursor()
@@ -308,102 +308,102 @@ void IGraphicsMac::ShowMouseCursor()
 
 static int getRespIdFromType(int type, CFOptionFlags response)
 {
-    switch (type)
-    {
-        case MB_OKCANCEL:
-            return (response == kCFUserNotificationDefaultResponse ? IDOK  : IDCANCEL) ;
-        case MB_YESNO:
-            return (response == kCFUserNotificationDefaultResponse ? IDYES : IDNO) ;
-        case MB_YESNOCANCEL:
-            return (response == kCFUserNotificationDefaultResponse ?   IDYES : 
-                   (response == kCFUserNotificationAlternateResponse ? IDNO : IDCANCEL)) ;
-            
-        case MB_ABORTRETRYIGNORE:
-            return (response == kCFUserNotificationDefaultResponse ?    IDABORT : 
-                   (response == kCFUserNotificationAlternateResponse ?  IDRETRY : IDIGNORE)) ;
-            
-        case MB_RETRYCANCEL:
-            return (response == kCFUserNotificationDefaultResponse ?    IDRETRY : IDCANCEL);
-            break;
-            
-        case MB_CANCELTRYCONTINUE: /* WINVER >= 0x0500 */
-            return (response == kCFUserNotificationDefaultResponse ?    IDCANCEL : 
-                   (response == kCFUserNotificationAlternateResponse ?  IDRETRY : IDIGNORE)) ;
-            
-        case MB_OK:
-        default:
-            return IDOK;
-    }
+  switch (type)
+  {
+    case MB_OKCANCEL:
+      return (response == kCFUserNotificationDefaultResponse ? IDOK  : IDCANCEL) ;
+    case MB_YESNO:
+      return (response == kCFUserNotificationDefaultResponse ? IDYES : IDNO) ;
+    case MB_YESNOCANCEL:
+      return (response == kCFUserNotificationDefaultResponse ?   IDYES :
+              (response == kCFUserNotificationAlternateResponse ? IDNO : IDCANCEL)) ;
+
+    case MB_ABORTRETRYIGNORE:
+      return (response == kCFUserNotificationDefaultResponse ?    IDABORT :
+              (response == kCFUserNotificationAlternateResponse ?  IDRETRY : IDIGNORE)) ;
+
+    case MB_RETRYCANCEL:
+      return (response == kCFUserNotificationDefaultResponse ?    IDRETRY : IDCANCEL);
+      break;
+
+    case MB_CANCELTRYCONTINUE: /* WINVER >= 0x0500 */
+      return (response == kCFUserNotificationDefaultResponse ?    IDCANCEL :
+              (response == kCFUserNotificationAlternateResponse ?  IDRETRY : IDIGNORE)) ;
+
+    case MB_OK:
+    default:
+      return IDOK;
+  }
 }
 
 int IGraphicsMac::ShowMessageBox(const char* pText, const char* pCaption, int type)
 {
-    int result = 0;
-    
-    CFStringRef defaultButtonTitle = NULL;
-    CFStringRef alternateButtonTitle = NULL;
-    CFStringRef otherButtonTitle = NULL;
-    
-    CFStringRef alertMessage = CFStringCreateWithCStringNoCopy(NULL, pText, 0, kCFAllocatorNull);
-    CFStringRef alertHeader = CFStringCreateWithCStringNoCopy(NULL, pCaption, 0, kCFAllocatorNull);
-    
-    switch (type)
-    {
-        case MB_OKCANCEL:
-            alternateButtonTitle = CFSTR("Cancel");
-            break;
-        case MB_YESNO:
-            defaultButtonTitle = CFSTR("Yes");
-            alternateButtonTitle = CFSTR("No");
-            break;
-        case MB_YESNOCANCEL:
-            defaultButtonTitle = CFSTR("Yes");
-            alternateButtonTitle = CFSTR("No");
-            otherButtonTitle = CFSTR("Cancel");
-            
-        case MB_ABORTRETRYIGNORE:
-            defaultButtonTitle = CFSTR("Abort");
-            alternateButtonTitle = CFSTR("Retry");
-            otherButtonTitle = CFSTR("Ignore");
-            break;
-            
-        case MB_RETRYCANCEL:
-            defaultButtonTitle = CFSTR("Retry");
-            alternateButtonTitle = CFSTR("Cancel");
-            break;
-            
-        case MB_CANCELTRYCONTINUE: /* WINVER >= 0x0500 */
-            defaultButtonTitle = CFSTR("Cancel");
-            alternateButtonTitle = CFSTR("Try");
-            otherButtonTitle = CFSTR("Continue");
-            break;
-            
-        default:
-            break;
-    }
-    
-    CFOptionFlags response = 0;
-    CFUserNotificationDisplayAlert(0, kCFUserNotificationNoteAlertLevel, NULL, NULL, NULL,
-                                   alertHeader, alertMessage,
-                                   defaultButtonTitle, alternateButtonTitle, otherButtonTitle,
-                                   &response);
-    
-    CFRelease(alertMessage);
-    CFRelease(alertHeader);
-    
-    result = getRespIdFromType(type, response);
-    
-    return result;
+  int result = 0;
+
+  CFStringRef defaultButtonTitle = NULL;
+  CFStringRef alternateButtonTitle = NULL;
+  CFStringRef otherButtonTitle = NULL;
+
+  CFStringRef alertMessage = CFStringCreateWithCStringNoCopy(NULL, pText, 0, kCFAllocatorNull);
+  CFStringRef alertHeader = CFStringCreateWithCStringNoCopy(NULL, pCaption, 0, kCFAllocatorNull);
+
+  switch (type)
+  {
+    case MB_OKCANCEL:
+      alternateButtonTitle = CFSTR("Cancel");
+      break;
+    case MB_YESNO:
+      defaultButtonTitle = CFSTR("Yes");
+      alternateButtonTitle = CFSTR("No");
+      break;
+    case MB_YESNOCANCEL:
+      defaultButtonTitle = CFSTR("Yes");
+      alternateButtonTitle = CFSTR("No");
+      otherButtonTitle = CFSTR("Cancel");
+
+    case MB_ABORTRETRYIGNORE:
+      defaultButtonTitle = CFSTR("Abort");
+      alternateButtonTitle = CFSTR("Retry");
+      otherButtonTitle = CFSTR("Ignore");
+      break;
+
+    case MB_RETRYCANCEL:
+      defaultButtonTitle = CFSTR("Retry");
+      alternateButtonTitle = CFSTR("Cancel");
+      break;
+
+    case MB_CANCELTRYCONTINUE: /* WINVER >= 0x0500 */
+      defaultButtonTitle = CFSTR("Cancel");
+      alternateButtonTitle = CFSTR("Try");
+      otherButtonTitle = CFSTR("Continue");
+      break;
+
+    default:
+      break;
+  }
+
+  CFOptionFlags response = 0;
+  CFUserNotificationDisplayAlert(0, kCFUserNotificationNoteAlertLevel, NULL, NULL, NULL,
+                                 alertHeader, alertMessage,
+                                 defaultButtonTitle, alternateButtonTitle, otherButtonTitle,
+                                 &response);
+
+  CFRelease(alertMessage);
+  CFRelease(alertHeader);
+
+  result = getRespIdFromType(type, response);
+
+  return result;
 }
 
 void IGraphicsMac::ForceEndUserEdit()
 {
-  #ifndef IPLUG_NO_CARBON_SUPPORT
+#ifndef IPLUG_NO_CARBON_SUPPORT
   if (mGraphicsCarbon)
   {
     mGraphicsCarbon->EndUserInput(false);
   }
-  #endif
+#endif
   if (mGraphicsCocoa)
   {
     [(IGRAPHICS_COCOA*) mGraphicsCocoa endUserInput];
@@ -415,19 +415,19 @@ void IGraphicsMac::UpdateTooltips()
   if (!(mGraphicsCocoa && TooltipsEnabled())) return;
 
   CocoaAutoReleasePool pool;
-  
+
   [(IGRAPHICS_COCOA*) mGraphicsCocoa removeAllToolTips];
-  
+
   IControl** ppControl = mControls.GetList();
-  
-  for (int i = 0, n = mControls.GetSize(); i < n; ++i, ++ppControl) 
+
+  for (int i = 0, n = mControls.GetSize(); i < n; ++i, ++ppControl)
   {
     IControl* pControl = *ppControl;
     const char* tooltip = pControl->GetTooltip();
-    if (tooltip && !pControl->IsHidden()) 
+    if (tooltip && !pControl->IsHidden())
     {
       IRECT* pR = pControl->GetTargetRECT();
-      if (!pControl->GetTargetRECT()->Empty()) 
+      if (!pControl->GetTargetRECT()->Empty())
       {
         [(IGRAPHICS_COCOA*) mGraphicsCocoa registerToolTip: pR];
       }
@@ -437,7 +437,7 @@ void IGraphicsMac::UpdateTooltips()
 
 const char* IGraphicsMac::GetGUIAPI()
 {
-  #ifndef IPLUG_NO_CARBON_SUPPORT
+#ifndef IPLUG_NO_CARBON_SUPPORT
   if (mGraphicsCarbon)
   {
     if (mGraphicsCarbon->GetIsComposited())
@@ -446,7 +446,7 @@ const char* IGraphicsMac::GetGUIAPI()
       return "Carbon Non-Composited GUI";
   }
   else
-  #endif
+#endif
     return "Cocoa GUI";
 }
 
@@ -454,7 +454,7 @@ void IGraphicsMac::HostPath(WDL_String* pPath)
 {
   CocoaAutoReleasePool pool;
   NSBundle* pBundle = [NSBundle bundleWithIdentifier: ToNSString(GetBundleID())];
-  
+
   if (pBundle)
   {
     NSString* path = [pBundle executablePath];
@@ -469,11 +469,11 @@ void IGraphicsMac::PluginPath(WDL_String* pPath)
 {
   CocoaAutoReleasePool pool;
   NSBundle* pBundle = [NSBundle bundleWithIdentifier: ToNSString(GetBundleID())];
-  
+
   if (pBundle)
   {
     NSString* path = [[pBundle bundlePath] stringByDeletingLastPathComponent];
-    
+
     if (path)
     {
       pPath->Set([path UTF8String]);
@@ -609,12 +609,12 @@ IPopupMenu* IGraphicsMac::CreateIPopupMenu(IPopupMenu* pMenu, IRECT* pTextRect)
     NSRect areaRect = ToNSRect(this, pTextRect);
     return [(IGRAPHICS_COCOA*) mGraphicsCocoa createIPopupMenu: pMenu atLocation: areaRect];
   }
-  #ifndef IPLUG_NO_CARBON_SUPPORT
+#ifndef IPLUG_NO_CARBON_SUPPORT
   else if (mGraphicsCarbon)
   {
     return mGraphicsCarbon->CreateIPopupMenu(pMenu, pTextRect);
   }
-  #endif
+#endif
   else return 0;
 }
 
@@ -625,17 +625,17 @@ void IGraphicsMac::CreateTextEntry(IControl* pControl, IText* pText, IRECT* pTex
     NSRect areaRect = ToNSRect(this, pTextRect);
     [(IGRAPHICS_COCOA*) mGraphicsCocoa createTextEntry: pControl withIParam:pParam withIText:pText withCStr:pString withFrame:areaRect];
   }
-  #ifndef IPLUG_NO_CARBON_SUPPORT
+#ifndef IPLUG_NO_CARBON_SUPPORT
   else if (mGraphicsCarbon)
   {
     mGraphicsCarbon->CreateTextEntry(pControl, pText, pTextRect, pString, pParam);
   }
-  #endif
+#endif
 }
 
 bool IGraphicsMac::OpenURL(const char* url, const char* msgWindowTitle, const char* confirmMsg, const char* errMsgOnFailure)
 {
-  #pragma REMINDER("Warning and error messages for OpenURL not implemented")
+#pragma REMINDER("Warning and error messages for OpenURL not implemented")
   NSURL* pURL = 0;
   if (strstr(url, "http"))
   {

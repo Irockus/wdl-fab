@@ -16,7 +16,7 @@
     2. Altered source versions must be plainly marked as such, and must not be
        misrepresented as being the original software.
     3. This notice may not be removed or altered from any source distribution.
-  
+
 
     SWELL provides _EXTREMELY BASIC_ win32 wrapping for OS X and maybe other platforms.
 
@@ -33,11 +33,11 @@
 
 
 #ifdef SWELL_PROVIDED_BY_APP
-  #ifdef __cplusplus
-    #define SWELL_API_DEFINE(ret,func,parms) extern "C" ret (*func)parms;
-  #else
-    #define SWELL_API_DEFINE(ret,func,parms) extern ret (*func)parms;
-  #endif
+#ifdef __cplusplus
+#define SWELL_API_DEFINE(ret,func,parms) extern "C" ret (*func)parms;
+#else
+#define SWELL_API_DEFINE(ret,func,parms) extern ret (*func)parms;
+#endif
 #else
 #define SWELL_API_DEFINE(ret,func,parms) ret func parms ;
 #endif
@@ -48,8 +48,8 @@
 //   rather than:
 //      void function_name(int parm, int parm2);
 
-/* 
-** lstrcpyn: this is provided because strncpy is braindead (filling with zeroes, and not 
+/*
+** lstrcpyn: this is provided because strncpy is braindead (filling with zeroes, and not
 ** NULL terminating if the destination buffer is too short? ASKING for trouble..)
 ** lstrpcyn always null terminates the string and doesnt fill anything extra.
 */
@@ -64,15 +64,15 @@ SWELL_API_DEFINE(int, MulDiv, (int, int, int))
 
 
 /*
-** Sleep() sleeps for specified milliseconds. This maps to usleep, with a ms value of 0 
-** usleeping for 100 microseconds. 
+** Sleep() sleeps for specified milliseconds. This maps to usleep, with a ms value of 0
+** usleeping for 100 microseconds.
 */
 SWELL_API_DEFINE(void, Sleep,(int ms))
 
 /*
-** GetTickCount() and timeGetTime() give you ms level timings via gettimeofday(). 
-** 
-** NOTE: This doesn't map to time since system start (like in win32), so a wrap around 
+** GetTickCount() and timeGetTime() give you ms level timings via gettimeofday().
+**
+** NOTE: This doesn't map to time since system start (like in win32), so a wrap around
 ** is slightly more likely (i.e. even if you booted your system an hour ago it could happen).
 */
 SWELL_API_DEFINE(DWORD, GetTickCount,())
@@ -83,14 +83,14 @@ SWELL_API_DEFINE(DWORD, GetTickCount,())
 /*
 ** GetFileTime() gets the file time of a file (FILE *), and converts it to the Windows time.
 **
-** NOTE: while it returns a 64 bit time value, it is only accurate to the second since thats 
+** NOTE: while it returns a 64 bit time value, it is only accurate to the second since thats
 ** what fstat() returns. Takes an int filedes rather than a HANDLE.
 */
 SWELL_API_DEFINE(BOOL, GetFileTime,(int filedes, FILETIME *lpCreationTime, FILETIME *lpLastAccessTime, FILETIME *lpLastWriteTime))
 
 /*
 ** *PrivateProfileString/Int():
-** These are mostly thread-safe, mostly inter-process safe, and mostly module safe 
+** These are mostly thread-safe, mostly inter-process safe, and mostly module safe
 ** (i.e. writes from other modules) should be synchronized).
 **
 ** NOTES:
@@ -116,8 +116,8 @@ SWELL_API_DEFINE(DWORD, GetModuleFileName,(HINSTANCE hInst, char *fn, DWORD nSiz
 
 #ifdef SWELL_TARGET_OSX
 /*
-** SWELL_CStringToCFString(): Creates a CFString/NSString * from a C string. This is mostly 
-** used internally but you may wish to use it as well (though none of the SWELL APIs take 
+** SWELL_CStringToCFString(): Creates a CFString/NSString * from a C string. This is mostly
+** used internally but you may wish to use it as well (though none of the SWELL APIs take
 ** CFString/NSString.
 */
 SWELL_API_DEFINE(void *,SWELL_CStringToCFString,(const char *str))
@@ -136,7 +136,7 @@ SWELL_API_DEFINE(void, SWELL_CFStringToCString, (const void *str, char *buf, int
 SWELL_API_DEFINE(BOOL, SWELL_PtInRect,(RECT *r, POINT p))
 
 /*
-** ShellExecute(): 
+** ShellExecute():
 ** NOTE: currently action is ignored, and it only works on content1 being a URL beginning with http://.
 ** TODO: finish implementation
 */
@@ -149,20 +149,20 @@ SWELL_API_DEFINE(int, MessageBox,(HWND hwndParent, const char *text, const char 
 
 
 /*
-** GetOpenFileName() / GetSaveFileName() 
+** GetOpenFileName() / GetSaveFileName()
 ** These are a different API because we didnt feel like reeimplimenting the full API.
-** Extlist is something similar you'd pass getopenfilename, 
+** Extlist is something similar you'd pass getopenfilename,
 ** initialdir and initialfile are optional (and NULL means not set).
 */
 
 // free() the result of this, if non-NULL.
 // if allowmul is set, the multiple files are specified the same way GetOpenFileName() returns.
-SWELL_API_DEFINE(char *,BrowseForFiles,(const char *text, const char *initialdir, 
-					const char *initialfile, bool allowmul, const char *extlist)) 
+SWELL_API_DEFINE(char *,BrowseForFiles,(const char *text, const char *initialdir,
+                                        const char *initialfile, bool allowmul, const char *extlist))
 
-// returns TRUE if file was chosen.         
+// returns TRUE if file was chosen.
 SWELL_API_DEFINE(bool, BrowseForSaveFile,(const char *text, const char *initialdir, const char *initialfile, const char *extlist,
-			char *fn, int fnsize))
+                 char *fn, int fnsize))
 
 // returns TRUE if path was chosen.
 SWELL_API_DEFINE(bool, BrowseForDirectory,(const char *text, const char *initialdir, char *fn, int fnsize))
@@ -175,9 +175,9 @@ SWELL_API_DEFINE(void,BrowseFile_SetTemplate,(const char *dlgid, DLGPROC dlgProc
 // all of these treat HWND as NSView and/or NSWindow (usually smartish about it)
 
 
-/* 
+/*
 ** GetDlgItem(hwnd,0) returns hwnd if hwnd is a NSView, or the contentview if hwnd is a NSWindow.
-** Note that this GetDlgItem will actually search a view hierarchy for the tagged view, 
+** Note that this GetDlgItem will actually search a view hierarchy for the tagged view,
 ** unlike Win32 where it will only look at immediate children.
 */
 SWELL_API_DEFINE(HWND, GetDlgItem,(HWND, int))
@@ -192,12 +192,12 @@ SWELL_API_DEFINE(void, ShowWindow,(HWND, int))
 
 /*
 ** DestroyWindow() works for both a NSWindow or NSView.
-** Note that if the window is a fake window with a procedure 
+** Note that if the window is a fake window with a procedure
 ** (created via CreateDialog or DialogBox below) then WM_DESTROY
-** will be called immediately, though the window/view may be freed 
+** will be called immediately, though the window/view may be freed
 ** sometime later via the autorelease pool.
 */
-SWELL_API_DEFINE(void, DestroyWindow,(HWND hwnd)) 
+SWELL_API_DEFINE(void, DestroyWindow,(HWND hwnd))
 
 SWELL_API_DEFINE(BOOL, SWELL_GetGestureInfo, (LPARAM lParam, GESTUREINFO* gi))
 
@@ -241,7 +241,7 @@ SWELL_API_DEFINE(HWND, GetForegroundWindow,())
 ** Updated: they actually send WM_CAPTURECHANGED messages now, if the window supports
 ** onSwellMessage:p1:p2: and swellCapChangeNotify (and swellCapChangeNotify returns YES).
 **
-** Note that any HWND that returns YES to swellCapChangeNotify should do the following on 
+** Note that any HWND that returns YES to swellCapChangeNotify should do the following on
 ** destroy or dealloc: if (GetCapture()==(HWND)self) ReleaseCapture(); Failure to do so
 ** can cause a dealloc'd window to get messages sent to it.
 */
@@ -252,7 +252,7 @@ SWELL_API_DEFINE(void, ReleaseCapture,())
 /*
 ** IsChild()
 ** Notes: hwndChild must be a NSView (if not then false is returned)
-** hwndParent can be a NSWindow or NSView. 
+** hwndParent can be a NSWindow or NSView.
 ** NSWindow level ownership/children are not detected.
 */
 SWELL_API_DEFINE(int, IsChild,(HWND hwndParent, HWND hwndChild))
@@ -260,9 +260,9 @@ SWELL_API_DEFINE(int, IsChild,(HWND hwndParent, HWND hwndChild))
 
 /*
 ** GetParent()
-** Notes: if hwnd is a NSView, then gets the parent view (or NSWindow 
+** Notes: if hwnd is a NSView, then gets the parent view (or NSWindow
 ** if the parent view is the window's contentview). If hwnd is a NSWindow,
-** then GetParent returns the owner window, if any. Note that the owner 
+** then GetParent returns the owner window, if any. Note that the owner
 ** window system is not part of OSX, but rather part of SWELL.
 */
 SWELL_API_DEFINE(HWND, GetParent,(HWND hwnd))
@@ -275,7 +275,7 @@ SWELL_API_DEFINE(HWND, SetParent,(HWND hwnd, HWND newPar))
 
 /*
 ** GetWindow()
-** Most of the standard GW_CHILD etc work. Does not do anything to prevent you from 
+** Most of the standard GW_CHILD etc work. Does not do anything to prevent you from
 ** getting into infinite loops if you go changing the order on the fly etc.
 */
 SWELL_API_DEFINE(HWND, GetWindow,(HWND hwnd, int what))
@@ -286,11 +286,11 @@ SWELL_API_DEFINE(HWND,FindWindowEx,(HWND par, HWND lastw, const char *classname,
 /*
 ** Notes: common win32 code like this:
 **   RECT r;
-**   GetWindowRect(hwnd,&r); 
+**   GetWindowRect(hwnd,&r);
 **   ScreenToClient(otherhwnd,(LPPOINT)&r);
 **   ScreenToClient(otherhwnd,((LPPOINT)&r)+1);
-** does work, however be aware that in certain instances r.bottom may be less 
-** than r.top, due to flipped coordinates. SetWindowPos and other functions 
+** does work, however be aware that in certain instances r.bottom may be less
+** than r.top, due to flipped coordinates. SetWindowPos and other functions
 ** handle negative heights gracefully, and you should too.
 **
 ** Note: GetWindowContentViewRect gets the rectangle of the content view (pre-NCCALCSIZE etc)
@@ -298,7 +298,7 @@ SWELL_API_DEFINE(HWND,FindWindowEx,(HWND par, HWND lastw, const char *classname,
 SWELL_API_DEFINE(void, ClientToScreen,(HWND hwnd, POINT *p))
 SWELL_API_DEFINE(void, ScreenToClient,(HWND hwnd, POINT *p))
 SWELL_API_DEFINE(bool, GetWindowRect,(HWND hwnd, RECT *r))
-SWELL_API_DEFINE(void, GetWindowContentViewRect, (HWND hwnd, RECT *r)) 
+SWELL_API_DEFINE(void, GetWindowContentViewRect, (HWND hwnd, RECT *r))
 SWELL_API_DEFINE(void, GetClientRect,(HWND hwnd, RECT *r))
 SWELL_API_DEFINE(HWND, WindowFromPoint,(POINT p))
 SWELL_API_DEFINE(BOOL, WinOffsetRect, (LPRECT lprc, int dx, int dy))
@@ -309,7 +309,7 @@ SWELL_API_DEFINE(int,WinIntersectRect,(RECT *out, RECT *in1, RECT *in2))
 
 /*
 ** SetWindowPos():
-** Notes: Z ordering stuff is ignored, as are most flags. 
+** Notes: Z ordering stuff is ignored, as are most flags.
 ** SWP_NOMOVE and SWP_NOSIZE are the only flags used.
 */
 SWELL_API_DEFINE(void, SetWindowPos,(HWND hwnd, HWND unused, int x, int y, int cx, int cy, int flags))
@@ -335,10 +335,10 @@ SWELL_API_DEFINE(void,UpdateWindow,(HWND hwnd))
 ** GWL_ID is supported for all objects that support the 'tag'/'setTag' methods,
 ** which would be controls and SWELL created windows/dialogs/controls.
 **
-** GWL_USERDATA is supported by SWELL created windows/dialogs/controls, using 
+** GWL_USERDATA is supported by SWELL created windows/dialogs/controls, using
 ** (int)getSwellUserData and setSwellUserData:(int).
-** 
-** GWL_WNDPROC is supported by SWELL created windows/dialogs/controls, using 
+**
+** GWL_WNDPROC is supported by SWELL created windows/dialogs/controls, using
 ** (int)getSwellWindowProc and setSwellWindowProc:(int).
 **
 ** DWL_DLGPROC is supported by SWELL created dialogs now (it might work in windows/controls but isnt recommended)
@@ -346,9 +346,9 @@ SWELL_API_DEFINE(void,UpdateWindow,(HWND hwnd))
 ** GWL_STYLE is only supported for NSButton. Currently the only flags supported are
 ** BS_AUTO3STATE (BS_AUTOCHECKBOX is returned but also ignored).
 **
-** indices of >= 0 and < 128 (32 integers) are supported for SWELL created 
-** windows/dialogs/controls, via (int)getSwellExtraData:(int)idx and 
-** setSwellExtraData:(int)idx value:(int)val . 
+** indices of >= 0 and < 128 (32 integers) are supported for SWELL created
+** windows/dialogs/controls, via (int)getSwellExtraData:(int)idx and
+** setSwellExtraData:(int)idx value:(int)val .
 */
 SWELL_API_DEFINE(LONG_PTR, GetWindowLong,(HWND hwnd, int idx))
 SWELL_API_DEFINE(LONG_PTR, SetWindowLong,(HWND hwnd, int idx, LONG_PTR val))
@@ -356,10 +356,10 @@ SWELL_API_DEFINE(LONG_PTR, SetWindowLong,(HWND hwnd, int idx, LONG_PTR val))
 
 SWELL_API_DEFINE(BOOL, ScrollWindow, (HWND hwnd, int xamt, int yamt, const RECT *lpRect, const RECT *lpClipRect))
 
-/* 
+/*
 ** GetProp() SetProp() RemoveProp() EnumPropsEx()
 ** These should work like in win32. Free your props otherwise they will leak.
-** Restriction on what you can do in the PROPENUMPROCEX is similar to win32 
+** Restriction on what you can do in the PROPENUMPROCEX is similar to win32
 ** (you can remove only the called prop, and can't add props within it).
 ** if the prop name is < (void *)65536 then it is treated as a short identifier.
 */
@@ -367,7 +367,7 @@ SWELL_API_DEFINE(int, EnumPropsEx,(HWND, PROPENUMPROCEX, LPARAM))
 SWELL_API_DEFINE(HANDLE, GetProp, (HWND, const char *))
 SWELL_API_DEFINE(BOOL, SetProp, (HWND, const char *, HANDLE))
 SWELL_API_DEFINE(HANDLE, RemoveProp, (HWND, const char *))
-                
+
 
 /*
 ** IsWindowVisible()
@@ -390,7 +390,7 @@ SWELL_API_DEFINE(void, CenterWindow, (HWND hwnd))
 ** receive your timers via a WM_TIMER (or SWELL_Timer:(id))
 **
 ** You can kill all timers for a window using KillTimer(hwnd,-1);
-** You MUST kill all timers for a window before destroying it. Note that SWELL created 
+** You MUST kill all timers for a window before destroying it. Note that SWELL created
 ** windows/dialogs/controls automatically do this, but if you use SetTimer() on a NSView *
 ** or NSWindow * directly, then you should kill all timers in -dealloc.
 */
@@ -457,7 +457,7 @@ SWELL_API_DEFINE(void, ListView_RedrawItems,(HWND h, int startitem, int enditem)
 SWELL_API_DEFINE(void, ListView_SetItemCount,(HWND h, int cnt))
 SWELL_API_DEFINE(void, ListView_EnsureVisible,(HWND h, int i, BOOL pok))
 SWELL_API_DEFINE(bool, ListView_GetSubItemRect,(HWND h, int item, int subitem, int code, RECT *r))
-SWELL_API_DEFINE(void, ListView_SetImageList,(HWND h, HIMAGELIST imagelist, int which)) 
+SWELL_API_DEFINE(void, ListView_SetImageList,(HWND h, HIMAGELIST imagelist, int which))
 SWELL_API_DEFINE(int, ListView_HitTest,(HWND h, LVHITTESTINFO *pinf))
 SWELL_API_DEFINE(int, ListView_SubItemHitTest,(HWND h, LVHITTESTINFO *pinf))
 SWELL_API_DEFINE(void, ListView_GetItemText,(HWND hwnd, int item, int subitem, char *text, int textmax))
@@ -483,7 +483,7 @@ SWELL_API_DEFINE(BOOL, ImageList_Remove, (HIMAGELIST list, int idx))
 SWELL_API_DEFINE(int, ImageList_ReplaceIcon,(HIMAGELIST list, int offset, HICON image))
 SWELL_API_DEFINE(void, ImageList_Destroy, (HIMAGELIST))
 /*
-** TabCtrl api. 
+** TabCtrl api.
 */
 SWELL_API_DEFINE(int, TabCtrl_GetItemCount,(HWND hwnd))
 SWELL_API_DEFINE(BOOL, TabCtrl_DeleteItem,(HWND hwnd, int idx))
@@ -496,7 +496,7 @@ SWELL_API_DEFINE(BOOL, TabCtrl_AdjustRect, (HWND hwnd, BOOL fLarger, RECT *r))
 ** TreeView
 */
 
-SWELL_API_DEFINE(HTREEITEM, TreeView_InsertItem, (HWND hwnd, TV_INSERTSTRUCT *ins)) 
+SWELL_API_DEFINE(HTREEITEM, TreeView_InsertItem, (HWND hwnd, TV_INSERTSTRUCT *ins))
 SWELL_API_DEFINE(BOOL, TreeView_Expand,(HWND hwnd, HTREEITEM item, UINT flag))
 SWELL_API_DEFINE(HTREEITEM, TreeView_GetSelection,(HWND hwnd))
 SWELL_API_DEFINE(void, TreeView_DeleteItem,(HWND hwnd, HTREEITEM item))
@@ -560,8 +560,8 @@ SWELL_API_DEFINE(void, DrawMenuBar,(HWND))
 /*
 ** LoadMenu()
 **  Loads a menu created with SWELL_DEFINE_MENU_RESOURCE_BEGIN(), see swell-menugen.h
-**  Notes: the hinst parameter is ignored, the menu must have been defined in the same 
-**  APP or DYLIB as the LoadMenu call. If you wish to load a menu from another module, 
+**  Notes: the hinst parameter is ignored, the menu must have been defined in the same
+**  APP or DYLIB as the LoadMenu call. If you wish to load a menu from another module,
 **  you should somehow get its SWELL_curmodule_menuresource_head and pass it to SWELL_LoadMenu
 **  directly.
 */
@@ -577,8 +577,8 @@ SWELL_API_DEFINE(HMENU, SWELL_LoadMenu,(struct SWELL_MenuResourceIndex *head, co
 */
 SWELL_API_DEFINE(int, TrackPopupMenu,(HMENU hMenu, int flags, int xpos, int ypos, int resvd, HWND hwnd, const RECT *r))
 
-/* 
-** SWELL_SetMenuDestination: set the action destination for all items in a menu 
+/*
+** SWELL_SetMenuDestination: set the action destination for all items in a menu
 ** Notes:
 **   TrackPopupMenu and SetMenu use this internally, but it may be useful.
 */
@@ -588,22 +588,22 @@ SWELL_API_DEFINE(void, SWELL_SetMenuDestination,(HMENU menu, HWND hwnd))
 ** SWELL_DuplicateMenu:
 ** Copies an entire menu.
 */
-SWELL_API_DEFINE(HMENU, SWELL_DuplicateMenu,(HMENU menu))  
+SWELL_API_DEFINE(HMENU, SWELL_DuplicateMenu,(HMENU menu))
 
 /*
 ** SetMenu()/GetMenu()
 ** Notes: These work on SWELL created NSWindows, or objective C objects that respond to
-** swellSetMenu:(HMENU) and swellGetMenu. 
+** swellSetMenu:(HMENU) and swellGetMenu.
 ** Setting these values doesnt mean anything, except that the SWELL windows will automatically
 ** set the application menu via NSApp setMainMenu: when activated.
-** 
+**
 */
 SWELL_API_DEFINE(BOOL, SetMenu,(HWND hwnd, HMENU menu))
 SWELL_API_DEFINE(HMENU, GetMenu,(HWND hwnd))
 
 /*
 ** SWELL_SetDefaultWindowMenu()/SWELL_GetDefaultWindowMenu()
-** these set an internal flag for the default window menu, which will be set 
+** these set an internal flag for the default window menu, which will be set
 ** when switching to a window that has no menu set. Set this to your application's
 ** main menu.
 */
@@ -616,19 +616,19 @@ SWELL_API_DEFINE(void, SWELL_SetCurrentMenu,(HMENU))
 
 
 
-/* 
+/*
 ** SWELL dialog box/control/window/child dialog/etc creation
 ** DialogBox(), DialogBoxParam(), CreateDialog(), and CreateDialogParam()
 **
 ** Notes:
 ** hInstance parameters are ignored. If you wish to load a dialog resource from another
-** module (DYLIB), you should get its SWELL_curmodule_dialogresource_head via your own 
+** module (DYLIB), you should get its SWELL_curmodule_dialogresource_head via your own
 ** mechanism and pass it as the first parameter of SWELL_DialogBox or whichever API.
-** 
-** If you are using CreateDialog() and creating a child window, you can use a resource ID of 
-** 0, which creates an opaque child window. Instead of passing a DLGPROC, you should pass a 
+**
+** If you are using CreateDialog() and creating a child window, you can use a resource ID of
+** 0, which creates an opaque child window. Instead of passing a DLGPROC, you should pass a
 ** routine that retuns LRESULT (and cast it to DLGPROC).
-** 
+**
 */
 
 #ifndef DialogBox
@@ -637,7 +637,7 @@ SWELL_API_DEFINE(void, SWELL_SetCurrentMenu,(HMENU))
 #define CreateDialog(hinst,resid,par,dlgproc) SWELL_CreateDialog(SWELL_curmodule_dialogresource_head,(resid),par,dlgproc,0)
 #define CreateDialogParam(hinst,resid,par,dlgproc,param) SWELL_CreateDialog(SWELL_curmodule_dialogresource_head,(resid),par,dlgproc,param)
 #endif
-SWELL_API_DEFINE(int, SWELL_DialogBox,(struct SWELL_DialogResourceIndex *reshead, const char *resid, HWND parent,  DLGPROC dlgproc, LPARAM param))  
+SWELL_API_DEFINE(int, SWELL_DialogBox,(struct SWELL_DialogResourceIndex *reshead, const char *resid, HWND parent,  DLGPROC dlgproc, LPARAM param))
 SWELL_API_DEFINE(HWND, SWELL_CreateDialog,(struct SWELL_DialogResourceIndex *reshead, const char *resid, HWND parent, DLGPROC dlgproc, LPARAM param))
 
 
@@ -652,17 +652,17 @@ SWELL_API_DEFINE(void, SWELL_RegisterCustomControlCreator,(SWELL_ControlCreatorP
 SWELL_API_DEFINE(void, SWELL_UnregisterCustomControlCreator,(SWELL_ControlCreatorProc proc))
 
 /*
-** DefWindowProc(). 
-** Notes: Doesnt do much but call it anyway from any child windows created with CreateDialog 
+** DefWindowProc().
+** Notes: Doesnt do much but call it anyway from any child windows created with CreateDialog
 ** and a 0 resource-id window proc.
 */
 SWELL_API_DEFINE(LRESULT, DefWindowProc,(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam))
-                 
+
 /*
 ** EndDialog():
 ** Notes: _ONLY_ use on a dialog created with DialogBox(). Will do nothing on other dialogs.
 */
-SWELL_API_DEFINE(void, EndDialog,(HWND, int))            
+SWELL_API_DEFINE(void, EndDialog,(HWND, int))
 
 
 SWELL_API_DEFINE(int,SWELL_GetDefaultButtonID,(HWND hwndDlg, bool onlyIfEnabled))
@@ -674,7 +674,7 @@ SWELL_API_DEFINE(int,SWELL_GetDefaultButtonID,(HWND hwndDlg, bool onlyIfEnabled)
 **   LIMITATION - SendMessage should only be used from the same thread that the window/view
 **   was created in. Cross-thread use SHOULD BE AVOIDED. It may work, but it may blow up.
 **   PostMessage  (below) can be used in certain instances for asynchronous notifications.
-** 
+**
 ** If the hwnd supports onSwellMessage:p1:p2: then the message is sent via this.
 ** Alternatively, buttons created via the dialog interface support BM_GETIMAGE/BM_SETIMAGE
 ** NSPopUpButton and NSComboBox controls support CB_*
@@ -683,8 +683,8 @@ SWELL_API_DEFINE(int,SWELL_GetDefaultButtonID,(HWND hwndDlg, bool onlyIfEnabled)
 ** If the receiver is a window and none of these work, the message goes to the window's contentview's onSwellMessage, if any
 **
 */
-SWELL_API_DEFINE(LRESULT, SendMessage,(HWND, UINT, WPARAM, LPARAM))  
-#ifndef SendDlgItemMessage                                       
+SWELL_API_DEFINE(LRESULT, SendMessage,(HWND, UINT, WPARAM, LPARAM))
+#ifndef SendDlgItemMessage
 #define SendDlgItemMessage(hwnd,idx,msg,wparam,lparam) SendMessage(GetDlgItem(hwnd,idx),msg,wparam,lparam)
 #endif
 
@@ -694,7 +694,7 @@ SWELL_API_DEFINE(void,SWELL_BroadcastMessage,(UINT, WPARAM, LPARAM))
 ** PostMessage()
 ** Notes:
 **   Queues a message into the application message queue. Note that you should only ever
-**   send messages to destinations that were created from the main thread. They will be 
+**   send messages to destinations that were created from the main thread. They will be
 **   processed later from a timer (in the main thread).
 ** When a window is destroyed any outstanding messages will be discarded for it.
 */
@@ -723,15 +723,15 @@ SWELL_API_DEFINE(void, SWELL_MessageQueue_Clear,(HWND h))
 
 /*
 ** SWELL_MacKeyToWindowsKey()
-** Pass a keyboard NSEvent *, and it will return a windows VK_ keycode (or ascii), and set flags, 
+** Pass a keyboard NSEvent *, and it will return a windows VK_ keycode (or ascii), and set flags,
 ** including (possibly) FSHIFT, FCONTROL (apple key), FALT, and FVIRTKEY. The ctrl key is not checked,
 ** as SWELL generally encourages this to be used soley for a right mouse button (as modifier).
 */
 #ifdef SWELL_TARGET_OSX
 SWELL_API_DEFINE(int, SWELL_MacKeyToWindowsKey,(void *nsevent, int *flags))
 
-  // ex is the same as normal, except if mode=1 it does more processing of raw keys w/ modifiers
-  // and also if nsevent==NULL current event is used
+// ex is the same as normal, except if mode=1 it does more processing of raw keys w/ modifiers
+// and also if nsevent==NULL current event is used
 SWELL_API_DEFINE(int, SWELL_MacKeyToWindowsKeyEx,(void *nsevent, int *flags, int mode))
 #endif
 SWELL_API_DEFINE(int,SWELL_KeyToASCII,(int wParam, int lParam, int *newflags))
@@ -752,7 +752,7 @@ SWELL_API_DEFINE(void, GetCursorPos,(POINT *pt))
 SWELL_API_DEFINE(DWORD, GetMessagePos,())
 
 /*
-** LoadCursor(). 
+** LoadCursor().
 ** Notes: hinstance parameter ignored, currently only supports loading some of the predefined values.
 ** (IDC_SIZEALL etc). If it succeeds value is a NSCursor *
 */
@@ -820,7 +820,7 @@ SWELL_API_DEFINE(void, SWELL_GetViewPort,(RECT *r, RECT *sourcerect, bool wantWo
 /*
 ** Clipboard API emulation
 ** Notes: setting multiple types may not work right
-** 
+**
 */
 SWELL_API_DEFINE(bool, OpenClipboard,(HWND hwndDlg))
 SWELL_API_DEFINE(void, CloseClipboard,())
@@ -836,9 +836,9 @@ SWELL_API_DEFINE(UINT, EnumClipboardFormats,(UINT lastfmt))
 #endif
 
 /*
-** GlobalAlloc*() 
+** GlobalAlloc*()
 ** These are only currently used by the clipboard system,
-** but should work normally. 
+** but should work normally.
 */
 
 SWELL_API_DEFINE(HANDLE, GlobalAlloc,(int flags, int sz))
@@ -882,7 +882,7 @@ SWELL_API_DEFINE(BOOL,FreeLibrary,(HINSTANCE hInst))
 
 /*
 ** GDI functions.
-** Everything should be all hunky dory, your windows may get WM_PAINT, call 
+** Everything should be all hunky dory, your windows may get WM_PAINT, call
 ** GetDC()/ReleaseDC(), etc.
 **
 ** Or, there are these helper functions:
@@ -917,8 +917,8 @@ SWELL_API_DEFINE(void *, SWELL_GetCtxFrameBuffer,(HDC ctx))
 
 
 
-/* 
-** Some utility functions for pushing, setting, and popping the clip region. 
+/*
+** Some utility functions for pushing, setting, and popping the clip region.
 */
 SWELL_API_DEFINE(void, SWELL_PushClipRegion,(HDC ctx))
 SWELL_API_DEFINE(void, SWELL_SetClipRegion,(HDC ctx, RECT *r))
@@ -926,15 +926,15 @@ SWELL_API_DEFINE(void, SWELL_PopClipRegion,(HDC ctx))
 
 
 
-/* 
+/*
 ** GDI emulation functions
 ** todo: document
 */
 
 SWELL_API_DEFINE(HFONT, CreateFontIndirect,(LOGFONT *))
-SWELL_API_DEFINE(HFONT, CreateFont,(int lfHeight, int lfWidth, int lfEscapement, int lfOrientation, int lfWeight, char lfItalic, 
-  char lfUnderline, char lfStrikeOut, char lfCharSet, char lfOutPrecision, char lfClipPrecision, 
-         char lfQuality, char lfPitchAndFamily, const char *lfFaceName))
+SWELL_API_DEFINE(HFONT, CreateFont,(int lfHeight, int lfWidth, int lfEscapement, int lfOrientation, int lfWeight, char lfItalic,
+                                    char lfUnderline, char lfStrikeOut, char lfCharSet, char lfOutPrecision, char lfClipPrecision,
+                                    char lfQuality, char lfPitchAndFamily, const char *lfFaceName))
 
 SWELL_API_DEFINE(HPEN, CreatePen,(int attr, int wid, int col))
 SWELL_API_DEFINE(HBRUSH, CreateSolidBrush,(int col))
@@ -1009,13 +1009,13 @@ SWELL_API_DEFINE(HDC, BeginPaint,(HWND, PAINTSTRUCT *))
 SWELL_API_DEFINE(BOOL, EndPaint,(HWND, PAINTSTRUCT *))
 
 SWELL_API_DEFINE(HDC, GetDC,(HWND)) // use these sparingly! they kinda work but shouldnt be overused!!
-SWELL_API_DEFINE(HDC, GetWindowDC,(HWND)) 
+SWELL_API_DEFINE(HDC, GetWindowDC,(HWND))
 SWELL_API_DEFINE(void, ReleaseDC,(HWND, HDC))
 
 #ifdef __APPLE__
 SWELL_API_DEFINE(void, SWELL_FlushWindow,(HWND))
 #endif
-            
+
 SWELL_API_DEFINE(void, SWELL_FillDialogBackground,(HDC hdc, RECT *r, int level))
 
 SWELL_API_DEFINE(HGDIOBJ,SWELL_CloneGDIObject,(HGDIOBJ a))

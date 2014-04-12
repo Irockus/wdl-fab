@@ -2,13 +2,13 @@
 #define _CONTAINERS_
 
 #ifdef WIN32
-  #undef _WIN32_WINNT
-  #define _WIN32_WINNT 0x0501
-  #undef WINVER
-  #define WINVER 0x0501
-  #pragma warning(disable:4018 4267)    // size_t/signed/unsigned mismatch..
-  #pragma warning(disable:4800)        // if (pointer) ...
-  #pragma warning(disable:4805)   
+#undef _WIN32_WINNT
+#define _WIN32_WINNT 0x0501
+#undef WINVER
+#define WINVER 0x0501
+#pragma warning(disable:4018 4267)    // size_t/signed/unsigned mismatch..
+#pragma warning(disable:4800)        // if (pointer) ...
+#pragma warning(disable:4805)
 #ifndef snprintf
 #define snprintf(a, b, c, ...) _snprintf_s(a,b, _TRUNCATE, c, __VA_ARGS__)
 #endif
@@ -55,12 +55,12 @@ inline double AmpToDB(double amp)
 }
 
 #ifndef REMINDER
-  #if defined (WIN32)
-  // This enables: #pragma REMINDER("change this line!") with click-through from VC++.
-    #define REMINDER(msg) message(__FILE__   "(" MAKE_STR(__LINE__) "): " msg)
-  #elif defined (__APPLE__)
-    #define REMINDER(msg) WARNING msg
-  #endif
+#if defined (WIN32)
+// This enables: #pragma REMINDER("change this line!") with click-through from VC++.
+#define REMINDER(msg) message(__FILE__   "(" MAKE_STR(__LINE__) "): " msg)
+#elif defined (__APPLE__)
+#define REMINDER(msg) WARNING msg
+#endif
 #endif
 
 template <class T> inline void SWAP(T& a, T& b)
@@ -69,6 +69,8 @@ template <class T> inline void SWAP(T& a, T& b)
 }
 
 typedef unsigned char BYTE;
+
+/// Generic Byte Chunk container data structure
 class ByteChunk
 {
 public:
@@ -191,11 +193,11 @@ public:
   inline int PutStr(const char* str)
   {
     int slen = strlen(str);
-    #ifdef WDL_BIG_ENDIAN
+#ifdef WDL_BIG_ENDIAN
     { const unsigned int i = WDL_bswap32_if_be(slen); Put(&i); }
-    #else
+#else
     Put(&slen);
-    #endif
+#endif
     return PutBytes(str, slen);
   }
 

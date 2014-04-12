@@ -17,7 +17,7 @@
     2. Altered source versions must be plainly marked as such, and must not be
        misrepresented as being the original software.
     3. This notice may not be removed or altered from any source distribution.
-      
+
     You may also distribute this software under the LGPL v2 or later.
 
 */
@@ -38,18 +38,18 @@
 class WDL_Resampler::WDL_Resampler_IIRFilter
 {
 public:
-  WDL_Resampler_IIRFilter() 
-  { 
+  WDL_Resampler_IIRFilter()
+  {
     m_fpos=-1;
-    Reset(); 
+    Reset();
   }
   ~WDL_Resampler_IIRFilter()
   {
   }
 
-  void Reset() 
-  { 
-    memset(m_hist,0,sizeof(m_hist)); 
+  void Reset()
+  {
+    memset(m_hist,0,sizeof(m_hist));
   }
 
   void setParms(double fpos, double Q)
@@ -60,9 +60,9 @@ public:
     double pos = fpos * PI;
     double cpos=cos(pos);
     double spos=sin(pos);
-    
+
     double alpha=spos/(2.0*Q);
-    
+
     double sc=1.0/( 1 + alpha);
     m_b1 = (1-cpos) * sc;
     m_b2 = m_b0 = m_b1*0.5;
@@ -112,8 +112,8 @@ void inline WDL_Resampler::SincSample(WDL_ResampleSample *outptr, WDL_ResampleSa
     int i=filtsz;
     while (i--)
     {
-      sum += fptr[0]*iptr[0]; 
-      sum2 += fptr[1]*iptr[0]; 
+      sum += fptr[0]*iptr[0];
+      sum2 += fptr[1]*iptr[0];
       iptr+=nch;
       fptr += oversize;
     }
@@ -136,7 +136,7 @@ void inline WDL_Resampler::SincSample1(WDL_ResampleSample *outptr, WDL_ResampleS
   int i=filtsz;
   while (i--)
   {
-    sum += fptr[0]*iptr[0]; 
+    sum += fptr[0]*iptr[0];
     sum2 += fptr[1]*iptr[0];
     iptr++;
     fptr += oversize;
@@ -186,20 +186,20 @@ WDL_Resampler::WDL_Resampler()
   m_filterpos=0.693f; // .792 ?
 
   m_sincoversize=0;
-  m_lp_oversize=1; 
+  m_lp_oversize=1;
   m_sincsize=0;
   m_filtercnt=1;
   m_interp=true;
   m_feedmode=false;
 
-  m_filter_coeffs_size=0; 
-  m_sratein=44100.0; 
-  m_srateout=44100.0; 
-  m_ratio=1.0; 
-  m_filter_ratio=-1.0; 
+  m_filter_coeffs_size=0;
+  m_sratein=44100.0;
+  m_srateout=44100.0;
+  m_ratio=1.0;
+  m_filter_ratio=-1.0;
   m_iirfilter=0;
 
-  Reset(); 
+  Reset();
 }
 
 WDL_Resampler::~WDL_Resampler()
@@ -211,9 +211,9 @@ void WDL_Resampler::Reset(double fracpos)
 {
   m_last_requested=0;
   m_filtlatency=0;
-  m_fracpos=fracpos; 
-  m_samples_in_rsinbuf=0; 
-  if (m_iirfilter) m_iirfilter->Reset();   
+  m_fracpos=fracpos;
+  m_samples_in_rsinbuf=0;
+  if (m_iirfilter) m_iirfilter->Reset();
 }
 
 void WDL_Resampler::SetMode(bool interp, int filtercnt, bool sinc, int sinc_size, int sinc_interpsize)
@@ -227,26 +227,26 @@ void WDL_Resampler::SetMode(bool interp, int filtercnt, bool sinc, int sinc_size
 //  sprintf(buf,"setting interp=%d, filtercnt=%d, sinc=%d,%d\n",m_interp,m_filtercnt,m_sincsize,m_sincoversize);
 //  OutputDebugString(buf);
 
-  if (!m_sincsize) 
+  if (!m_sincsize)
   {
     m_filter_coeffs.Resize(0);
     m_filter_coeffs_size=0;
   }
-  if (!m_filtercnt) 
+  if (!m_filtercnt)
   {
     delete m_iirfilter;
     m_iirfilter=0;
   }
 }
 
-void WDL_Resampler::SetRates(double rate_in, double rate_out) 
+void WDL_Resampler::SetRates(double rate_in, double rate_out)
 {
   if (rate_in<1.0) rate_in=1.0;
   if (rate_out<1.0) rate_out=1.0;
   if (rate_in != m_sratein || rate_out != m_srateout)
   {
-    m_sratein=rate_in; 
-    m_srateout=rate_out;  
+    m_sratein=rate_in;
+    m_srateout=rate_out;
     m_ratio=m_sratein / m_srateout;
   }
 }
@@ -257,7 +257,7 @@ void WDL_Resampler::BuildLowPass(double filtpos) // only called in sinc modes
   int wantsize=m_sincsize;
   int wantinterp=m_sincoversize;
 
-  if (m_filter_ratio!=filtpos || 
+  if (m_filter_ratio!=filtpos ||
       m_filter_coeffs_size != wantsize ||
       m_lp_oversize != wantinterp)
   {
@@ -278,9 +278,9 @@ void WDL_Resampler::BuildLowPass(double filtpos) // only called in sinc modes
       double dwindowpos = 2.0 * PI/(double)(sz);
       double dsincpos  = PI / m_lp_oversize * filtpos; // filtpos is outrate/inrate, i.e. 0.5 is going to half rate
       double sincpos = dsincpos * (double)(-hsz);
-    
+
       int x;
-      for (x = -hsz; x < hsz+m_lp_oversize; x ++) 
+      for (x = -hsz; x < hsz+m_lp_oversize; x ++)
       {
         double val = 0.35875 - 0.48829 * cos(windowpos) + 0.14128 * cos(2*windowpos) - 0.01168 * cos(6*windowpos); // blackman-harris
         if (x) val *= sin(sincpos) / sincpos;
@@ -292,7 +292,7 @@ void WDL_Resampler::BuildLowPass(double filtpos) // only called in sinc modes
         if (x < hsz) filtpower += val;
       }
       filtpower = m_lp_oversize/filtpower;
-      for (x = 0; x < sz+m_lp_oversize; x ++) 
+      for (x = 0; x < sz+m_lp_oversize; x ++)
       {
         cfout[x] = (WDL_SincFilterSample) (cfout[x]*filtpower);
       }
@@ -302,16 +302,16 @@ void WDL_Resampler::BuildLowPass(double filtpos) // only called in sinc modes
   }
 }
 
-double WDL_Resampler::GetCurrentLatency() 
-{ 
+double WDL_Resampler::GetCurrentLatency()
+{
   double v=((double)m_samples_in_rsinbuf-m_filtlatency)/m_sratein;
-  
+
   if (v<0.0)v=0.0;
   return v;
 }
 
-int WDL_Resampler::ResamplePrepare(int out_samples, int nch, WDL_ResampleSample **inbuffer) 
-{   
+int WDL_Resampler::ResamplePrepare(int out_samples, int nch, WDL_ResampleSample **inbuffer)
+{
   if (nch > WDL_RESAMPLE_MAX_NCH || nch < 1) return 0;
 
   int fsize=0;
@@ -325,19 +325,19 @@ int WDL_Resampler::ResamplePrepare(int out_samples, int nch, WDL_ResampleSample 
     m_samples_in_rsinbuf=hfs-1;
 
     if (m_samples_in_rsinbuf>0)
-    {      
+    {
       WDL_ResampleSample *p = m_rsinbuf.Resize(m_samples_in_rsinbuf*nch,false);
       memset(p,0,sizeof(WDL_ResampleSample)*m_rsinbuf.GetSize());
     }
   }
 
   int sreq = 0;
-    
+
   if (!m_feedmode) sreq = (int)(m_ratio * out_samples) + 4 + fsize - m_samples_in_rsinbuf;
   else sreq = out_samples;
 
   if (sreq<0)sreq=0;
-  
+
 again:
   m_rsinbuf.Resize((m_samples_in_rsinbuf+sreq)*nch,false);
 
@@ -420,7 +420,7 @@ int WDL_Resampler::ResampleOut(WDL_ResampleSample *out, int nsamples_in, int nsa
     int filtsz=m_filter_coeffs_size;
     int filtlen = rsinbuf_availtemp - filtsz;
     outlatadj=filtsz/2-1;
-    WDL_SincFilterSample *filter=m_filter_coeffs.Get();   
+    WDL_SincFilterSample *filter=m_filter_coeffs.Get();
 
     if (nch == 1)
     {
@@ -500,7 +500,7 @@ int WDL_Resampler::ResampleOut(WDL_ResampleSample *out, int nsamples_in, int nsa
       {
         int ipos = (int)srcpos;
         if (ipos >= rsinbuf_availtemp)  break; // quit decoding, not enough input samples
-    
+
         memcpy(outptr,localin + ipos*nch,nch*sizeof(WDL_ResampleSample));
         outptr += nch;
         srcpos+=drspos;
@@ -514,9 +514,9 @@ int WDL_Resampler::ResampleOut(WDL_ResampleSample *out, int nsamples_in, int nsa
       while (ns--)
       {
         int ipos = (int)srcpos;
-        double fracpos=srcpos-ipos; 
+        double fracpos=srcpos-ipos;
 
-        if (ipos >= rsinbuf_availtemp-1) 
+        if (ipos >= rsinbuf_availtemp-1)
         {
           break; // quit decoding, not enough input samples
         }
@@ -533,9 +533,9 @@ int WDL_Resampler::ResampleOut(WDL_ResampleSample *out, int nsamples_in, int nsa
       while (ns--)
       {
         int ipos = (int)srcpos;
-        double fracpos=srcpos-ipos; 
+        double fracpos=srcpos-ipos;
 
-        if (ipos >= rsinbuf_availtemp-1) 
+        if (ipos >= rsinbuf_availtemp-1)
         {
           break; // quit decoding, not enough input samples
         }
@@ -554,9 +554,9 @@ int WDL_Resampler::ResampleOut(WDL_ResampleSample *out, int nsamples_in, int nsa
       while (ns--)
       {
         int ipos = (int)srcpos;
-        double fracpos=srcpos-ipos; 
+        double fracpos=srcpos-ipos;
 
-        if (ipos >= rsinbuf_availtemp-1) 
+        if (ipos >= rsinbuf_availtemp-1)
         {
           break; // quit decoding, not enough input samples
         }
@@ -592,7 +592,7 @@ int WDL_Resampler::ResampleOut(WDL_ResampleSample *out, int nsamples_in, int nsa
     }
   }
 
-  
+
 
   if (ret>0 && rsinbuf_availtemp>m_samples_in_rsinbuf) // we had to pad!!
   {

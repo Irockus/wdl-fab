@@ -18,9 +18,10 @@
 
 class RtError : public std::exception
 {
- public:
+public:
   //! Defined RtError types.
-  enum Type {
+  enum Type
+  {
     WARNING,           /*!< A non-critical error. */
     DEBUG_WARNING,     /*!< A non-critical error which might be useful for debugging. */
     UNSPECIFIED,       /*!< The default, unspecified error type. */
@@ -36,7 +37,7 @@ class RtError : public std::exception
 
   //! The constructor.
   RtError( const std::string& message, Type type = RtError::UNSPECIFIED ) throw() : message_(message), type_(type) {}
- 
+
   //! The destructor.
   virtual ~RtError( void ) throw() {}
 
@@ -52,7 +53,7 @@ class RtError : public std::exception
   //! Returns the thrown error message as a c-style string.
   virtual const char* what( void ) const throw() { return message_.c_str(); }
 
- protected:
+protected:
   std::string message_;
   Type type_;
 };

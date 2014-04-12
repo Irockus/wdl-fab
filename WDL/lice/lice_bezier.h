@@ -6,8 +6,8 @@
 
 // Returns quadratic bezier x, y for a given t in [0,1].
 template <class T>
-void LICE_Bezier(T ctrl_x1, T ctrl_x2, T ctrl_x3, 
-  T ctrl_y1, T ctrl_y2, T ctrl_y3, double t, T* pX, T* pY)
+void LICE_Bezier(T ctrl_x1, T ctrl_x2, T ctrl_x3,
+                 T ctrl_y1, T ctrl_y2, T ctrl_y3, double t, T* pX, T* pY)
 {
   double it = 1.0 - t;
   double a = it * it;
@@ -19,9 +19,9 @@ void LICE_Bezier(T ctrl_x1, T ctrl_x2, T ctrl_x3,
 
 template <class T>
 void LICE_CBezier_GetCoeffs(T ctrl_x1, T ctrl_x2, T ctrl_x3, T ctrl_x4,
-  T ctrl_y1, T ctrl_y2, T ctrl_y3, T ctrl_y4, 
-  double* pAX, double* pBX, double* pCX, 
-  double* pAY, double* pBY, double* pCY)
+                            T ctrl_y1, T ctrl_y2, T ctrl_y3, T ctrl_y4,
+                            double* pAX, double* pBX, double* pCX,
+                            double* pAY, double* pBY, double* pCY)
 {
   double cx = *pCX = 3.0 * (double) (ctrl_x2 - ctrl_x1);
   double bx = *pBX = 3.0 * (double) (ctrl_x3 - ctrl_x2) - cx;
@@ -34,12 +34,12 @@ void LICE_CBezier_GetCoeffs(T ctrl_x1, T ctrl_x2, T ctrl_x3, T ctrl_x4,
 // Returns cubic bezier x, y for a given t in [0,1].
 template <class T>
 void LICE_CBezier(T ctrl_x1, T ctrl_x2, T ctrl_x3, T ctrl_x4,
-  T ctrl_y1, T ctrl_y2, T ctrl_y3, T ctrl_y4, double t, T* pX, T* pY)
+                  T ctrl_y1, T ctrl_y2, T ctrl_y3, T ctrl_y4, double t, T* pX, T* pY)
 {
   double ax, bx, cx, ay, by, cy;
   LICE_CBezier_GetCoeffs(ctrl_x1, ctrl_x2, ctrl_x3, ctrl_x4,
-    ctrl_y1, ctrl_y2, ctrl_y3, ctrl_y4, 
-    &ax, &bx, &cx, &ay, &by, &cy);
+                         ctrl_y1, ctrl_y2, ctrl_y3, ctrl_y4,
+                         &ax, &bx, &cx, &ay, &by, &cy);
 
   double t2 = t * t;
   double t3 = t * t2;
@@ -52,7 +52,7 @@ void LICE_CBezier(T ctrl_x1, T ctrl_x2, T ctrl_x3, T ctrl_x4,
 template <class T>
 T LICE_Bezier_GetY(T ctrl_x1, T ctrl_x2, T ctrl_x3, T ctrl_y1, T ctrl_y2, T ctrl_y3, T x, double* pt=0)
 {
-  if (x <= ctrl_x1) 
+  if (x <= ctrl_x1)
   {
     if (pt) *pt = 0.0;
     return ctrl_y1;
@@ -65,13 +65,13 @@ T LICE_Bezier_GetY(T ctrl_x1, T ctrl_x2, T ctrl_x3, T ctrl_y1, T ctrl_y2, T ctrl
 
   double a = (double) ctrl_x1 - (double) (2 * ctrl_x2) + (double) ctrl_x3;
   if (a == 0.0)   // linear
-  { 
+  {
     T y = ctrl_y1;
     double t = 0.0;
-    if (ctrl_x1 != ctrl_x3) 
+    if (ctrl_x1 != ctrl_x3)
     {
       t = (x-ctrl_x1)/(ctrl_x3-ctrl_x1);
-      y += t*(ctrl_y3-ctrl_y1);      
+      y += t*(ctrl_y3-ctrl_y1);
     }
     if (pt) *pt = t;
     return y;
@@ -104,13 +104,16 @@ void LICE_Bezier_Norm(T ctrl_x2, T ctrl_y2, double t, T* pX, T* pY)
 template <class T>
 T LICE_Bezier_GetY_Norm(T ctrl_x2, T ctrl_y2, T x)
 {
-  if (x < (T) 0.0) {
+  if (x < (T) 0.0)
+  {
     return (T) 0.0;
   }
-  if (x >= (T) 1.0) {
+  if (x >= (T) 1.0)
+  {
     return (T) 1.0;
   }
-  if (ctrl_x2 == (T) 0.5) { // linear
+  if (ctrl_x2 == (T) 0.5)   // linear
+  {
     return x;
   }
 
@@ -124,26 +127,26 @@ T LICE_Bezier_GetY_Norm(T ctrl_x2, T ctrl_y2, T x)
   return (T) (b * (double) ctrl_y2 + c);
 }
 
-// Finds the cardinal bezier control points surrounding x2.  
+// Finds the cardinal bezier control points surrounding x2.
 // Cubic bezier over (x1,x1b,x2a,x2), (y1,y1b,y2a,y2) or
 // quadratic bezier over (x1,x1b,mid(x1b,x2a)), (y1,y1b,mid(y1b,y2a))
 // will smoothly interpolate between (x1,y1) and (x2,y2) while preserving all existing values.
 // The lower alpha is, the more tame the bezier curve will be (0.25 = subtle).
 template <class T>
-void LICE_Bezier_FindCardinalCtlPts(double alpha, T x1, T x2, T x3, T y1, T y2, T y3, 
-  T* ctrl_x2a, T* ctrl_x2b, T* ctrl_y2a, T* ctrl_y2b)
+void LICE_Bezier_FindCardinalCtlPts(double alpha, T x1, T x2, T x3, T y1, T y2, T y3,
+                                    T* ctrl_x2a, T* ctrl_x2b, T* ctrl_y2a, T* ctrl_y2b)
 {
   double dxa = alpha * (double) (x2 - x1);
   double dxb = alpha * (double) (x3 - x2);
   if (ctrl_x2a) *ctrl_x2a = x2 - (T) dxa;
   if (ctrl_x2b) *ctrl_x2b = x2 + (T) dxb;
 
-  if (x1 == x3) 
+  if (x1 == x3)
   {
     if (ctrl_y2a) *ctrl_y2a = y2;
     if (ctrl_y2b) *ctrl_y2b = y2;
   }
-  else 
+  else
   {
     double m = (double) (y3 - y1) / (double) (x3 - x1);
     if (ctrl_y2a) *ctrl_y2a = y2 - (T) (m * dxa);
@@ -151,7 +154,7 @@ void LICE_Bezier_FindCardinalCtlPts(double alpha, T x1, T x2, T x3, T y1, T y2, 
   }
 }
 
-// Basic quadratic nurbs.  Given a set of n (x,y) pairs, 
+// Basic quadratic nurbs.  Given a set of n (x,y) pairs,
 // populate pDest with the unit-spaced nurbs curve.
 // pDest must be passed in with size (int) (*(pX+n-1) - *pX).
 // pX must be monotonically increasing and no duplicates.
@@ -165,12 +168,12 @@ inline void LICE_QNurbs(T* pDest, T* pX, T* pY, int n)
 
   double m = (y2 - y1) / (x2 - x1);
   double xi = x1, yi = y1;
-  for (/* */; xi < xm2; xi += 1.0, yi += m, ++pDest) 
+  for (/* */; xi < xm2; xi += 1.0, yi += m, ++pDest)
   {
     *pDest = (T) yi;
   }
 
-  for (int i = 2; i < n; ++i, ++pX, ++pY) 
+  for (int i = 2; i < n; ++i, ++pX, ++pY)
   {
     x1 = x2;
     x2 = (double) *pX;
@@ -182,16 +185,16 @@ inline void LICE_QNurbs(T* pDest, T* pX, T* pY, int n)
     ym1 = ym2;
     ym2 = 0.5 * (y1 + y2);
 
-    if (ym1 == ym2) 
+    if (ym1 == ym2)
     {
-      for (/* */; xi < xm2; xi += 1.0, ++pDest) 
+      for (/* */; xi < xm2; xi += 1.0, ++pDest)
       {
         *pDest = (T) y1;
       }
     }
-    else 
-    {    
-      for (/* */; xi < xm2; xi += 1.0, ++pDest) 
+    else
+    {
+      for (/* */; xi < xm2; xi += 1.0, ++pDest)
       {
         *pDest = (T) LICE_Bezier_GetY(xm1, x1, xm2, ym1, y1, ym2, xi);
       }
@@ -200,7 +203,7 @@ inline void LICE_QNurbs(T* pDest, T* pX, T* pY, int n)
 
   m = (y2 - y1) / (x2 - x1);
   yi = ym2;
-  for (/* */; xi < x2; xi += 1.0, yi += m, ++pDest) 
+  for (/* */; xi < x2; xi += 1.0, yi += m, ++pDest)
   {
     *pDest = (T) yi;
   }
@@ -224,16 +227,16 @@ inline void LICE_QNurbs(T* pDest, T* pX, T* pY, int n)
 
 template <class T>
 T LICE_CBezier_GetY(T ctrl_x1, T ctrl_x2, T ctrl_x3, T ctrl_x4,
-  T ctrl_y1, T ctrl_y2, T ctrl_y3, T ctrl_y4, T x, 
-  T* pNextX = 0, T* pdYdX = 0, double* ptLo = 0, double* ptHi = 0)
+                    T ctrl_y1, T ctrl_y2, T ctrl_y3, T ctrl_y4, T x,
+                    T* pNextX = 0, T* pdYdX = 0, double* ptLo = 0, double* ptHi = 0)
 {
-  if (x < ctrl_x1) 
+  if (x < ctrl_x1)
   {
     if (pNextX) *pNextX = ctrl_x1;
     if (pdYdX) *pdYdX = (T) 0.0;
     return ctrl_y1;
   }
-  if (x >= ctrl_x4) 
+  if (x >= ctrl_x4)
   {
     if (pNextX) *pNextX = ctrl_x4;
     if (pdYdX) *pdYdX = (T) 0.0;
@@ -242,8 +245,8 @@ T LICE_CBezier_GetY(T ctrl_x1, T ctrl_x2, T ctrl_x3, T ctrl_x4,
 
   double ax, bx, cx, ay, by, cy;
   LICE_CBezier_GetCoeffs(ctrl_x1, ctrl_x2, ctrl_x3, ctrl_x4,
-    ctrl_y1, ctrl_y2, ctrl_y3, ctrl_y4, 
-    &ax, &bx, &cx, &ay, &by, &cy);
+                         ctrl_y1, ctrl_y2, ctrl_y3, ctrl_y4,
+                         &ax, &bx, &cx, &ay, &by, &cy);
 
   double tx, t, tLo = 0.0, tHi = 1.0;
   double xLo=0., xHi=0., yLo, yHi;
@@ -257,7 +260,7 @@ T LICE_CBezier_GetY(T ctrl_x1, T ctrl_x2, T ctrl_x3, T ctrl_x4,
       tLo = t;
       xLo = tx;
     }
-    else if (tx > (double) x) 
+    else if (tx > (double) x)
     {
       tHi = t;
       xHi = tx;
@@ -267,7 +270,7 @@ T LICE_CBezier_GetY(T ctrl_x1, T ctrl_x2, T ctrl_x3, T ctrl_x4,
       tLo = t;
       xLo = tx;
       tHi = t + 1.0/pow(2.0,CBEZ_ITERS);
-      if (tHi > 1.0) tHi = 1.0; // floating point error 
+      if (tHi > 1.0) tHi = 1.0; // floating point error
       EVAL_CBEZ(xHi, ax, bx, cx, (double) ctrl_x1, tHi);
       break;
     }

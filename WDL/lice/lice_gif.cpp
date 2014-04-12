@@ -10,7 +10,7 @@
 extern "C" {
 
 #include "../giflib/gif_lib.h"
-int _GifError;
+  int _GifError;
 };
 
 
@@ -24,32 +24,32 @@ LICE_IBitmap *LICE_LoadGIF(const char *filename, LICE_IBitmap *bmp, int *nframes
   GifRecordType RecordType;
   GifByteType *Extension;
   int ExtCode;
-  do 
+  do
   {
-	  if (DGifGetRecordType(fp, &RecordType) == GIF_ERROR) 
+    if (DGifGetRecordType(fp, &RecordType) == GIF_ERROR)
     {
       DGifCloseFile(fp);
       return 0;
-	  }
-  	switch (RecordType) 
+    }
+    switch (RecordType)
     {
-	    case IMAGE_DESC_RECORD_TYPE:
-		    if (DGifGetImageDesc(fp) == GIF_ERROR) 
+      case IMAGE_DESC_RECORD_TYPE:
+        if (DGifGetImageDesc(fp) == GIF_ERROR)
         {
           DGifCloseFile(fp);
           return 0;
-  		  }
+        }
 
         // todo: support transparency
         // todo: have it buffer all frames and output frame count
-        if (nframes) *nframes=1; // placeholder 
+        if (nframes) *nframes=1; // placeholder
 
         {
           int width=fp->Image.Width,height=fp->Image.Height;
           if (bmp)
           {
             bmp->resize(width,height);
-            if (bmp->getWidth() != (int)width || bmp->getHeight() != (int)height) 
+            if (bmp->getWidth() != (int)width || bmp->getHeight() != (int)height)
             {
               DGifCloseFile(fp);
               return 0;
@@ -67,7 +67,7 @@ LICE_IBitmap *LICE_LoadGIF(const char *filename, LICE_IBitmap *bmp, int *nframes
           GifPixelType *linebuf=(GifPixelType*)malloc(width*sizeof(GifPixelType));
           int y;
           int cmap[256];
-          for (y=0;y<256;y++)
+          for (y=0; y<256; y++)
           {
             if (fp->SColorMap&&y<fp->SColorMap->ColorCount&&fp->SColorMap->Colors)
             {
@@ -95,27 +95,27 @@ LICE_IBitmap *LICE_LoadGIF(const char *filename, LICE_IBitmap *bmp, int *nframes
           DGifCloseFile(fp);
           return bmp;
         }
-  		break;
-	    case EXTENSION_RECORD_TYPE:
-    		if (DGifGetExtension(fp, &ExtCode, &Extension) == GIF_ERROR) 
+        break;
+      case EXTENSION_RECORD_TYPE:
+        if (DGifGetExtension(fp, &ExtCode, &Extension) == GIF_ERROR)
         {
           DGifCloseFile(fp);
           return 0;
         }
-    		while (Extension != NULL) 
+        while (Extension != NULL)
         {
-		      if (DGifGetExtensionNext(fp, &Extension) == GIF_ERROR) 
+          if (DGifGetExtensionNext(fp, &Extension) == GIF_ERROR)
           {
             DGifCloseFile(fp);
             return 0;
-  		    }
-		    }
-      break;
-	    case TERMINATE_RECORD_TYPE:
-  		break;
-	    default:		    /* Should be traps by DGifGetRecordType. */
-	  	break;
-	  }
+          }
+        }
+        break;
+      case TERMINATE_RECORD_TYPE:
+        break;
+      default:		    /* Should be traps by DGifGetRecordType. */
+        break;
+    }
   }
   while (RecordType != TERMINATE_RECORD_TYPE);
 
@@ -130,7 +130,7 @@ class LICE_GIFLoader
 {
 public:
   _LICE_ImageLoader_rec rec;
-  LICE_GIFLoader() 
+  LICE_GIFLoader()
   {
     rec.loadfunc = loadfunc;
     rec.get_extlist = get_extlist;

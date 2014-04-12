@@ -133,13 +133,13 @@ IGraphicsCarbon::~IGraphicsCarbon()
     RemoveEventHandler(mTextEntryHandler);
     mTextEntryHandler = 0;
 
-    #if USE_MLTE
+#if USE_MLTE
     TXNFocus(mTextEntryView, false);
     TXNClear(mTextEntryView);
     TXNDeleteObject(mTextEntryView);
-    #else
+#else
     HIViewRemoveFromSuperview(mTextEntryView);
-    #endif
+#endif
 
     mTextEntryView = 0;
     mEdControl = 0;
@@ -251,9 +251,9 @@ MenuRef IGraphicsCarbon::CreateMenu(IPopupMenu* pMenu)
     //    CheckMenuItem (menuRef, pMenu->getCurrentIndex (true) + 1, true);
     SetMenuItemRefCon(menuRef, 0, (int32_t)pMenu);
     //swell collision
-    #undef InsertMenu
+#undef InsertMenu
     InsertMenu(menuRef, kInsertHierarchicalMenu);
-    #define InsertMenu SWELL_InsertMenu
+#define InsertMenu SWELL_InsertMenu
   }
 
   return menuRef;
@@ -269,17 +269,17 @@ IPopupMenu* IGraphicsCarbon::CreateIPopupMenu(IPopupMenu* pMenu, IRECT* pAreaRec
   Rect wrct;
   GetWindowBounds(this->mWindow, kWindowContentRgn, &wrct);
 
-  #ifdef RTAS_API
+#ifdef RTAS_API
   int xpos = wrct.left + this->GetLeftOffset() + pAreaRect->L;
   int ypos = wrct.top + this->GetTopOffset() + pAreaRect->B + 5;
-  #else
+#else
   HIViewRef contentView;
   HIViewFindByID(HIViewGetRoot(this->mWindow), kHIViewWindowContentID, &contentView);
   HIViewConvertRect(&rct, HIViewGetSuperview((HIViewRef)this->mView), contentView);
 
   int xpos = wrct.left + rct.origin.x + pAreaRect->L;
   int ypos = wrct.top + rct.origin.y + pAreaRect->B + 5;
-  #endif
+#endif
 
   MenuRef menuRef = CreateMenu(pMenu);
 
@@ -384,26 +384,26 @@ pascal OSStatus IGraphicsCarbon::MainEventHandler(EventHandlerCallRef pHandlerCa
           else
           {
             CGrafPtr port = 0;
-            
+
             GetEventParameter(pEvent, kEventParamGrafPort, typeGrafPtr, 0, sizeof(CGrafPtr), 0, &port);
             QDBeginCGContext(port, &(_this->mCGC));
-            
+
             Rect portBounds;
             GetPortBounds(port, &portBounds);
 
             int offsetW = 0;
             int offsetH = -portBounds.top;
-            
+
             if ((portBounds.right - portBounds.left) >= gfxW)
             {
               offsetW = 0.5 * ((portBounds.right - portBounds.left) - gfxW);
             }
-            
+
             CGContextTranslateCTM(_this->mCGC, portBounds.left + offsetW, offsetH);
-            
+
             r = IRECT(0, 0, pGraphicsMac->Width(), pGraphicsMac->Height());
             pGraphicsMac->Draw(&r); // Carbon non-composited will redraw everything, the IRECT passed here is the entire plugin-gui
-            
+
             QDEndCGContext(port, &(_this->mCGC));
           }
 #endif
@@ -417,7 +417,7 @@ pascal OSStatus IGraphicsCarbon::MainEventHandler(EventHandlerCallRef pHandlerCa
       HIPoint hp;
       GetEventParameter(pEvent, kEventParamWindowMouseLocation, typeHIPoint, 0, sizeof(HIPoint), 0, &hp);
 
-      #ifdef RTAS_API
+#ifdef RTAS_API
       // Header offset
       hp.x -= _this->GetLeftOffset();
       hp.y -= _this->GetTopOffset();
@@ -439,11 +439,11 @@ pascal OSStatus IGraphicsCarbon::MainEventHandler(EventHandlerCallRef pHandlerCa
       int x = (int) hp.x;
       int y = (int) hp.y;
 
-      #else // NOT RTAS
+#else // NOT RTAS
       HIPointConvert(&hp, kHICoordSpaceWindow, _this->mWindow, kHICoordSpaceView, _this->mView);
       int x = (int) hp.x - 2;
       int y = (int) hp.y - 3;
-      #endif
+#endif
 
       UInt32 mods;
       GetEventParameter(pEvent, kEventParamKeyModifiers, typeUInt32, 0, sizeof(UInt32), 0, &mods);
@@ -456,24 +456,24 @@ pascal OSStatus IGraphicsCarbon::MainEventHandler(EventHandlerCallRef pHandlerCa
       {
         case kEventMouseDown:
         {
-           _this->HideTooltip();
-          
+          _this->HideTooltip();
+
           if (_this->mTextEntryView)
           {
-            #if !(USE_MLTE)
+#if !(USE_MLTE)
             HIViewRef view;
             HIViewGetViewForMouseEvent(_this->mView, pEvent, &view);
             if (view == _this->mTextEntryView) break;
-            #endif
+#endif
             _this->EndUserInput(true);
           }
 
-          #ifdef RTAS_API // RTAS triple click
+#ifdef RTAS_API // RTAS triple click
           if (mmod.L && mmod.R && mmod.C && (pGraphicsMac->GetParamIdxForPTAutomation(x, y) > -1))
           {
             return CallNextEventHandler(pHandlerCall, pEvent);
           }
-          #endif
+#endif
 
           CallNextEventHandler(pHandlerCall, pEvent);
 
@@ -503,23 +503,23 @@ pascal OSStatus IGraphicsCarbon::MainEventHandler(EventHandlerCallRef pHandlerCa
           _this->mPrevX = x;
           _this->mPrevY = y;
           pGraphicsMac->OnMouseOver(x, y, &mmod);
-          
-          if (pGraphicsMac->TooltipsEnabled()) 
+
+          if (pGraphicsMac->TooltipsEnabled())
           {
             int c = pGraphicsMac->GetMouseOver();
-            if (c != _this->mTooltipIdx) 
+            if (c != _this->mTooltipIdx)
             {
               _this->mTooltipIdx = c;
               _this->HideTooltip();
               const char* tooltip = c >= 0 ? pGraphicsMac->GetControl(c)->GetTooltip() : NULL;
-              if (CSTR_NOT_EMPTY(tooltip)) 
+              if (CSTR_NOT_EMPTY(tooltip))
               {
                 _this->mTooltip = tooltip;
                 _this->mTooltipTimer = pGraphicsMac->FPS() * 3 / 2;  //TODO: remove FPS link
               }
             }
-          }          
-          
+          }
+
           return noErr;
         }
 
@@ -588,7 +588,7 @@ pascal void IGraphicsCarbon::TimerHandler(EventLoopTimerRef pTimer, void* pGraph
       CGRect tmp = CGRectMake(r.L, r.T, r.W(), r.H());
       HIViewSetNeedsDisplayInRect(_this->mView, &tmp , true); // invalidate everything that is set dirty
 
-      #if USE_MTLE
+#if USE_MTLE
       if (_this->mTextEntryView) // validate the text entry rect, otherwise, flicker
       {
         tmp = CGRectMake(_this->mTextEntryRect.L,
@@ -597,7 +597,7 @@ pascal void IGraphicsCarbon::TimerHandler(EventLoopTimerRef pTimer, void* pGraph
                          _this->mTextEntryRect.H() + 1);
         HIViewSetNeedsDisplayInRect(_this->mView, &tmp , false);
       }
-      #endif
+#endif
     }
     else
     {
@@ -607,17 +607,17 @@ pascal void IGraphicsCarbon::TimerHandler(EventLoopTimerRef pTimer, void* pGraph
       UpdateControls(_this->mWindow, 0);
     }
   }
-  
-  if (_this->mTooltipTimer) 
-  {    
-    if (!(--_this->mTooltipTimer)) 
+
+  if (_this->mTooltipTimer)
+  {
+    if (!(--_this->mTooltipTimer))
     {
-      if (!_this->mShowingTooltip) 
+      if (!_this->mShowingTooltip)
       {
         _this->ShowTooltip();
         _this->mTooltipTimer = _this->mGraphicsMac->FPS() * 10; // TODO: remove FPS link
       }
-      else 
+      else
       {
         _this->HideTooltip();
       }
@@ -958,12 +958,12 @@ pascal OSStatus IGraphicsCarbon::TextEntryHandler(EventHandlerCallRef pHandlerCa
           TXNGetViewRect (_this->mTextEntryView, &rect);
 
           //swell collision
-          #undef PtInRect
-          #define MacPtInRect PtInRect
+#undef PtInRect
+#define MacPtInRect PtInRect
           // Handle the click as necessary
           if (PtInRect(point, &rect))
           {
-            #define PtInRect(r,p) SWELL_PtInRect(r,p)
+#define PtInRect(r,p) SWELL_PtInRect(r,p)
             EventRecord eventRecord;
             if (eventKind == kEventMouseDown && ConvertEventRefToEventRecord(pEvent, &eventRecord))
             {
@@ -1123,13 +1123,13 @@ void IGraphicsCarbon::EndUserInput(bool commit)
   }
   else
   {
-    if (mEdControl) 
+    if (mEdControl)
     {
       mEdControl->SetDirty(false);
       mEdControl->Redraw();
     }
   }
-  
+
   SetThemeCursor(kThemeArrowCursor);
   SetUserFocusWindow(kUserFocusAuto);
 
@@ -1232,7 +1232,7 @@ void IGraphicsCarbon::ShowTooltip()
   helpTag.absHotRect.left = (int)r.origin.x;
   helpTag.absHotRect.bottom = helpTag.absHotRect.top + (int)r.size.height;
   helpTag.absHotRect.right = helpTag.absHotRect.left + (int)r.size.width;
-  
+
   helpTag.content[kHMMinimumContentIndex].contentType = kHMCFStringLocalizedContent;
   CFStringRef str = CFStringCreateWithCString(NULL, mTooltip, kCFStringEncodingUTF8);
   helpTag.content[kHMMinimumContentIndex].u.tagCFString = str;
@@ -1245,7 +1245,7 @@ void IGraphicsCarbon::ShowTooltip()
 void IGraphicsCarbon::HideTooltip()
 {
   mTooltipTimer = 0;
-  if (mShowingTooltip) 
+  if (mShowingTooltip)
   {
     HMHideTag();
     mShowingTooltip = false;

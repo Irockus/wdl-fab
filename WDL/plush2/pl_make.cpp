@@ -7,14 +7,15 @@ Copyright (c) 1996-2000, Justin Frankel
  Notes:
    Most of these routines are highly unoptimized.
    They could all use some work, such as more capable divisions (Box is
-   most notable), etc... The mapping coordinates are all set up nicely, 
+   most notable), etc... The mapping coordinates are all set up nicely,
    though.
 ******************************************************************************/
 
 #include "plush.h"
 
-pl_Obj *plMakeTorus(pl_Float r1, pl_Float r2, pl_uInt divrot, pl_uInt divrad, 
-                    pl_Mat *m) {
+pl_Obj *plMakeTorus(pl_Float r1, pl_Float r2, pl_uInt divrot, pl_uInt divrad,
+                    pl_Mat *m)
+{
   pl_Obj *o;
   pl_Vertex *v;
   pl_Face *f;
@@ -30,10 +31,12 @@ pl_Obj *plMakeTorus(pl_Float r1, pl_Float r2, pl_uInt divrot, pl_uInt divrad,
   v = o->Vertices.Get();
   a = 0.0;
   da = 2*PL_PI/divrot;
-  for (y = 0; y < divrot; y ++) {
+  for (y = 0; y < divrot; y ++)
+  {
     al = 0.0;
     dal = 2*PL_PI/divrad;
-    for (x = 0; x < divrad; x ++) {
+    for (x = 0; x < divrad; x ++)
+    {
       v->x = (pl_Float) (cos((double) a)*(ravg + cos((double) al)*rt));
       v->z = (pl_Float) (sin((double) a)*(ravg + cos((double) al)*rt));
       v->y = (pl_Float) (sin((double) al)*rt);
@@ -47,9 +50,11 @@ pl_Obj *plMakeTorus(pl_Float r1, pl_Float r2, pl_uInt divrot, pl_uInt divrad,
   dV = 1.0/divrad;
   dU = 1.0/divrot;
   U = 0;
-  for (y = 0; y < divrot; y ++) {
+  for (y = 0; y < divrot; y ++)
+  {
     V = -0.5;
-    for (x = 0; x < divrad; x ++) {
+    for (x = 0; x < divrad; x ++)
+    {
       f->VertexIndices[0] = v+x+y*divrad - o->Vertices.Get();
       f->MappingU[0][0] = U;
       f->MappingV[0][0] = V;
@@ -80,7 +85,8 @@ pl_Obj *plMakeTorus(pl_Float r1, pl_Float r2, pl_uInt divrot, pl_uInt divrad,
   return (o);
 }
 
-pl_Obj *plMakeSphere(pl_Float r, pl_uInt divr, pl_uInt divh, pl_Mat *m) {
+pl_Obj *plMakeSphere(pl_Float r, pl_uInt divr, pl_uInt divh, pl_Mat *m)
+{
   pl_Obj *o;
   pl_Vertex *v;
   pl_Face *f;
@@ -97,12 +103,14 @@ pl_Obj *plMakeSphere(pl_Float r, pl_uInt divr, pl_uInt divh, pl_Mat *m) {
   ya = 0.0;
   yda = PL_PI/(divh-1);
   da = (PL_PI*2.0)/divr;
-  for (y = 0; y < divh - 2; y ++) {
+  for (y = 0; y < divh - 2; y ++)
+  {
     ya += yda;
     yp = cos((double) ya)*r;
     yf = sin((double) ya)*r;
     a = 0.0;
-    for (x = 0; x < divr; x ++) {
+    for (x = 0; x < divr; x ++)
+    {
       v->y = (pl_Float) yp;
       v->x = (pl_Float) (cos((double) a)*yf);
       v->z = (pl_Float) (sin((double) a)*yf);
@@ -112,11 +120,12 @@ pl_Obj *plMakeSphere(pl_Float r, pl_uInt divr, pl_uInt divh, pl_Mat *m) {
   }
   f = o->Faces.Get();
   v = o->Vertices.Get() + 2;
-  a = 0.0; 
+  a = 0.0;
   U = 0;
   dU = 1.0/divr;
   dV = V = 1.0/divh;
-  for (x = 0; x < divr; x ++) {
+  for (x = 0; x < divr; x ++)
+  {
     f->VertexIndices[0] = 0;
     f->VertexIndices[1] = v + (x+1==divr ? 0 : x+1) - o->Vertices.Get();
     f->VertexIndices[2] = v + x - o->Vertices.Get();
@@ -132,9 +141,11 @@ pl_Obj *plMakeSphere(pl_Float r, pl_uInt divr, pl_uInt divh, pl_Mat *m) {
   }
   da = 1.0/(divr+1);
   v = o->Vertices.Get() + 2;
-  for (x = 0; x < (divh-3); x ++) {
+  for (x = 0; x < (divh-3); x ++)
+  {
     U = 0;
-    for (y = 0; y < divr; y ++) {
+    for (y = 0; y < divr; y ++)
+    {
       f->VertexIndices[0] = v+y - o->Vertices.Get();
       f->VertexIndices[1] = v+divr+(y+1==divr?0:y+1) - o->Vertices.Get();
       f->VertexIndices[2] = v+y+divr - o->Vertices.Get();
@@ -162,7 +173,8 @@ pl_Obj *plMakeSphere(pl_Float r, pl_uInt divr, pl_uInt divh, pl_Mat *m) {
   }
   v = o->Vertices.Get() + o->Vertices.GetSize() - divr;
   U = 0;
-  for (x = 0; x < divr; x ++) {
+  for (x = 0; x < divr; x ++)
+  {
     f->VertexIndices[0] = 1;
     f->VertexIndices[1] = v + x - o->Vertices.Get();
     f->VertexIndices[2] = v + (x+1==divr ? 0 : x+1) - o->Vertices.Get();
@@ -180,8 +192,9 @@ pl_Obj *plMakeSphere(pl_Float r, pl_uInt divr, pl_uInt divh, pl_Mat *m) {
   return (o);
 }
 
-pl_Obj *plMakeCylinder(pl_Float r, pl_Float h, pl_uInt divr, pl_Bool captop, 
-                       pl_Bool capbottom, pl_Mat *m) {
+pl_Obj *plMakeCylinder(pl_Float r, pl_Float h, pl_uInt divr, pl_Bool captop,
+                       pl_Bool capbottom, pl_Mat *m)
+{
   pl_Obj *o;
   pl_Vertex *v, *topverts, *bottomverts, *topcapvert=0, *bottomcapvert=0;
   pl_Face *f;
@@ -189,46 +202,51 @@ pl_Obj *plMakeCylinder(pl_Float r, pl_Float h, pl_uInt divr, pl_Bool captop,
   double a, da;
   if (divr < 3) divr = 3;
   o = new pl_Obj(divr*2+((divr==3)?0:(captop?1:0)+(capbottom?1:0)),
-                  divr*2+(divr==3 ? (captop ? 1 : 0) + (capbottom ? 1 : 0) :
-                  (captop ? divr : 0) + (capbottom ? divr : 0)));
+                 divr*2+(divr==3 ? (captop ? 1 : 0) + (capbottom ? 1 : 0) :
+                         (captop ? divr : 0) + (capbottom ? divr : 0)));
   if (!o) return 0;
   a = 0.0;
   da = (2.0*PL_PI)/divr;
   v = o->Vertices.Get();
   topverts = v;
-  for (i = 0; i < divr; i ++) {
-    v->y = h/2.0f; 
-    v->x = (pl_Float) (r*cos((double) a)); 
+  for (i = 0; i < divr; i ++)
+  {
+    v->y = h/2.0f;
+    v->x = (pl_Float) (r*cos((double) a));
     v->z = (pl_Float)(r*sin(a));
     v->xformedx = (0.5 + (0.5*cos((double) a))); // temp
     v->xformedy = (0.5 + (0.5*sin((double) a))); // use xf
-    v++; 
+    v++;
     a += da;
   }
   bottomverts = v;
   a = 0.0;
-  for (i = 0; i < divr; i ++) {
-    v->y = -h/2.0f; 
-    v->x = (pl_Float) (r*cos((double) a)); 
+  for (i = 0; i < divr; i ++)
+  {
+    v->y = -h/2.0f;
+    v->x = (pl_Float) (r*cos((double) a));
     v->z = (pl_Float) (r*sin(a));
     v->xformedx = (0.5 + (0.5*cos((double) a)));
     v->xformedy = (0.5 + (0.5*sin((double) a)));
     v++; a += da;
   }
-  if (captop && divr != 3) {
+  if (captop && divr != 3)
+  {
     topcapvert = v;
-    v->y = h / 2.0f; 
+    v->y = h / 2.0f;
     v->x = v->z = 0.0f;
     v++;
   }
-  if (capbottom && divr != 3) {
+  if (capbottom && divr != 3)
+  {
     bottomcapvert = v;
-    v->y = -h / 2.0f; 
+    v->y = -h / 2.0f;
     v->x = v->z = 0.0f;
     v++;
   }
   f = o->Faces.Get();
-  for (i = 0; i < divr; i ++) {
+  for (i = 0; i < divr; i ++)
+  {
     f->VertexIndices[0] = bottomverts + i - o->Vertices.Get();
     f->VertexIndices[1] = topverts + i - o->Vertices.Get();
     f->VertexIndices[2] = bottomverts + (i == divr-1 ? 0 : i+1) - o->Vertices.Get();
@@ -244,8 +262,10 @@ pl_Obj *plMakeCylinder(pl_Float r, pl_Float h, pl_uInt divr, pl_Bool captop,
     f->MappingU[0][1] = (i)/(double)divr;
     f->Material = m; f++;
   }
-  if (captop) {
-    if (divr == 3) {
+  if (captop)
+  {
+    if (divr == 3)
+    {
       f->VertexIndices[0] = topverts + 0 - o->Vertices.Get();
       f->VertexIndices[1] = topverts + 2 - o->Vertices.Get();
       f->VertexIndices[2] = topverts + 1 - o->Vertices.Get();
@@ -256,8 +276,11 @@ pl_Obj *plMakeCylinder(pl_Float r, pl_Float h, pl_uInt divr, pl_Bool captop,
       f->MappingU[0][2] = topverts[2].xformedx;
       f->MappingV[0][2] = topverts[2].xformedy;
       f->Material = m; f++;
-    } else {
-      for (i = 0; i < divr; i ++) {
+    }
+    else
+    {
+      for (i = 0; i < divr; i ++)
+      {
         f->VertexIndices[0] = topverts + (i == divr-1 ? 0 : i + 1) - o->Vertices.Get();
         f->VertexIndices[1] = topverts + i - o->Vertices.Get();
         f->VertexIndices[2] = topcapvert - o->Vertices.Get();
@@ -270,8 +293,10 @@ pl_Obj *plMakeCylinder(pl_Float r, pl_Float h, pl_uInt divr, pl_Bool captop,
       }
     }
   }
-  if (capbottom) {
-    if (divr == 3) {
+  if (capbottom)
+  {
+    if (divr == 3)
+    {
       f->VertexIndices[0] = bottomverts + 0 - o->Vertices.Get();
       f->VertexIndices[1] = bottomverts + 1 - o->Vertices.Get();
       f->VertexIndices[2] = bottomverts + 2 - o->Vertices.Get();
@@ -282,8 +307,11 @@ pl_Obj *plMakeCylinder(pl_Float r, pl_Float h, pl_uInt divr, pl_Bool captop,
       f->MappingU[0][2] = bottomverts[2].xformedx;
       f->MappingV[0][2] = bottomverts[2].xformedy;
       f->Material = m; f++;
-    } else {
-      for (i = 0; i < divr; i ++) {
+    }
+    else
+    {
+      for (i = 0; i < divr; i ++)
+      {
         f->VertexIndices[0] = bottomverts + i - o->Vertices.Get();
         f->VertexIndices[1] = bottomverts + (i == divr-1 ? 0 : i + 1) - o->Vertices.Get();
         f->VertexIndices[2] = bottomcapvert - o->Vertices.Get();
@@ -301,7 +329,8 @@ pl_Obj *plMakeCylinder(pl_Float r, pl_Float h, pl_uInt divr, pl_Bool captop,
 }
 
 pl_Obj *plMakeCone(pl_Float r, pl_Float h, pl_uInt div,
-                   pl_Bool cap, pl_Mat *m) {
+                   pl_Bool cap, pl_Mat *m)
+{
   pl_Obj *o;
   pl_Vertex *v;
   pl_Face *f;
@@ -309,7 +338,7 @@ pl_Obj *plMakeCone(pl_Float r, pl_Float h, pl_uInt div,
   double a, da;
   if (div < 3) div = 3;
   o = new pl_Obj(div + (div == 3 ? 1 : (cap ? 2 : 1)),
-                  div + (div == 3 ? 1 : (cap ? div : 0)));
+                 div + (div == 3 ? 1 : (cap ? div : 0)));
   if (!o) return 0;
   v = o->Vertices.Get();
   v->x = v->z = 0; v->y = h/2;
@@ -318,7 +347,8 @@ pl_Obj *plMakeCone(pl_Float r, pl_Float h, pl_uInt div,
   v++;
   a = 0.0;
   da = (2.0*PL_PI)/div;
-  for (i = 1; i <= div; i ++) {
+  for (i = 1; i <= div; i ++)
+  {
     v->y = h/-2.0f;
     v->x = (pl_Float) (r*cos((double) a));
     v->z = (pl_Float) (r*sin((double) a));
@@ -327,15 +357,17 @@ pl_Obj *plMakeCone(pl_Float r, pl_Float h, pl_uInt div,
     a += da;
     v++;
   }
-  if (cap && div != 3) {
-    v->y = h / -2.0f; 
+  if (cap && div != 3)
+  {
+    v->y = h / -2.0f;
     v->x = v->z = 0.0f;
     v->xformedx = 0.5;
     v->xformedy = 0.5;
     v++;
   }
   f = o->Faces.Get();
-  for (i = 1; i <= div; i ++) {
+  for (i = 1; i <= div; i ++)
+  {
     f->VertexIndices[0] = 0;
     f->VertexIndices[1] = o->Vertices.Get() + (i == div ? 1 : i + 1) - o->Vertices.Get();
     f->VertexIndices[2] = o->Vertices.Get() + i - o->Vertices.Get();
@@ -348,8 +380,10 @@ pl_Obj *plMakeCone(pl_Float r, pl_Float h, pl_uInt div,
     f->Material = m;
     f++;
   }
-  if (cap) {
-    if (div == 3) {
+  if (cap)
+  {
+    if (div == 3)
+    {
       f->VertexIndices[0] = 1;
       f->VertexIndices[1] = 2;
       f->VertexIndices[2] = 3;
@@ -361,8 +395,11 @@ pl_Obj *plMakeCone(pl_Float r, pl_Float h, pl_uInt div,
       f->MappingV[0][2] = o->Vertices.Get()[3].xformedy;
       f->Material = m;
       f++;
-    } else {
-      for (i = 1; i <= div; i ++) {
+    }
+    else
+    {
+      for (i = 1; i <= div; i ++)
+      {
         f->VertexIndices[0] = div + 1;
         f->VertexIndices[1] = i;
         f->VertexIndices[2] = (i==div ? 1 : i+1);
@@ -381,11 +418,13 @@ pl_Obj *plMakeCone(pl_Float r, pl_Float h, pl_uInt div,
   return (o);
 }
 
-static pl_uChar verts[6*6] = { 
+static pl_uChar verts[6*6] =
+{
   0,4,1, 1,4,5, 0,1,2, 3,2,1, 2,3,6, 3,7,6,
   6,7,4, 4,7,5, 1,7,3, 7,1,5, 2,6,0, 4,0,6
 };
-static pl_uChar map[24*2*3] = {
+static pl_uChar map[24*2*3] =
+{
   1,0, 1,1, 0,0, 0,0, 1,1, 0,1,
   0,0, 1,0, 0,1, 1,1, 0,1, 1,0,
   0,0, 1,0, 0,1, 1,0, 1,1, 0,1,
@@ -395,7 +434,8 @@ static pl_uChar map[24*2*3] = {
 };
 
 
-pl_Obj *plMakeBox(pl_Float w, pl_Float d, pl_Float h, pl_Mat *m) {
+pl_Obj *plMakeBox(pl_Float w, pl_Float d, pl_Float h, pl_Mat *m)
+{
   pl_uChar *mm = map;
   pl_uChar *vv = verts;
   pl_Obj *o;
@@ -414,7 +454,8 @@ pl_Obj *plMakeBox(pl_Float w, pl_Float d, pl_Float h, pl_Mat *m) {
   v->x = -w/2; v->y = -h/2; v->z = -d/2; v++;
   v->x = w/2; v->y = -h/2; v->z = -d/2; v++;
   f = o->Faces.Get();
-  for (x = 0; x < 12; x ++) {
+  for (x = 0; x < 12; x ++)
+  {
     f->VertexIndices[0] = *vv++;
     f->VertexIndices[1] = *vv++;
     f->VertexIndices[2] = *vv++;
@@ -432,7 +473,8 @@ pl_Obj *plMakeBox(pl_Float w, pl_Float d, pl_Float h, pl_Mat *m) {
   return (o);
 }
 
-pl_Obj *plMakePlane(pl_Float w, pl_Float d, pl_uInt res, pl_Mat *m) {
+pl_Obj *plMakePlane(pl_Float w, pl_Float d, pl_uInt res, pl_Mat *m)
+{
   pl_Obj *o;
   pl_Vertex *v;
   pl_Face *f;
@@ -440,8 +482,10 @@ pl_Obj *plMakePlane(pl_Float w, pl_Float d, pl_uInt res, pl_Mat *m) {
   o = new pl_Obj((res+1)*(res+1),res*res*2);
   if (!o) return 0;
   v = o->Vertices.Get();
-  for (y = 0; y <= res; y ++) {
-    for (x = 0; x <= res; x ++) {
+  for (y = 0; y <= res; y ++)
+  {
+    for (x = 0; x <= res; x ++)
+    {
       v->y = 0;
       v->x = ((x*w)/res) - w/2;
       v->z = ((y*d)/res) - d/2;
@@ -449,8 +493,10 @@ pl_Obj *plMakePlane(pl_Float w, pl_Float d, pl_uInt res, pl_Mat *m) {
     }
   }
   f = o->Faces.Get();
-  for (y = 0; y < res; y ++) {
-    for (x = 0; x < res; x ++) {
+  for (y = 0; y < res; y ++)
+  {
+    for (x = 0; x < res; x ++)
+    {
       f->VertexIndices[0] = x+(y*(res+1));
       f->MappingU[0][0] = (x)/(double)res;
       f->MappingV[0][0] = (y)/(double)res;

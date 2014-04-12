@@ -16,7 +16,7 @@
     2. Altered source versions must be plainly marked as such, and must not be
        misrepresented as being the original software.
     3. This notice may not be removed or altered from any source distribution.
-  
+
 
     This file provides basic key and mouse cursor querying, as well as a key to windows key translation function.
 
@@ -31,9 +31,9 @@ int SWELL_KeyToASCII(int wParam, int lParam, int *newflags)
 {
   if (wParam >= '0' && wParam <= '9' && lParam == (FSHIFT|FVIRTKEY))
   {
-  // todo: some OS X API for this?
+    // todo: some OS X API for this?
     *newflags = lParam&~(FSHIFT|FVIRTKEY);
-    switch (wParam) 
+    switch (wParam)
     {
       case '1': return '!';
       case '2': return '@';
@@ -44,7 +44,7 @@ int SWELL_KeyToASCII(int wParam, int lParam, int *newflags)
       case '7': return '&';
       case '8': return '*';
       case '9': return '(';
-      case '0': return ')';      
+      case '0': return ')';
     }
   }
   return 0;
@@ -86,10 +86,10 @@ bool SWELL_IsCursorVisible()
 int SWELL_ShowCursor(BOOL bShow)
 {
   m_curvis_cnt += (bShow?1:-1);
-  if (m_curvis_cnt==-1 && !bShow) 
+  if (m_curvis_cnt==-1 && !bShow)
   {
   }
-  if (m_curvis_cnt==0 && bShow) 
+  if (m_curvis_cnt==0 && bShow)
   {
   }
   return m_curvis_cnt;
@@ -97,7 +97,7 @@ int SWELL_ShowCursor(BOOL bShow)
 
 
 BOOL SWELL_SetCursorPos(int X, int Y)
-{  
+{
 
   return false;
 }

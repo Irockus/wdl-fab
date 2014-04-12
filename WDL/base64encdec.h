@@ -22,13 +22,13 @@ static void base64encode(const unsigned char *in, char *out, int len)
   if (shift == 4)
   {
     *out++ = alphabet[(accum & 0xF)<<2];
-    *out++='=';  
+    *out++='=';
   }
   else if (shift == 2)
   {
     *out++ = alphabet[(accum & 0x3)<<4];
-    *out++='=';  
-    *out++='=';  
+    *out++='=';
+    *out++='=';
   }
 
   *out++=0;
@@ -53,7 +53,7 @@ static int base64decode(const char *src, unsigned char *dest, int destsize)
 
     accum <<= 6;
     accum |= x;
-    nbits += 6;   
+    nbits += 6;
 
     while (nbits >= 8)
     {

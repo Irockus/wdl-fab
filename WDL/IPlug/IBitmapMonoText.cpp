@@ -22,7 +22,7 @@ void DrawBitmapedText(IGraphics* pGraphics,
       basicYOffset = controlRect->T + ((controlRect->H() - charHeight) / 2);
     else
       basicYOffset = controlRect->T;
-    
+
     if (pItext->mAlign == IText::kAlignCenter)
       basicXOffset = controlRect->L + ((controlRect->W() - (len * charWidth)) / 2);
     else

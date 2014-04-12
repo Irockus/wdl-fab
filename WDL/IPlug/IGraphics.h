@@ -11,32 +11,32 @@
 
 // Specialty stuff for calling in to Reaper for Lice functionality.
 #ifdef REAPER_SPECIAL
-  #include "../IPlugExt/ReaperExt.h"
-  #define _LICE ReaperExt
+#include "../IPlugExt/ReaperExt.h"
+#define _LICE ReaperExt
 #else
-  #define _LICE
+#define _LICE
 #endif
 
 #ifdef AAX_API
-  #include "AAX_IViewContainer.h"
+#include "AAX_IViewContainer.h"
 
-  static uint32_t GetAAXModifiersFromIMouseMod(const IMouseMod* pMod)
-  {
-    uint32_t aax_mods = 0;
+static uint32_t GetAAXModifiersFromIMouseMod(const IMouseMod* pMod)
+{
+  uint32_t aax_mods = 0;
 
-    if (pMod->A) aax_mods |= AAX_eModifiers_Option; // ALT Key on Windows, ALT/Option key on mac
+  if (pMod->A) aax_mods |= AAX_eModifiers_Option; // ALT Key on Windows, ALT/Option key on mac
 
-    #ifdef OS_WIN
-    if (pMod->C) aax_mods |= AAX_eModifiers_Command;
-    #else
-    if (pMod->C) aax_mods |= AAX_eModifiers_Control;
-    if (pMod->R) aax_mods |= AAX_eModifiers_Command;
-    #endif
-    if (pMod->S) aax_mods |= AAX_eModifiers_Shift;
-    if (pMod->R) aax_mods |= AAX_eModifiers_SecondaryButton;
-    
-    return aax_mods;
-  }
+#ifdef OS_WIN
+  if (pMod->C) aax_mods |= AAX_eModifiers_Command;
+#else
+  if (pMod->C) aax_mods |= AAX_eModifiers_Control;
+  if (pMod->R) aax_mods |= AAX_eModifiers_Command;
+#endif
+  if (pMod->S) aax_mods |= AAX_eModifiers_Shift;
+  if (pMod->R) aax_mods |= AAX_eModifiers_SecondaryButton;
+
+  return aax_mods;
+}
 #endif
 
 #define MAX_PARAM_LEN 32
@@ -44,15 +44,23 @@
 class IPlugBase;
 class IControl;
 class IParam;
-
+/**
+ Abstract base class that handles managing the graphic primitives and controls on the GUI.
+ This base is overloaded by Windows (IGraphicsWin) and Mac OS X (IGraphicsMac) implementations.
+ */
 class IGraphics
 {
 public:
-  void PrepDraw();    // Called once, when the IGraphics class is attached to the IPlug class.
+  void PrepDraw();///< Called once, when the IGraphics class is attached to the IPlug class.
 
-  bool IsDirty(IRECT* pR);        // Ask the plugin what needs to be redrawn.
-  bool Draw(IRECT* pR);           // The system announces what needs to be redrawn.  Ordering and drawing logic.
-  virtual bool DrawScreen(IRECT* pR) = 0;  // Tells the OS class to put the final bitmap on the screen.
+  bool IsDirty(IRECT* pR);///< Ask the plug-in what needs to be redrawn.
+  bool Draw(IRECT* pR);///< The system announces what needs to be redrawn.  Ordering and drawing logic.
+  virtual bool DrawScreen(IRECT* pR) = 0;///< Tells the OS class to put the final bitmap on the screen.
+
+  /** @name Drawing primitives
+  	API to draw Bitmaps, point, lines, triangles, rectangles, arcs, circles and texts
+  */
+  /// @{
 
   // Methods for the drawing implementation class.
   bool DrawBitmap(IBitmap* pBitmap, IRECT* pDest, int srcX, int srcY, const IChannelBlend* pBlend = 0);
@@ -75,6 +83,8 @@ public:
   bool DrawIText(IText* pTxt, const char* str, IRECT* pR, bool measure = false);
   virtual bool MeasureIText(IText* pTxt, const char* str, IRECT* pR) { return DrawIText(pTxt, str, pR, true); } ;
 
+  /// @}
+
   IColor GetPoint(int x, int y);
   void* GetData();
 
@@ -82,12 +92,21 @@ public:
 
   // Methods for the OS implementation class.
 
+  /** @name  OS dependent features
+  Abstracting window, standard dialogs, user input, path and URL primitives
+  */
+
+  /// @{
+
   virtual void ForceEndUserEdit() = 0;
   virtual void Resize(int w, int h);
   virtual bool WindowIsOpen() { return (GetWindow()); }
   virtual const char* GetGUIAPI() { return ""; };
 
-  // type can be MB_OKCANCEL/MB_YESNO/MB_YESNOCANCEL, return val is either IDOK, IDCANCEL or IDNO
+  /** Standard message box dialog.
+    Type can be MB_OKCANCEL/MB_YESNO/MB_YESNOCANCEL, return val is either IDOK, IDCANCEL or IDNO
+    Not always focusing correctly depending on some VST hosts ...
+   */
   virtual int ShowMessageBox(const char* pText, const char* pCaption, int type) = 0;
 
   // helper
@@ -96,7 +115,6 @@ public:
     IRECT tempRect = IRECT(x,y,x,y);
     return CreateIPopupMenu(pMenu, &tempRect);
   }
-
   virtual IPopupMenu* CreateIPopupMenu(IPopupMenu* pMenu, IRECT* pTextRect) = 0;
   virtual void CreateTextEntry(IControl* pControl, IText* pText, IRECT* pTextRect, const char* pString = "", IParam* pParam = 0) = 0;
 
@@ -104,17 +122,19 @@ public:
   virtual void HostPath(WDL_String* pPath) = 0;   // Full path to host executable.
   virtual void PluginPath(WDL_String* pPath) = 0; // Full path to plugin dll.
   virtual void DesktopPath(WDL_String* pPath) = 0; // Full path to user's desktop.
-  
+
   //Windows7: %LOCALAPPDATA%
   //Windows XP/Vista: %USERPROFILE%\Local Settings\Application Data
   //OSX: ~/Library/Application Support
   virtual void AppSupportPath(WDL_String* pPath) = 0;
-  
-  // Run the "open file" or "save file" dialog.  Default to host executable path.
+
+  /// Run the "open file" or "save file" dialog.  Default to host executable path.
   virtual void PromptForFile(WDL_String* pFilename, EFileAction action = kFileOpen, WDL_String* pDir = 0, const char* extensions = 0) = 0;  // extensions = "txt wav" for example.
+  /// Standard color peeker Dialog (os dependent)
   virtual bool PromptForColor(IColor* pColor, const char* prompt = 0) = 0;
 
   virtual bool OpenURL(const char* url, const char* msgWindowTitle = 0, const char* confirmMsg = 0, const char* errMsgOnFailure = 0) = 0;
+
 
   // Strict (default): draw everything within the smallest rectangle that contains everything dirty.
   // Every control is guaranteed to get no more than one Draw() call per cycle.
@@ -131,6 +151,8 @@ public:
 
   virtual void CloseWindow() = 0;
   virtual void* GetWindow() = 0;
+
+  /// @}
 
   ////////////////////////////////////////
 
@@ -150,7 +172,7 @@ public:
   void AttachPanelBackground(const IColor *pColor);
   void AttachKeyCatcher(IControl* pControl);
 
-  // Returns the control index of this control (not the number of controls).
+  /// Returns the control index of this control (not the number of controls).
   int AttachControl(IControl* pControl);
 
   IControl* GetControl(int idx) { return mControls.Get(idx); }
@@ -158,19 +180,22 @@ public:
   void HideControl(int paramIdx, bool hide);
   void GrayOutControl(int paramIdx, bool gray);
 
-  // Normalized means the value is in [0, 1].
-  void ClampControl(int paramIdx, double lo, double hi, bool normalized);
-  void SetParameterFromPlug(int paramIdx, double value, bool normalized);
-  // For setting a control that does not have a parameter associated with it.
+
+  void ClampControl(int paramIdx, double lo, double hi, bool normalized);///< Normalized means the value is in [0, 1].
+  void SetParameterFromPlug(int paramIdx, double value, bool normalized);///< Normalized means the value is in [0, 1].
+  /// For setting a control that does not have a parameter associated with it.
   void SetControlFromPlug(int controlIdx, double normalizedValue);
-  
+
   void SetAllControlsDirty();
 
-  // This is for when the gui needs to change a control value that it can't redraw
-  // for context reasons.  If the gui has redrawn the control, use IPlug::SetParameterFromGUI.
+  /** This is for when the gui needs to change a control value that it can't redraw
+     for context reasons.  If the gui has redrawn the control, use IPlug::SetParameterFromGUI.
+   */
   void SetParameterFromGUI(int paramIdx, double normalizedValue);
 
-  // Convenience wrappers.
+  /** @name Convenience wrappers.
+  */
+  /// @{
   bool DrawBitmap(IBitmap* pBitmap, IRECT* pR, int bmpState = 1, const IChannelBlend* pBlend = 0);
   bool DrawRect(const IColor* pColor, IRECT* pR);
   bool DrawVerticalLine(const IColor* pColor, IRECT* pR, float x);
@@ -178,12 +203,14 @@ public:
   bool DrawVerticalLine(const IColor* pColor, int xi, int yLo, int yHi);
   bool DrawHorizontalLine(const IColor* pColor, int yi, int xLo, int xHi);
   bool DrawRadialLine(const IColor* pColor, float cx, float cy, float angle, float rMin, float rMax, const IChannelBlend* pBlend = 0, bool antiAlias = false);
+  /// @}
 
   void OnMouseDown(int x, int y, IMouseMod* pMod);
   void OnMouseUp(int x, int y, IMouseMod* pMod);
   void OnMouseDrag(int x, int y, IMouseMod* pMod);
-  // Returns true if the control receiving the double click will treat it as a single click
-  // (meaning the OS should capture the mouse).
+  /** Returns true if the control receiving the double click will treat it as a single click
+  (meaning the OS should capture the mouse).
+   */
   bool OnMouseDblClick(int x, int y, IMouseMod* pMod);
   void OnMouseWheel(int x, int y, IMouseMod* pMod, int d);
   bool OnKeyDown(int x, int y, int key);
@@ -200,46 +227,48 @@ public:
 #endif
 //  void DisplayControlValue(IControl* pControl);
 
-  // For efficiency, mouseovers/mouseouts are ignored unless you explicity say you can handle them.
+  /// For efficiency, mouseovers/mouseouts are ignored unless you explicity say you can handle them.
   void HandleMouseOver(bool canHandle) { mHandleMouseOver = canHandle; }
-  bool OnMouseOver(int x, int y, IMouseMod* pMod);   // Returns true if mouseovers are handled.
+  bool OnMouseOver(int x, int y, IMouseMod* pMod);///< Returns true if mouseovers are handled.
   void OnMouseOut();
-  // Some controls may not need to capture the mouse for dragging, they can call ReleaseCapture when the mouse leaves.
+  /// Some controls may not need to capture the mouse for dragging, they can call ReleaseMouseCapture when the mouse leaves.
   void ReleaseMouseCapture();
 
-  // Enables/disables tooltips; also enables mouseovers/mouseouts if necessary.
+  /// Enables/disables tooltips; also enables mouseovers/mouseouts if necessary.
   inline void EnableTooltips(bool enable)
   {
     mEnableTooltips = enable;
     if (enable) mHandleMouseOver = enable;
   }
-  
-  // in debug builds you can enable this to draw a coloured box on the top of the GUI to show the bounds of the IControls
+
+  /// In debug builds, you can enable this to draw a coloured box on the top of the GUI to show the bounds of the IControls
   inline void ShowControlBounds(bool enable)
   {
     mShowControlBounds = enable;
   }
 
-  // Updates tooltips after (un)hiding controls.
+  /// Updates tooltips after (un)hiding controls.
   virtual void UpdateTooltips() = 0;
 
-	// This is an idle call from the GUI thread, as opposed to 
-	// IPlug::OnIdle which is called from the audio processing thread.
-	void OnGUIIdle();
+  /** This is an idle call from the GUI thread, as opposed to IPlug::OnIdle
+  which is called from the audio processing thread.
+   */
+  void OnGUIIdle();
 
   void RetainBitmap(IBitmap* pBitmap);
   void ReleaseBitmap(IBitmap* pBitmap);
   LICE_pixel* GetBits();
-  // For controls that need to interface directly with LICE.
+  /// For controls that need to interface directly with LICE.
   inline LICE_SysBitmap* GetDrawBitmap() const { return mDrawBitmap; }
 
   WDL_Mutex mMutex;
 
+  /// WDL_Mutex block scope wrapper class.
   struct IMutexLock
   {
     WDL_Mutex* mpMutex;
-    IMutexLock(IGraphics* pGraphics) : mpMutex(&(pGraphics->mMutex)) { mpMutex->Enter(); }
-    ~IMutexLock() { mpMutex->Leave(); }
+    IMutexLock(IGraphics* pGraphics) : mpMutex(&(pGraphics->mMutex)) { mpMutex->Enter(); } ///< Enter the wrapped wdl mutex
+    ~IMutexLock() { mpMutex->Leave(); } /// Release the wrapped wdl mutex
   };
 
 protected:
@@ -254,14 +283,14 @@ protected:
   inline int GetMouseX() const { return mMouseX; }
   inline int GetMouseY() const { return mMouseY; }
   inline bool TooltipsEnabled() const { return mEnableTooltips; }
-  
+
   virtual LICE_IBitmap* OSLoadBitmap(int ID, const char* name) = 0;
-  
+
   LICE_SysBitmap* mDrawBitmap;
   LICE_IFont* CacheFont(IText* pTxt);
-  
+
 #ifdef AAX_API
-  AAX_IViewContainer* mAAXViewContainer;  
+  AAX_IViewContainer* mAAXViewContainer;
 #endif
 
 private:

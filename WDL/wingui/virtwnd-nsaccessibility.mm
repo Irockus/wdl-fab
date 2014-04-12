@@ -53,46 +53,46 @@ class VWndBridgeNS;
 class VWndBridgeNS : public WDL_VWnd_IAccessibleBridge
 {
 public:
-  VWndBridgeNS(VWndNSAccessibility *p, WDL_VWnd *vw) 
-  { 
-     [(par=p) retain]; 
-     (vwnd=vw)->SetAccessibilityBridge(this);
+  VWndBridgeNS(VWndNSAccessibility *p, WDL_VWnd *vw)
+  {
+    [(par=p) retain];
+    (vwnd=vw)->SetAccessibilityBridge(this);
   }
-  ~VWndBridgeNS() 
-  { 
+  ~VWndBridgeNS()
+  {
 //    if (vwnd) printf("Destroying self before Released, wtf!\n");
   }
 
-  virtual void Release() 
-  {  
+  virtual void Release()
+  {
     if (__focus == vwnd) __focus=0;
 
-    vwnd=0; 
-    if (par) 
+    vwnd=0;
+    if (par)
     {
       NSAccessibilityPostNotification(par,NSAccessibilityUIElementDestroyedNotification);
       [par release];
-       // this is probably no longer valid!
+      // this is probably no longer valid!
     }
   }
   virtual void ClearCaches()
   {
     if (par) [par clearCaches];
   }
-  virtual void OnFocused() 
+  virtual void OnFocused()
   {
     if (vwnd && __focus != vwnd && par)
     {
       __focus = vwnd;
 //      NSAccessibilityPostNotification(par,NSAccessibilityFocusedWindowChangedNotification);
       NSAccessibilityPostNotification(par,NSAccessibilityFocusedUIElementChangedNotification);
-   }
-  } 
-  virtual void OnStateChange() 
+    }
+  }
+  virtual void OnStateChange()
   {
     if (par) NSAccessibilityPostNotification(par,NSAccessibilityValueChangedNotification);
   }
-  
+
   VWndNSAccessibility *par;
   WDL_VWnd *vwnd;
 };
@@ -143,18 +143,18 @@ public:
   }
   if (type)
   {
-//    if (m_br->vwnd->GetNumChildren()) 
+//    if (m_br->vwnd->GetNumChildren())
     {
       s[sidx++] = NSAccessibilityChildrenAttribute;
       s[sidx++] = NSAccessibilityVisibleChildrenAttribute;
     }
     s[sidx++]=NSAccessibilityTitleAttribute;
-        
+
     if (!strcmp(type,"vwnd_iconbutton")) s[sidx++] = NSAccessibilityEnabledAttribute;
-    
+
     s[sidx++] = NSAccessibilityFocusedAttribute;
     s[sidx++] = NSAccessibilityParentAttribute;
-    
+
     RECT r;
     m_br->vwnd->GetPosition(&r);
     if (m_br->vwnd->IsVisible() && r.right>r.left && r.bottom>r.top)
@@ -162,16 +162,16 @@ public:
       s[sidx++] = NSAccessibilityPositionAttribute;
       s[sidx++] = NSAccessibilitySizeAttribute;
     }
-    
+
     s[sidx++] = NSAccessibilityRoleAttribute;
     s[sidx++] = NSAccessibilityRoleDescriptionAttribute;
-    
-    if (!strcmp(type,"vwnd_statictext")) 
+
+    if (!strcmp(type,"vwnd_statictext"))
     {
-  //    s[sidx++]=NSAccessibilityDescriptionAttribute;
+      //    s[sidx++]=NSAccessibilityDescriptionAttribute;
 //      s[sidx++]=NSAccessibilityValueDescriptionAttribute;
     }
-    
+
     s[sidx++] = NSAccessibilityWindowAttribute;
     bool hasState = false;
     if (!strcmp(type,"vwnd_iconbutton"))
@@ -200,9 +200,9 @@ public:
   if (!m_br->vwnd) return nil;
   const char *type = m_br->vwnd->GetType();
   if (!type) type="";
-  
+
   //NSLog(@"Requesting attribute: %@ %s %p\n",attribute,type,m_br->vwnd);
-  
+
   int a = [attribute isEqual:NSAccessibilityChildrenAttribute]?1:0;
   if (!a) a= [attribute isEqual:NSAccessibilityVisibleChildrenAttribute]?2:0;
   if (a) // if 2, only add visible items
@@ -214,7 +214,7 @@ public:
 
     NSMutableArray *ar = [NSMutableArray arrayWithCapacity:nc];
     int x;
-    for (x=0;x<nc;x++)
+    for (x=0; x<nc; x++)
     {
       WDL_VWnd *ch = m_br->vwnd->EnumChildren(x);
       if (!ch) continue;
@@ -252,12 +252,12 @@ public:
   if ([attribute isEqual:NSAccessibilityParentAttribute])
   {
     WDL_VWnd *parw = m_br->vwnd->GetParent();
-    if (parw) 
+    if (parw)
     {
       VWndNSAccessibility *cid = GetVWndNSAccessible(parw);
-      if (cid) return NSAccessibilityUnignoredAncestor([cid autorelease]);      
+      if (cid) return NSAccessibilityUnignoredAncestor([cid autorelease]);
     }
-    HWND h =m_br->vwnd->GetRealParent(); 
+    HWND h =m_br->vwnd->GetRealParent();
     if (h) return NSAccessibilityUnignoredAncestor((id)h);
     return NULL;
   }
@@ -292,7 +292,7 @@ public:
   }
   if ([attribute isEqual:NSAccessibilityRoleDescriptionAttribute])
   {
-    const char *str= NULL; 
+    const char *str= NULL;
     if (!str || !*str)
     {
       if (!strcmp(type,"vwnd_statictext")) str = "text";
@@ -337,7 +337,7 @@ public:
       WDL_VirtualComboBox *cb = (WDL_VirtualComboBox *)m_br->vwnd;
       str = cb->GetItem(cb->GetCurSel());
     }
-    if (!strcmp(type,"vwnd_iconbutton")) 
+    if (!strcmp(type,"vwnd_iconbutton"))
     {
       WDL_VirtualIconButton *b = (WDL_VirtualIconButton *)m_br->vwnd;
       str = b->GetTextLabel();
@@ -355,7 +355,7 @@ public:
       }
     }
 
-  
+
 #if 0
     if (cs>=0)
     {
@@ -365,10 +365,10 @@ public:
         str=buf;
       }
 //      strcat(buf,cs>0 ? " checked" : " unchecked");
-      
+
     }
 #endif
-    
+
     if (str && *str) return [(id)SWELL_CStringToCFString(str) autorelease];
   }
   if ([attribute isEqual:NSAccessibilityWindowAttribute])
@@ -381,32 +381,32 @@ public:
   }
   int s;
   if ((s=!![attribute isEqual:NSAccessibilityMaxValueAttribute]) ||
-       (s=[attribute isEqual:NSAccessibilityValueAttribute]?2:0) || 
-        [attribute isEqual:NSAccessibilityMinValueAttribute])
+      (s=[attribute isEqual:NSAccessibilityValueAttribute]?2:0) ||
+      [attribute isEqual:NSAccessibilityMinValueAttribute])
   {
-     if (!strcmp(type,"vwnd_slider"))
-     {
-       WDL_VirtualSlider *slid = (WDL_VirtualSlider *)m_br->vwnd;
-       int v=0;
-       if (s!=2) slid->GetRange(s ? NULL : &v, s ? &v :NULL,NULL);
-       else v= slid->GetSliderPosition();
-       return [NSNumber numberWithInt:v];
-     }
-     if (!strcmp(type,"vwnd_combobox"))
-     {
-       int v=0;
-       if (s==1) v=((WDL_VirtualComboBox*)m_br->vwnd)->GetCount();
-       else if (s==2) v= !!((WDL_VirtualComboBox *)m_br->vwnd)->GetCurSel();
-       if (v<0)v=0;
-       return [NSNumber numberWithInt:v];
-     }
-     if (!strcmp(type,"vwnd_iconbutton"))
-     {
-       int v=0;
-       if (s==1) v=1;
-       else if (s==2) v= !!((WDL_VirtualIconButton *)m_br->vwnd)->GetCheckState()>0;
-       return [NSNumber numberWithInt:v];
-     }
+    if (!strcmp(type,"vwnd_slider"))
+    {
+      WDL_VirtualSlider *slid = (WDL_VirtualSlider *)m_br->vwnd;
+      int v=0;
+      if (s!=2) slid->GetRange(s ? NULL : &v, s ? &v :NULL,NULL);
+      else v= slid->GetSliderPosition();
+      return [NSNumber numberWithInt:v];
+    }
+    if (!strcmp(type,"vwnd_combobox"))
+    {
+      int v=0;
+      if (s==1) v=((WDL_VirtualComboBox*)m_br->vwnd)->GetCount();
+      else if (s==2) v= !!((WDL_VirtualComboBox *)m_br->vwnd)->GetCurSel();
+      if (v<0)v=0;
+      return [NSNumber numberWithInt:v];
+    }
+    if (!strcmp(type,"vwnd_iconbutton"))
+    {
+      int v=0;
+      if (s==1) v=1;
+      else if (s==2) v= !!((WDL_VirtualIconButton *)m_br->vwnd)->GetCheckState()>0;
+      return [NSNumber numberWithInt:v];
+    }
   }
   return nil;
 }
@@ -415,7 +415,7 @@ public:
   {
     const char *type = m_br->vwnd ?  m_br->vwnd->GetType() : NULL;
     if (!type) type="";
-   // NSLog(@"accessibilityIsAttributeSettable: %@ %s %p\n",attribute,type,m_br->vwnd);
+    // NSLog(@"accessibilityIsAttributeSettable: %@ %s %p\n",attribute,type,m_br->vwnd);
   }
 
   if ([attribute isEqual:NSAccessibilityFocusedAttribute]) return YES;
@@ -429,7 +429,7 @@ public:
     //NSLog(@"accessibilitySetValue: %@ %s %p\n",attribute,type,m_br->vwnd);
   }
 
-  if ([attribute isEqual:NSAccessibilityFocusedAttribute]) 
+  if ([attribute isEqual:NSAccessibilityFocusedAttribute])
   {
     if ([value isKindOfClass:[NSNumber class]])
     {
@@ -447,7 +447,7 @@ public:
     const char *type = m_br->vwnd ?  m_br->vwnd->GetType() : NULL;
     if (!type) type="";
     //NSLog(@"accessibilityParameterizedAttributeNames: %@ %s %p\n",@"",type,m_br->vwnd);
-  }  
+  }
   return [NSArray arrayWithObjects:nil count:0];
   return nil;
 }
@@ -457,7 +457,7 @@ public:
     const char *type = m_br->vwnd ?  m_br->vwnd->GetType() : NULL;
     if (!type) type="";
     //NSLog(@"accessibilityAttributeValue: %@ %s %p\n",attribute,type,m_br->vwnd);
-  }  
+  }
   return nil;
 }
 
@@ -468,25 +468,25 @@ public:
     const char *type = m_br->vwnd ?  m_br->vwnd->GetType() : NULL;
     if (!type) type="";
     //NSLog(@"accessibilityActionNames: %@ %s %p\n",@"",type,m_br->vwnd);
-  }  
+  }
   NSString *s[32];
   int sidx=0;
-  
+
   const char *type = m_br->vwnd ? m_br->vwnd->GetType() : NULL;
   if (type)
   {
     if (!strcmp(type,"vwnd_combobox") ||
         !strcmp(type,"vwnd_iconbutton") ||
-        !strcmp(type,"vwnd_statictext") 
-        ) s[sidx++] =  NSAccessibilityPressAction;
-    
-    if (!strcmp(type,"vwnd_slider")) 
+        !strcmp(type,"vwnd_statictext")
+       ) s[sidx++] =  NSAccessibilityPressAction;
+
+    if (!strcmp(type,"vwnd_slider"))
     {
       s[sidx++] = NSAccessibilityDecrementAction;
       s[sidx++] = NSAccessibilityIncrementAction;
     }
   }
-  
+
   return [NSArray arrayWithObjects:s count:sidx];
 }
 - (NSString *)accessibilityActionDescription:(NSString *)action
@@ -495,7 +495,7 @@ public:
     const char *type = m_br->vwnd ?  m_br->vwnd->GetType() : NULL;
     if (!type) type="";
     //NSLog(@"accessibilityActionDescription: %@ %s %p\n",action,type,m_br->vwnd);
-  }  
+  }
   const char *type = m_br->vwnd ? m_br->vwnd->GetType() : NULL;
   if (type)
   {
@@ -505,7 +505,7 @@ public:
       if (!strcmp(type,"vwnd_iconbutton")) return @"Press button";
       if (!strcmp(type,"vwnd_statictext")) return @"Doubleclick text";
     }
-    else if (!strcmp(type,"vwnd_slider")) 
+    else if (!strcmp(type,"vwnd_slider"))
     {
       if ([action isEqual:NSAccessibilityDecrementAction]) return @"Decrease value of control";
       else if ([action isEqual:NSAccessibilityIncrementAction])return @"Increase value of control";
@@ -520,14 +520,14 @@ public:
   {
     const char *type =  m_br->vwnd->GetType();
     if (!type) type="";
-    
+
     if ([action isEqual:NSAccessibilityPressAction])
     {
       if (!strcmp(type,"vwnd_statictext")) m_br->vwnd->OnMouseDblClick(0,0);
       else
       {
         m_br->vwnd->OnMouseDown(0,0);
-        m_br->vwnd->OnMouseUp(0,0);      
+        m_br->vwnd->OnMouseUp(0,0);
       }
     }
     else if ([action isEqual:NSAccessibilityDecrementAction])
@@ -539,7 +539,7 @@ public:
       m_br->vwnd->OnMouseWheel(0,0,1);
     }
     //NSLog(@"accessibilityPerformAction: %@ %s %p\n",action,type,m_br->vwnd);
-  }  
+  }
   // todo
 }
 
@@ -549,7 +549,7 @@ public:
   if (m_br->vwnd)
   {
     if (!m_br->vwnd->IsVisible()) return YES;
-    if (m_br->vwnd->GetNumChildren()) 
+    if (m_br->vwnd->GetNumChildren())
     {
       const char *type = m_br->vwnd->GetType();
       if (type) if (!strcmp(type,"vwnd_unknown") || strstr(type,"container")) return YES;
@@ -571,8 +571,8 @@ public:
     const char *type = m_br->vwnd ?  m_br->vwnd->GetType() : NULL;
     if (!type) type="";
 //    NSLog(@"accessibilityHitTest: %f,%f %s %p\n",point.x,point.y,type,m_br->vwnd);
-  }  
-  
+  }
+
   if (m_br->vwnd)
   {
     HWND h = m_br->vwnd->GetRealParent();
@@ -583,12 +583,12 @@ public:
       WDL_VWnd *par = m_br->vwnd;
       while (par->GetParent()) par=par->GetParent();
       RECT r;
-      par->GetPosition(&r);     
+      par->GetPosition(&r);
       WDL_VWnd *hit = par->VirtWndFromPoint(pt.x-r.left,pt.y-r.top);
       if (hit)
       {
         VWndNSAccessibility *a = GetVWndNSAccessible(hit);
-        if (a) 
+        if (a)
         {
           [a autorelease];
           return a;
@@ -605,7 +605,7 @@ public:
     const char *type = m_br->vwnd ?  m_br->vwnd->GetType() : NULL;
     if (!type) type="";
     //NSLog(@"accessibilityFocusedUIElement: %s %p\n",type,m_br->vwnd);
-  }  
+  }
   if (__focus && m_br && m_br->vwnd && m_br->vwnd->IsDescendent(__focus))
   {
     VWndBridgeNS *p = (VWndBridgeNS *)__focus->GetAccessibilityBridge();
@@ -623,7 +623,7 @@ static VWndNSAccessibility *GetVWndNSAccessible(WDL_VWnd *vwnd)
 {
   if (!vwnd) return NULL;
   VWndBridgeNS *p = (VWndBridgeNS *)vwnd->GetAccessibilityBridge();
-  if (p) 
+  if (p)
   {
     if (p->par) [p->par retain];
     return p->par;
