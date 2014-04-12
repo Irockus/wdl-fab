@@ -81,18 +81,18 @@ MACRO(create_example name)
 	  set(${PN_SRC} ${${PN_SRC}} ${PLUGNAME}.rc)
 	else(WIN32)
 	  set(${PN_SRC} ${${PN_SRC}}  ../../WDL/IPlug/IPlugCocoa.mm ../../common.xcconfig ${PLUGNAME}.xcconfig)
-	endif(WIN32)
-
-	# Source code headers
-	set(${PN_HDR} ${${PN_HDR}} resource.h ${PLUGNAME}.h  )
-  
-    ADD_DEFINITIONS(
+	  ADD_DEFINITIONS(
     	-D__MACOSX_CORE__ 
     	-DSWELL_FORCE_COCOA_TEXT 
     	-DBINARY_NAME=${PLUGNAME}
     	-DCOCOA_PREFIX=v${PLUGNAME} 
     	-DSWELL_APP_PREFIX=Swell_v${PLUGNAME}
     	)
+	endif(WIN32)
+
+	# Source code headers
+	set(${PN_HDR} ${${PN_HDR}} resource.h ${PLUGNAME}.h  )
+  
     	
 	set(BINARY_NAME ${PLUGNAME} ) # needed by cmake for expanding the template plist file (one per target)
 	
