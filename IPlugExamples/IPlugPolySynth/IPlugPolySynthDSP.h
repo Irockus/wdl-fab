@@ -252,13 +252,7 @@ struct CVoiceState
     //mLastBusy = false;
   }
 
-  bool GetBusy()
-  {
-    if (mEnv_ctx.mStage == kIdle)
-      return false;
-    else
-      return true;
-  }
+  inline bool GetBusy()  { return (mEnv_ctx.mStage != kIdle);  } // called in ProcessDoubleReplacing, so a lot lot of times ...
 };
 
 

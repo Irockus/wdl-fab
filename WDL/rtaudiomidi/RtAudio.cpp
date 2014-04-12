@@ -8730,19 +8730,19 @@ void RtApi :: convertBuffer( char *outBuffer, char *inBuffer, ConvertInfo &info 
     }
     else if (info.inFormat == RTAUDIO_SINT32)
     {
-      Int32 *in = (Int32 *)inBuffer;
-      scale = 1.0 / 2147483647.5;
-      for (unsigned int i=0; i<stream_.bufferSize; i++)
-      {
-        for (j=0; j<info.channels; j++)
+        Int32 *in; //  = (Int32 *)inBuffer;
+        scale = (Float64)(1.0 / 2147483647.5);
+        int incIn = info.inJump, incOut = info.outJump;
+        for (j = 0; j<info.channels; j++) // num channels are assumed to be way less than buffer sizes, so optimize main copy loop
         {
-          out[info.outOffset[j]] = (Float64) in[info.inOffset[j]];
-          out[info.outOffset[j]] += 0.5;
-          out[info.outOffset[j]] *= scale;
+            in = (Int32 *)inBuffer + info.inOffset[j];
+            out = (Float64*)outBuffer + info.outOffset[j];
+
+            for (unsigned int i = 0; i<stream_.bufferSize; i++, in += incIn, out += incOut)
+            {
+                *out = (Float64)((*in) + 0.5)*scale;
+            }
         }
-        in += info.inJump;
-        out += info.outJump;
-      }
     }
     else if (info.inFormat == RTAUDIO_FLOAT32)
     {
@@ -8827,19 +8827,19 @@ void RtApi :: convertBuffer( char *outBuffer, char *inBuffer, ConvertInfo &info 
     }
     else if (info.inFormat == RTAUDIO_SINT32)
     {
-      Int32 *in = (Int32 *)inBuffer;
-      scale = (Float32) ( 1.0 / 2147483647.5 );
-      for (unsigned int i=0; i<stream_.bufferSize; i++)
-      {
-        for (j=0; j<info.channels; j++)
+        Int32 *in; //  = (Int32 *)inBuffer;
+        scale = (Float32)(1.0 / 2147483647.5);
+        int incIn = info.inJump, incOut = info.outJump;
+        for (j = 0; j<info.channels; j++) // num channels are assumed to be way less than buffer sizes, so optimize main copy loop
         {
-          out[info.outOffset[j]] = (Float32) in[info.inOffset[j]];
-          out[info.outOffset[j]] += 0.5;
-          out[info.outOffset[j]] *= scale;
+            in = (Int32 *)inBuffer + info.inOffset[j];
+            out = (Float32*)outBuffer + info.outOffset[j];
+
+            for (unsigned int i = 0; i<stream_.bufferSize; i++, in += incIn, out += incOut)
+            {
+                *out = (Float32) ((*in) + 0.5)*scale;
+            }
         }
-        in += info.inJump;
-        out += info.outJump;
-      }
     }
     else if (info.inFormat == RTAUDIO_FLOAT32)
     {
@@ -8943,15 +8943,17 @@ void RtApi :: convertBuffer( char *outBuffer, char *inBuffer, ConvertInfo &info 
     }
     else if (info.inFormat == RTAUDIO_FLOAT64)
     {
-      Float64 *in = (Float64 *)inBuffer;
-      for (unsigned int i=0; i<stream_.bufferSize; i++)
+      Float64 *in; //  = (Float64 *)inBuffer;
+      int incIn = info.inJump, incOut = info.outJump;
+      for (j = 0; j<info.channels; j++) // num channels are assumed to be way less than buffer sizes, so optimize main copy loop
       {
-        for (j=0; j<info.channels; j++)
+        in = (Float64 *)inBuffer + info.inOffset[j];
+        out = (Int32*)outBuffer + info.outOffset[j];
+        
+        for (unsigned int i = 0; i<stream_.bufferSize; i++, in+=incIn, out+=incOut)
         {
-          out[info.outOffset[j]] = (Int32) (in[info.inOffset[j]] * 2147483647.5 - 0.5);
+          *out = (Int32) ( (*in) * 2147483647.5 - 0.5); 
         }
-        in += info.inJump;
-        out += info.outJump;
       }
     }
   }

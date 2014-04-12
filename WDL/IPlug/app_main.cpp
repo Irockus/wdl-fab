@@ -378,24 +378,30 @@ int AppWrapper::AudioCallback(void *outputBuffer,
 
   double* inputBufferD = (double*)inputBuffer;
   double* outputBufferD = (double*)outputBuffer;
+  
+  // optimize these it is called in the frame loop ... 
+  AppWrapper& inst = Instance(); 
+  IPlugStandalone* plug = inst.gPluginInstance;
+  unsigned int& bufIndex = inst.gBufIndex;
+  unsigned int& sigVS = inst.gSigVS;
 
   int inRightOffset = 0;
 
-  if(!Instance().gState->mAudioInIsMono)
+  if(!inst.gState->mAudioInIsMono)
     inRightOffset = nFrames;
 
   if (gVecElapsed > N_VECTOR_WAIT) // wait N_VECTOR_WAIT * iovs before processing audio, to avoid clicks
   {
     for (int i=0; i<nFrames; i++)
     {
-      Instance().gBufIndex %= Instance().gSigVS;
+      bufIndex %= sigVS;
 
-      if (Instance().gBufIndex == 0)
+      if (bufIndex == 0)
       {
         double* inputs[2] = {inputBufferD + i, inputBufferD + inRightOffset + i};
         double* outputs[2] = {outputBufferD + i, outputBufferD + nFrames + i};
 
-        Instance().gPluginInstance->LockMutexAndProcessDoubleReplacing(inputs, outputs, Instance().gSigVS);
+        plug->LockMutexAndProcessDoubleReplacing(inputs, outputs, sigVS);
       }
 
       // fade in
@@ -410,7 +416,7 @@ int AppWrapper::AudioCallback(void *outputBuffer,
       outputBufferD[i] *= APP_MULT;
       outputBufferD[i + nFrames] *= APP_MULT;
 
-      Instance().gBufIndex++;
+      bufIndex++;
     }
   }
   else
