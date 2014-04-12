@@ -29,8 +29,10 @@
 *.xcschememanagement.plist
 *.xcworkspace
 *.zip
+*.tar.gz
 */*/gui/*
 *xcuserdata*
+*/*/CMakeFiles/
 IPlugExamples/IPlugEEL/libEEL/build/
 /WDL/IPlug/doc/html
 /WorkProjects/
@@ -57,14 +59,10 @@ VST3_SDK/*
 *.makeRelWithDebInfo
 *.makeRelease
 *.vcxproj
-IPlugExamples/CMakeFiles/generate.stamp
 *.filters
 WDL/*/*.dir/
 IPlugExamples/*/*.dir/
 WDL/*/Debug/
 WDL0/
-WDL/CMakeFiles/
-WDL/IPlug/CMakeFiles/generate.stamp
-WDL/*/CMakeFiles/
+*/CMakeFiles/
 Win32/Debug/
-IPlugExamples/*/CMakeFiles/
