@@ -10,26 +10,25 @@
 #define LOGFILE "C:\\IPlugLog.txt" // TODO: what if no write permissions?
 
 /// Debug output txt msg for windows OutputDebugString wrapper function
-void DBGMSG(const char *format, ...)
+void DBGMSG(const char* fmt, ...)
 {
-  char    buf[4096], *p = buf;
   va_list args;
-  int     n;
+  va_start(args, fmt);
 
-  va_start(args, format);
-  n = _vsnprintf(p, sizeof buf - 3, format, args); // buf-3 is room for CR/LF/NUL
+  char szBuffer[512] = ""; // get rid of this hard-coded buffer
+#ifdef _MSC_VER
+  _vsnprintf(szBuffer, 511, fmt, args);
+#else
+  vsnprintf(szBuffer, 511, lpszFormat, args);
+#endif
+  szBuffer[sizeof(szBuffer)-1] = 0;
+
+#ifdef _MSC_VER
+  ::OutputDebugString(szBuffer);
+#else
+  fprintf(stderr, "%s", szBuffer);
+#endif
   va_end(args);
-
-  p += (n < 0) ? sizeof buf - 3 : n;
-
-  while ( p > buf  &&  isspace(p[-1]) )
-    *--p = '\0';
-
-  *p++ = '\r';
-  *p++ = '\n';
-  *p   = '\0';
-
-  OutputDebugString(buf);
 }
 
 #else // OSX
@@ -197,7 +196,7 @@ const char* AppendTimestamp(const char* Mmm_dd_yyyy, const char* hh_mm_ss, const
   return str.Get();
 }
 
-#if defined TRACER_BUILD
+#if defined(_DEBUG)
 
 intptr_t GetOrdinalThreadID(intptr_t sysThreadID)
 {
@@ -230,11 +229,7 @@ void Trace(const char* funcName, int line, const char* format, ...)
     VARARGS_TO_STR(str);
 
 #ifdef TRACETOSTDOUT
-#ifdef OS_WIN
     DBGMSG("[%ld:%s:%d]%s", GetOrdinalThreadID(SYS_THREAD_ID), funcName, line, str);
-#else
-    printf("[%ld:%s:%d]%s", GetOrdinalThreadID(SYS_THREAD_ID), funcName, line, str);
-#endif
 #else
     WDL_MutexLock lock(&sLogMutex);
     fprintf(sLogFile.mFP, "[%ld:%s:%d]%s", GetOrdinalThreadID(SYS_THREAD_ID), funcName, line, str);

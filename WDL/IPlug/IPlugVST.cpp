@@ -346,7 +346,7 @@ VstIntPtr VSTCALLBACK IPlugVST::VSTDispatcher(AEffect *pEffect, VstInt32 opCode,
       return 0;
   }
 
-  Trace(TRACELOC, "%d(%s):%d:%d", opCode, VSTOpcodeStr(opCode), idx, (int) value);
+  //Trace(TRACELOC, "%d(%s):%d:%d", opCode, VSTOpcodeStr(opCode), idx, (int) value);
 
   switch (opCode)
   {
@@ -860,7 +860,7 @@ void VSTCALLBACK IPlugVST::VSTProcess(AEffect* pEffect, float** inputs, float** 
 
 void VSTCALLBACK IPlugVST::VSTProcessReplacing(AEffect* pEffect, float** inputs, float** outputs, VstInt32 nFrames)
 {
-  TRACE_PROCESS;
+  // TRACE_PROCESS;
   IPlugVST* _this = (IPlugVST*) pEffect->object;
   IMutexLock lock(_this);
   _this->VSTPrepProcess(inputs, outputs, nFrames);
@@ -869,7 +869,7 @@ void VSTCALLBACK IPlugVST::VSTProcessReplacing(AEffect* pEffect, float** inputs,
 
 void VSTCALLBACK IPlugVST::VSTProcessDoubleReplacing(AEffect* pEffect, double** inputs, double** outputs, VstInt32 nFrames)
 {
-  TRACE_PROCESS;
+  // TRACE_PROCESS;
   IPlugVST* _this = (IPlugVST*) pEffect->object;
   IMutexLock lock(_this);
   _this->VSTPrepProcess(inputs, outputs, nFrames);
@@ -878,7 +878,7 @@ void VSTCALLBACK IPlugVST::VSTProcessDoubleReplacing(AEffect* pEffect, double** 
 
 float VSTCALLBACK IPlugVST::VSTGetParameter(AEffect *pEffect, VstInt32 idx)
 {
-  Trace(TRACELOC, "%d", idx);
+  // Trace(TRACELOC, "%d", idx);
   IPlugVST* _this = (IPlugVST*) pEffect->object;
   IMutexLock lock(_this);
   if (idx >= 0 && idx < _this->NParams())

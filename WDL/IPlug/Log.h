@@ -12,6 +12,7 @@
 #include "Containers.h"
 #include "IPlugOSDetect.h"
 
+
 #if defined OS_WIN
 #include <stdio.h>
 #include <ctype.h>
@@ -25,16 +26,11 @@ void DBGMSG(const char *format, ...);
 #error "No OS defined!"
 #endif
 
-#if defined TRACER_BUILD
-#define TRACE Trace(TRACELOC, "");
-//  #define TRACE_PROCESS Trace(TRACELOC, "");
-#define TRACE_PROCESS
-#else
-#define TRACE
-#define TRACE_PROCESS
-#endif
-
 #define TRACELOC __FUNCTION__,__LINE__
+#define TRACE Trace(TRACELOC, "");
+#define TRACE_PROCESS TRACE
+#define TRACEINT(msg, val ) Trace(TRACELOC, "\t%s=%d.", msg,val)
+#define TRACEDBL(msg, val ) Trace(TRACELOC,"\t%s=%lf.", msg,val)
 void Trace(const char* funcName, int line, const char* fmtStr, ...);
 
 // To trace some arbitrary data:                 Trace(TRACELOC, "%s:%d", myStr, myInt);
