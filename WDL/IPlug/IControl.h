@@ -49,8 +49,8 @@ public:
   /// Ask the IGraphics object to open an edit box so the user can enter a value for this control.
   void PromptUserInput();
   void PromptUserInput(IRECT* pTextRect);
-
-  inline void SetTooltip(const char* tooltip) { mTooltip = tooltip; }
+  /// Set a tooltip to a control and return itself for convenient method calls cascading ...
+  inline IControl* SetTooltip(const char* tooltip) { mTooltip = tooltip; return this; }
   inline const char* GetTooltip() const { return mTooltip; }
 
   int ParamIdx() { return mParamIdx; }
