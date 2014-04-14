@@ -33,6 +33,7 @@
 */*/gui/*
 *xcuserdata*
 */*/CMakeFiles/
+*/*/CMakeScripts/
 IPlugExamples/IPlugEEL/libEEL/build/
 /WDL/IPlug/doc/html
 /WorkProjects/
@@ -62,7 +63,9 @@ VST3_SDK/*
 *.filters
 WDL/*/*.dir/
 IPlugExamples/*/*.dir/
-WDL/*/Debug/
+*/*/Debug/
 WDL0/
 */CMakeFiles/
-Win32/Debug/
+*/Debug/
+.svn
+*.tmp
