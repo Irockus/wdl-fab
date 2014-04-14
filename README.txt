@@ -1,7 +1,14 @@
 WDL / IPlug - Fabulous Fab Edition
 
-Forks from great Oli Larkin version, for now : mainly adds more c++ compliants fixes, 
-more compatibility against various compilers.
+Forks from great Oli Larkin version
+
+This branch mainly focuses for now on code refactoring/cleanup and re-usability aspects.
+Provides a Cmake build alternative, which makes a new project creation (i.e. in the examples folder) a 2-liner.
+Also provides extra documentation like custom html pages autodocumentation with doxygen (lots of todo's here).
+Also provides fixes and enhancements in terms of features compleneteness like the std dialogs api. 
+It provides a lot of code decoupling and re-factoring/cleanup (i.e. less files to duplicate for each new project, 
+ audio preferences dialog integrated inton the iPlug library hence can evolve rapidly with no code duplication).
+It makes unsafe depracted api safe (i.e. string manipulation operations), hence enhancing debugging experience.
 
 IPlug is a simple-to-use C++ framework for developing cross platform audio plugins,
  and targeting multiple plugin APIs with the same code. 
