@@ -69,3 +69,5 @@ WDL0/
 */Debug/
 .svn
 *.tmp
+!CMakeLists.txt
+!readme.txt
