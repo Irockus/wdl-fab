@@ -7,7 +7,7 @@
  *
  */
 #ifdef SA_API
-#include "../swell/swell-appstub.mm"
+//#include "../swell/swell-appstub.mm"
 #include "main.mm"
 #endif
 
