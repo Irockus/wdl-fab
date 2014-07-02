@@ -296,8 +296,8 @@ void lvgImageCtx::processLvgLine(LineParser *lp, lvgRenderState *state, LICE_IBi
       int h = (int)parsecoord(lp->gettoken_str(4),yscale,true);
       if (w>0 && h>0)
       {
-        if (dcdx!=LICE_RGBA(0x80,0x80,0x80,0x80) ||
-            dcdy!=LICE_RGBA(0x80,0x80,0x80,0x80))
+        if (dcdx!=(LICE_pixel) LICE_RGBA(0x80,0x80,0x80,0x80) ||
+            dcdy!=(LICE_pixel) LICE_RGBA(0x80,0x80,0x80,0x80))
         {
           LICE_pixel sc = state->m_color;
           dcdxsc /= w*128.0;

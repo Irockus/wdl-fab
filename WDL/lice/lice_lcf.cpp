@@ -634,7 +634,7 @@ LICE_IBitmap *LICECaptureDecompressor::GetCurrentFrame()
           int wid  = totw-xpos;
           if (wid>hdr->bsize_w) wid=hdr->bsize_w;
 
-          int sz1=wid*hei;
+          //int sz1=wid*hei;
 
           unsigned short *rdptr = (unsigned short *)*sliceptr;
 

@@ -306,7 +306,7 @@ static void MapListReader(pl_uChar *f, pl_uInt32 p)
 
 static pl_sInt16 _pl3DSFindChunk(pl_uInt16 id)
 {
-  pl_sInt16 i;
+  size_t i;
   for (i = 0; i < sizeof(_pl3DSChunkNames)/sizeof(_pl3DSChunkNames[0]); i++)
     if (id == _pl3DSChunkNames[i].id) return i;
   return -1;

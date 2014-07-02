@@ -32,12 +32,12 @@ C string manipulation utilities -- [v]snprintf for Win32, also snprintf_append, 
 #include "wdltypes.h"
 
 #ifdef _WDL_CSTRING_IMPL_ONLY_
-#ifdef _WDL_CSTRING_IF_ONLY_
-#undef _WDL_CSTRING_IF_ONLY_
-#endif
-#define _WDL_CSTRING_PREFIX
+# ifdef _WDL_CSTRING_IF_ONLY_
+#  undef _WDL_CSTRING_IF_ONLY_
+# endif
+# define _WDL_CSTRING_PREFIX
 #else
-#define _WDL_CSTRING_PREFIX static
+# define _WDL_CSTRING_PREFIX inline
 #endif
 
 

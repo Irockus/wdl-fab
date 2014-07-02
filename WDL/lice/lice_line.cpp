@@ -1337,18 +1337,18 @@ static int FindXOnSegment(int x1, int y1, int x2, int y2, int ty)
   return x1+(int)((float)(ty-y1)*dxdy);
 }
 
-static int FindYOnSegment(int x1, int y1, int x2, int y2, int tx)
-{
-  if (x1 > x2)
-  {
-    SWAP(x1, x2);
-    SWAP(y1, y2);
-  }
-  if (tx <= x1) return y1;
-  if (tx >= x2) return y2;
-  float dydx = (float)(y2-y1)/(float)(x2-x1);
-  return y1+(int)((float)(tx-x1)*dydx);
-}
+//static int FindYOnSegment(int x1, int y1, int x2, int y2, int tx)
+//{
+//  if (x1 > x2)
+//  {
+//    SWAP(x1, x2);
+//    SWAP(y1, y2);
+//  }
+//  if (tx <= x1) return y1;
+//  if (tx >= x2) return y2;
+//  float dydx = (float)(y2-y1)/(float)(x2-x1);
+//  return y1+(int)((float)(tx-x1)*dydx);
+//}
 
 void LICE_FillTrapezoid(LICE_IBitmap* dest, int x1a, int x1b, int y1, int x2a, int x2b, int y2, LICE_pixel color, float alpha, int mode)
 {

@@ -59,7 +59,7 @@ pl_Obj *plReadJAWObj(char *filename, pl_Mat *m)
   while (fgets(line, 256, jawfile) != NULL) if (strstr(line, "tri") != NULL)
     {
       pl_uInt32 a,b,c;
-      sscanf(line, "tri %ld, %ld, %ld", &a, &b, &c);
+      sscanf(line, "tri %d, %d, %d", &a, &b, &c);
       obj->Faces.Get()[i].VertexIndices[0] = a;
       obj->Faces.Get()[i].VertexIndices[1] = c;
       obj->Faces.Get()[i].VertexIndices[2] = b;

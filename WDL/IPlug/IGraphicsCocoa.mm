@@ -144,7 +144,7 @@ inline IMouseMod GetRightMouseMod(NSEvent* pEvent)
 
   if (maxLength)
   {
-    if ([partialString length] > maxLength)
+    if (((int) [partialString length]) > maxLength)
     {
       return NO;
     }

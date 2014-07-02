@@ -331,7 +331,7 @@ void AppWrapper::MIDICallback( double deltatime, std::vector< unsigned char > *m
 {
   if ( message->size() )
   {
-    IMidiMsg *myMsg;
+    IMidiMsg *myMsg = 0;
 
     switch (message->size())
     {
@@ -349,20 +349,23 @@ void AppWrapper::MIDICallback( double deltatime, std::vector< unsigned char > *m
         break;
     }
 
-    IMidiMsg msg(*myMsg);
-
-    delete myMsg;
-
-    // filter midi messages based on channel, if Instance().gStatus.mMidiInChan != all (0)
-    if (Instance().gState->mMidiInChan)
+    if (myMsg)
     {
-      if (Instance().gState->mMidiInChan == msg.Channel() + 1)
+      IMidiMsg msg(*myMsg);
+      delete myMsg;
+          
+      // filter midi messages based on channel, if Instance().gStatus.mMidiInChan != all (0)
+      if (Instance().gState->mMidiInChan)
+      {
+        if (Instance().gState->mMidiInChan == msg.Channel() + 1)
+          Instance().gPluginInstance->ProcessMidiMsg(&msg);
+      }
+      else
+      {
         Instance().gPluginInstance->ProcessMidiMsg(&msg);
+      }
     }
-    else
-    {
-      Instance().gPluginInstance->ProcessMidiMsg(&msg);
-    }
+      
   }
 }
 

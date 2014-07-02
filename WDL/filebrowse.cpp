@@ -112,6 +112,8 @@ bool WDL_ChooseDirectory(HWND parent, const char *text, const char *initialdir, 
 #endif
 }
 
+#ifdef WDL_FILEBROWSE_WIN7VISTAMODE
+
 static const char *stristr(const char* a, const char* b)
 {
   int i;
@@ -122,6 +124,7 @@ static const char *stristr(const char* a, const char* b)
       return a+i;
   return NULL;
 }
+#endif
 
 bool WDL_ChooseFileForSave(HWND parent,
                            const char *text,

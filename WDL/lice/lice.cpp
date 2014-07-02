@@ -942,7 +942,7 @@ void LICE_Blur(LICE_IBitmap *dest, LICE_IBitmap *src, int dstx, int dsty, int sr
   LICE_pixel turdbuf[2048];
   if (src==dest)
   {
-    if (w <= sizeof(turdbuf)/sizeof(turdbuf[0])/2) tmpbuf=turdbuf;
+    if (w <= (int) (sizeof(turdbuf)/sizeof(turdbuf[0])/2)) tmpbuf=turdbuf;
     else tmpbuf=(LICE_pixel*)malloc(w*2*sizeof(LICE_pixel));
   }
 

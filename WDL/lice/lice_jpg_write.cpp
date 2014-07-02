@@ -49,7 +49,7 @@ bool LICE_WriteJPG(const char *filename, LICE_IBitmap *bmp, int quality, bool fo
   if (!fp) return false;
 
   struct jpeg_compress_struct cinfo;
-  struct my_error_mgr jerr= {0,};
+  struct my_error_mgr jerr= {{0},};
   jerr.pub.error_exit = LICEJPEG_Error;
   jerr.pub.emit_message = LICEJPEG_EmitMsg;
   jerr.pub.output_message = LICEJPEG_OutMsg;

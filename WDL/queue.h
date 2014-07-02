@@ -201,6 +201,7 @@ public:
 private:
   WDL_HeapBuf m_hb;
   int m_pos;
+protected:
   int __pad; // keep 8 byte aligned
 };
 

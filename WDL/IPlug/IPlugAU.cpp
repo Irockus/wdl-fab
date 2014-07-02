@@ -1610,7 +1610,7 @@ inline ComponentResult RenderCallback(AURenderCallbackStruct* pCB, AudioUnitRend
 ComponentResult IPlugAU::RenderProc(void* pPlug, AudioUnitRenderActionFlags* pFlags, const AudioTimeStamp* pTimestamp,
                                     UInt32 outputBusIdx, UInt32 nFrames, AudioBufferList* pOutBufList)
 {
-  TRACE_PROCESS(TRACELOC, "%d:%d:%d", outputBusIdx, pOutBufList->mNumberBuffers, nFrames);
+  Trace(TRACELOC, "%d:%d:%d", outputBusIdx, pOutBufList->mNumberBuffers, nFrames);
 
   IPlugAU* _this = (IPlugAU*) pPlug;
 

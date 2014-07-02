@@ -156,7 +156,7 @@ void SWELL_DoDialogColorUpdates(HWND hwnd, DLGPROC d, bool isUpdate)
   NSColor *buttonFg=NULL; // had_flags&4, WM_CTLCOLORBTN
 
   int x;
-  for (x = 0; x < [children count]; x ++)
+  for (x = 0; x < (int) [children count]; x ++)
   {
     NSView *ch = [children objectAtIndex:x];
     if (ch)
@@ -506,7 +506,7 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
     if (v && [v isKindOfClass:[NSView class]] && (ar=[v subviews]) && [ar count]>0)
     {
       int x;
-      for (x = 0; x < [ar count]; x ++)
+      for (x = 0; x < (int) [ar count]; x ++)
       {
         NSView *sv=[ar objectAtIndex:x];
         sendSwellDlgMessage(sv,WM_DESTROY,0,0);
@@ -766,7 +766,7 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
 {
 
   int x;
-  for (x=0; x<sizeof(m_access_cacheptrs)/sizeof(m_access_cacheptrs[0]); x ++)
+  for (x=0; x < (int) (sizeof(m_access_cacheptrs)/sizeof(m_access_cacheptrs[0])); x ++)
   {
     if (m_access_cacheptrs[x]) [m_access_cacheptrs[x] release];
     m_access_cacheptrs[x]=0;
@@ -786,8 +786,17 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
 -(void)setTag:(NSInteger)t { m_tag=t; }
 -(LONG_PTR)getSwellUserData { return m_userdata; }
 -(void)setSwellUserData:(LONG_PTR)val {   m_userdata=val; }
--(LPARAM)getSwellExtraData:(int)idx { idx/=sizeof(INT_PTR); if (idx>=0&&idx<sizeof(m_extradata)/sizeof(m_extradata[0])) return m_extradata[idx]; return 0; }
--(void)setSwellExtraData:(int)idx value:(LPARAM)val { idx/=sizeof(INT_PTR); if (idx>=0&&idx<sizeof(m_extradata)/sizeof(m_extradata[0])) m_extradata[idx] = val; }
+-(LPARAM)getSwellExtraData:(int)idx { 
+  idx/=sizeof(INT_PTR); 
+  if (idx>=0&&idx<(int)(sizeof(m_extradata)/sizeof(m_extradata[0]))) 
+    return m_extradata[idx];
+  return 0; 
+}
+-(void)setSwellExtraData:(int)idx value:(LPARAM)val { 
+  idx/=sizeof(INT_PTR);
+  if (idx>=0&&idx<(int)(sizeof(m_extradata)/sizeof(m_extradata[0]))) 
+    m_extradata[idx] = val; 
+}
 -(void)setSwellWindowProc:(WNDPROC)val { m_wndproc=val; }
 -(WNDPROC)getSwellWindowProc { return m_wndproc; }
 -(void)setSwellDialogProc:(DLGPROC)val { m_dlgproc=val; }
@@ -967,7 +976,7 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
     if (ar && [ar count]>0)
     {
       int x;
-      for (x = 0; x < [ar count] && !hFoc; x ++)
+      for (x = 0; x < (int)[ar count] && !hFoc; x ++)
       {
         NSView *v=[ar objectAtIndex:x];
         if (v && [v isKindOfClass:[NSScrollView class]]) v=[(NSScrollView *)v documentView];
@@ -1486,7 +1495,7 @@ static void MakeGestureInfo(NSEvent* evt, GESTUREINFO* gi, HWND hwnd, int type)
       {
         NSMutableArray* paths=[NSMutableArray arrayWithCapacity:[files count]];
         int i;
-        for (i=0; i < [files count]; ++i)
+        for (i=0; i < (int) [files count]; ++i)
         {
           NSString* fn=[files objectAtIndex:i];
           if (fn)
@@ -1503,7 +1512,7 @@ static void MakeGestureInfo(NSEvent* evt, GESTUREINFO* gi, HWND hwnd, int type)
   if (!files) return 0;
 
   int x;
-  for (x = 0; x < [files count]; x ++)
+  for (x = 0; x < (int) [files count]; x ++)
   {
     NSString *sv=[files objectAtIndex:x];
     if (sv)
@@ -1526,7 +1535,7 @@ static void MakeGestureInfo(NSEvent* evt, GESTUREINFO* gi, HWND hwnd, int type)
   df->fNC = FALSE;
   df->fWide = FALSE;
   char *pout = (char *)(df+1);
-  for (x = 0; x < [files count]; x ++)
+  for (x = 0; x < (int) [files count]; x ++)
   {
     NSString *sv=[files objectAtIndex:x];
     if (sv)
@@ -1769,7 +1778,7 @@ static HWND last_key_window;
   NSView *cv = [self contentView];  \
   if (!cv || ![cv respondsToSelector:@selector(swellHasBeenDestroyed)] || ![(SWELL_hwndChild*)cv swellHasBeenDestroyed])  { \
     if ([cv respondsToSelector:@selector(swellGetMenu)]) menu = [(SWELL_hwndChild*)cv swellGetMenu]; \
-    if (!menu) menu=ISMODAL && g_swell_defaultmenumodal ? g_swell_defaultmenumodal : g_swell_defaultmenu; \
+    if (!menu) menu= (ISMODAL && g_swell_defaultmenumodal) ? g_swell_defaultmenumodal : g_swell_defaultmenu; \
     if (menu && menu != (HMENU)[NSApp mainMenu] && !g_swell_terminating) [NSApp setMainMenu:(NSMenu *)menu]; \
     sendSwellDlgMessage(cv,WM_ACTIVATE,WA_ACTIVE,(LPARAM)foc); \
     sendSwellDlgMessage(cv,WM_MOUSEACTIVATE,0,0); \
@@ -1852,7 +1861,7 @@ static HWND last_key_window;
   if (mmi.ptMaxTrackSize.x < 1000000) maxsz.width=mmi.ptMaxTrackSize.x; \
   if (mmi.ptMaxTrackSize.y < 1000000) maxsz.height=mmi.ptMaxTrackSize.y; \
   return maxsz; \
-} \
+}
  
 
 
