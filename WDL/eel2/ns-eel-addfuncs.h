@@ -1,7 +1,7 @@
 /*
   Nullsoft Expression Evaluator Library (NS-EEL)
   Copyright (C) 1999-2003 Nullsoft, Inc.
-
+  
   ns-eel-addfuncs.h: defines macros useful for adding functions to the compiler
 
   This software is provided 'as-is', without any express or implied
@@ -46,7 +46,7 @@ extern EEL_BC_TYPE _asm_generic2parm_retd[]; // 2 double * parms, returning doub
 extern EEL_BC_TYPE _asm_generic2parm_retd_end[];
 extern EEL_BC_TYPE _asm_generic1parm[]; // 1 double * parms, returning double *
 extern EEL_BC_TYPE _asm_generic1parm_end[];
-extern EEL_BC_TYPE _asm_generic1parm_retd[]; // 1 double * parms, returning double
+extern EEL_BC_TYPE _asm_generic1parm_retd[]; // 1 double * parms, returning double 
 extern EEL_BC_TYPE _asm_generic1parm_retd_end[];
 
 #else
@@ -61,7 +61,7 @@ void _asm_generic2parm_retd(void); // 2 double * parms, returning double
 void _asm_generic2parm_retd_end(void);
 void _asm_generic1parm(void); // 1 double * parms, returning double *
 void _asm_generic1parm_end(void);
-void _asm_generic1parm_retd(void); // 1 double * parms, returning double
+void _asm_generic1parm_retd(void); // 1 double * parms, returning double 
 void _asm_generic1parm_retd_end(void);
 
 #endif
@@ -72,12 +72,6 @@ void _asm_generic1parm_retd_end(void);
 #else
 #define EEL_F_SSTR "8"
 #define EEL_F_SUFFIX "l"
-#endif
-
-#ifdef _MSC_VER
-#define NSEEL_CGEN_CALL __cdecl
-#else
-#define NSEEL_CGEN_CALL
 #endif
 
 #ifdef __cplusplus

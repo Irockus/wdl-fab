@@ -17,13 +17,13 @@
     2. Altered source versions must be plainly marked as such, and must not be
        misrepresented as being the original software.
     3. This notice may not be removed or altered from any source distribution.
-
+    
 */
 
 /*
 
-  This file provides a simple class for a circular FIFO queue of bytes. It
-  has a strong advantage over WDL_Queue with large buffers, as it does far
+  This file provides a simple class for a circular FIFO queue of bytes. It 
+  has a strong advantage over WDL_Queue with large buffers, as it does far 
   fewer memcpy()'s.
 
 */
@@ -48,9 +48,9 @@ public:
   void SetSize(int size, bool keepcontents=false)
   {
     WDL_HeapBuf tmp(4096 WDL_HEAPBUF_TRACEPARM("WDL_CircBuf/TEMP"));
-    if (keepcontents)
+    if (keepcontents) 
     {
-      int ms=NbInBuf();
+      int ms=NbInBuf(); 
       if (ms>size) ms=size;
       if (ms>0) Get(tmp.Resize(ms),ms);
     }
@@ -73,15 +73,15 @@ public:
     int put = l;
     int l2;
     if (!m_size) return 0;
-    l2 = m_endbuf - m_head;
-    if (l2 <= l)
+    l2 = (int) (m_endbuf - m_head);
+    if (l2 <= l) 
     {
       memcpy(m_head, p, l2);
       m_head = (char *)m_hb.Get();
       p += l2;
       l -= l2;
     }
-    if (l)
+    if (l) 
     {
       memcpy(m_head, p, l);
       m_head += l;
@@ -100,17 +100,17 @@ public:
     if (l > m_inbuf) l = m_inbuf;
     m_inbuf -= l;
     got = l;
-    if (m_tail+l >= m_endbuf)
+    if (m_tail+l >= m_endbuf) 
     {
-      int l1 = m_endbuf - m_tail;
+      int l1 = (int) (m_endbuf - m_tail);
       l -= l1;
       memcpy(p, m_tail, l1);
       m_tail = (char *)m_hb.Get();
       p += l1;
       memcpy(p, m_tail, l);
       m_tail += l;
-    }
-    else
+    } 
+    else 
     {
       memcpy(p, m_tail, l);
       m_tail += l;
@@ -132,40 +132,40 @@ class WDL_TypedCircBuf
 {
 public:
 
-  WDL_TypedCircBuf() {}
-  ~WDL_TypedCircBuf() {}
+    WDL_TypedCircBuf() {}
+    ~WDL_TypedCircBuf() {}
 
-  void SetSize(int size, bool keepcontents = false)
-  {
-    mBuf.SetSize(size * sizeof(T), keepcontents);
-  }
+    void SetSize(int size, bool keepcontents = false)
+    {
+        mBuf.SetSize(size * sizeof(T), keepcontents);
+    }
 
-  void Reset()
-  {
-    mBuf.Reset();
-  }
+    void Reset()
+    {
+        mBuf.Reset();
+    }
 
-  int Add(const T* buf, int l)
-  {
-    return mBuf.Add(buf, l * sizeof(T)) / sizeof(T);
-  }
+    int Add(const T* buf, int l)
+    {
+        return mBuf.Add(buf, l * sizeof(T)) / sizeof(T);
+    }
 
-  int Get(T* buf, int l)
-  {
-    return mBuf.Get(buf, l * sizeof(T)) / sizeof(T);
-  }
+    int Get(T* buf, int l)
+    {
+        return mBuf.Get(buf, l * sizeof(T)) / sizeof(T);
+    }
 
-  int Available()
-  {
-    return mBuf.Available() / sizeof(T);
-  }
-  int NbInBuf()
-  {
-    return mBuf.NbInBuf() / sizeof(T);
-  }
+    int Available() 
+    {
+        return mBuf.Available() / sizeof(T);
+    }
+     int NbInBuf() 
+     { 
+         return mBuf.NbInBuf() / sizeof(T);
+     }
 
 private:
-  WDL_CircBuf mBuf;
+    WDL_CircBuf mBuf;
 } WDL_FIXALIGN;
 
 #endif

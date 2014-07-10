@@ -17,7 +17,7 @@
     2. Altered source versions must be plainly marked as such, and must not be
        misrepresented as being the original software.
     3. This notice may not be removed or altered from any source distribution.
-
+      
 
     Implementation for virtual window listboxes.
 
@@ -57,7 +57,7 @@ void WDL_VirtualListBox::CalcLayout(int num_items, int *nrows, int *ncols, int *
   *usedw = m_position.right - m_position.left;
   *leftrightbuttonsize=*updownbuttonsize=0;
   if (m_rh<7) m_rh=7;
-
+  
   *ncols=1;
 
   *nrows= (m_position.bottom - m_position.top) / m_rh;
@@ -67,26 +67,26 @@ void WDL_VirtualListBox::CalcLayout(int num_items, int *nrows, int *ncols, int *
   {
     *ncols = (num_items+*nrows-1) / *nrows; // round up
     if (*ncols<1) *ncols=1;
-    if ((m_position.right-m_position.left) < m_mincolwidth**ncols)
+    if ((m_position.right-m_position.left) < m_mincolwidth* *ncols)
       *ncols =  (m_position.right-m_position.left)/m_mincolwidth;
   }
 
   if (m_maxcolwidth>0)
   {
-    if (m_mincolwidth<=0 || (m_position.right-m_position.left) <= m_maxcolwidth **ncols)
+    if (m_mincolwidth<=0 || (m_position.right-m_position.left) <= m_maxcolwidth * *ncols)
       *ncols = (m_position.right-m_position.left) / m_maxcolwidth; // round down
   }
-
+  
   if (*ncols < 1) *ncols=1;
   *startpos=0;
-
-  if (num_items > *nrows **ncols)
+  
+  if (num_items > *nrows * *ncols)
   {
     *startpos=m_viewoffs;
 
     if (*ncols > 1 && m_mincolwidth>0) // reduce columns to meet size requirements
     {
-      if ((m_position.right-m_position.left - m_scrollbuttonsize*2) < m_mincolwidth**ncols)
+      if ((m_position.right-m_position.left - m_scrollbuttonsize*2) < m_mincolwidth* *ncols)
       {
         *ncols =  (m_position.right-m_position.left - m_scrollbuttonsize*2)/m_mincolwidth;
         if (*ncols < 1) *ncols=1;
@@ -95,7 +95,7 @@ void WDL_VirtualListBox::CalcLayout(int num_items, int *nrows, int *ncols, int *
 
     if (*ncols > 1) *leftrightbuttonsize = m_scrollbuttonsize;
     else *updownbuttonsize = m_scrollbuttonsize;
-
+    
     *nrows = (m_position.bottom - m_position.top - *updownbuttonsize) / m_rh;
     if (*nrows<1) *nrows=1;
 
@@ -107,11 +107,11 @@ void WDL_VirtualListBox::CalcLayout(int num_items, int *nrows, int *ncols, int *
       *nrows = (m_position.bottom - m_position.top - *updownbuttonsize) / m_rh;
       if (*nrows<1) *nrows=1;
     }
-
-    int tot=*nrows **ncols - (*nrows-1);
+    
+    int tot=*nrows * *ncols - (*nrows-1);
     if (*startpos > num_items-tot) *startpos=num_items-tot;
     if (*startpos<0)*startpos=0;
-
+    
     if (*ncols>1)
       *startpos -= *startpos % *nrows;
   }
@@ -135,7 +135,7 @@ static void maxSizePreservingAspect(int sw, int sh, int dw, int dh, int *outw, i
     // too wide, make maximum width and reduce height
     *outh = (dw * sh) / sw;
   }
-  else
+  else 
   {
     // too narrow, use full height and reduce width
     *outw = (dh * sw) / sh;
@@ -143,7 +143,7 @@ static void maxSizePreservingAspect(int sw, int sh, int dw, int dh, int *outw, i
 }
 
 static void DrawBkImage(LICE_IBitmap *drawbm, WDL_VirtualWnd_BGCfg *bkbm, int drawx, int drawy, int draww, int drawh,
-                        RECT *cliprect, int drawsrcx, int drawsrcw, int bkbmstate, float alpha, int whichpass=0)
+                RECT *cliprect, int drawsrcx, int drawsrcw, int bkbmstate, float alpha, int whichpass=0)
 {
   bool haspink=bkbm->bgimage_lt[0]||bkbm->bgimage_lt[1]||bkbm->bgimage_rb[0] || bkbm->bgimage_rb[1];
 
@@ -176,16 +176,16 @@ static void DrawBkImage(LICE_IBitmap *drawbm, WDL_VirtualWnd_BGCfg *bkbm, int dr
     tmp.bgimage = &bm;
 
     WDL_VirtualWnd_ScaledBlitBG(drawbm,&tmp,
-                                drawx,drawy,draww,drawh,
-                                cliprect->left,cliprect->top,cliprect->right-cliprect->left,cliprect->bottom-cliprect->top,
-                                alpha,LICE_BLIT_USE_ALPHA|LICE_BLIT_MODE_COPY|LICE_BLIT_FILTER_BILINEAR);
+                                  drawx,drawy,draww,drawh,
+                                  cliprect->left,cliprect->top,cliprect->right-cliprect->left,cliprect->bottom-cliprect->top,
+                                  alpha,LICE_BLIT_USE_ALPHA|LICE_BLIT_MODE_COPY|LICE_BLIT_FILTER_BILINEAR);
   }
   else
   {
     LICE_ScaledBlit(drawbm,bkbm->bgimage,
-                    drawx,drawy,draww,drawh,
-                    drawsrcx,bkbmstate*hh,
-                    drawsrcw,hh,alpha,LICE_BLIT_USE_ALPHA|LICE_BLIT_MODE_COPY|LICE_BLIT_FILTER_BILINEAR);
+      drawx,drawy,draww,drawh,
+      (float)drawsrcx,bkbmstate*(float)hh,
+      (float)drawsrcw,(float)hh,alpha,LICE_BLIT_USE_ALPHA|LICE_BLIT_MODE_COPY|LICE_BLIT_FILTER_BILINEAR);
   }
 }
 
@@ -212,9 +212,9 @@ void WDL_VirtualListBox::OnPaint(LICE_IBitmap *drawbm, int origin_x, int origin_
     if (mainbk->bgimage->getWidth()>1 && mainbk->bgimage->getHeight()>1)
     {
       WDL_VirtualWnd_ScaledBlitBG(drawbm,mainbk,
-                                  r.left,r.top,r.right-r.left,r.bottom-r.top,
-                                  cliprect->left,cliprect->top,cliprect->right-cliprect->left,cliprect->bottom-cliprect->top,
-                                  1.0,LICE_BLIT_USE_ALPHA|LICE_BLIT_MODE_COPY|LICE_BLIT_FILTER_BILINEAR);
+                                    r.left,r.top,r.right-r.left,r.bottom-r.top,
+                                    cliprect->left,cliprect->top,cliprect->right-cliprect->left,cliprect->bottom-cliprect->top,
+                                    1.0,LICE_BLIT_USE_ALPHA|LICE_BLIT_MODE_COPY|LICE_BLIT_FILTER_BILINEAR);
     }
   }
   else
@@ -234,7 +234,7 @@ void WDL_VirtualListBox::OnPaint(LICE_IBitmap *drawbm, int origin_x, int origin_
 
   int endpos=r.bottom - updownbuttonsize;
   int itempos=startpos;
-
+  
   int colpos;
   int y=0;
   for (colpos = 0; colpos < num_cols; colpos ++)
@@ -276,11 +276,11 @@ void WDL_VirtualListBox::OnPaint(LICE_IBitmap *drawbm, int origin_x, int origin_
             }
           }
           if (bkbm && bkbm->bgimage) //draw image!
-          {
+          {            
             DrawBkImage(drawbm,bkbm,
-                        thisr.left,thisr.top-1,thisr.right-thisr.left,thisr.bottom-thisr.top+2,
-                        cliprect,
-                        0,bkbm->bgimage->getWidth(),bkbmstate,alpha);
+                thisr.left,thisr.top-1,thisr.right-thisr.left,thisr.bottom-thisr.top+2,
+                cliprect,
+                0,bkbm->bgimage->getWidth(),bkbmstate,alpha);
 
           }
           if (m_CustomDraw)
@@ -311,15 +311,15 @@ void WDL_VirtualListBox::OnPaint(LICE_IBitmap *drawbm, int origin_x, int origin_
   memset(&m_lastscrollbuttons,0,sizeof(m_lastscrollbuttons));
   if (updownbuttonsize||leftrightbuttonsize)
   {
-    WDL_VirtualWnd_BGCfg *bkbm[2]= {0,};
+    WDL_VirtualWnd_BGCfg *bkbm[2]={0,};
     int a=m_GetItemInfo ? m_GetItemInfo(this,
-                                        leftrightbuttonsize ? WDL_VWND_LISTBOX_ARROWINDEX_LR : WDL_VWND_LISTBOX_ARROWINDEX,NULL,0,NULL,bkbm) : 0;
+      leftrightbuttonsize ? WDL_VWND_LISTBOX_ARROWINDEX_LR : WDL_VWND_LISTBOX_ARROWINDEX,NULL,0,NULL,bkbm) : 0;
 
     if (!a) bkbm[0]=0;
 
     if (leftrightbuttonsize)
     {
-      RECT br= {0,0,r.right-r.left,r.bottom-r.top};
+      RECT br={0,0,r.right-r.left,r.bottom-r.top};
 
       if (startpos>0)
       {
@@ -332,9 +332,9 @@ void WDL_VirtualListBox::OnPaint(LICE_IBitmap *drawbm, int origin_x, int origin_
         m_lastscrollbuttons[1].left=br.right - m_scrollbuttonsize;
       }
     }
-    else
+    else 
     {
-      RECT br= {0,y-r.top - m_rh,r.right-r.left,y-r.top - m_rh  + m_scrollbuttonsize};
+      RECT br={0,y-r.top - m_rh,r.right-r.left,y-r.top - m_rh  + m_scrollbuttonsize};
       if (startpos>0)
       {
         m_lastscrollbuttons[0]=br;
@@ -349,7 +349,7 @@ void WDL_VirtualListBox::OnPaint(LICE_IBitmap *drawbm, int origin_x, int origin_
 
 
     int wb;
-    for (wb=0; wb<2; wb++)
+    for (wb=0;wb<2;wb++)
     {
       if (bkbm[wb] && bkbm[wb]->bgimage)
       {
@@ -358,29 +358,29 @@ void WDL_VirtualListBox::OnPaint(LICE_IBitmap *drawbm, int origin_x, int origin_
         if (leftrightbuttonsize)
         {
           DrawBkImage(drawbm,bkbm[wb],
-                      r.left,r.top,m_scrollbuttonsize,(r.bottom-r.top),
-                      cliprect,
-                      0,tw/2,bkbmstate,1.0, wb);
+              r.left,r.top,m_scrollbuttonsize,(r.bottom-r.top),
+              cliprect,
+              0,tw/2,bkbmstate,1.0, wb);
 
 
           bkbmstate=itempos<num_items ? 2 : 1;
           DrawBkImage(drawbm,bkbm[wb],
-                      r.right-m_scrollbuttonsize,r.top,m_scrollbuttonsize,(r.bottom-r.top),
-                      cliprect,
-                      tw/2,tw - tw/2,bkbmstate,1.0,wb);
+              r.right-m_scrollbuttonsize,r.top,m_scrollbuttonsize,(r.bottom-r.top),
+              cliprect,
+              tw/2,tw - tw/2,bkbmstate,1.0,wb);
         }
         else
         {
           DrawBkImage(drawbm,bkbm[wb],
-                      r.left,y-m_rh,(r.right-r.left)/2,m_scrollbuttonsize,
-                      cliprect,
-                      0,tw/2,bkbmstate,1.0,wb);
-
+              r.left,y-m_rh,(r.right-r.left)/2,m_scrollbuttonsize,
+              cliprect,
+              0,tw/2,bkbmstate,1.0,wb);
+  
           bkbmstate=itempos<num_items ? 2 : 1;
           DrawBkImage(drawbm,bkbm[wb],
-                      (r.left+r.right)/2,y-m_rh,(r.right-r.left) - (r.right-r.left)/2,m_scrollbuttonsize,
-                      cliprect,
-                      tw/2,tw - tw/2,bkbmstate,1.0,wb);
+              (r.left+r.right)/2,y-m_rh,(r.right-r.left) - (r.right-r.left)/2,m_scrollbuttonsize,
+              cliprect,
+              tw/2,tw - tw/2,bkbmstate,1.0,wb);
         }
       }
     }
@@ -401,7 +401,7 @@ void WDL_VirtualListBox::OnPaint(LICE_IBitmap *drawbm, int origin_x, int origin_
           LICE_Line(drawbm,cx,y-m_scrollbuttonsize+2,cx,y-1,pencol2,1.0f,0,false);
           LICE_Line(drawbm,r.left,y,r.right,y,pencol2,1.0f,0,false);
         }
-
+      
         y-=m_scrollbuttonsize/2+bsh/2;
 
         if (!bkbm[1] || !bkbm[1]->bgimage)
@@ -436,7 +436,7 @@ void WDL_VirtualListBox::OnPaint(LICE_IBitmap *drawbm, int origin_x, int origin_
       {
         if (!bkbm[1] || !bkbm[1]->bgimage)
         {
-#define LICE_LINEROT(bm,x1,y1,x2,y2,pc,al,mode,aa) LICE_Line(bm,y1,x1,y2,x2,pc,al,mode,aa)
+          #define LICE_LINEROT(bm,x1,y1,x2,y2,pc,al,mode,aa) LICE_Line(bm,y1,x1,y2,x2,pc,al,mode,aa)
           int bs=5;
           int bsh=8;
           int cx = (r.bottom + r.top)/2;
@@ -462,7 +462,7 @@ void WDL_VirtualListBox::OnPaint(LICE_IBitmap *drawbm, int origin_x, int origin_
             LICE_LINEROT(drawbm,cx,y+3,cx+bs+1,y+bsh+1,pencol,1.0f,0,butaa);
             LICE_LINEROT(drawbm,cx+bs+1,y+bsh+1, cx-bs-1,y+bsh+1, pencol,1.0f,0,butaa);
           }
-#undef LICE_LINEROT
+          #undef LICE_LINEROT
         }
       }
     }
@@ -496,8 +496,8 @@ bool WDL_VirtualListBox::HandleScrollClicks(int xpos, int ypos, int leftrightbut
     }
     else
     {
-      if (m_viewoffs+nrows*num_cols < num_items)
-      {
+     if (m_viewoffs+nrows*num_cols < num_items)
+     {
         m_viewoffs+=nrows;
         RequestRedraw(NULL);
       }
@@ -544,10 +544,10 @@ int WDL_VirtualListBox::OnMouseDown(int xpos, int ypos)
   int nrows,num_cols,updownbuttonsize,leftrightbuttonsize,startpos,usedw;
   CalcLayout(num_items,&nrows,&num_cols,&leftrightbuttonsize,&updownbuttonsize,&startpos,&usedw);
 
-  if (xpos >= usedw) return 0;
+  if (xpos >= usedw) return 0; 
 
   if (HandleScrollClicks(xpos,ypos,leftrightbuttonsize,updownbuttonsize,nrows,num_cols,num_items,usedw)) return 1;
-
+  
 
 
   m_cap_state=0x1000;
@@ -569,10 +569,10 @@ bool WDL_VirtualListBox::OnMouseDblClick(int xpos, int ypos)
   int nrows,num_cols,updownbuttonsize,leftrightbuttonsize,startpos,usedw;
   CalcLayout(num_items,&nrows,&num_cols,&leftrightbuttonsize,&updownbuttonsize,&startpos,&usedw);
 
-  if (xpos >= usedw) return false;
-
+  if (xpos >= usedw) return false; 
+  
   if (HandleScrollClicks(xpos,ypos,leftrightbuttonsize,updownbuttonsize,nrows,num_cols,num_items,usedw)) return true;
-
+  
   return false;
 }
 
@@ -584,11 +584,11 @@ bool WDL_VirtualListBox::OnMouseWheel(int xpos, int ypos, int amt)
   int nrows,num_cols,updownbuttonsize,leftrightbuttonsize,startpos,usedw;
   CalcLayout(num_items,&nrows,&num_cols,&leftrightbuttonsize,&updownbuttonsize,&startpos,&usedw);
 
-  if (xpos >= usedw) return false;
+  if (xpos >= usedw) return false; 
 
   if (num_items > nrows*num_cols)
   {
-    if (amt>0 && m_viewoffs>0)
+    if (amt>0 && m_viewoffs>0) 
     {
       m_viewoffs-=(num_cols>1?nrows:1);
       if (m_viewoffs<0)m_viewoffs=0;
@@ -653,7 +653,7 @@ void WDL_VirtualListBox::OnMouseUp(int xpos, int ypos)
   if (m_grayed) return;
 
   int hit=IndexFromPt(xpos,ypos);
-  if (m_cap_state>=0x1000 && m_cap_state<0x1008 && hit==m_cap_startitem)
+  if (m_cap_state>=0x1000 && m_cap_state<0x1008 && hit==m_cap_startitem) 
   {
     if (m_clickmsg)
     {
@@ -677,7 +677,7 @@ bool WDL_VirtualListBox::GetItemRect(int item, RECT *r)
   int nrows,num_cols,updownbuttonsize,leftrightbuttonsize,startpos, usedw;
   CalcLayout(num_items,&nrows,&num_cols,&leftrightbuttonsize,&updownbuttonsize,&startpos,&usedw);
   item -= startpos;
-
+  
   if (r)
   {
     int col = item / nrows;
@@ -702,14 +702,14 @@ int WDL_VirtualListBox::IndexFromPt(int x, int y)
 
   int usewid=(usedw-leftrightbuttonsize*2);
   int col = num_cols > 0 && usewid>0 ? ((x-leftrightbuttonsize)*num_cols)/usewid : 0;
-
+  
   return startpos + (y)/m_rh + col * nrows;
 }
 
 void WDL_VirtualListBox::SetViewOffset(int offs)
 {
   int num_items = m_GetItemInfo ? m_GetItemInfo(this,-1,NULL,0,NULL,NULL) : 0;
-  if (num_items)
+  if (num_items) 
   {
     if (offs < 0) offs=0;
     else if (offs >= num_items) offs = num_items-1;

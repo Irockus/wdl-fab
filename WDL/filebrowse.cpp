@@ -8,51 +8,48 @@
 
 
 #ifdef _WIN32
-#define PREF_DIRCH '\\'
-#ifdef _MSC_VER // todo: win7filedialog.cpp support for mingw32
-#define WDL_FILEBROWSE_WIN7VISTAMODE
-#endif
-#else
-#define PREF_DIRCH '/'
+  #ifdef _MSC_VER // todo: win7filedialog.cpp support for mingw32
+    #define WDL_FILEBROWSE_WIN7VISTAMODE
+  #endif
 #endif
 
 
 
 
 #ifdef WDL_FILEBROWSE_WIN7VISTAMODE // win7/vista file dialog support
-#include "win7filedialog.cpp"
+  #include "win7filedialog.cpp"
 
-// stuff since win7filedialog.h collides with shlobj.h below
-#define tagSHCONTF tagSHCONTF___
-#define SHCONTF SHCONTF___
-#define SHCONTF_FOLDERS SHCONTF_FOLDERS___
-#define SHCONTF_NONFOLDERS SHCONTF_NONFOLDERS___
-#define SHCONTF_INCLUDEHIDDEN SHCONTF_INCLUDEHIDDEN___
-#define SHCONTF_SHAREABLE SHCONTF_SHAREABLE__
-#define SHCONTF_INIT_ON_FIRST_NEXT SHCONTF_INIT_ON_FIRST_NEXT__
-#define SHCONTF_NETPRINTERSRCH SHCONTF_NETPRINTERSRCH__
-#define SHCONTF_STORAGE SHCONTF_STORAGE__
+  // stuff since win7filedialog.h collides with shlobj.h below
+  #define tagSHCONTF tagSHCONTF___
+  #define SHCONTF SHCONTF___
+  #define SHCONTF_FOLDERS SHCONTF_FOLDERS___
+  #define SHCONTF_NONFOLDERS SHCONTF_NONFOLDERS___
+  #define SHCONTF_INCLUDEHIDDEN SHCONTF_INCLUDEHIDDEN___
+  #define SHCONTF_SHAREABLE SHCONTF_SHAREABLE__
+  #define SHCONTF_INIT_ON_FIRST_NEXT SHCONTF_INIT_ON_FIRST_NEXT__
+  #define SHCONTF_NETPRINTERSRCH SHCONTF_NETPRINTERSRCH__
+  #define SHCONTF_STORAGE SHCONTF_STORAGE__
 #endif
 
 
 #ifdef _WIN32
 // include after win7filedialog.*
 
-#include <commctrl.h>
-#include <shlobj.h>
+  #include <commctrl.h>
+  #include <shlobj.h>
 #endif
 
 #ifndef BIF_NEWDIALOGSTYLE
-#define BIF_NEWDIALOGSTYLE 0x40
+  #define BIF_NEWDIALOGSTYLE 0x40
 #endif
 
 
 static void WDL_fixfnforopenfn(char *buf)
 {
   char *p=buf;
-  while (*p)
+  while (*p) 
   {
-    if (*p == '/' || *p == '\\') *p=PREF_DIRCH;
+    if (WDL_IS_DIRCHAR(*p)) *p = WDL_DIRCHAR;
     p++;
   }
 #ifdef _WIN32
@@ -62,7 +59,7 @@ static void WDL_fixfnforopenfn(char *buf)
     char *op=p;
     while (*p)
     {
-      while (p[0]=='\\' && p[1] == '\\') p++;
+      while (p[0]==WDL_DIRCHAR && p[1] == WDL_DIRCHAR) p++;
       *op++ = *p++;
     }
     *op=0;
@@ -74,13 +71,13 @@ static void WDL_fixfnforopenfn(char *buf)
 #ifdef _WIN32
 static int CALLBACK WINAPI WDL_BrowseCallbackProc( HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData)
 {
-  switch (uMsg)
-  {
-    case BFFM_INITIALIZED:
-      if (lpData && ((char *)lpData)[0]) SendMessage(hwnd,BFFM_SETSELECTION,1,(LPARAM)lpData);
-      break;
-  }
-  return 0;
+	switch (uMsg)
+	{
+		case BFFM_INITIALIZED:
+				if (lpData && ((char *)lpData)[0]) SendMessage(hwnd,BFFM_SETSELECTION,1,(LPARAM)lpData);
+    break;
+	}
+	return 0;
 }
 #endif
 
@@ -92,11 +89,11 @@ bool WDL_ChooseDirectory(HWND parent, const char *text, const char *initialdir, 
 #ifdef _WIN32
   char name[4096];
   lstrcpyn_safe(name,initialdir?initialdir:"",sizeof(name));
-  BROWSEINFO bi= {parent,NULL, name, text, BIF_RETURNONLYFSDIRS|BIF_NEWDIALOGSTYLE, WDL_BrowseCallbackProc, (LPARAM)name,};
+  BROWSEINFO bi={parent,NULL, name, text, BIF_RETURNONLYFSDIRS|BIF_NEWDIALOGSTYLE, WDL_BrowseCallbackProc, (LPARAM)name,};
   LPITEMIDLIST idlist = SHBrowseForFolder( &bi );
-  if (idlist)
+  if (idlist) 
   {
-    SHGetPathFromIDList( idlist, name );
+    SHGetPathFromIDList( idlist, name );        
     IMalloc *m;
     SHGetMalloc(&m);
     m->Free(idlist);
@@ -112,37 +109,30 @@ bool WDL_ChooseDirectory(HWND parent, const char *text, const char *initialdir, 
 #endif
 }
 
-#ifdef WDL_FILEBROWSE_WIN7VISTAMODE
-
 static const char *stristr(const char* a, const char* b)
 {
-  int i;
-  int len = strlen(b);
-  int n = strlen(a)-len;
-  for (i = 0; i <= n; ++i)
-    if (!strnicmp(a+i, b, len))
-      return a+i;
+  const size_t n = strlen(a), len = strlen(b);
+  for (size_t i = 0; i+len <= n; ++i) if (!strnicmp(a+i, b, len)) return a+i;
   return NULL;
 }
-#endif
 
-bool WDL_ChooseFileForSave(HWND parent,
-                           const char *text,
-                           const char *initialdir,
-                           const char *initialfile,
-                           const char *extlist,
-                           const char *defext,
-                           bool preservecwd,
-                           char *fn,
-                           int fnsize,
-                           const char *dlgid,
-                           void *dlgProc,
+bool WDL_ChooseFileForSave(HWND parent, 
+                                      const char *text, 
+                                      const char *initialdir, 
+                                      const char *initialfile, 
+                                      const char *extlist,
+                                      const char *defext,
+                                      bool preservecwd,
+                                      char *fn, 
+                                      int fnsize,
+                                      const char *dlgid,
+                                      void *dlgProc,
 #ifdef _WIN32
-                           HINSTANCE hInstance
+                                      HINSTANCE hInstance
 #else
-                           struct SWELL_DialogResourceIndex *reshead
+                                      struct SWELL_DialogResourceIndex *reshead
 #endif
-                          )
+                                      )
 {
   char cwd[2048];
   GetCurrentDirectory(sizeof(cwd),cwd);
@@ -164,7 +154,7 @@ bool WDL_ChooseFileForSave(HWND parent,
       GetCurrentDirectory(sizeof(olddir),olddir);
 
       fd.setFilterList(extlist);
-      if (defext)
+      if (defext) 
       {
         fd.setDefaultExtension(defext);
 
@@ -174,7 +164,7 @@ bool WDL_ChooseFileForSave(HWND parent,
         {
           if(*p) p+=strlen(p)+1;
           if(!*p) break;
-          if(stristr(p, defext))
+          if(stristr(p, defext)) 
           {
             fd.setFileTypeIndex(i+1);
             break;
@@ -184,32 +174,29 @@ bool WDL_ChooseFileForSave(HWND parent,
         }
       }
       fd.setFolder(initialdir?initialdir:olddir, 0);
-      if(initialfile)
+      if(initialfile) 
       {
         //check for folder name
-        char *p = temp+strlen(temp);
-        while(p>temp && *p!='/' && *p!='\\') p--;
-        if(*p=='/'||*p=='\\')
+        if (WDL_remove_filepart(temp))
         {
           //folder found
-          *p=0;
           fd.setFolder(temp, 0);
-          fd.setFilename(p+1);
+          fd.setFilename(temp + strlen(temp) + 1);
         }
         else
           fd.setFilename(temp);
       }
       fd.setTemplate(hInstance, dlgid, (LPOFNHOOKPROC)dlgProc);
-
+      
       if(fd.show(parent))
       {
         //ifilesavedialog saves the last folder automatically
         fd.getResult(fn, fnsize);
-
+        
         if (preservecwd) SetCurrentDirectory(olddir);
         return true;
       }
-
+      
       if (preservecwd) SetCurrentDirectory(olddir);
       return NULL;
     }
@@ -217,14 +204,13 @@ bool WDL_ChooseFileForSave(HWND parent,
 #endif
 
 
-  OPENFILENAME l= {sizeof(l),parent, hInstance, extlist, NULL,0, 0, temp, sizeof(temp)-1, NULL, 0, initialdir&&initialdir[0] ? initialdir : cwd, text,
-                   OFN_HIDEREADONLY|OFN_EXPLORER|OFN_OVERWRITEPROMPT,0,0,defext, 0, (LPOFNHOOKPROC)dlgProc, dlgid
-                  };
+  OPENFILENAME l={sizeof(l),parent, hInstance, extlist, NULL,0, 0, temp, sizeof(temp)-1, NULL, 0, initialdir&&initialdir[0] ? initialdir : cwd, text, 
+                  OFN_HIDEREADONLY|OFN_EXPLORER|OFN_OVERWRITEPROMPT,0,0,defext, 0, (LPOFNHOOKPROC)dlgProc, dlgid};
 
   if (hInstance&&dlgProc&&dlgid) l.Flags |= OFN_ENABLEHOOK|OFN_ENABLETEMPLATE|OFN_ENABLESIZING;
   if (preservecwd) l.Flags |= OFN_NOCHANGEDIR;
 
-  if (!GetSaveFileName(&l)||!temp[0])
+  if (!GetSaveFileName(&l)||!temp[0]) 
   {
     if (preservecwd) SetCurrentDirectory(cwd);
     return false;
@@ -236,7 +222,7 @@ bool WDL_ChooseFileForSave(HWND parent,
 #else
   BrowseFile_SetTemplate(dlgid,(DLGPROC)dlgProc,reshead);
   char if_temp[4096];
-  if (initialfile)
+  if (initialfile) 
   {
     lstrcpyn_safe(if_temp,initialfile,sizeof(if_temp));
     WDL_fixfnforopenfn(if_temp);
@@ -253,23 +239,23 @@ bool WDL_ChooseFileForSave(HWND parent,
 
 
 char *WDL_ChooseFileForOpen(HWND parent,
-                            const char *text,
-                            const char *initialdir,
-                            const char *initialfile,
-                            const char *extlist,
-                            const char *defext,
+                                        const char *text, 
+                                        const char *initialdir,  
+                                        const char *initialfile, 
+                                        const char *extlist,
+                                        const char *defext,
 
-                            bool preservecwd,
-                            bool allowmul,
+                                        bool preservecwd,
+                                        bool allowmul, 
 
-                            const char *dlgid,
-                            void *dlgProc,
+                                        const char *dlgid, 
+                                        void *dlgProc, 
 #ifdef _WIN32
-                            HINSTANCE hInstance
+                                        HINSTANCE hInstance
 #else
-                            struct SWELL_DialogResourceIndex *reshead
+                                        struct SWELL_DialogResourceIndex *reshead
 #endif
-                           )
+                                        )
 {
   char olddir[2048];
   GetCurrentDirectory(sizeof(olddir),olddir);
@@ -285,17 +271,17 @@ char *WDL_ChooseFileForOpen(HWND parent,
       //vista+ file open dialog
       fd.addOptions(FOS_FILEMUSTEXIST);
       fd.setFilterList(extlist);
-      if (defext)
+      if (defext) 
       {
         fd.setDefaultExtension(defext);
-
+        
         int i = 0;
         const char *p = extlist;
         while(*p)
         {
           if(*p) p+=strlen(p)+1;
           if(!*p) break;
-          if(stristr(p, defext))
+          if(stristr(p, defext)) 
           {
             fd.setFileTypeIndex(i+1);
             break;
@@ -306,19 +292,16 @@ char *WDL_ChooseFileForOpen(HWND parent,
       }
       fd.setFolder(initialdir?initialdir:olddir, 0);
       fd.setTemplate(hInstance, dlgid, (LPOFNHOOKPROC)dlgProc);
-      if(initialfile)
+      if(initialfile) 
       {
         char temp[4096];
         lstrcpyn_safe(temp,initialfile,sizeof(temp));
         //check for folder name
-        char *p = temp+strlen(temp);
-        while(p>temp && *p!='/' && *p!='\\') p--;
-        if(*p=='/'||*p=='\\')
+        if (WDL_remove_filepart(temp))
         {
           //folder found
-          *p=0;
           fd.setFolder(temp, 0);
-          fd.setFilename(p+1);
+          fd.setFilename(temp + strlen(temp) + 1);
         }
         else
           fd.setFilename(temp);
@@ -346,9 +329,8 @@ char *WDL_ChooseFileForOpen(HWND parent,
   int temp_size = allowmul ? 256*1024-1 : 4096-1;
   char *temp = (char *)calloc(temp_size+1,1);
 
-  OPENFILENAME l= {sizeof(l), parent, hInstance, extlist, NULL, 0, 0, temp, temp_size, NULL, 0, initialdir, text,
-                   OFN_HIDEREADONLY|OFN_EXPLORER|OFN_FILEMUSTEXIST,0,0, (char *)(defext ? defext : ""), 0, (LPOFNHOOKPROC)dlgProc, dlgid
-                  };
+  OPENFILENAME l={sizeof(l), parent, hInstance, extlist, NULL, 0, 0, temp, temp_size, NULL, 0, initialdir, text,
+    OFN_HIDEREADONLY|OFN_EXPLORER|OFN_FILEMUSTEXIST,0,0, (char *)(defext ? defext : ""), 0, (LPOFNHOOKPROC)dlgProc, dlgid};
 
   if (hInstance&&dlgProc&&dlgid) l.Flags |= OFN_ENABLEHOOK|OFN_ENABLETEMPLATE|OFN_ENABLESIZING;
   if (allowmul) l.Flags|=OFN_ALLOWMULTISELECT;
@@ -366,15 +348,15 @@ char *WDL_ChooseFileForOpen(HWND parent,
   if (!r) free(temp);
   return r?temp:NULL;
 
-#else
+#else  
   char if_temp[4096];
-  if (initialfile)
+  if (initialfile) 
   {
     lstrcpyn_safe(if_temp,initialfile,sizeof(if_temp));
     WDL_fixfnforopenfn(if_temp);
     initialfile = if_temp;
   }
-
+  
   // defext support?
   BrowseFile_SetTemplate(dlgid,(DLGPROC)dlgProc,reshead);
   char *ret = BrowseForFiles(text,initialdir,initialfile,allowmul,extlist);

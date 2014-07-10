@@ -11,7 +11,7 @@
   class wwwServer : public WebServerBaseClass
   {
   public:
-    wwwServer() { }
+    wwwServer() { } 
     virtual IPageGenerator *onConnection(JNL_HTTPServ *serv, int port)
     {
       serv->set_reply_header("Server:jnetlib_test/0.0");
@@ -150,37 +150,35 @@ private:
 
 class JNL_FilePageGenerator : public IPageGenerator
 {
-public:
-  JNL_FilePageGenerator(WDL_FileRead *fr) { m_file = fr; }
-  virtual ~JNL_FilePageGenerator() { delete m_file; }
-  virtual int GetData(char *buf, int size) { return m_file ? m_file->Read(buf,size) : -1; }
+  public:
+    JNL_FilePageGenerator(WDL_FileRead *fr) { m_file = fr; }
+    virtual ~JNL_FilePageGenerator() { delete m_file; }
+    virtual int GetData(char *buf, int size) { return m_file ? m_file->Read(buf,size) : -1; }
 
-private:
+  private:
 
-  WDL_FileRead *m_file;
+    WDL_FileRead *m_file;
 };
 class JNL_StringPageGenerator : public IPageGenerator
 {
-public:
-  JNL_StringPageGenerator() { m_pos=0; m_len=-1; }
-  virtual ~JNL_StringPageGenerator() { }
-  virtual int GetData(char *buf, int size)
-  {
-    if (m_len<0) m_len=strlen(str.Get());
-    if (size > m_len - m_pos) size=m_len-m_pos;
-    if (size>0)
-    {
-      memcpy(buf,str.Get()+m_pos,size);
-      m_pos+=size;
+  public:
+    JNL_StringPageGenerator() { m_pos=0; }
+    virtual ~JNL_StringPageGenerator() { }
+    virtual int GetData(char *buf, int size) 
+    { 
+      if (size > str.GetLength() - m_pos) size=str.GetLength()-m_pos;
+      if (size>0) 
+      {
+        memcpy(buf,str.Get()+m_pos,size);
+        m_pos+=size;
+      }
+      return size; 
     }
-    return size;
-  }
 
-  WDL_String str; // set this before sending it off
+    WDL_FastString str; // set this before sending it off
 
-private:
-  int m_len;
-  int m_pos;
+  private:
+    int m_pos;
 };
 
 static void JNL_get_mime_type_for_file(const char *fn, char *strout, int stroutsz)

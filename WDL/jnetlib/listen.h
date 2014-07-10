@@ -22,21 +22,21 @@
 
 #ifndef JNL_NO_DEFINE_INTERFACES
 
-class JNL_IListen
-{
-public:
+  class JNL_IListen
+  {
+    public:
 
-  virtual ~JNL_IListen() { }
+      virtual ~JNL_IListen() { }
 
-  virtual JNL_IConnection *get_connect(int sendbufsize=8192, int recvbufsize=8192)=0;
-  virtual short port(void)=0;
-  virtual int is_error(void)=0;
-};
+      virtual JNL_IConnection *get_connect(int sendbufsize=8192, int recvbufsize=8192)=0;
+      virtual short port(void)=0;
+      virtual int is_error(void)=0;
+  };
 
-#define JNL_Listen_PARENTDEF : public JNL_IListen
+  #define JNL_Listen_PARENTDEF : public JNL_IListen
 #else
-#define JNL_IListen JNL_Listen
-#define JNL_Listen_PARENTDEF
+  #define JNL_IListen JNL_Listen
+  #define JNL_Listen_PARENTDEF
 #endif
 
 #ifndef JNL_NO_IMPLEMENTATION
@@ -44,17 +44,17 @@ public:
 
 class JNL_Listen JNL_Listen_PARENTDEF
 {
-public:
-  JNL_Listen(short port, unsigned int which_interface=0);
-  ~JNL_Listen();
+  public:
+    JNL_Listen(short port, unsigned int which_interface=0);
+    ~JNL_Listen();
 
-  JNL_IConnection *get_connect(int sendbufsize=8192, int recvbufsize=8192);
-  short port(void) { return m_port; }
-  int is_error(void) { return (m_socket<0); }
+    JNL_IConnection *get_connect(int sendbufsize=8192, int recvbufsize=8192);
+    short port(void) { return m_port; }
+    int is_error(void) { return (m_socket == INVALID_SOCKET); }
 
-protected:
-  int m_socket;
-  short m_port;
+  protected:
+    SOCKET m_socket;
+    short m_port;
 };
 
 #endif

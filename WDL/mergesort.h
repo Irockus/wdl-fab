@@ -25,7 +25,7 @@ static void WDL_mergesort(void *base, size_t nmemb, size_t size, int (*compar)(c
   {
     if (compar(b1, b2) > 0) // out of order, go to full merge
     {
-      int sofar = b1-(char*)base;
+      size_t sofar = b1-(char*)base;
       memcpy(tmpspace,base,sofar);
       memcpy(tmpspace+sofar, b2, size);
       b2 += size;

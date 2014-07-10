@@ -17,7 +17,7 @@
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
-
+  
 
 
   This file defines a template class for hosting lists of referenced count, string-identified objects.
@@ -50,22 +50,15 @@
 
 #include "mutex.h"
 
-template<class DATATYPE> class WDL_PoolList
+template<class DATATYPE> class WDL_PoolList_NoFreeOnDestroy
 {
 public:
 
-  WDL_PoolList()
+  WDL_PoolList_NoFreeOnDestroy()
   {
   }
-  ~WDL_PoolList()
+  ~WDL_PoolList_NoFreeOnDestroy()
   {
-    int x;
-    for (x = 0; x < pool.GetSize(); x ++)
-    {
-      DATATYPE *p = pool.Get(x);
-      free(p->WDL_POOLLIST_identstr);
-      delete p;
-    }
   }
 
   DATATYPE *Get(const char *filename)
@@ -83,7 +76,7 @@ public:
     t->WDL_POOLLIST_refcnt=1;
 
     int x;
-    for(x=0; x<pool.GetSize(); x++) if (stricmp(pool.Get(x)->WDL_POOLLIST_identstr,filename)>0) break;
+    for(x=0;x<pool.GetSize();x++) if (stricmp(pool.Get(x)->WDL_POOLLIST_identstr,filename)>0) break;
 
     pool.Insert(x,t);
 
@@ -119,13 +112,13 @@ public:
     {
       if (!isFull)
       {
-        tp->Clear();
+        tp->Clear();        
       }
       else
       {
         int x;
         for (x = 0; x < pool.GetSize() && pool.Get(x) != tp; x ++);
-        if (x<pool.GetSize())
+        if (x<pool.GetSize()) 
         {
           pool.Delete(x);
         }
@@ -135,6 +128,18 @@ public:
       // remove from list
     }
     return refcnt;
+  }
+ 
+  void RemoveAll() 
+  {
+    int x;
+    for (x = 0; x < pool.GetSize(); x ++) 
+    {
+      DATATYPE *p = pool.Get(x);
+      free(p->WDL_POOLLIST_identstr);
+      delete p;
+    }
+    pool.Empty();
   }
 
   WDL_Mutex mutex;
@@ -151,5 +156,13 @@ private:
   }
 };
 
+template<class DATATYPE> class WDL_PoolList : public WDL_PoolList_NoFreeOnDestroy<DATATYPE>
+{
+public:
+  WDL_PoolList() { }
+  ~WDL_PoolList() { WDL_PoolList_NoFreeOnDestroy<DATATYPE>::RemoveAll(); }
+
+
+};
 
 #endif

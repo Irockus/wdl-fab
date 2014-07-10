@@ -18,10 +18,10 @@
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
+  
 
 
-
-  This file implements the WDL FFT library. These routines are based on the
+  This file implements the WDL FFT library. These routines are based on the 
   DJBFFT library, which are   Copyright 1999 D. J. Bernstein, djb@pobox.com
 
   The DJB FFT web page is:  http://cr.yp.to/djbfft.html
@@ -40,10 +40,8 @@
 #ifdef _MSC_VER
 #define inline __inline
 #endif
-#ifndef PI
 
 #define PI 3.1415926535897932384626433832795
-#endif
 
 static WDL_FFT_COMPLEX d16[3];
 static WDL_FFT_COMPLEX d32[7];
@@ -208,7 +206,7 @@ static WDL_FFT_COMPLEX d32768[4095];
   a3.re = t8; \
   a2.im = t2; \
   }
-
+ 
 
 #define UNTRANSFORMHALF(a0,a1,a2,a3) { \
   t6 = sqrthalf; \
@@ -516,8 +514,7 @@ static void cpass(register WDL_FFT_COMPLEX *a,register const WDL_FFT_COMPLEX *w,
   TRANSFORMZERO(a[0],a1[0],a2[0],a3[0]);
   TRANSFORM(a[1],a1[1],a2[1],a3[1],w[0].re,w[0].im);
 
-  for (;;)
-  {
+  for (;;) {
     TRANSFORM(a[2],a1[2],a2[2],a3[2],w[1].re,w[1].im);
     TRANSFORM(a[3],a1[3],a2[3],a3[3],w[2].re,w[2].im);
     if (!--n) break;
@@ -590,8 +587,7 @@ static void cpassbig(register WDL_FFT_COMPLEX *a,register const WDL_FFT_COMPLEX 
   a2 += 2;
   a3 += 2;
 
-  do
-  {
+  do {
     TRANSFORM(a[0],a1[0],a2[0],a3[0],w[1].re,w[1].im);
     TRANSFORM(a[1],a1[1],a2[1],a3[1],w[2].re,w[2].im);
     a += 2;
@@ -599,8 +595,7 @@ static void cpassbig(register WDL_FFT_COMPLEX *a,register const WDL_FFT_COMPLEX 
     a2 += 2;
     a3 += 2;
     w += 2;
-  }
-  while (k -= 2);
+  } while (k -= 2);
 
   TRANSFORMHALF(a[0],a1[0],a2[0],a3[0]);
   TRANSFORM(a[1],a1[1],a2[1],a3[1],w[0].im,w[0].re);
@@ -610,8 +605,7 @@ static void cpassbig(register WDL_FFT_COMPLEX *a,register const WDL_FFT_COMPLEX 
   a3 += 2;
 
   k = n - 2;
-  do
-  {
+  do {
     TRANSFORM(a[0],a1[0],a2[0],a3[0],w[-1].im,w[-1].re);
     TRANSFORM(a[1],a1[1],a2[1],a3[1],w[-2].im,w[-2].re);
     a += 2;
@@ -619,8 +613,7 @@ static void cpassbig(register WDL_FFT_COMPLEX *a,register const WDL_FFT_COMPLEX 
     a2 += 2;
     a3 += 2;
     w -= 2;
-  }
-  while (k -= 2);
+  } while (k -= 2);
 }
 
 
@@ -698,8 +691,7 @@ void WDL_fft_complexmul(WDL_FFT_COMPLEX *a,WDL_FFT_COMPLEX *b,int n)
   register WDL_FFT_REAL t1, t2, t3, t4, t5, t6, t7, t8;
   if (n<2 || (n&1)) return;
 
-  do
-  {
+  do {
     t1 = a[0].re * b[0].re;
     t2 = a[0].im * b[0].im;
     t3 = a[0].im * b[0].re;
@@ -718,8 +710,7 @@ void WDL_fft_complexmul(WDL_FFT_COMPLEX *a,WDL_FFT_COMPLEX *b,int n)
     a[1].im = t7;
     a += 2;
     b += 2;
-  }
-  while (n -= 2);
+  } while (n -= 2);
 }
 
 void WDL_fft_complexmul2(WDL_FFT_COMPLEX *c, WDL_FFT_COMPLEX *a, WDL_FFT_COMPLEX *b, int n)
@@ -727,8 +718,7 @@ void WDL_fft_complexmul2(WDL_FFT_COMPLEX *c, WDL_FFT_COMPLEX *a, WDL_FFT_COMPLEX
   register WDL_FFT_REAL t1, t2, t3, t4, t5, t6, t7, t8;
   if (n<2 || (n&1)) return;
 
-  do
-  {
+  do {
     t1 = a[0].re * b[0].re;
     t2 = a[0].im * b[0].im;
     t3 = a[0].im * b[0].re;
@@ -748,16 +738,14 @@ void WDL_fft_complexmul2(WDL_FFT_COMPLEX *c, WDL_FFT_COMPLEX *a, WDL_FFT_COMPLEX
     a += 2;
     b += 2;
     c += 2;
-  }
-  while (n -= 2);
+  } while (n -= 2);
 }
 void WDL_fft_complexmul3(WDL_FFT_COMPLEX *c, WDL_FFT_COMPLEX *a, WDL_FFT_COMPLEX *b, int n)
 {
   register WDL_FFT_REAL t1, t2, t3, t4, t5, t6, t7, t8;
   if (n<2 || (n&1)) return;
 
-  do
-  {
+  do {
     t1 = a[0].re * b[0].re;
     t2 = a[0].im * b[0].im;
     t3 = a[0].im * b[0].re;
@@ -777,8 +765,7 @@ void WDL_fft_complexmul3(WDL_FFT_COMPLEX *c, WDL_FFT_COMPLEX *a, WDL_FFT_COMPLEX
     a += 2;
     b += 2;
     c += 2;
-  }
-  while (n -= 2);
+  } while (n -= 2);
 }
 
 
@@ -930,8 +917,7 @@ static void upass(register WDL_FFT_COMPLEX *a,register const WDL_FFT_COMPLEX *w,
   UNTRANSFORMZERO(a[0],a1[0],a2[0],a3[0]);
   UNTRANSFORM(a[1],a1[1],a2[1],a3[1],w[0].re,w[0].im);
 
-  for (;;)
-  {
+  for (;;) {
     UNTRANSFORM(a[2],a1[2],a2[2],a3[2],w[1].re,w[1].im);
     UNTRANSFORM(a[3],a1[3],a2[3],a3[3],w[2].re,w[2].im);
     if (!--n) break;
@@ -1005,8 +991,7 @@ static void upassbig(register WDL_FFT_COMPLEX *a,register const WDL_FFT_COMPLEX 
   a2 += 2;
   a3 += 2;
 
-  do
-  {
+  do {
     UNTRANSFORM(a[0],a1[0],a2[0],a3[0],w[1].re,w[1].im);
     UNTRANSFORM(a[1],a1[1],a2[1],a3[1],w[2].re,w[2].im);
     a += 2;
@@ -1014,8 +999,7 @@ static void upassbig(register WDL_FFT_COMPLEX *a,register const WDL_FFT_COMPLEX 
     a2 += 2;
     a3 += 2;
     w += 2;
-  }
-  while (k -= 2);
+  } while (k -= 2);
 
   UNTRANSFORMHALF(a[0],a1[0],a2[0],a3[0]);
   UNTRANSFORM(a[1],a1[1],a2[1],a3[1],w[0].im,w[0].re);
@@ -1025,8 +1009,7 @@ static void upassbig(register WDL_FFT_COMPLEX *a,register const WDL_FFT_COMPLEX 
   a3 += 2;
 
   k = n - 2;
-  do
-  {
+  do {
     UNTRANSFORM(a[0],a1[0],a2[0],a3[0],w[-1].im,w[-1].re);
     UNTRANSFORM(a[1],a1[1],a2[1],a3[1],w[-2].im,w[-2].re);
     a += 2;
@@ -1034,8 +1017,7 @@ static void upassbig(register WDL_FFT_COMPLEX *a,register const WDL_FFT_COMPLEX 
     a2 += 2;
     a3 += 2;
     w -= 2;
-  }
-  while (k -= 2);
+  } while (k -= 2);
 }
 
 
@@ -1126,19 +1108,23 @@ static int _idxperm[2<<FFT_MAXBITLEN];
 
 static void idx_perm_calc(int offs, int n)
 {
-  int i, j;
-  _idxperm[offs] = 0;
-  for (i = 1; i < n; ++i)
-  {
-    j = fftfreq_c(i, n);
-    _idxperm[offs+n-j] = i;
-  }
+	int i, j;
+	_idxperm[offs] = 0;
+	for (i = 1; i < n; ++i) {
+		j = fftfreq_c(i, n);
+		_idxperm[offs+n-j] = i;
+	}
 }
 
 int WDL_fft_permute(int fftsize, int idx)
 {
-  return _idxperm[fftsize+idx-16];
+  return _idxperm[fftsize+idx-2];
 }
+int *WDL_fft_permute_tab(int fftsize)
+{
+  return _idxperm + fftsize - 2;
+}
+
 
 #endif
 
@@ -1148,7 +1134,7 @@ void WDL_fft_init()
   if (!ffttabinit)
   {
     int i, offs;
-    ffttabinit=1;
+  	ffttabinit=1;
 
 #define fft_gen(x,y) __fft_gen(x,sizeof(x)/sizeof(x[0]),y)
     fft_gen(d16,1);
@@ -1166,12 +1152,12 @@ void WDL_fft_init()
 #undef fft_gen
 
 #ifndef WDL_FFT_NO_PERMUTE
-    offs = 0;
-    for (i = 16; i <= 32768; i *= 2)
+	  offs = 0;
+	  for (i = 2; i <= 32768; i *= 2) 
     {
-      idx_perm_calc(offs, i);
-      offs += i;
-    }
+		  idx_perm_calc(offs, i);
+		  offs += i;
+	  }
 #endif
 
   }
@@ -1183,20 +1169,20 @@ void WDL_fft(WDL_FFT_COMPLEX *buf, int len, int isInverse)
   {
     case 2: c2(buf); break;
 #define TMP(x) case x: if (!isInverse) c##x(buf); else u##x(buf); break;
-      TMP(4)
-      TMP(8)
-      TMP(16)
-      TMP(32)
-      TMP(64)
-      TMP(128)
-      TMP(256)
-      TMP(512)
-      TMP(1024)
-      TMP(2048)
-      TMP(4096)
-      TMP(8192)
-      TMP(16384)
-      TMP(32768)
+    TMP(4)
+    TMP(8)
+    TMP(16)
+    TMP(32)
+    TMP(64)
+    TMP(128)
+    TMP(256)
+    TMP(512)
+    TMP(1024)
+    TMP(2048)
+    TMP(4096)
+    TMP(8192)
+    TMP(16384)
+    TMP(32768)
 #undef TMP
   }
 }
@@ -1292,8 +1278,7 @@ static void rpass(register WDL_FFT_REAL *a,register const WDL_FFT_COMPLEX *w,reg
   R(a[4],a[5],b[4],b[5],w[1].re,w[1].im);
   R(a[6],a[7],b[6],b[7],w[2].re,w[2].im);
 
-  for (;;)
-  {
+  for (;;) {
     R(a[8],a[9],b[8],b[9],w[3].re,w[3].im);
     R(a[10],a[11],b[10],b[11],w[4].re,w[4].im);
     R(a[12],a[13],b[12],b[13],w[5].re,w[5].im);
@@ -1366,29 +1351,25 @@ static void rpassbig(register WDL_FFT_REAL *a,register const WDL_FFT_COMPLEX *w,
   R(a[2],a[3],b[2],b[3],w[0].re,w[0].im);
 
   k = n - 2;
-  do
-  {
+  do {
     R(a[4],a[5],b[4],b[5],w[1].re,w[1].im);
     R(a[6],a[7],b[6],b[7],w[2].re,w[2].im);
     a += 4;
     b += 4;
     w += 2;
-  }
-  while (k -= 2);
+  } while (k -= 2);
 
   RHALF(a[4],a[5],b[4],b[5]);
   R(a[6],a[7],b[6],b[7],w[0].im,w[0].re);
 
   k = n - 2;
-  do
-  {
+  do {
     R(a[8],a[9],b[8],b[9],w[-1].im,w[-1].re);
     R(a[10],a[11],b[10],b[11],w[-2].im,w[-2].re);
     a += 4;
     b += 4;
     w -= 2;
-  }
-  while (k -= 2);
+  } while (k -= 2);
 }
 
 
@@ -1405,7 +1386,7 @@ static void r2048(register WDL_FFT_REAL *a)
   r1024(a);
   c512((WDL_FFT_COMPLEX *)(a + 1024));
 }
-
+ 
 
 static void r4096(register WDL_FFT_REAL *a)
 {
@@ -1504,8 +1485,7 @@ static void vpass(register WDL_FFT_REAL *a,register const WDL_FFT_COMPLEX *w,reg
   V(a[4],a[5],b[4],b[5],w[1].re,w[1].im);
   V(a[6],a[7],b[6],b[7],w[2].re,w[2].im);
 
-  for (;;)
-  {
+  for (;;) {
     V(a[8],a[9],b[8],b[9],w[3].re,w[3].im);
     V(a[10],a[11],b[10],b[11],w[4].re,w[4].im);
     V(a[12],a[13],b[12],b[13],w[5].re,w[5].im);
@@ -1579,29 +1559,25 @@ static void vpassbig(register WDL_FFT_REAL *a,register const WDL_FFT_COMPLEX *w,
   V(a[2],a[3],b[2],b[3],w[0].re,w[0].im);
 
   k = n - 2;
-  do
-  {
+  do {
     V(a[4],a[5],b[4],b[5],w[1].re,w[1].im);
     V(a[6],a[7],b[6],b[7],w[2].re,w[2].im);
     a += 4;
     b += 4;
     w += 2;
-  }
-  while (k -= 2);
+  } while (k -= 2);
 
   VHALF(a[4],a[5],b[4],b[5]);
   V(a[6],a[7],b[6],b[7],w[0].im,w[0].re);
 
   k = n - 2;
-  do
-  {
+  do {
     V(a[8],a[9],b[8],b[9],w[-1].im,w[-1].re);
     V(a[10],a[11],b[10],b[11],w[-2].im,w[-2].re);
     a += 4;
     b += 4;
     w -= 2;
-  }
-  while (k -= 2);
+  } while (k -= 2);
 }
 
 
@@ -1655,20 +1631,20 @@ void WDL_real_fft(WDL_FFT_REAL *buf, int len, int isInverse)
   {
     case 2: r2(buf); break;
 #define TMP(x) case x: if (!isInverse) r##x(buf); else v##x(buf); break;
-      TMP(4)
-      TMP(8)
-      TMP(16)
-      TMP(32)
-      TMP(64)
-      TMP(128)
-      TMP(256)
-      TMP(512)
-      TMP(1024)
-      TMP(2048)
-      TMP(4096)
-      TMP(8192)
-      TMP(16384)
-      TMP(32768)
+    TMP(4)
+    TMP(8)
+    TMP(16)
+    TMP(32)
+    TMP(64)
+    TMP(128)
+    TMP(256)
+    TMP(512)
+    TMP(1024)
+    TMP(2048)
+    TMP(4096)
+    TMP(8192)
+    TMP(16384)
+    TMP(32768)
 #undef TMP
   }
 }

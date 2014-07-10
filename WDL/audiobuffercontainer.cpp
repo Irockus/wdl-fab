@@ -7,11 +7,9 @@ void ChannelPinMapper::SetNPins(int nPins)
   if (nPins<0) nPins=0;
   else if (nPins>CHANNELPINMAPPER_MAXPINS) nPins=CHANNELPINMAPPER_MAXPINS;
   int i;
-  for (i = m_nPins; i < nPins; ++i)
-  {
+  for (i = m_nPins; i < nPins; ++i) {
     ClearPin(i);
-    if (i < m_nCh)
-    {
+    if (i < m_nCh) {
       SetPin(i, i, true);
     }
   }
@@ -21,8 +19,7 @@ void ChannelPinMapper::SetNPins(int nPins)
 void ChannelPinMapper::SetNChannels(int nCh)
 {
   int i;
-  for (i = m_nCh; i < nCh && i < m_nPins; ++i)
-  {
+  for (i = m_nCh; i < nCh && i < m_nPins; ++i) {
     SetPin(i, i, true);
   }
   m_nCh = nCh;
@@ -33,11 +30,12 @@ void ChannelPinMapper::Init(WDL_UINT64* pMapping, int nPins)
   if (nPins<0) nPins=0;
   else if (nPins>CHANNELPINMAPPER_MAXPINS) nPins=CHANNELPINMAPPER_MAXPINS;
   memcpy(m_mapping, pMapping, nPins*sizeof(WDL_UINT64));
+  memset(m_mapping+nPins, 0, (CHANNELPINMAPPER_MAXPINS-nPins)*sizeof(WDL_UINT64));
   m_nPins = m_nCh = nPins;
 }
 
 #define BITMASK64(bitIdx) (((WDL_UINT64)1)<<(bitIdx))
-
+ 
 void ChannelPinMapper::ClearPin(int pinIdx)
 {
   if (pinIdx >=0 && pinIdx < CHANNELPINMAPPER_MAXPINS) m_mapping[pinIdx] = 0;
@@ -47,22 +45,22 @@ void ChannelPinMapper::SetPin(int pinIdx, int chIdx, bool on)
 {
   if (pinIdx >=0 && pinIdx < CHANNELPINMAPPER_MAXPINS)
   {
-    if (on)
+    if (on) 
     {
       m_mapping[pinIdx] |= BITMASK64(chIdx);
     }
-    else
+    else 
     {
       m_mapping[pinIdx] &= ~BITMASK64(chIdx);
     }
   }
 }
 
-bool ChannelPinMapper::TogglePin(int pinIdx, int chIdx)
+bool ChannelPinMapper::TogglePin(int pinIdx, int chIdx) 
 {
   bool on = GetPin(pinIdx, chIdx);
   on = !on;
-  SetPin(pinIdx, chIdx, on);
+  SetPin(pinIdx, chIdx, on); 
   return on;
 }
 
@@ -91,8 +89,7 @@ bool ChannelPinMapper::IsStraightPassthrough() const
   if (m_nCh != m_nPins) return false;
   const WDL_UINT64* pMap = m_mapping;
   int i;
-  for (i = 0; i < m_nPins; ++i, ++pMap)
-  {
+  for (i = 0; i < m_nPins; ++i, ++pMap) {
     if (*pMap != BITMASK64(i)) return false;
   }
   return true;
@@ -127,7 +124,7 @@ bool ChannelPinMapper::LoadState(const char* buf, int len)
   int maplen = *pNPins*sizeof(WDL_UINT64);
   if (chunk.Available() < maplen) return false;
   void* pMap = WDL_Queue__GetDataFromLE(&chunk, maplen, sizeof(WDL_UINT64));
-
+  
   int sz= m_nPins*sizeof(WDL_UINT64);
   if (sz>maplen) sz=maplen;
   memcpy(m_mapping, pMap, sz);
@@ -147,32 +144,32 @@ template <class TDEST, class TSRC> void BufConvertT(TDEST* dest, const TSRC* src
 template <class T> void BufMixT(T* dest, const T* src, int nFrames, bool addToDest, double wt_start, double wt_end)
 {
   int i;
-
+  
   if (wt_start == 1.0 && wt_end == 1.0)
   {
     if (addToDest)
     {
       for (i = 0; i < nFrames; ++i)
       {
-        dest[i] += src[i];
+        dest[i] += src[i];    
       }
     }
     else
     {
       memcpy(dest, src, nFrames*sizeof(T));
-    }
+    }  
   }
   else
   {
     double dw = (wt_end-wt_start)/(double)nFrames;
     double cw = wt_start;
-
+   
     if (addToDest)
     {
       for (i = 0; i < nFrames; ++i)
       {
         dest[i] += (T)(1.0-cw)*dest[i]+(T)cw*src[i];
-        cw += dw;
+        cw += dw;  
       }
     }
     else
@@ -180,13 +177,13 @@ template <class T> void BufMixT(T* dest, const T* src, int nFrames, bool addToDe
       for (i = 0; i < nFrames; ++i)
       {
         dest[i] = (T)(1.0-cw)*dest[i]+(T)cw*src[i];
-        cw += dw;
+        cw += dw;  
       }
     }
   }
 }
 
-// static
+// static 
 bool AudioBufferContainer::BufConvert(void* dest, const void* src, int destFmt, int srcFmt, int nFrames, int destStride, int srcStride)
 {
   if (destFmt == FMT_32FP)
@@ -229,7 +226,7 @@ AudioBufferContainer::AudioBufferContainer()
 
 void AudioBufferContainer::Resize(int nCh, int nFrames, bool preserveData)
 {
-  if (!m_hasData)
+  if (!m_hasData) 
   {
     preserveData = false;
   }
@@ -272,7 +269,7 @@ void AudioBufferContainer::Resize(int nCh, int nFrames, bool preserveData)
       // adjust interleaving
     }
   }
-
+  
   m_data.Resize(newsz);
   m_hasData = preserveData;
   m_nCh = nCh;
@@ -281,23 +278,23 @@ void AudioBufferContainer::Resize(int nCh, int nFrames, bool preserveData)
 
 void AudioBufferContainer::Reformat(int fmt, bool preserveData)
 {
-  if (!m_hasData)
+  if (!m_hasData) 
   {
-    preserveData = false;
+    preserveData = false;   
   }
-
-  int newsz = m_nCh*m_nFrames*(int)fmt;
-
+  
+  int newsz = m_nCh*m_nFrames*(int)fmt; 
+  
   if (preserveData && fmt != m_fmt)
   {
     int oldsz = m_data.GetSize();
     void* src = m_data.Resize(oldsz+newsz);
     void* dest = (unsigned char*)src+oldsz;
     BufConvert(dest, src, fmt, m_fmt, m_nCh*m_nFrames, 1, 1);
-    memmove(src, dest, newsz);
+    memmove(src, dest, newsz); 
   }
-
-  m_data.Resize(newsz);
+  
+  m_data.Resize(newsz);    
   m_hasData = preserveData;
   m_fmt = fmt;
 }
@@ -307,7 +304,7 @@ void* AudioBufferContainer::SetAllChannels(int fmt, const void* src, int nCh, in
 {
   Reformat(fmt, false);
   Resize(nCh, nFrames, false);
-
+  
   int sz = nCh*nFrames*(int)fmt;
   void* dest = GetAllChannels(fmt, false);
   if (src)
@@ -318,9 +315,9 @@ void* AudioBufferContainer::SetAllChannels(int fmt, const void* src, int nCh, in
   {
     memset(dest, 0, sz);
   }
-
+  
   m_interleaved = true;
-  m_hasData = true;
+  m_hasData = true;  
   return dest;
 }
 
@@ -328,12 +325,12 @@ void* AudioBufferContainer::SetAllChannels(int fmt, const void* src, int nCh, in
 void* AudioBufferContainer::SetChannel(int fmt, const void* src, int chIdx, int nFrames)
 {
   Reformat(fmt, true);
-  if (nFrames > m_nFrames || chIdx >= m_nCh)
+  if (nFrames > m_nFrames || chIdx >= m_nCh) 
   {
     int maxframes = (nFrames > m_nFrames ? nFrames : m_nFrames);
-    Resize(chIdx+1, maxframes, true);
+    Resize(chIdx+1, maxframes, true);        
   }
-
+  
   int sz = nFrames*(int)fmt;
   void* dest = GetChannel(fmt, chIdx, true);
   if (src)
@@ -344,7 +341,7 @@ void* AudioBufferContainer::SetChannel(int fmt, const void* src, int chIdx, int 
   {
     memset(dest, 0, sz);
   }
-
+   
   m_interleaved = false;
   m_hasData = true;
   return dest;
@@ -353,14 +350,14 @@ void* AudioBufferContainer::SetChannel(int fmt, const void* src, int chIdx, int 
 void* AudioBufferContainer::MixChannel(int fmt, const void* src, int chIdx, int nFrames, bool addToDest, double wt_start, double wt_end)
 {
   Reformat(fmt, true);
-  if (nFrames > m_nFrames || chIdx >= m_nCh)
+  if (nFrames > m_nFrames || chIdx >= m_nCh) 
   {
     int maxframes = (nFrames > m_nFrames ? nFrames : m_nFrames);
-    Resize(chIdx+1, maxframes, true);
+    Resize(chIdx+1, maxframes, true);        
   }
-
+  
   void* dest = GetChannel(fmt, chIdx, true);
-
+  
   if (fmt == FMT_32FP)
   {
     BufMixT((float*)dest, (float*)src, nFrames, addToDest, wt_start, wt_end);
@@ -369,7 +366,7 @@ void* AudioBufferContainer::MixChannel(int fmt, const void* src, int chIdx, int 
   {
     BufMixT((double*)dest, (double*)src, nFrames, addToDest, wt_start, wt_end);
   }
-
+  
   m_interleaved = false;
   m_hasData = true;
   return dest;
@@ -380,23 +377,23 @@ void* AudioBufferContainer::GetAllChannels(int fmt, bool preserveData)
 {
   Reformat(fmt, preserveData);
   ReLeave(true, preserveData);
-
+  
   m_hasData = true;   // because caller may use the returned pointer to populate the container
-
+  
   return m_data.Get();
 }
 
 void* AudioBufferContainer::GetChannel(int fmt, int chIdx, bool preserveData)
 {
-  Reformat(fmt, preserveData);
+  Reformat(fmt, preserveData); 
   if (chIdx >= m_nCh)
   {
     Resize(chIdx+1, m_nFrames, true);
   }
   ReLeave(false, preserveData);
-
+  
   m_hasData = true;   // because caller may use the returned pointer to populate the container
-
+  
   int offsz = chIdx*m_nFrames*(int)fmt;
   return (unsigned char*)m_data.Get()+offsz;
 }
@@ -411,10 +408,10 @@ void AudioBufferContainer::ReLeave(bool interleave, bool preserveData)
     int i;
 
     unsigned char* src = (unsigned char*)m_data.Resize(bufsz*2);
-    unsigned char* dest = src+bufsz;
-
+    unsigned char* dest = src+bufsz;    
+    
     if (interleave)
-    {
+    { 
       for (i = 0; i < m_nCh; ++i)
       {
         BufConvert((void*)(dest+i*elemsz), (void*)(src+i*chansz), m_fmt, m_fmt, m_nFrames, m_nCh, 1);
@@ -427,11 +424,11 @@ void AudioBufferContainer::ReLeave(bool interleave, bool preserveData)
         BufConvert((void*)(dest+i*chansz), (void*)(src+i*elemsz), m_fmt, m_fmt, m_nFrames, 1, m_nCh);
       }
     }
-
+    
     memcpy(src, dest, bufsz); // no overlap
     m_data.Resize(bufsz);
   }
-
+  
   m_hasData = preserveData;
   m_interleaved = interleave;
 }
@@ -439,8 +436,8 @@ void AudioBufferContainer::ReLeave(bool interleave, bool preserveData)
 void AudioBufferContainer::CopyFrom(const AudioBufferContainer* rhs)
 {
   int sz = rhs->m_data.GetSize();
-  void* dest = m_data.Resize(sz);
-
+  void* dest = m_data.Resize(sz);    
+  
   if (rhs->m_hasData)
   {
     void* src = rhs->m_data.Get();
@@ -468,28 +465,28 @@ void SetPinsFromChannels(AudioBufferContainer* dest, AudioBufferContainer* src, 
   const int nframes = src->GetNFrames();
   const int fmt = src->GetFormat();
   const int np = max(npins,forceMinChanCnt);
-
+  
   dest->Resize(np, nframes, false);
-
+  
   int c, p;
   for (p = 0; p < np; ++p)
   {
-    bool pinused = false;
+    bool pinused = false;  
     if (p < npins) for (c = 0; c < nch; ++c)
+    {
+      if (mapper->GetPin(p, c))
       {
-        if (mapper->GetPin(p, c))
+        void* srcbuf = src->GetChannel(fmt, c, true);
+        dest->MixChannel(fmt, srcbuf, p, nframes, pinused, 1.0, 1.0);
+        pinused = true;
+        
+        if (!mapper->PinHasMoreMappings(p, c))
         {
-          void* srcbuf = src->GetChannel(fmt, c, true);
-          dest->MixChannel(fmt, srcbuf, p, nframes, pinused, 1.0, 1.0);
-          pinused = true;
-
-          if (!mapper->PinHasMoreMappings(p, c))
-          {
-            break;
-          }
+          break;
         }
       }
-
+    }
+    
     if (!pinused)
     {
       dest->SetChannel(fmt, 0, p, nframes);   // clear unused pins
@@ -503,7 +500,7 @@ void SetChannelsFromPins(AudioBufferContainer* dest, AudioBufferContainer* src, 
   {
     dest->CopyFrom(src);
     return;
-  }
+  }   
 
   int nch = mapper->GetNChannels();
   int npins = mapper->GetNPins();
@@ -511,17 +508,17 @@ void SetChannelsFromPins(AudioBufferContainer* dest, AudioBufferContainer* src, 
   int fmt = src->GetFormat();
 
   dest->Resize(nch, nframes, true);
-
+  
   int c, p;
-  for (c = 0; c < nch; ++c)
+  for (c = 0; c < nch; ++c) 
   {
     bool chanused = false;
-    for (p = 0; p < npins; ++p)
+    for (p = 0; p < npins; ++p) 
     {
-      if (mapper->GetPin(p, c))
+      if (mapper->GetPin(p, c)) 
       {
         void* srcbuf = src->GetChannel(fmt, p, true);
-        dest->MixChannel(fmt, srcbuf, c, nframes, chanused, wt_start, wt_end);
+        dest->MixChannel(fmt, srcbuf, c, nframes, chanused, wt_start, wt_end);        
         chanused = true;
       }
     }
@@ -536,9 +533,9 @@ void SetChannelsFromPins(AudioBufferContainer* dest, AudioBufferContainer* src, 
 // converts interleaved buffer to interleaved buffer, using min(len_in,len_out) and zeroing any extra samples
 // isInput means it reads from track channels and writes to plugin pins
 // wantZeroExcessOutput=false means that untouched channels will be preserved in buf_out
-void PinMapperConvertBuffers(const double *buf, int len_in, int nch_in,
+void PinMapperConvertBuffers(const double *buf, int len_in, int nch_in, 
                              double *buf_out, int len_out, int nch_out,
-                             const ChannelPinMapper *pinmap, bool isInput, bool wantZeroExcessOutput)
+                             const ChannelPinMapper *pinmap, bool isInput, bool wantZeroExcessOutput) 
 {
 
   if (pinmap->IsStraightPassthrough() || !pinmap->GetNPins())
@@ -554,11 +551,11 @@ void PinMapperConvertBuffers(const double *buf, int len_in, int nch_in,
 
     const int cplen = min(len_in,len_out);
 
-    for (x=0; x<cplen; x++)
+    for (x=0;x<cplen;x++)
     {
       memcpy(op,ip,clen);
       op += clen;
-      if (zlen)
+      if (zlen) 
       {
         if (wantZeroExcessOutput) memset(op,0,zlen);
         op += zlen;
@@ -603,7 +600,7 @@ void PinMapperConvertBuffers(const double *buf, int len_in, int nch_in,
 
           if (want_zero)
           {
-            while (i-- > 0)
+            while (i-- > 0) 
             {
               *op = *ip;
               op += nch_out;
@@ -612,7 +609,7 @@ void PinMapperConvertBuffers(const double *buf, int len_in, int nch_in,
           }
           else
           {
-            while (i-- > 0)
+            while (i-- > 0) 
             {
               *op += *ip;
               op += nch_out;
