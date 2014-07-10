@@ -31,7 +31,7 @@ SET(DSP_HEADERS
 
 if(NOT WIN32)
 	set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
-endif(WIN32)
+endif()
 
 add_library(icst_dsp ${DSP_SRC} ${DSP_HEADERS} )
 
