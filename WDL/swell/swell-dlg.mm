@@ -28,12 +28,15 @@ bool SWELL_owned_windows_levelincrease=false;
 #define NSColorFromCol(a) [NSColor colorWithCalibratedRed:GetRValue(a)/255.0f green:GetGValue(a)/255.0f blue:GetBValue(a)/255.0f alpha:1.0f]
 extern int g_swell_terminating;
 
+#ifndef MM_CONCAT
+
 static LRESULT sendSwellMessage(id obj, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   if (obj && [obj respondsToSelector:@selector(onSwellMessage:p1:p2:)])
     return [(SWELL_hwndChild *)obj onSwellMessage:uMsg p1:wParam p2:lParam];
   return 0;
 }
+#endif
 
 static BOOL Is105Plus()
 {

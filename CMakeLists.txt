@@ -99,7 +99,7 @@ IF(MSVC)
   ADD_DEFINITIONS(-DMSVC_RUNTIME=static)
   ADD_DEFINITIONS(/arch:SSE2)
 ELSEIF(APPLE)
-  ADD_DEFINITIONS(-D__MACOSX_CORE__ -DSWELL_FORCE_COCOA_TEXT)
+  ADD_DEFINITIONS(-D__MACOSX_CORE__ -DWDL_FFT_REALSIZE=8 -DSWELL_FORCE_COCOA_TEXT -DSWELL_CLEANUP_ON_UNLOAD)
 ENDIF(MSVC)
 
 configure_msvc_runtime()
@@ -153,9 +153,9 @@ set(IPLUG_LIBS
 	# ${SDL_LIBRARY} 
 	# ${GLU_LIBRARY} 
 	# ${OPENGL_LIBRARY} 
-	${OGG_LIBRARY}
-	${VORBIS_LIBRARY} 
-	${VORBISFILE_LIBRARY} 
+#	${OGG_LIBRARY}
+#	${VORBIS_LIBRARY} 
+#	${VORBISFILE_LIBRARY} 
 )
 
 
@@ -229,7 +229,7 @@ endif(HAVE_AUDIOUNITS)
 
 #	Common
 add_subdirectory(WDL) # wdl lice iplug libs
-add_subdirectory(contribs)
+#add_subdirectory(contribs)
 add_subdirectory(IPlugExamples)
 
 # TODO externalize the custom user projects and completely split the lib from its use in the path ...

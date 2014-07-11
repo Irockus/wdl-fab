@@ -5377,7 +5377,7 @@ BOOL TreeView_Expand(HWND hwnd, HTREEITEM item, UINT flag)
   
   SWELL_TreeView *tv=(SWELL_TreeView*)hwnd;
   
-  id itemid=((HTREEITEM__*)item)->m_dh;
+  id itemid= ((HTREEITEM__*)item)->m_dh;
   bool isExp=!![tv isItemExpanded:itemid];
   
   if (flag == TVE_EXPAND && !isExp) [tv expandItem:itemid];

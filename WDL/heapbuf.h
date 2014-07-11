@@ -44,6 +44,8 @@
 
 #include "wdltypes.h"
 
+#include <string.h>
+
 class WDL_HeapBuf
 {
   public:

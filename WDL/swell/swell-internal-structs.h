@@ -40,8 +40,8 @@ typedef struct WindowPropRec
 class SWELL_ListView_Row
 {
 public:
-  SWELL_ListView_Row();
-  ~SWELL_ListView_Row();
+  SWELL_ListView_Row() : m_param(0), m_imageidx(0), m_tmp(0) { }
+  ~SWELL_ListView_Row() { m_vals.Empty(true,free); }
   WDL_PtrList<char> m_vals;
   LPARAM m_param;
   int m_imageidx;
@@ -55,7 +55,7 @@ struct HTREEITEM__
   ~HTREEITEM__();
   bool FindItem(HTREEITEM it, HTREEITEM__ **parOut, int *idxOut);
 
-  void *m_dh;
+  id m_dh;
 
   bool m_haschildren;
   char *m_value;

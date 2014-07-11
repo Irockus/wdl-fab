@@ -2,19 +2,7 @@
 #define _SWELL_INTERNAL_H_
 
 #include "../ptrlist.h"
-
-class SWELL_ListView_Row
-{
-public:
-  SWELL_ListView_Row() : m_param(0), m_imageidx(0), m_tmp(0) { }
-  ~SWELL_ListView_Row() { m_vals.Empty(true,free); }
-  WDL_PtrList<char> m_vals;
-
-  LPARAM m_param;
-  int m_imageidx;
-  int m_tmp; // Cocoa uses this temporarily, generic uses it as a mask (1= selected)
-};
-
+#include "swell-internal-structs.h"
 
 #ifdef SWELL_TARGET_OSX
 
@@ -97,37 +85,6 @@ typedef unsigned int NSUInteger;
 -(id) initWithId:(UINT_PTR)tid hwnd:(HWND)h callback:(TIMERPROC)cb;
 -(void)SWELL_Timer:(id)sender;
 @end
-
-typedef struct OwnedWindowListRec
-{
-  NSWindow *hwnd;
-  struct OwnedWindowListRec *_next;
-} OwnedWindowListRec;
-
-typedef struct WindowPropRec
-{
-  char *name; // either <64k or a strdup'd name
-  void *data;
-  struct WindowPropRec *_next;
-} WindowPropRec;
-
-
-
-struct HTREEITEM__
-{
-  HTREEITEM__();
-  ~HTREEITEM__();
-  bool FindItem(HTREEITEM it, HTREEITEM__ **parOut, int *idxOut);
-  
-  SWELL_DataHold *m_dh;
-  
-  bool m_haschildren;
-  char *m_value;
-  WDL_PtrList<HTREEITEM__> m_children; // only used in tree mode
-  LPARAM m_param;
-};
-
-
 
 @interface SWELL_TextField : NSTextField
 - (void)setNeedsDisplay:(BOOL)flag;
@@ -463,57 +420,6 @@ struct HTREEITEM__
 
 #endif
 
-struct HGDIOBJ__
-{
-  int type;
-
-  int additional_refcnt; // refcnt of 0 means one owner (if >0, additional owners)
-  
-  // used by pen/brush
-  CGColorRef color;
-  int wid;
-  NSImage *bitmapptr;  
-  
-  NSMutableDictionary *__old_fontdict; // unused, for ABI compat
-  //
-  // if ATSUI used, meaning IsCoreTextSupported() returned false
-  ATSUStyle atsui_font_style;
-
-  float font_rotation;
-
-  bool _infreelist;
-  struct HGDIOBJ__ *_next;
- 
-  // if using CoreText to draw text
-  void *ct_FontRef;
-  char font_quality;
-};
-
-struct HDC__ {
-  CGContextRef ctx; 
-  void *ownedData; // always use via SWELL_GetContextFrameBuffer() (which performs necessary alignment)
-  HGDIOBJ__ *curpen;
-  HGDIOBJ__ *curbrush;
-  HGDIOBJ__ *curfont;
-  
-  NSColor *__old_nstextcol; // provided for ABI compat, but unused
-  int cur_text_color_int; // text color as int
-  
-  int curbkcol;
-  int curbkmode;
-  float lastpos_x,lastpos_y;
-  
-  void *GLgfxctx; // optionally set
-  bool _infreelist;
-  struct HDC__ *_next;
-
-  CGColorRef curtextcol; // text color as CGColor
-};
-
-
-
-
-
 // some extras so we can call functions available only on some OSX versions without warnings, and with the correct types
 #define SWELL_DelegateExtensions __SWELL_PREFIX_CLASSNAME(_delext)
 #define SWELL_ViewExtensions __SWELL_PREFIX_CLASSNAME(_viewext)
@@ -697,82 +603,6 @@ HDC SWELL_CreateGfxContext(void *);
 #define TYPE_BRUSH 2
 #define TYPE_FONT 3
 #define TYPE_BITMAP 4
-
-typedef struct
-{
-  void *instptr; 
-  void *bundleinstptr;
-  int refcnt;
-
-  int (*SWELL_dllMain)(HINSTANCE, DWORD,LPVOID); //last parm=SWELLAPI_GetFunc
-  BOOL (*dllMain)(HINSTANCE, DWORD, LPVOID);
-  void *lastSymbolRequested;
-} SWELL_HINSTANCE;
-
-
-enum
-{
-  INTERNAL_OBJECT_START= 0x1000001,
-  INTERNAL_OBJECT_THREAD,
-  INTERNAL_OBJECT_EVENT,
-  INTERNAL_OBJECT_FILE,
-  INTERNAL_OBJECT_EXTERNALSOCKET, // socket not owned by us
-  INTERNAL_OBJECT_SOCKETEVENT,
-  INTERNAL_OBJECT_NSTASK, 
-  INTERNAL_OBJECT_END
-};
-
-typedef struct
-{
-   int type; // INTERNAL_OBJECT_*
-   int count; // reference count
-} SWELL_InternalObjectHeader;
-
-typedef struct
-{
-  SWELL_InternalObjectHeader hdr;
-  DWORD (*threadProc)(LPVOID);
-  void *threadParm;
-  pthread_t pt;
-  DWORD retv;
-  bool done;
-} SWELL_InternalObjectHeader_Thread;
-
-typedef struct
-{
-  SWELL_InternalObjectHeader hdr;
-  
-  pthread_mutex_t mutex;
-  pthread_cond_t cond;
-
-  bool isSignal;
-  bool isManualReset;
-  
-} SWELL_InternalObjectHeader_Event;
-
-
-// used for both INTERNAL_OBJECT_EXTERNALSOCKET and INTERNAL_OBJECT_SOCKETEVENT. 
-// if EXTERNALSOCKET, socket[1] ignored and autoReset ignored.
-typedef struct
-{
-  SWELL_InternalObjectHeader hdr;
-  int socket[2]; 
-  bool autoReset;
-} SWELL_InternalObjectHeader_SocketEvent;
- 
-typedef struct
-{
-  SWELL_InternalObjectHeader hdr;
-  
-  FILE *fp;
-} SWELL_InternalObjectHeader_File;
-
-typedef struct
-{
-  SWELL_InternalObjectHeader hdr;
-  void *task; 
-} SWELL_InternalObjectHeader_NSTask;
-
 
 bool IsRightClickEmulateEnabled();
 

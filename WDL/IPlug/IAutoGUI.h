@@ -155,7 +155,7 @@ public:
     pGraphics->FillRoundRect(&mFGColor, &sliderHandleRect, &mBlend, 2, true);
 
     char cstr[32];    
-    mPlug->GetParam(mParamIdx)->GetDisplayForHost(cstr);
+    mPlug->GetParam(mParamIdx)->GetDisplayForHost(cstr, sizeof(cstr));
     mParamValueStr.Set(cstr);
     mParamValueStr.Append(" ");
     mParamValueStr.Append(mPlug->GetParam(mParamIdx)->GetLabelForHost());
@@ -275,7 +275,7 @@ public:
     pGraphics->DrawLine(&mFGColor, x1, y1, x2, y2, &mBlend, true);
     
     char cstr[32];    
-    mPlug->GetParam(mParamIdx)->GetDisplayForHost(cstr);
+    mPlug->GetParam(mParamIdx)->GetDisplayForHost(cstr, sizeof(cstr));
     mParamValueStr.Set(cstr);
     mParamValueStr.Append(" ");
     mParamValueStr.Append(mPlug->GetParam(mParamIdx)->GetLabelForHost());

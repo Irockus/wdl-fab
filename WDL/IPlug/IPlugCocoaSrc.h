@@ -6,6 +6,9 @@
  *  Created by Fabien on 1/24/14.
  *
  */
+
+#define MM_CONCAT
+
 #ifdef SA_API
 //#include "../swell/swell-appstub.mm"
 #include "main.mm"
@@ -22,4 +25,5 @@
 #ifdef SA_API
 #include "../swell/swellappmain.mm"
 #endif
+
 #include "../swell/swell-dlg.mm"
