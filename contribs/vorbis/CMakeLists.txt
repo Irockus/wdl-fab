@@ -31,6 +31,25 @@ SET(VORBIS_HEADERS
 	include/vorbis/codec.h
 	include/vorbis/vorbisenc.h
 	include/vorbis/vorbisfile.h
+	lib/modes/floor_all.h
+	lib/modes/psych_11.h
+	lib/modes/psych_16.h
+	lib/modes/psych_44.h
+	lib/modes/psych_8.h
+	lib/modes/residue_16.h
+	lib/modes/residue_44.h
+	lib/modes/residue_44p51.h
+	lib/modes/residue_44u.h
+	lib/modes/residue_8.h
+	lib/modes/setup_11.h
+	lib/modes/setup_16.h
+	lib/modes/setup_22.h
+	lib/modes/setup_32.h
+	lib/modes/setup_44.h
+	lib/modes/setup_44p51.h
+	lib/modes/setup_44u.h
+	lib/modes/setup_8.h
+	lib/modes/setup_X.h
 )
 
 if(NOT WIN32)

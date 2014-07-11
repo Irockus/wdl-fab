@@ -29,7 +29,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 # vorbis / ogg audio encoding decoding libs
 set(VORBIS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/contribs/vorbis" )
 set(OGG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/contribs/ogg" )
-set(VORBIS_INCLUDE_DIR "${VORBIS_DIR}/include" )
+set(VORBIS_INCLUDE_DIR "${VORBIS_DIR}/include" "${VORBIS_DIR}/lib" )
 set(OGG_INCLUDE_DIR "${OGG_DIR}/include" )
 set(OGG_LIBRARY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libogg.lib" )
 set(VORBIS_LIBRARY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libvorbis.lib" )
@@ -229,7 +229,7 @@ endif(HAVE_AUDIOUNITS)
 
 #	Common
 add_subdirectory(WDL) # wdl lice iplug libs
-#add_subdirectory(contribs)
+add_subdirectory(contribs)
 add_subdirectory(IPlugExamples)
 
 # TODO externalize the custom user projects and completely split the lib from its use in the path ...
