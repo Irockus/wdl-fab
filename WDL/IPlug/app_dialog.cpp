@@ -325,19 +325,41 @@ WDL_DLGRET AppWrapper::PreferencesDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam
 
             if(v != gState->mAudioDriverType)
             {
+              memcpy(i.gTempState, i.gState, sizeof(AppState)); // copy state to temp state
+
               gState->mAudioDriverType = v;
 
-              i.TryToChangeAudioDriverType();
+              bool ret = i.TryToChangeAudioDriverType();
+              if (!ret)
+              {
+                memcpy(gState, gTempState, sizeof(AppState));
+
+                i.TryToChangeAudioDriverType();
+                i.ProbeAudioIO();
+                i.TryToChangeAudio();
+                break;
+              }
               i.ProbeAudioIO();
 
-              strcpy(gState->mAudioInDev, i.GetAudioDeviceName(i.gAudioInputDevs[0]).c_str());
-              strcpy(gState->mAudioOutDev, i.GetAudioDeviceName(i.gAudioOutputDevs[0]).c_str());
+              if (i.gAudioInputDevs.size() > 0 && i.gAudioOutputDevs.size() > 0)
+              { // if no driver or no dev inside driver found dont crash and keep previous driver instead
+                strcpy(gState->mAudioInDev, i.GetAudioDeviceName(i.gAudioInputDevs[0]).c_str());
+                strcpy(gState->mAudioOutDev, i.GetAudioDeviceName(i.gAudioOutputDevs[0]).c_str());
+                // Reset IO
+                gState->mAudioOutChanL = 1;
+                gState->mAudioOutChanR = 2;
 
-              // Reset IO
-              gState->mAudioOutChanL = 1;
-              gState->mAudioOutChanR = 2;
+                i.PopulateAudioDialogs(hwndDlg);
+              }
+              else
+              {
+                memcpy(gState, gTempState, sizeof(AppState));
 
-              i.PopulateAudioDialogs(hwndDlg);
+                i.TryToChangeAudioDriverType();
+                i.ProbeAudioIO();
+                i.TryToChangeAudio();
+              }
+
             }
           }
           break;
