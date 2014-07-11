@@ -17,13 +17,13 @@
     2. Altered source versions must be plainly marked as such, and must not be
        misrepresented as being the original software.
     3. This notice may not be removed or altered from any source distribution.
-
+      
 */
 
 /*
 
   This file provides a simple class for a FIFO queue of bytes. It uses a simple buffer,
-  so should not generally be used for large quantities of data (it can advance the queue
+  so should not generally be used for large quantities of data (it can advance the queue 
   pointer, but Compact() needs to be called regularly to keep memory usage down, and when
   it is called, there's a memcpy() penalty for the remaining data. oh well, is what it is).
 
@@ -36,8 +36,7 @@
 
 #include "heapbuf.h"
 
-
-class WDL_Queue
+class WDL_Queue 
 {
 public:
   WDL_Queue() : m_hb(4096 WDL_HEAPBUF_TRACEPARM("WDL_Queue")), m_pos(0) { }
@@ -59,7 +58,7 @@ public:
 
     char* newbuf = (char*) obuf + olen;
     if (buf) memcpy(newbuf,buf,len);
-    return newbuf;
+    return newbuf; 
   }
 
   template <class T> T* GetT(T* val=0)
@@ -68,21 +67,21 @@ public:
     if (val && p) *val = *p;
     return p;
   }
-
+  
   void* Get(int size)
   {
     void* p = Get();
     if (p) Advance(size);
     return p;
   }
-
+    
   void *Get() const
   {
     void *buf=m_hb.Get();
     if (buf && m_pos >= 0 && m_pos < m_hb.GetSize()) return (char *)buf+m_pos;
     return NULL;
   }
-
+  
   void* Rewind()
   {
     m_pos = 0;
@@ -101,9 +100,9 @@ public:
     m_hb.Resize(0,false);
   }
 
-  void Advance(int bytecnt)
-  {
-    m_pos+=bytecnt;
+  void Advance(int bytecnt) 
+  { 
+    m_pos+=bytecnt; 
     if (m_pos<0)m_pos=0;
     else if (m_pos > m_hb.GetSize()) m_pos=m_hb.GetSize();
   }
@@ -129,18 +128,18 @@ public:
 
 
 
-  // endian-management stuff
+  // endian-management stuff 
 
   static void WDL_Queue__bswap_buffer(void *buf, int len)
   {
-#ifdef __ppc__
+  #ifdef __ppc__
     char *p=(char *)buf;
     char *ep=p+len;
     while ((len-=2) >= 0)
     {
       char tmp=*p; *p++=*--ep; *ep=tmp;
     }
-#endif
+  #endif
   }
 
   // older API of static functions (that endedu p warning a bit anyway)
@@ -155,7 +154,7 @@ public:
   }
   void AddDataToLE(void *data, int datasize, int unitsize)
   {
-#ifdef __ppc__
+    #ifdef __ppc__
     char *dout = (char *)Add(data,datasize);
     while (datasize >= unitsize)
     {
@@ -163,19 +162,18 @@ public:
       dout+=unitsize;
       datasize-=unitsize;
     }
-#else
+    #else
     Add(data,datasize);
-#endif
+    #endif
   }
 
 
-  // NOTE: these thrash the contents of the queue if on LE systems. So for example if you are going to rewind it later or use it elsewhere,
+  // NOTE: these thrash the contents of the queue if on LE systems. So for example if you are going to rewind it later or use it elsewhere, 
   // then get ready to get unhappy.
   template<class T> T *GetTFromLE(T* val=0)
   {
     T *p = GetT(val);
-    if (p)
-    {
+    if (p) {
       WDL_Queue__bswap_buffer(p,sizeof(T));
       if (val) *val = *p;
     }
@@ -185,15 +183,15 @@ public:
   void *GetDataFromLE(int datasize, int unitsize)
   {
     void *data=Get(datasize);
-#ifdef __ppc__
+    #ifdef __ppc__
     char *dout=(char *)data;
     if (dout) while (datasize >= unitsize)
-      {
-        WDL_Queue__bswap_buffer(dout,unitsize);
-        dout+=unitsize;
-        datasize-=unitsize;
-      }
-#endif
+    {
+      WDL_Queue__bswap_buffer(dout,unitsize);
+      dout+=unitsize;
+      datasize-=unitsize;
+    }
+    #endif
     return data;
   }
 
@@ -201,7 +199,6 @@ public:
 private:
   WDL_HeapBuf m_hb;
   int m_pos;
-protected:
   int __pad; // keep 8 byte aligned
 };
 
@@ -241,9 +238,9 @@ public:
     m_hb.Resize(0,false);
   }
 
-  void Advance(int cnt)
-  {
-    m_pos+=cnt*sizeof(T);
+  void Advance(int cnt) 
+  { 
+    m_pos+=cnt*sizeof(T); 
     if (m_pos<0)m_pos=0;
     else if (m_pos > m_hb.GetSize()) m_pos=m_hb.GetSize();
   }

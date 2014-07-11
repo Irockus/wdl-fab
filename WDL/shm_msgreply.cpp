@@ -30,10 +30,10 @@ SHM_MsgReplyConnection::SHM_MsgReplyConnection(int bufsize, int maxqueuesize, bo
     WDL_INT64 thisptr = (WDL_INT64) (INT_PTR) this;
     static int cnt=0xdeadf00d;
     sprintf(m_uniq,"%08x%08x%08x%08x",
-            (int)(pid&0xffffffff),
-            (int)(pid>>32),
-            (int)(thisptr&0xffffffff) ^ GetTickCount(),
-            (int)(thisptr>>32)^(cnt++));
+      (int)(pid&0xffffffff),
+      (int)(pid>>32),
+      (int)(thisptr&0xffffffff) ^ GetTickCount(),
+      (int)(thisptr>>32)^(cnt++));
   }
 
   m_shm = new WDL_SHM_Connection(dir,m_uniq,bufsize,timeout_sec,extra_flags);
@@ -65,10 +65,10 @@ void SHM_MsgReplyConnection::Reply(int msgID, const void *msg, int msglen)
 }
 
 
-int SHM_MsgReplyConnection::Send(int type, const void *msg, int msglen,
-                                 void *replybuf, int maxretbuflen, const int *forceMsgID,
-                                 const void *secondchunk, int secondchunklen,
-                                 WDL_HeapBuf *hbreplyout)
+int SHM_MsgReplyConnection::Send(int type, const void *msg, int msglen,  
+                           void *replybuf, int maxretbuflen, const int *forceMsgID,
+                           const void *secondchunk, int secondchunklen,
+                           WDL_HeapBuf *hbreplyout)
 {
   if (!m_shm||m_has_had_error) return -1;
 
@@ -185,33 +185,33 @@ void SHM_MsgReplyConnection::ReturnSpares(WaitingMessage *msglist)
     WaitingMessage *msgtail = msglist;
     while (msgtail && msgtail->_next) msgtail=msgtail->_next;
 
-    m_shmmutex.Enter();
+    m_shmmutex.Enter(); 
     msgtail->_next = m_spares;
     m_spares=msglist;
-    m_shmmutex.Leave();
+    m_shmmutex.Leave(); 
   }
 }
 
 bool SHM_MsgReplyConnection::Run(bool runFull)
-{
+{ 
   if (m_has_had_error) return true;
 
-  if (runFull) return RunInternal();
+  if (runFull) return RunInternal(); 
 
   m_shmmutex.Enter();
   int s=m_shm->Run();
   if (m_shm->send_queue.Available() > m_maxqueuesize) s=-1;
   m_shmmutex.Leave();
-
+  
   if (s<0) m_has_had_error=true;
-  else if (m_shm && m_shm->WantSendKeepAlive())
+  else if (m_shm && m_shm->WantSendKeepAlive()) 
   {
     int zer=0;
     Send(0,NULL,0,NULL,0,&zer);
   }
 
   return s<0;
-}
+} 
 
 bool SHM_MsgReplyConnection::RunInternal(int checkForReplyID, WaitingMessage **replyPtr)
 {
@@ -220,11 +220,11 @@ bool SHM_MsgReplyConnection::RunInternal(int checkForReplyID, WaitingMessage **r
   if (replyPtr) *replyPtr=0;
 
   int s=0;
-
+  
   do
   {
     m_shmmutex.Enter();
-
+    
     // autocompact on first time through
     if (!s) m_shm->recv_queue.Compact();
 
@@ -244,7 +244,7 @@ bool SHM_MsgReplyConnection::RunInternal(int checkForReplyID, WaitingMessage **r
 
       int type = *(int *)((char *)m_shm->recv_queue.Get());
       WDL_Queue::WDL_Queue__bswap_buffer(&type,4); // convert to LE if needed
-
+      
       WaitingMessage *msg = m_spares;
       if (msg) m_spares = m_spares->_next;
       else msg = new WaitingMessage;
@@ -273,7 +273,7 @@ bool SHM_MsgReplyConnection::RunInternal(int checkForReplyID, WaitingMessage **r
 
       if (type==0)
       {
-        if (checkForReplyID && replyPtr && !*replyPtr &&
+        if (checkForReplyID && replyPtr && !*replyPtr && 
             checkForReplyID == msg->m_msgid)
         {
           *replyPtr = msg;
@@ -286,16 +286,16 @@ bool SHM_MsgReplyConnection::RunInternal(int checkForReplyID, WaitingMessage **r
           m_waiting_replies = msg;
         }
       }
-      else
+      else 
       {
-        m_shmmutex.Leave();
+        m_shmmutex.Leave(); 
 
         WaitingMessage *msgtail=NULL;
 
-        if (OnRecv)
+        if (OnRecv) 
         {
           msg->_next=0;
-          msgtail = msg = OnRecv(this,msg);
+          msgtail = msg = OnRecv(this,msg);          
           while (msgtail && msgtail->_next) msgtail=msgtail->_next;
         }
         else if (msg->m_msgid) Reply(msg->m_msgid,"",0); // send an empty reply
@@ -321,7 +321,7 @@ bool SHM_MsgReplyConnection::RunInternal(int checkForReplyID, WaitingMessage **r
         {
           if (lp) lp->_next = m->_next;
           else m_waiting_replies=m->_next;
-
+          
           *replyPtr = m;
           s=0; // make sure we return ASAP
           break;
@@ -333,8 +333,7 @@ bool SHM_MsgReplyConnection::RunInternal(int checkForReplyID, WaitingMessage **r
 
     m_shmmutex.Leave();
 
-  }
-  while (s>0);
+  } while (s>0);
 
   if (s<0) m_has_had_error=true;
   else if (m_shm && m_shm->WantSendKeepAlive())
@@ -342,6 +341,6 @@ bool SHM_MsgReplyConnection::RunInternal(int checkForReplyID, WaitingMessage **r
     int zer=0;
     Send(0,NULL,0,NULL,0,&zer);
   }
-  return s<0;
+  return s<0; 
 }
 

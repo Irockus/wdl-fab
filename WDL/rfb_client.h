@@ -1,10 +1,6 @@
 #ifndef _WDL_RFBCLIENT_H_
 #define _WDL_RFBCLIENT_H_
 
-#ifdef __APPLE__
-#include <stdlib.h>
-#endif
-
 #include "wdlstring.h"
 #include "queue.h"
 #include "jnetlib/jnetlib.h"

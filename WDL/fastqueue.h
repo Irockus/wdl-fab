@@ -17,13 +17,13 @@
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
+  
 
-
-  This file defines and implements a class which can queue arbitrary amounts of data.
-  It is optimized for lots of reads and writes with a significant queue (i.e. it doesnt
+  This file defines and implements a class which can queue arbitrary amounts of data. 
+  It is optimized for lots of reads and writes with a significant queue (i.e. it doesnt 
   have to shuffle much memory around).
 
-  The downside is that you can't just ask for a pointer to specific bytes, it may have to peice
+  The downside is that you can't just ask for a pointer to specific bytes, it may have to peice 
   it together into a buffer of your choosing (or you can step through the buffers using GetPtr()).
 
 
@@ -56,7 +56,7 @@ public:
     m_queue.Empty(true,free);
     m_empties.Empty(true,free);
   }
-
+  
   void Add(const void *buf, int len) // buf can be NULL to add zeroes
   {
     if (len < 1) return;
@@ -103,7 +103,7 @@ public:
       {
         free(m_queue.Get(--x));
       }
-      m_queue.Delete(x);
+      m_queue.Delete(x);      
     }
     m_offs=0;
     m_avail=0;

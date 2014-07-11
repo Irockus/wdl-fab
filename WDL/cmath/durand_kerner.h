@@ -34,9 +34,9 @@
 
 /* settings */
 #ifdef _DURAND_KERNER_USE_INLINE_
-#define _DURAND_KERNER_INLINE _CMATH_INLINE
+  #define _DURAND_KERNER_INLINE _CMATH_INLINE
 #else
-#define _DURAND_KERNER_INLINE
+  #define _DURAND_KERNER_INLINE
 #endif
 
 #define DK_EPSILON  1E-16

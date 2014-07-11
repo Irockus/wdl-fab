@@ -12,7 +12,7 @@
 
 class ChannelPinMapper
 {
-public:
+public: 
 
   ChannelPinMapper() : m_nCh(0), m_nPins(0) {}
   ~ChannelPinMapper() {}
@@ -50,7 +50,7 @@ private:
 // converts interleaved buffer to interleaved buffer, using min(len_in,len_out) and zeroing any extra samples
 // isInput means it reads from track channels and writes to plugin pins
 // wantZeroExcessOutput=false means that untouched channels will be preserved in buf_out
-void PinMapperConvertBuffers(const double *buf, int len_in, int nch_in,
+void PinMapperConvertBuffers(const double *buf, int len_in, int nch_in, 
                              double *buf_out, int len_out, int nch_out,
                              const ChannelPinMapper *pinmap, bool isInput, bool wantZeroExcessOutput);
 
@@ -62,7 +62,7 @@ public:
   AudioBufferContainer();
   ~AudioBufferContainer() {}
 
-  enum
+  enum 
   {
     FMT_32FP=4,
     FMT_64FP=8
@@ -73,24 +73,24 @@ public:
   int GetNChannels() const { return m_nCh; }
   int GetNFrames() const { return m_nFrames; }
   int GetFormat() const { return m_fmt; }
-
-  void Resize(int nCh, int nFrames, bool preserveData);
+    
+  void Resize(int nCh, int nFrames, bool preserveData);  
   // call Reformat(GetFormat(), false) to discard current data (for efficient repopulating)
-  void Reformat(int fmt, bool preserveData);
-
+  void Reformat(int fmt, bool preserveData); 
+    
   // src=NULL to memset(0)
   void* SetAllChannels(int fmt, const void* src, int nCh, int nFrames);
-
+  
   // src=NULL to memset(0)
   void* SetChannel(int fmt, const void* src, int chIdx, int nFrames);
-
+  
   void* MixChannel(int fmt, const void* src, int chIdx, int nFrames, bool addToDest, double wt_start, double wt_end);
-
+  
   void* GetAllChannels(int fmt, bool preserveData);
   void* GetChannel(int fmt, int chIdx, bool preserveData);
-
+  
   void CopyFrom(const AudioBufferContainer* rhs);
-
+  
 private:
 
   void ReLeave(bool interleave, bool preserveData);

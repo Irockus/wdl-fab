@@ -112,7 +112,7 @@ static const RtAudioFormat RTAUDIO_FLOAT64 = 0x20; // Normalized between plus/mi
     open the input and/or output stream device(s) for exclusive use.
     Note that this is not possible with all supported audio APIs.
 
-    If the RTAUDIO_SCHEDULE_REALTIME flag is set, RtAudio will attempt
+    If the RTAUDIO_SCHEDULE_REALTIME flag is set, RtAudio will attempt 
     to select realtime scheduling (round-robin) for the callback thread.
 
     If the RTAUDIO_ALSA_USE_DEFAULT flag is set, RtAudio will attempt to
@@ -204,11 +204,10 @@ class RtApi;
 
 class RtAudio
 {
-public:
+ public:
 
   //! Audio API specifier arguments.
-  enum Api
-  {
+  enum Api {
     UNSPECIFIED,    /*!< Search for a working compiled API. */
     LINUX_ALSA,     /*!< The Advanced Linux Sound Architecture API. */
     LINUX_PULSE,    /*!< The Linux PulseAudio API. */
@@ -221,8 +220,7 @@ public:
   };
 
   //! The public device information structure for returning queried values.
-  struct DeviceInfo
-  {
+  struct DeviceInfo {
     bool probed;                  /*!< true if the device capabilities were successfully probed. */
     std::string name;             /*!< Character string device identifier. */
     unsigned int outputChannels;  /*!< Maximum output channels supported by device. */
@@ -240,8 +238,7 @@ public:
   };
 
   //! The structure for specifying input or ouput stream parameters.
-  struct StreamParameters
-  {
+  struct StreamParameters {
     unsigned int deviceId;     /*!< Device index (0 to getDeviceCount() - 1). */
     unsigned int nChannels;    /*!< Number of channels. */
     unsigned int firstChannel; /*!< First channel index on device (default = 0). */
@@ -286,7 +283,7 @@ public:
     open the input and/or output stream device(s) for exclusive use.
     Note that this is not possible with all supported audio APIs.
 
-    If the RTAUDIO_SCHEDULE_REALTIME flag is set, RtAudio will attempt
+    If the RTAUDIO_SCHEDULE_REALTIME flag is set, RtAudio will attempt 
     to select realtime scheduling (round-robin) for the callback thread.
     The \c priority parameter will only be used if the RTAUDIO_SCHEDULE_REALTIME
     flag is set. It defines the thread's realtime priority.
@@ -308,8 +305,7 @@ public:
     RtApiJack.  However, if you wish to create multiple instances of
     RtAudio with Jack, each instance must have a unique client name.
   */
-  struct StreamOptions
-  {
+  struct StreamOptions {
     RtAudioStreamFlags flags;      /*!< A bit-mask of stream flags (RTAUDIO_NONINTERLEAVED, RTAUDIO_MINIMIZE_LATENCY, RTAUDIO_HOG_DEVICE, RTAUDIO_ALSA_USE_DEFAULT). */
     unsigned int numberOfBuffers;  /*!< Number of stream buffers. */
     std::string streamName;        /*!< A stream name (currently used only in Jack). */
@@ -317,7 +313,7 @@ public:
 
     // Default constructor.
     StreamOptions()
-      : flags(0), numberOfBuffers(0), priority(0) {}
+    : flags(0), numberOfBuffers(0), priority(0) {}
   };
 
   //! A static function to determine the available compiled audio APIs.
@@ -353,7 +349,7 @@ public:
   /*!
     This function performs a system query of available devices each time it
     is called, thus supporting devices connected \e after instantiation. If
-    a system error occurs during processing, a warning will be issued.
+    a system error occurs during processing, a warning will be issued. 
   */
   unsigned int getDeviceCount( void ) throw();
 
@@ -420,7 +416,7 @@ public:
            from within the callback function.
     \param options An optional pointer to a structure containing various
            global stream options, including a list of OR'ed RtAudioStreamFlags
-           and a suggested number of stream buffers that can be used to
+           and a suggested number of stream buffers that can be used to 
            control stream latency.  More buffers typically result in more
            robust performance, though at a cost of greater latency.  If a
            value of zero is specified, a system-specific median value is
@@ -491,18 +487,18 @@ public:
   */
   long getStreamLatency( void );
 
-//! Returns actual sample rate in use by the stream.
-  /*!
-    On some systems, the sample rate used may be slightly different
-    than that specified in the stream parameters.  If a stream is not
-    open, an RtError (type = INVALID_USE) will be thrown.
-  */
+ //! Returns actual sample rate in use by the stream.
+ /*!
+   On some systems, the sample rate used may be slightly different
+   than that specified in the stream parameters.  If a stream is not
+   open, an RtError (type = INVALID_USE) will be thrown.
+ */
   unsigned int getStreamSampleRate( void );
 
   //! Specify whether warning messages should be printed to stderr.
   void showWarnings( bool value = true ) throw();
 
-protected:
+ protected:
 
   void openRtApi( RtAudio::Api api );
   RtApi *rtapi_;
@@ -510,32 +506,31 @@ protected:
 
 // Operating system dependent thread functionality.
 #if defined(__WINDOWS_DS__) || defined(__WINDOWS_ASIO__)
-#include <windows.h>
-#include <process.h>
+  #include <windows.h>
+  #include <process.h>
 
-typedef unsigned long ThreadHandle;
-typedef CRITICAL_SECTION StreamMutex;
+  typedef unsigned long ThreadHandle;
+  typedef CRITICAL_SECTION StreamMutex;
 
 #elif defined(__LINUX_ALSA__) || defined(__LINUX_PULSE__) || defined(__UNIX_JACK__) || defined(__LINUX_OSS__) || defined(__MACOSX_CORE__)
-// Using pthread library for various flavors of unix.
-#include <pthread.h>
+  // Using pthread library for various flavors of unix.
+  #include <pthread.h>
 
-typedef pthread_t ThreadHandle;
-typedef pthread_mutex_t StreamMutex;
+  typedef pthread_t ThreadHandle;
+  typedef pthread_mutex_t StreamMutex;
 
 #else // Setup for "dummy" behavior
 
-#define __RTAUDIO_DUMMY__
-typedef int ThreadHandle;
-typedef int StreamMutex;
+  #define __RTAUDIO_DUMMY__
+  typedef int ThreadHandle;
+  typedef int StreamMutex;
 
 #endif
 
 // This global structure type is used to pass callback information
 // between the private RtAudio stream structure and global callback
 // handling functions.
-struct CallbackInfo
-{
+struct CallbackInfo {
   void *object;    // Used as a "this" pointer.
   ThreadHandle thread;
   void *callback;
@@ -563,7 +558,7 @@ struct CallbackInfo
 // **************************************************************** //
 
 #if defined( HAVE_GETTIMEOFDAY )
-#include <sys/time.h>
+  #include <sys/time.h>
 #endif
 
 #include <sstream>
@@ -603,16 +598,14 @@ protected:
 
   enum { FAILURE, SUCCESS };
 
-  enum StreamState
-  {
+  enum StreamState {
     STREAM_STOPPED,
     STREAM_STOPPING,
     STREAM_RUNNING,
     STREAM_CLOSED = -50
   };
 
-  enum StreamMode
-  {
+  enum StreamMode {
     OUTPUT,
     INPUT,
     DUPLEX,
@@ -620,8 +613,7 @@ protected:
   };
 
   // A protected structure used for buffer conversion.
-  struct ConvertInfo
-  {
+  struct ConvertInfo {
     int channels;
     int inJump, outJump;
     RtAudioFormat inFormat, outFormat;
@@ -630,8 +622,7 @@ protected:
   };
 
   // A protected structure for audio streams.
-  struct RtApiStream
-  {
+  struct RtApiStream {
     unsigned int device[2];    // Playback and record, respectively.
     void *apiHandle;           // void pointer for API specific stream handle information
     StreamMode mode;           // OUTPUT, INPUT, or DUPLEX.
@@ -681,7 +672,7 @@ protected:
     "warning" message is reported and FAILURE is returned. A
     successful probe is indicated by a return value of SUCCESS.
   */
-  virtual bool probeDeviceOpen( unsigned int device, StreamMode mode, unsigned int channels,
+  virtual bool probeDeviceOpen( unsigned int device, StreamMode mode, unsigned int channels, 
                                 unsigned int firstChannel, unsigned int sampleRate,
                                 RtAudioFormat format, unsigned int *bufferSize,
                                 RtAudio::StreamOptions *options );
@@ -770,9 +761,9 @@ public:
                       const AudioBufferList *inBufferList,
                       const AudioBufferList *outBufferList );
 
-private:
+  private:
 
-  bool probeDeviceOpen( unsigned int device, StreamMode mode, unsigned int channels,
+  bool probeDeviceOpen( unsigned int device, StreamMode mode, unsigned int channels, 
                         unsigned int firstChannel, unsigned int sampleRate,
                         RtAudioFormat format, unsigned int *bufferSize,
                         RtAudio::StreamOptions *options );
@@ -804,9 +795,9 @@ public:
   // will most likely produce highly undesireable results!
   bool callbackEvent( unsigned long nframes );
 
-private:
+  private:
 
-  bool probeDeviceOpen( unsigned int device, StreamMode mode, unsigned int channels,
+  bool probeDeviceOpen( unsigned int device, StreamMode mode, unsigned int channels, 
                         unsigned int firstChannel, unsigned int sampleRate,
                         RtAudioFormat format, unsigned int *bufferSize,
                         RtAudio::StreamOptions *options );
@@ -837,12 +828,12 @@ public:
   // will most likely produce highly undesireable results!
   bool callbackEvent( long bufferIndex );
 
-private:
+  private:
 
   std::vector<RtAudio::DeviceInfo> devices_;
   void saveDeviceInfo( void );
   bool coInitialized_;
-  bool probeDeviceOpen( unsigned int device, StreamMode mode, unsigned int channels,
+  bool probeDeviceOpen( unsigned int device, StreamMode mode, unsigned int channels, 
                         unsigned int firstChannel, unsigned int sampleRate,
                         RtAudioFormat format, unsigned int *bufferSize,
                         RtAudio::StreamOptions *options );
@@ -875,12 +866,12 @@ public:
   // will most likely produce highly undesireable results!
   void callbackEvent( void );
 
-private:
+  private:
 
   bool coInitialized_;
   bool buffersRolling;
   long duplexPrerollBytes;
-  bool probeDeviceOpen( unsigned int device, StreamMode mode, unsigned int channels,
+  bool probeDeviceOpen( unsigned int device, StreamMode mode, unsigned int channels, 
                         unsigned int firstChannel, unsigned int sampleRate,
                         RtAudioFormat format, unsigned int *bufferSize,
                         RtAudio::StreamOptions *options );
@@ -910,11 +901,11 @@ public:
   // will most likely produce highly undesireable results!
   void callbackEvent( void );
 
-private:
+  private:
 
   std::vector<RtAudio::DeviceInfo> devices_;
   void saveDeviceInfo( void );
-  bool probeDeviceOpen( unsigned int device, StreamMode mode, unsigned int channels,
+  bool probeDeviceOpen( unsigned int device, StreamMode mode, unsigned int channels, 
                         unsigned int firstChannel, unsigned int sampleRate,
                         RtAudioFormat format, unsigned int *bufferSize,
                         RtAudio::StreamOptions *options );
@@ -942,7 +933,7 @@ public:
   // will most likely produce highly undesireable results!
   void callbackEvent( void );
 
-private:
+  private:
 
   std::vector<RtAudio::DeviceInfo> devices_;
   void saveDeviceInfo( void );
@@ -976,9 +967,9 @@ public:
   // will most likely produce highly undesireable results!
   void callbackEvent( void );
 
-private:
+  private:
 
-  bool probeDeviceOpen( unsigned int device, StreamMode mode, unsigned int channels,
+  bool probeDeviceOpen( unsigned int device, StreamMode mode, unsigned int channels, 
                         unsigned int firstChannel, unsigned int sampleRate,
                         RtAudioFormat format, unsigned int *bufferSize,
                         RtAudio::StreamOptions *options );
@@ -1001,9 +992,9 @@ public:
   void stopStream( void ) {};
   void abortStream( void ) {};
 
-private:
+  private:
 
-  bool probeDeviceOpen( unsigned int device, StreamMode mode, unsigned int channels,
+  bool probeDeviceOpen( unsigned int device, StreamMode mode, unsigned int channels, 
                         unsigned int firstChannel, unsigned int sampleRate,
                         RtAudioFormat format, unsigned int *bufferSize,
                         RtAudio::StreamOptions *options ) { return false; };

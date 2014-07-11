@@ -156,8 +156,7 @@ void SWELL_DoDialogColorUpdates(HWND hwnd, DLGPROC d, bool isUpdate)
 //  NSColor *editFg=NULL, *editBg=NULL; // had_flags&2, WM_CTLCOLOREDIT
   NSColor *buttonFg=NULL; // had_flags&4, WM_CTLCOLORBTN
       
-  int x;
-  for (x = 0; x < [children count]; x ++)
+  for (size_t x = 0; x < [children count]; x ++)
   {
     NSView *ch = [children objectAtIndex:x];
     if (ch)
@@ -506,7 +505,7 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
     NSArray *ar;
     if (v && [v isKindOfClass:[NSView class]] && (ar=[v subviews]) && [ar count]>0) 
     {
-      int x; 
+      size_t x; 
       for (x = 0; x < [ar count]; x ++) 
       {
         NSView *sv=[ar objectAtIndex:x]; 
@@ -766,8 +765,7 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
 -(void) dealloc
 {
 
-  int x;
-  for (x=0;x<sizeof(m_access_cacheptrs)/sizeof(m_access_cacheptrs[0]);x ++)
+  for (size_t x=0;x<sizeof(m_access_cacheptrs)/sizeof(m_access_cacheptrs[0]);x ++)
   {
     if (m_access_cacheptrs[x]) [m_access_cacheptrs[x] release];
     m_access_cacheptrs[x]=0;
@@ -787,8 +785,17 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
 -(void)setTag:(NSInteger)t { m_tag=t; }
 -(LONG_PTR)getSwellUserData { return m_userdata; }
 -(void)setSwellUserData:(LONG_PTR)val {   m_userdata=val; }
--(LPARAM)getSwellExtraData:(int)idx { idx/=sizeof(INT_PTR); if (idx>=0&&idx<sizeof(m_extradata)/sizeof(m_extradata[0])) return m_extradata[idx]; return 0; }
--(void)setSwellExtraData:(int)idx value:(LPARAM)val { idx/=sizeof(INT_PTR); if (idx>=0&&idx<sizeof(m_extradata)/sizeof(m_extradata[0])) m_extradata[idx] = val; }
+-(LPARAM)getSwellExtraData:(int)idx { 
+	idx/=sizeof(INT_PTR); 
+	if (idx>=0 && idx < (int)(sizeof(m_extradata)/sizeof(m_extradata[0])))
+		return m_extradata[idx];
+	return 0; 
+}
+-(void)setSwellExtraData:(int)idx value:(LPARAM)val {
+	idx/=sizeof(INT_PTR); 
+	if (idx>=0 && idx < (int)(sizeof(m_extradata)/sizeof(m_extradata[0]))) 
+		m_extradata[idx] = val; 
+}
 -(void)setSwellWindowProc:(WNDPROC)val { m_wndproc=val; }
 -(WNDPROC)getSwellWindowProc { return m_wndproc; }
 -(void)setSwellDialogProc:(DLGPROC)val { m_dlgproc=val; }
@@ -966,8 +973,7 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
     NSArray *ar=[self subviews];
     if (ar && [ar count]>0)
     {
-      int x;
-      for (x = 0; x < [ar count] && !hFoc; x ++)
+      for (size_t x = 0; x < [ar count] && !hFoc; x ++)
       {
         NSView *v=[ar objectAtIndex:x];
         if (v && [v isKindOfClass:[NSScrollView class]]) v=[(NSScrollView *)v documentView];
@@ -1484,8 +1490,7 @@ static void MakeGestureInfo(NSEvent* evt, GESTUREINFO* gi, HWND hwnd, int type)
       if ([files count])
       {
         NSMutableArray* paths=[NSMutableArray arrayWithCapacity:[files count]];
-        int i;
-        for (i=0; i < [files count]; ++i)
+        for (size_t i=0; i < [files count]; ++i)
         {
           NSString* fn=[files objectAtIndex:i];
           if (fn) 
@@ -1500,8 +1505,7 @@ static void MakeGestureInfo(NSEvent* evt, GESTUREINFO* gi, HWND hwnd, int type)
     }      
   }
   if (!files) return 0;
-  
-  int x;
+  size_t x;
   for (x = 0; x < [files count]; x ++)
   {
     NSString *sv=[files objectAtIndex:x]; 
@@ -2534,7 +2538,7 @@ void SWELL_CarbonWndHost_SetWantAllKeys(void* carbonhost, bool want)
       if ([NSApp keyWindow] == m_cwnd) // restore focus to highest window that is not us!
       {
         NSArray *ar = [NSApp orderedWindows];
-        int x;
+        size_t x;
         for (x = 0; x < (ar ? [ar count] : 0); x ++)
         {
           NSWindow *w=[ar objectAtIndex:x];

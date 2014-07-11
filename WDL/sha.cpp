@@ -17,7 +17,7 @@
     2. Altered source versions must be plainly marked as such, and must not be
        misrepresented as being the original software.
     3. This notice may not be removed or altered from any source distribution.
-
+      
 */
 
 /*
@@ -56,11 +56,11 @@ void WDL_SHA1::reset()
 void WDL_SHA1::add(const void *data, int datalen)
 {
   int i;
-  for (i = 0; i < datalen; i++)
+  for (i = 0; i < datalen; i++) 
   {
     W[lenW / 4] <<= 8;
     W[lenW / 4] |= (unsigned int)((const unsigned char *)data)[i];
-    if (!(++lenW & 63))
+    if (!(++lenW & 63)) 
     {
       int t;
 
@@ -73,22 +73,22 @@ void WDL_SHA1::add(const void *data, int datalen)
 
       for (t = 16; t < 80; t++) W[t] = SHA_ROTL(W[t-3] ^ W[t-8] ^ W[t-14] ^ W[t-16], 1);
 
-      for (t = 0; t < 20; t++)
+      for (t = 0; t < 20; t++) 
       {
         unsigned int TEMP = SHA_ROTL(A,5) + E + W[t] + 0x5a827999 + (((C^D)&B)^D);
         SHUFFLE();
       }
-      for (; t < 40; t++)
+      for (; t < 40; t++) 
       {
         unsigned int TEMP = SHA_ROTL(A,5) + E + W[t] + 0x6ed9eba1 + (B^C^D);
         SHUFFLE();
       }
-      for (; t < 60; t++)
+      for (; t < 60; t++) 
       {
         unsigned int TEMP = SHA_ROTL(A,5) + E + W[t] + 0x8f1bbcdc + ((B&C)|(D&(B|C)));
         SHUFFLE();
       }
-      for (; t < 80; t++)
+      for (; t < 80; t++) 
       {
         unsigned int TEMP = SHA_ROTL(A,5) + E + W[t] + 0xca62c1d6 + (B^C^D);
         SHUFFLE();
@@ -124,7 +124,7 @@ void WDL_SHA1::result(void *out)
   add(&pad0x80, 1);
   while (lenW != 56) add(&pad0x00, 1);
   add(padlen, 8);
-  for (i = 0; i < 20; i++)
+  for (i = 0; i < 20; i++) 
   {
     ((unsigned char *)out)[i] = (unsigned char)(H[i / 4] >> 24);
     H[i / 4] <<= 8;

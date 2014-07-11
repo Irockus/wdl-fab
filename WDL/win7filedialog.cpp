@@ -61,10 +61,10 @@ void Win7FileDialog::setFilterList(const char *list)
 
 void Win7FileDialog::addOptions(DWORD o)
 {
-  DWORD fileOpenDialogOptions;
-  m_fod->GetOptions(&fileOpenDialogOptions);
-  fileOpenDialogOptions |= o;
-  m_fod->SetOptions(fileOpenDialogOptions);
+  DWORD fileOpenDialogOptions; 
+  m_fod->GetOptions(&fileOpenDialogOptions); 
+  fileOpenDialogOptions |= o; 
+  m_fod->SetOptions(fileOpenDialogOptions); 
 }
 
 void Win7FileDialog::setDefaultExtension(const char *ext)
@@ -194,7 +194,7 @@ void Win7FileDialog::getResult(char *fn, int maxlen)
 #if defined(WDL_NO_SUPPORT_UTF8)
   wcstombs(fn, res, maxlen);
 #else
-  int len = WideCharToMultiByte(CP_UTF8,0,res,-1,fn,maxlen-1,NULL,NULL);
+  int len = WideCharToMultiByte(CP_UTF8,0,res,-1,fn,maxlen-1,NULL,NULL); 
   fn[len] = 0;
 #endif
 
@@ -221,7 +221,7 @@ int Win7FileDialog::getState(DWORD id)
 static WNDPROC m_oldproc, m_oldproc2;
 static LRESULT CALLBACK newWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-  if(msg == WM_SIZE)
+  if(msg == WM_SIZE) 
   {
     //disable the win7 dialog to resize our custom dialog
     static int reent = 0;
@@ -270,48 +270,48 @@ public:
     return 0;
   }
 
-  virtual HRESULT STDMETHODCALLTYPE OnFileOk(
+  virtual HRESULT STDMETHODCALLTYPE OnFileOk( 
     /* [in] */ __RPC__in_opt IFileDialog *pfd)
   {
     return E_NOTIMPL;
   }
-
-  virtual HRESULT STDMETHODCALLTYPE OnFolderChanging(
+    
+  virtual HRESULT STDMETHODCALLTYPE OnFolderChanging( 
     /* [in] */ __RPC__in_opt IFileDialog *pfd,
     /* [in] */ __RPC__in_opt IShellItem *psiFolder)
   {
     return E_NOTIMPL;
   }
 
-  virtual HRESULT STDMETHODCALLTYPE OnFolderChange(
+  virtual HRESULT STDMETHODCALLTYPE OnFolderChange( 
     /* [in] */ __RPC__in_opt IFileDialog *pfd)
   {
     doHook2(pfd); //post a msg for the actual hook
     return E_NOTIMPL;
   }
-
-  virtual HRESULT STDMETHODCALLTYPE OnSelectionChange(
+  
+  virtual HRESULT STDMETHODCALLTYPE OnSelectionChange( 
     /* [in] */ __RPC__in_opt IFileDialog *pfd)
   {
     doHook2(pfd); //post a msg for the actual hook
     return E_NOTIMPL;
   }
-
-  virtual HRESULT STDMETHODCALLTYPE OnShareViolation(
+  
+  virtual HRESULT STDMETHODCALLTYPE OnShareViolation( 
     /* [in] */ __RPC__in_opt IFileDialog *pfd,
     /* [in] */ __RPC__in_opt IShellItem *psi,
     /* [out] */ __RPC__out FDE_SHAREVIOLATION_RESPONSE *pResponse)
   {
     return E_NOTIMPL;
   }
-
-  virtual HRESULT STDMETHODCALLTYPE OnTypeChange(
+  
+  virtual HRESULT STDMETHODCALLTYPE OnTypeChange( 
     /* [in] */ __RPC__in_opt IFileDialog *pfd)
   {
     return E_NOTIMPL;
   }
-
-  virtual HRESULT STDMETHODCALLTYPE OnOverwrite(
+  
+  virtual HRESULT STDMETHODCALLTYPE OnOverwrite( 
     /* [in] */ __RPC__in_opt IFileDialog *pfd,
     /* [in] */ __RPC__in_opt IShellItem *psi,
     /* [out] */ __RPC__out FDE_OVERWRITE_RESPONSE *pResponse)
@@ -321,7 +321,7 @@ public:
 
   static BOOL CALLBACK enumProc(HWND hwnd, LPARAM lParam)
   {
-    char tmp[1024]= {0,};
+    char tmp[1024]={0,};
     GetClassName(hwnd, tmp, 1023);
     if(!stricmp(tmp,"FloatNotifySink"))
     {
@@ -347,18 +347,18 @@ public:
         {
           m_findwnd = NULL;
           EnumChildWindows(filehwnd, enumProc, (LPARAM)this);
-          if(m_findwnd)
+          if(m_findwnd) 
           {
             //hide other button
             HWND h3 = m_findwnd;
             HWND h5 = FindWindowEx(h3, NULL, NULL, NULL);
             ShowWindow(h5, SW_HIDE);
-
+            
             //resize the sink
             RECT r,r2;
             GetWindowRect(h3, &r2);
             SetWindowPos(h3, NULL, r2.left, r2.top, 1000, r2.bottom-r2.top, SWP_NOMOVE|SWP_NOACTIVATE|SWP_NOZORDER);
-
+            
             //put our own dialog instead
             HWND h4 = CreateDialog(m_inst, m_dlgid, h3, (DLGPROC)m_proc);
 
@@ -369,10 +369,10 @@ public:
 
             m_crwnd = h4;
             ShowWindow(h4, SW_SHOW);
-
+            
             GetClientRect(h3, &r);
             SetWindowPos(h4, NULL, 0, 0, r.right, r.bottom, 0);
-
+            
             //disable the win7 dialog to resize our custom dialog sink
             m_oldproc = (WNDPROC)SetWindowLongPtr(h3, GWLP_WNDPROC, (LPARAM)&newWndProc);
             m_didhook = 1;
@@ -425,7 +425,7 @@ int Win7FileDialog::show(HWND parent)
   myEvent *ev = new myEvent(m_inst, (char*)m_dlgid, m_proc, m_statictxt.Get());
   m_fod->Advise(ev, &c);
 
-  int res = SUCCEEDED(m_fod->Show(parent));
+  int res = SUCCEEDED(m_fod->Show(parent)); 
 
   m_fod->Unadvise(c);
   delete ev;
@@ -484,8 +484,8 @@ void Win7FileDialog::setTemplate(HINSTANCE inst, const char *dlgid, LPOFNHOOKPRO
   m_statictxt.Set(txt.Get());
   addText(2, "");
 
-  m_inst = inst;
-  m_dlgid = dlgid;
+  m_inst = inst; 
+  m_dlgid = dlgid; 
   m_proc = proc;
 }
 

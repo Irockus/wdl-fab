@@ -21,7 +21,7 @@ public:
     if (!bps||type!=CADPCM2_TYPE) bps=4;
     // remove overhead of headers
     INT64 nblocks=((nbytes+blockalign-1)/blockalign);
-
+       
     // remove preambles
     if (type==IMAADPCM_TYPE||type==CADPCM2_TYPE) nbytes -= nblocks*IMA_PREAMBLELEN*nch;
     else nbytes -= nblocks*MSADPCM_PREAMBLELEN*nch;
@@ -45,7 +45,7 @@ public:
     m_chans=0;
     setParameters(blockalign,nch,type,bps);
   }
-  ~WDL_adpcm_decoder()
+  ~WDL_adpcm_decoder() 
   {
     free(m_srcbuf);
     free(m_chans);
@@ -60,7 +60,7 @@ public:
     samplesOut.Compact();
   }
 
-  void setParameters(int ba, int nch, int type, int bps)
+  void setParameters(int ba, int nch, int type, int bps) 
   {
     if (m_blockalign != ba||nch != m_nch||type!=m_type||bps != m_bps)
     {
@@ -81,7 +81,7 @@ public:
 
   int samplesPerBlock()
   {
-    if (m_type==IMAADPCM_TYPE||m_type==CADPCM2_TYPE)
+    if (m_type==IMAADPCM_TYPE||m_type==CADPCM2_TYPE) 
     {
       if (m_bps == 2) return (m_blockalign/m_nch - IMA_PREAMBLELEN)*4 + 1;
       return (m_blockalign/m_nch - IMA_PREAMBLELEN)*2 + 1; //4 bit
@@ -98,7 +98,7 @@ public:
     if (spls_block<1) return 0;
     INT64 nblocks = (outlen_samples+spls_block-1)/spls_block;
     INT64 v=nblocks * m_blockalign;
-
+    
     v -= m_srcbuf_valid;
 
     return max(v,0);
@@ -150,39 +150,38 @@ private:
     int ch;
     short *outptr = samplesOut.Add(NULL,samples_block * nch);
 
-    for (ch=0; ch<nch; ch++)
+    for (ch=0;ch<nch;ch++)
     {
       m_chans[ch].spl1 = getwordsigned(&buf);
       m_chans[ch].cf1 = buf[0] | (buf[1]<<8);
       buf+=2;
     }
 
-    for (ch=0; ch<nch; ch++) *outptr++ = m_chans[ch].spl1;
+    for (ch=0;ch<nch;ch++) *outptr++ = m_chans[ch].spl1;
 
     char bstate=0;
     unsigned char lastbyte=0;
     int x;
 
-    static signed char index_table[8] = { -1, -1, -1, -1, 2, 4, 6, 8 };
-    static short step_table[89] =
-    {
-      7, 8, 9, 10, 11, 12, 13, 14, 16, 17,
-      19, 21, 23, 25, 28, 31, 34, 37, 41, 45,
-      50, 55, 60, 66, 73, 80, 88, 97, 107, 118,
+    static signed char index_table[8] = { -1, -1, -1, -1, 2, 4, 6, 8 }; 
+    static short step_table[89] = { 
+      7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 
+      19, 21, 23, 25, 28, 31, 34, 37, 41, 45, 
+      50, 55, 60, 66, 73, 80, 88, 97, 107, 118, 
       130, 143, 157, 173, 190, 209, 230, 253, 279, 307,
       337, 371, 408, 449, 494, 544, 598, 658, 724, 796,
-      876, 963, 1060, 1166, 1282, 1411, 1552, 1707, 1878, 2066,
+      876, 963, 1060, 1166, 1282, 1411, 1552, 1707, 1878, 2066, 
       2272, 2499, 2749, 3024, 3327, 3660, 4026, 4428, 4871, 5358,
-      5894, 6484, 7132, 7845, 8630, 9493, 10442, 11487, 12635, 13899,
-      15289, 16818, 18500, 20350, 22385, 24623, 27086, 29794, 32767
+      5894, 6484, 7132, 7845, 8630, 9493, 10442, 11487, 12635, 13899, 
+      15289, 16818, 18500, 20350, 22385, 24623, 27086, 29794, 32767 
     };
 
-
+ 
     int splcnt = (samples_block-1)*nch;
     int cnt=0;
     ch=0;
     int wrpos = 0;
-
+    
     int bps=m_bps;
     const int chunksize = bps == 2 ? 16 : 8;
 
@@ -231,7 +230,7 @@ private:
       // advance channelcounts
       if (++cnt==chunksize)
       {
-        if (++ch>=nch)
+        if (++ch>=nch) 
         {
           ch=0;
           outptr += chunksize*nch;
@@ -253,7 +252,7 @@ private:
     short *use_cotab = parm_cotab ? parm_cotab : cotab;
     int nch = m_nch;
     int ch;
-    for(ch=0; ch<nch; ch++)
+    for(ch=0;ch<nch;ch++)
     {
       unsigned char c=*buf++;
       if (c > 6) return false;
@@ -261,23 +260,23 @@ private:
       m_chans[ch].cf1 = use_cotab[c];
       m_chans[ch].cf2 = use_cotab[c+1];
     }
-    for(ch=0; ch<nch; ch++) m_chans[ch].deltas = getwordsigned(&buf);
-    for(ch=0; ch<nch; ch++) m_chans[ch].spl1 = getwordsigned(&buf);
-    for(ch=0; ch<nch; ch++) m_chans[ch].spl2 = getwordsigned(&buf);
+    for(ch=0;ch<nch;ch++) m_chans[ch].deltas = getwordsigned(&buf);
+    for(ch=0;ch<nch;ch++) m_chans[ch].spl1 = getwordsigned(&buf);
+    for(ch=0;ch<nch;ch++) m_chans[ch].spl2 = getwordsigned(&buf);
 
     int samples_block = samplesPerBlock();
 
     short *outptr = samplesOut.Add(NULL,samples_block * nch);
 
-    for(ch=0; ch<nch; ch++) *outptr++ = m_chans[ch].spl2;
-    for(ch=0; ch<nch; ch++) *outptr++ = m_chans[ch].spl1;
+    for(ch=0;ch<nch;ch++) *outptr++ = m_chans[ch].spl2;
+    for(ch=0;ch<nch;ch++) *outptr++ = m_chans[ch].spl1;
 
     int x;
     char bstate=0;
     unsigned char lastbyte;
     for (x=2; x < samples_block; x++)
     {
-      for(ch=0; ch<nch; ch++)
+      for(ch=0;ch<nch;ch++)
       {
         int nib;
         if ((bstate^=1)) nib=(lastbyte=*buf++)>>4;
@@ -286,15 +285,15 @@ private:
         int sn=nib;
         if (sn & 8) sn -= 16;
 
-        int pred = ( ((m_chans[ch].spl1 * m_chans[ch].cf1) +
-                      (m_chans[ch].spl2 * m_chans[ch].cf2)) / 256) +
-                   (sn * m_chans[ch].deltas);
+        int pred = ( ((m_chans[ch].spl1 * m_chans[ch].cf1) + 
+                       (m_chans[ch].spl2 * m_chans[ch].cf2)) / 256) + 
+                        (sn * m_chans[ch].deltas);
 
         m_chans[ch].spl2 = m_chans[ch].spl1;
 
         if (pred < -32768) pred=-32768;
         else if (pred > 32767) pred=32767;
-
+    
         *outptr++ = m_chans[ch].spl1 = pred;
 
         int i= (adtab[nib] * m_chans[ch].deltas) / 256;
@@ -310,7 +309,7 @@ private:
   int m_srcbuf_valid;
 
   int m_blockalign,m_nch,m_type,m_bps;
-
+  
 
 };
 

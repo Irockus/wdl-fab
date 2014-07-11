@@ -43,7 +43,7 @@
 #endif
 
 #include "wdltypes.h"
-
+#include <stdlib.h>
 #include <string.h>
 
 class WDL_HeapBuf
@@ -54,7 +54,7 @@ class WDL_HeapBuf
     void *Resize(int newsize, bool resizedown=true);
     void CopyFrom(const WDL_HeapBuf *hb, bool exactCopyOfConfig=false);
 #endif
-    void *Get() const { return m_size?m_buf:NULL; }
+    void *Get() const { return m_size?m_buf:0; }
     int GetSize() const { return m_size; }
     void *GetAligned(int align) const {  return (void *)(((UINT_PTR)Get() + (align-1)) & ~(UINT_PTR)(align-1)); }
 
@@ -63,7 +63,8 @@ class WDL_HeapBuf
 
     void SetMinAllocSize(int mas) { m_mas=mas; }
 
-
+    bool ResizeOK(int newsize, bool resizedown = true) { (void)Resize(newsize, resizedown); return GetSize() == newsize; }
+    
     WDL_HeapBuf(const WDL_HeapBuf &cp)
     {
       m_buf=0;
@@ -323,7 +324,8 @@ template<class PTRTYPE> class WDL_TypedBuf
     PTRTYPE *Get() const { return (PTRTYPE *) m_hb.Get(); }
     int GetSize() const { return m_hb.GetSize()/(unsigned int)sizeof(PTRTYPE); }
 
-    PTRTYPE *Resize(int newsize, bool resizedown=true) { return (PTRTYPE *)m_hb.Resize(newsize*(unsigned int)sizeof(PTRTYPE),resizedown); }
+    PTRTYPE *Resize(int newsize, bool resizedown = true) { return (PTRTYPE *)m_hb.Resize(newsize*sizeof(PTRTYPE),resizedown); }
+    bool ResizeOK(int newsize, bool resizedown = true) { return m_hb.ResizeOK(newsize*sizeof(PTRTYPE), resizedown);  }
 
     PTRTYPE *GetAligned(int align) const  { return (PTRTYPE *) m_hb.GetAligned(align); }
 
@@ -348,16 +350,15 @@ template<class PTRTYPE> class WDL_TypedBuf
       return 0;
     }
 
-    PTRTYPE* Delete(int idx)
+    void Delete(int idx)
     {
       PTRTYPE* p=Get();
       int sz=GetSize();
       if (idx >= 0 && idx < sz)
       {
-        memmove(p+idx, p+idx+1, (sz-idx-1)*(unsigned int)sizeof(PTRTYPE));
-        return Resize(sz-1,false);
+        memmove(p+idx, p+idx+1, (sz-idx-1)*sizeof(PTRTYPE));
+        Resize(sz-1,false);
       }
-      return p;
     }
 
     void SetGranul(int gran) { m_hb.SetGranul(gran); }

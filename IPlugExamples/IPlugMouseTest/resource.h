@@ -36,8 +36,8 @@
 #define PLUG_TYPE_PT "Effect"
 #define PLUG_DOES_AUDIOSUITE 0
 
-/* PLUG_TYPE_PT can be "None", "EQ", "Dynamics", "PitchShift", "Reverb", "Delay", "Modulation",
-"Harmonic" "NoiseReduction" "Dither" "SoundField" "Effect"
+/* PLUG_TYPE_PT can be "None", "EQ", "Dynamics", "PitchShift", "Reverb", "Delay", "Modulation", 
+"Harmonic" "NoiseReduction" "Dither" "SoundField" "Effect" 
 instrument determined by PLUG _IS _INST
 */
 

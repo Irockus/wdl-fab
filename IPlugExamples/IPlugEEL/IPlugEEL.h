@@ -1,5 +1,6 @@
 #ifndef __IPLUGEEL__
 #define __IPLUGEEL__
+
 #include "IPlug_include_in_plug_hdr.h"
 #include "../../WDL/eel2/ns-eel.h"
 #include "IControl.h"
@@ -10,34 +11,34 @@ class AlgDisplay : public IControl
 {
 public:
   AlgDisplay(IPlugBase* pPlug, IRECT pR, IText* pText, const char* str = "")
-    : IControl(pPlug, pR)
+  : IControl(pPlug, pR)
   {
     mDisablePrompt = true;
     mText = *pText;
     mStr.Set(str);
   }
-
+  
   ~AlgDisplay() {}
 
   bool Draw(IGraphics* pGraphics)
-  {
+  {  
     return pGraphics->DrawIText(&mText, mStr.Get(), &mRECT);
   }
-
+  
   void OnMouseDown(int x, int y, IMouseMod* pMod)
   {
     mPlug->GetGUI()->CreateTextEntry(this, &mText, &mRECT, mStr.Get());
   }
-
+  
   void TextFromTextEntry(const char* txt)
   {
     mStr.Set(txt, MAX_ALG_LENGTH);
-
+    
     //TODO: update alg
-
+    
     SetDirty(false);
   }
-
+  
 protected:
   WDL_String mStr;
 };

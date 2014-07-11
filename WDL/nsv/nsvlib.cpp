@@ -4,32 +4,32 @@
 Copyright 2005 Nullsoft, Inc.
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification,
+Redistribution and use in source and binary forms, with or without modification, 
 are permitted provided that the following conditions are met:
 
   * Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
+    this list of conditions and the following disclaimer. 
 
   * Redistributions in binary form must reproduce the above copyright notice,
     this list of conditions and the following disclaimer in the documentation
-    and/or other materials provided with the distribution.
+    and/or other materials provided with the distribution. 
 
-  * Neither the name of Nullsoft nor the names of its contributors may be used to
-    endorse or promote products derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
-IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+  * Neither the name of Nullsoft nor the names of its contributors may be used to 
+    endorse or promote products derived from this software without specific prior written permission. 
+ 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR 
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND 
+FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
 CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
 DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
 DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
-IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
 OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 /*
 ** nsvlib.cpp - NSV file/bitstream reading/writing code
-**
+** 
 */
 
 #include <stdio.h>
@@ -64,7 +64,7 @@ or
   NSV nonsync packet header
   16 bits: NSV_NONSYNC_WORD
 
-then
+then 
 
 4  bits: # aux data channels present (max 15)
 20 bits: video data + aux channels length
@@ -72,7 +72,7 @@ then
 
 --------------------------------
 sync:
-  192 bit header,
+  192 bit header, 
   136 bits are invariant
 nonsync:
   56 bit header
@@ -89,17 +89,17 @@ static int is_type_char_valid(int c)
   return (c >= 'a' && c <= 'z') ||
          (c >= 'A' && c <= 'Z') ||
          (c >= '0' && c <= '9') ||
-         c == ' ' || c == '-' ||
+         c == ' ' || c == '-' || 
          c == '.' || c == '_';
 }
 
 static int is_type_valid(unsigned int t)
 {
   return (t&0xff) != ' ' &&
-         is_type_char_valid(t>>24) &&
-         is_type_char_valid(t>>16) &&
-         is_type_char_valid(t>>8) &&
-         is_type_char_valid(t);
+          is_type_char_valid(t>>24) &&
+          is_type_char_valid(t>>16) &&
+          is_type_char_valid(t>>8) &&
+          is_type_char_valid(t);
 }
 
 
@@ -139,7 +139,7 @@ unsigned int nsv_string_to_type(char *in)
 // if !X, framerate is YYYYYZZ (1-127)
 // otherwise:
 //   ZZ indexes base
-//   YYYYY is scale (0-32).
+//   YYYYY is scale (0-32). 
 //     if YYYYY < 16, then scale = 1/(YYYY+1)
 //     otherwise scale = YYYYY-15
 
@@ -160,7 +160,7 @@ static double frate2double(unsigned char fr)
   if (d < 16) sc=1.0/(double)(d+1);
   else sc=d-15;
 
-  return fratetab[fr&3]*sc;
+  return fratetab[fr&3]*sc; 
 }
 
 
@@ -175,7 +175,7 @@ static unsigned char double2frate(double fr)
     double this_v=(fr-frate2double(x));
 
     if (this_v<0) this_v=-this_v;
-    if (this_v < best_v)
+    if (this_v < best_v) 
     {
       best_v=this_v;
       best=x;
@@ -217,22 +217,22 @@ int nsv_Packeter::packet(nsv_OutBS &bs)
 {
   int total_auxlen=0;
   int x;
-  if (width >= (1<<16) || height >= (1<<16) ||
+  if (width >= (1<<16) || height >= (1<<16) || 
       !framerate_idx ||
-      !is_type_valid(audfmt) ||
+      !is_type_valid(audfmt) || 
       !is_type_valid(vidfmt) ||
-      video_len > NSV_MAX_VIDEO_LEN ||
+      video_len > NSV_MAX_VIDEO_LEN || 
       audio_len > NSV_MAX_AUDIO_LEN ||
-      aux_used > NSV_MAX_AUXSTREAMS ||
-      aux_used < 0
-     ) return -1;
+      aux_used > NSV_MAX_AUXSTREAMS || 
+      aux_used < 0    
+    ) return -1;
 
   for (x = 0; x < aux_used; x ++)
   {
     if (aux_len[x] > NSV_MAX_AUX_LEN) return -1;
     total_auxlen+=aux_len[x]+6;
   }
-
+  
   if (is_sync_frame)
   {
     bs.putbits(32,NSV_SYNC_DWORD);
@@ -247,7 +247,7 @@ int nsv_Packeter::packet(nsv_OutBS &bs)
   {
     bs.putbits(16,NSV_NONSYNC_WORD);
   }
-
+  
   bs.putbits(4,aux_used); // no aux data channels for our streams yet
   bs.putbits(20,video_len+total_auxlen);
   bs.putbits(16,audio_len);
@@ -290,7 +290,7 @@ void nsv_Unpacketer::reset(int full)
 }
 
 
-// returns 0 on success, >0 on needs (at least X bytes) more data,
+// returns 0 on success, >0 on needs (at least X bytes) more data, 
 //   -1 on error (no header found in block)
 int nsv_Unpacketer::unpacket(nsv_InBS &bs)
 {
@@ -298,7 +298,7 @@ int nsv_Unpacketer::unpacket(nsv_InBS &bs)
   int num_aux=0;
   int vl=0;
   int al=0;
-
+   
   while (bs.avail()>=NSV_NONSYNC_HEADERLEN_BITS)
   {
     if (valid && synched)
@@ -312,7 +312,7 @@ int nsv_Unpacketer::unpacket(nsv_InBS &bs)
         num_aux=bs.getbits(4);
         vl=bs.getbits(20);
         al=bs.getbits(16);
-        if (al >= NSV_MAX_AUDIO_LEN ||
+        if (al >= NSV_MAX_AUDIO_LEN || 
             vl >= (NSV_MAX_VIDEO_LEN+num_aux*(NSV_MAX_AUX_LEN+6)))
         {
           bs.seek(-NSV_NONSYNC_HEADERLEN_BITS);
@@ -371,19 +371,18 @@ int nsv_Unpacketer::unpacket(nsv_InBS &bs)
       vl=bs.getbits(20);
       al=bs.getbits(16);
 
-      if (al >= NSV_MAX_AUDIO_LEN ||
+      if (al >= NSV_MAX_AUDIO_LEN || 
           vl >= (NSV_MAX_VIDEO_LEN+num_aux*(NSV_MAX_AUX_LEN+6)) ||
           !frt || !is_type_valid(vfmt) || !is_type_valid(afmt) ||
           (valid &&
            (width != w || height != h ||
             vidfmt != vfmt || audfmt != afmt || framerate_idx != frt)))
-      {
-        // frame is definately not valid
+      { // frame is definately not valid
         bs.seek(8-NSV_SYNC_HEADERLEN_BITS); // seek back what we just read
         synched=0;
         continue;
       }
-
+      
       if ((unsigned int)bs.avail() < (al+vl)*8+((m_eof||(valid&&synched))?0:32))
       {
         int l=(al+vl)*8+NSV_SYNC_HEADERLEN_BITS-bs.avail();
@@ -391,7 +390,7 @@ int nsv_Unpacketer::unpacket(nsv_InBS &bs)
         return m_eof?-1:(l/8);
       }
 
-      if (valid && synched)
+      if (valid && synched) 
       {
         gotframe=NSV_SYNC_HEADERLEN_BITS;
       }
@@ -427,9 +426,9 @@ int nsv_Unpacketer::unpacket(nsv_InBS &bs)
         }
         else if (a32 == NSV_SYNC_DWORD)
         {
-
-          sk+=32+32+32+16+16+8;
-
+			
+			    sk+=32+32+32+16+16+8;
+          
           bs.seek(32);
           unsigned int _vfmt=bs.getbits(32);
           unsigned int _afmt=bs.getbits(32);
@@ -451,7 +450,7 @@ int nsv_Unpacketer::unpacket(nsv_InBS &bs)
       }
       else
       {
-        if (so & 0x8000) so|=0xFFFF0000;
+        if (so & 0x8000) so|=0xFFFF0000;       
         syncoffset_cur=so;
         if (!valid || (unsigned int)syncoffset == NSV_INVALID_SYNC_OFFSET) syncoffset=so;
         if (!valid) framerate=frate2double(frt);
@@ -500,7 +499,7 @@ int nsv_Unpacketer::unpacket(nsv_InBS &bs)
         gotframe=0;
         continue;
       }
-
+    
       if (m_videobs)
       {
         m_videobs->addint(vl);
@@ -572,7 +571,7 @@ void nsv_writeheader(nsv_OutBS &bs, nsv_fileHeader *hdr, unsigned int padto)
 
   while (numtoc--)
   {
-    if (!numtocused)
+    if (!numtocused) 
     {
       if (numtocused2)
       {
@@ -584,14 +583,14 @@ void nsv_writeheader(nsv_OutBS &bs, nsv_fileHeader *hdr, unsigned int padto)
       else // extra (unused by this implementation but could be used someday so we fill it with 0xFF) space
         bs.putbits(32,~0);
     }
-    else if (toc)
+    else if (toc) 
     {
       bs.putbits(32,*toc++);
       numtocused--;
     }
     else bs.putbits(32,0);
   }
-
+  
   unsigned int x;
   for (x = hdr->header_size; x < padto; x ++) bs.putbits(8,0);
 }
@@ -609,13 +608,12 @@ int nsv_readheader(nsv_InBS &bs, nsv_fileHeader *hdr)
   hdr->toc_alloc=0;
   hdr->toc_size=0;
   hdr->metadata_len=0;
-
-  if (bs.avail()<64)
-  {
-    return 8-bs.avail()/8;
+  
+  if (bs.avail()<64) {
+	  return 8-bs.avail()/8;
   }
   s+=32;
-  if (bs.getbits(32) != NSV_HDR_DWORD)
+  if (bs.getbits(32) != NSV_HDR_DWORD) 
   {
     bs.seek(-s);
     return -1;
@@ -652,7 +650,7 @@ int nsv_readheader(nsv_InBS &bs, nsv_fileHeader *hdr)
   if (metadatalen)
   {
     metadata=malloc(metadatalen+1);
-    if (!metadata)
+    if (!metadata) 
     {
       bs.seek(-s);
       return -1;
@@ -668,7 +666,7 @@ int nsv_readheader(nsv_InBS &bs, nsv_fileHeader *hdr)
   if (tocalloc)
   {
     toc=(unsigned int *)malloc(tocsize * 4 * 2);
-    if (!toc)
+    if (!toc) 
     {
       free(metadata);
       bs.seek(-s);
@@ -701,7 +699,7 @@ int nsv_readheader(nsv_InBS &bs, nsv_fileHeader *hdr)
   hdr->toc_ex=toc_ex;
   hdr->toc_alloc=tocalloc;
   hdr->toc_size=tocsize;
-
+  
   return 0;
 }
 

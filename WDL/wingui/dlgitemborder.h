@@ -1,4 +1,4 @@
-/*
+/* 
     WDL - dlgitemborder.h
     Copyright (C) 1998-2003, Nullsoft Inc.
     Copyright (C) 2005 and later Cockos Incorporated
@@ -37,20 +37,20 @@
 #ifndef WDL_DLGITEMBORDER_NOIMPL
 
 static int RectInRect(RECT *rect1, RECT *rect2)
-{
+{ 
   // this has a bias towards true
 
   // this could probably be optimized a lot
   return ((rect1->top >= rect2->top && rect1->top <= rect2->bottom) ||
-          (rect1->bottom >= rect2->top && rect1->bottom <= rect2->bottom) ||
-          (rect2->top >= rect1->top && rect2->top <= rect1->bottom) ||
-          (rect2->bottom >= rect1->top && rect2->bottom <= rect1->bottom)) // vertical intersect
-         &&
-         ((rect1->left >= rect2->left && rect1->left <= rect2->right) ||
-          (rect1->right >= rect2->left && rect1->right <= rect2->right) ||
-          (rect2->left >= rect1->left && rect2->left <= rect1->right) ||
-          (rect2->right >= rect1->left && rect2->right <= rect1->right)) // horiz intersect
-         ;
+      (rect1->bottom >= rect2->top && rect1->bottom <= rect2->bottom) ||
+      (rect2->top >= rect1->top && rect2->top <= rect1->bottom) ||
+      (rect2->bottom >= rect1->top && rect2->bottom <= rect1->bottom)) // vertical intersect
+      &&
+      ((rect1->left >= rect2->left && rect1->left <= rect2->right) ||
+      (rect1->right >= rect2->left && rect1->right <= rect2->right) ||
+      (rect2->left >= rect1->left && rect2->left <= rect1->right) ||
+      (rect2->right >= rect1->left && rect2->right <= rect1->right)) // horiz intersect
+      ;
 }
 
 #ifdef _WIN32
@@ -60,19 +60,19 @@ static void Dlg_removeFromRgn(HRGN hrgn, int left, int top, int right, int botto
   CombineRgn(hrgn,hrgn,rgn2,RGN_DIFF);
   DeleteObject(rgn2);
 }
-#else
+#else 
 #define Dlg_removeFromRgn(a,b,c,d,e)
 #endif
 
 static void Dlg_DrawChildWindowBorders(HWND hwndDlg, INT_PTR *tab, int tabsize, int (*GSC)(int)=0, PAINTSTRUCT *__use_ps=NULL
-#ifdef WDL_DLGITEMBORDER_CUSTOMPARMS
-                                       , WDL_DLGITEMBORDER_CUSTOMPARMS
+#ifdef WDL_DLGITEMBORDER_CUSTOMPARMS                                       
+  , WDL_DLGITEMBORDER_CUSTOMPARMS
 #endif
-
-                                      )
+                                       
+                                       )
 {
   PAINTSTRUCT ps;
-  if (!__use_ps)
+  if (!__use_ps) 
   {
     BeginPaint(hwndDlg,&ps);
     __use_ps=&ps;
@@ -117,15 +117,15 @@ static void Dlg_DrawChildWindowBorders(HWND hwndDlg, INT_PTR *tab, int tabsize, 
       {
         GetWindowRect(GetDlgItem(hwndDlg,sa),&r);
 
-#ifdef CUSTOM_CHILDWNDBORDERCODE
+  #ifdef CUSTOM_CHILDWNDBORDERCODE
         CUSTOM_CHILDWNDBORDERCODE
-#endif
+  #endif
         ScreenToClient(hwndDlg,(LPPOINT)&r);
         ScreenToClient(hwndDlg,((LPPOINT)&r)+1);
       }
     }
 
-    if (RectInRect(&__use_ps->rcPaint,&r))
+    if (RectInRect(&__use_ps->rcPaint,&r)) 
     {
       if ((a & 0xffff0000) == DCW_SUNKENBORDER || (a&0xffff0000) == DCW_SUNKENBORDER_NOTOP)
       {
@@ -183,8 +183,7 @@ static void Dlg_DrawChildWindowBorders(HWND hwndDlg, INT_PTR *tab, int tabsize, 
   DeleteObject(pen2);
 
 #ifdef _WIN32
-  if(hrgn)
-  {
+  if(hrgn) {
     //erase bkgnd while clipping out our own drawn stuff (for flickerless display)
 #ifdef WDL_DLGITEMBORDER_CUSTOMBGCODE
     WDL_DLGITEMBORDER_CUSTOMBGCODE

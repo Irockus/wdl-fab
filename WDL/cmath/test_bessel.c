@@ -48,11 +48,11 @@ int main(void)
   cnum_s dk_roots[_BESSEL_MAX_ORDER];
 
   /* */
-#ifdef _CMATH_ANSI
-  puts("\n\nansi c is: on");
-#else
-  puts("\n\nansi c is: off");
-#endif
+  #ifdef _CMATH_ANSI
+    puts("\n\nansi c is: on");
+  #else
+    puts("\n\nansi c is: off");
+  #endif
 
   /* */
   while (in_order > _BESSEL_MAX_ORDER)
@@ -111,7 +111,7 @@ int main(void)
   while (i < order)
   {
     printf("root[%2d]: %.15f \t % .15f*i\n",
-           i+1, (double)dk_roots[i].r, (double)dk_roots[i].i);
+      i+1, (double)dk_roots[i].r, (double)dk_roots[i].i);
     i++;
   }
 

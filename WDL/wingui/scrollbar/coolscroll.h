@@ -2,14 +2,14 @@
 #define _COOLSBLIB_INCLUDED
 
 /*
-    WDL - Skinned/Resizing thumb scrollbar library
+    WDL - Skinned/Resizing thumb scrollbar library 
     Based on the "Cool Scrollbar Library v1.2" by James Brown - http://www.catch22.net
-
+  
     Original version Copyright(c) 2001 J Brown
     Modifications copyright (C) 2006 and later Cockos Incorporated
 
-    Note: for a more featureful, less hacked up version, you may wish to download the
-    original from catch22.net. It has lots of added features, whereas this version is
+    Note: for a more featureful, less hacked up version, you may wish to download the 
+    original from catch22.net. It has lots of added features, whereas this version is 
     very much tailored for Cockos' needs.
 
     License:
@@ -29,11 +29,11 @@
       2. Altered source versions must be plainly marked as such, and must not be
          misrepresented as being the original software.
       3. This notice may not be removed or altered from any source distribution.
-
+    
 */
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"{
 #endif
 
 /*

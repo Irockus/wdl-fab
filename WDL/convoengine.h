@@ -17,10 +17,10 @@
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
-
+  
 
   This file provides an interface to the WDL fast convolution engine. This engine can convolve audio streams using
-  either brute force (for small impulses), or a partitioned FFT scheme (for larger impulses).
+  either brute force (for small impulses), or a partitioned FFT scheme (for larger impulses). 
 
   Note that this library needs to have lookahead ability in order to process samples. Calling Add(somevalue) may produce Avail() < somevalue.
 
@@ -44,7 +44,7 @@
 
 //#define WDL_CONVO_WANT_FULLPRECISION_IMPULSE_STORAGE // define this for slowerness with -138dB error difference in resulting output (+-1 LSB at 24 bit)
 
-#ifdef WDL_CONVO_WANT_FULLPRECISION_IMPULSE_STORAGE
+#ifdef WDL_CONVO_WANT_FULLPRECISION_IMPULSE_STORAGE 
 
 typedef WDL_FFT_REAL WDL_CONVO_IMPULSEBUFf;
 typedef WDL_FFT_COMPLEX WDL_CONVO_IMPULSEBUFCPLXf;
@@ -85,10 +85,10 @@ public:
   ~WDL_ConvolutionEngine();
 
   int SetImpulse(WDL_ImpulseBuffer *impulse, int fft_size=-1, int impulse_sample_offset=0, int max_imp_size=0, bool forceBrute=false);
-
+ 
   int GetFFTSize() { return m_fft_size; }
   int GetLatency() { return m_fft_size/2; }
-
+  
   void Reset(); // clears out any latent samples
 
   void Add(WDL_FFT_REAL **bufs, int len, int nch);
@@ -114,7 +114,7 @@ private:
 
   WDL_TypedBuf<WDL_FFT_REAL> m_samplehist[WDL_CONVO_MAX_PROC_NCH]; // FFT'd sample blocks per channel
   WDL_TypedBuf<char> m_samplehist_zflag[WDL_CONVO_MAX_IMPULSE_NCH];
-  WDL_TypedBuf<WDL_FFT_REAL> m_overlaphist[WDL_CONVO_MAX_PROC_NCH];
+  WDL_TypedBuf<WDL_FFT_REAL> m_overlaphist[WDL_CONVO_MAX_PROC_NCH]; 
   WDL_TypedBuf<WDL_FFT_REAL> m_combinebuf;
 
   WDL_FFT_REAL *m_get_tmpptrs[WDL_CONVO_MAX_PROC_NCH];

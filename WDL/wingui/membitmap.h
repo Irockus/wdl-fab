@@ -1,4 +1,4 @@
-/*
+/* 
     WDL - membitmap.h
     Copyright (C) 2005 and later Cockos Incorporated
 
@@ -36,9 +36,9 @@
 class WDL_WinMemBitmap
 {
 public:
-  WDL_WinMemBitmap()
-  {
-    m_w=m_h=-100;
+  WDL_WinMemBitmap() 
+  { 
+    m_w=m_h=-100; 
     m_hdc=0;
 #ifdef _WIN32
     m_bm=0; m_oldbm=0;
@@ -49,7 +49,7 @@ public:
 #ifdef _WIN32
     if (m_oldbm) SelectObject(m_hdc,m_oldbm);
     if (m_bm) DeleteObject(m_bm);
-
+      
     if (m_hdc) DeleteDC(m_hdc);
 #else
     if (m_hdc) SWELL_DeleteGfxContext(m_hdc);
@@ -58,12 +58,12 @@ public:
 
   int DoSize(HDC compatDC, int w, int h) // returns 1 if it was resized
   {
-    if (m_w == w && m_h == h && m_hdc
+    if (m_w == w && m_h == h && m_hdc 
 #ifdef _WIN32
         && m_bm
 #endif
-       ) return 0;
-
+        ) return 0;
+    
 #ifdef _WIN32
     if (!m_hdc) m_hdc=CreateCompatibleDC(compatDC);
     if (m_oldbm) SelectObject(m_hdc,m_oldbm);

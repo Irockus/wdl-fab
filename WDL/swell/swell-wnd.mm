@@ -122,7 +122,7 @@ static int arr_bsearch_mod(void *key, NSArray *arr, int (*compar)(const void *, 
 		if (cmp > 0) {	/* key > p: move right */
       // check to see if key is less than p+1, if it is, we're done
 			base = p + 1;
-      if (base >= nmemb || compar(key,[arr objectAtIndex:base])<=0) return base;
+      if (base >= ((int)nmemb) || compar(key,[arr objectAtIndex:base])<=0) return base;
 			lim--;
 		} /* else move left */
 	}
@@ -418,7 +418,7 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
   if (m_selColors)
   {
     int a = GetFocus() == (HWND)self ? 0 : 2;
-    if ([m_selColors count] >= a)
+    if (((int)[m_selColors count]) >= a)
     {
       NSColor *c=[m_selColors objectAtIndex:a];
       if (c)
@@ -523,7 +523,7 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
   if (m_selColors)
   {
     int a = GetFocus() == (HWND)self ? 0 : 2;
-    if ([m_selColors count] >= a)
+    if (((int)[m_selColors count]) >= a)
     {
       NSColor *c=[m_selColors objectAtIndex:a];
       if (c)
@@ -558,7 +558,7 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
 {
   int idx=pos;
   NSArray* arr=[self tableColumns];
-  if (arr && pos>=0 && pos < [arr count])
+  if (arr && pos>=0 && pos < ((int)[arr count]))
   {
     NSTableColumn* col=[arr objectAtIndex:pos];
     if (col && m_cols)
@@ -801,7 +801,7 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
       case LB_ADDSTRING:
       case LB_INSERTSTRING:
       {
-        int cnt=ListView_GetItemCount(hwnd);
+        size_t  cnt=ListView_GetItemCount(hwnd);
         if (msg == LB_ADDSTRING && (style & LBS_SORT))
         {
           SWELL_ListView *tv=(SWELL_ListView*)hwnd;
@@ -832,7 +832,7 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
         return [self selectedRow];
       case LB_SETCURSEL:
       {
-        if (wParam<ListView_GetItemCount(hwnd))
+        if (((int)wParam)<ListView_GetItemCount(hwnd))
         {
           [self selectRowIndexes:[NSIndexSet indexSetWithIndex:wParam] byExtendingSelection:NO];        
         }
@@ -1137,7 +1137,7 @@ LONG_PTR SetWindowLong(HWND hwnd, int idx, LONG_PTR val)
             NSArray *ar=[oldw childWindows];
             if (ar)
             {
-              int x;
+              size_t x;
               for (x = 0; x < [ar count]; x ++)
               {
                 NSWindow *cw=[ar objectAtIndex:x];
@@ -1507,9 +1507,9 @@ LRESULT SendMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         {
           NSText* text = [[obj window] fieldEditor:YES forObject:(NSTextField*)obj]; // then get it from the window 
           int sl = [[text string] length];
-          if (wParam == -1) lParam = wParam = 0;
+          if (((int)wParam) == -1) lParam = wParam = 0;
           else if (lParam == -1) lParam = sl;        
-          if (wParam>sl) wParam=sl;
+          if (((int)wParam)>sl) wParam=sl;
           if (lParam>sl) lParam=sl;      
           if (text) [text setSelectedRange:NSMakeRange(wParam, max(lParam-wParam,0))]; // and set the range
         }
@@ -2956,10 +2956,10 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
     case EM_SETSEL:    
     {
       int sl =  [[self string] length];
-      if (wParam == -1) lParam = wParam = 0;
+      if (((int)wParam) == -1) lParam = wParam = 0;
       else if (lParam == -1) lParam = sl;
       
-      if (wParam>sl)wParam=sl;
+      if (((int)wParam)>sl)wParam=sl;
       if (lParam>sl)lParam=sl;
       [self setSelectedRange:NSMakeRange(wParam, max(lParam-wParam,0))];
     }
@@ -4874,8 +4874,8 @@ LRESULT DefWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
       NSArray *ch = [(NSView *)hwnd subviews];
       if (ch)
       {
-        int x;
-        for(x=0;x<[ch count]; x ++)
+		  size_t x;
+		for(x=0;x<[ch count]; x ++)
         {
           NSView *v = [ch objectAtIndex:x];
           sendSwellMessage(v,WM_DISPLAYCHANGE,wParam,lParam);
@@ -4894,9 +4894,8 @@ LRESULT DefWindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 void SWELL_BroadcastMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-  int x;
   NSArray *ch=[NSApp orderedWindows];
-  for(x=0;x<[ch count]; x ++)
+  for(size_t x=0;x<[ch count]; x ++)
   {
     NSView *v = [[ch objectAtIndex:x] contentView];
     if (v && [v respondsToSelector:@selector(onSwellMessage:p1:p2:)])
@@ -5020,9 +5019,7 @@ bool OpenClipboard(HWND hwndDlg)
   
   if (ar && [ar count])
   {
-    int x;
-    
-    for (x = 0; x < [ar count]; x ++)
+    for (size_t x = 0; x < [ar count]; x ++)
     {
       NSString *s=[ar objectAtIndex:x];
       if (!s) continue;

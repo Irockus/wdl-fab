@@ -274,7 +274,7 @@ void IPlugPolySynth::ProcessMidiMsg(IMidiMsg* pMsg)
 {
   int status = pMsg->StatusMsg();
   int velocity = pMsg->Velocity();
-
+  
   switch (status)
   {
     case IMidiMsg::kNoteOn:
@@ -294,7 +294,7 @@ void IPlugPolySynth::ProcessMidiMsg(IMidiMsg* pMsg)
     default:
       return; // if !note message, nothing gets added to the queue
   }
-
+  
 
   mKeyboard->SetDirty();
   mMidiQueue.Add(pMsg);

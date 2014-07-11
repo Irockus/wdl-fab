@@ -63,15 +63,15 @@ public:
   void FlushSamples() {}
 
   static const char *enumQual(int q);
-  static bool GetSizes(int qv, int *ws, int *os);
+ static bool GetSizes(int qv, int *ws, int *os);
 
   int GetSamples(int requested_output, WDL_SIMPLEPITCHSHIFT_SAMPLETYPE *buffer);
 
 
-  void SetQualityParameter(int parm)
-  {
-    m_qual=parm;
-  }
+ void SetQualityParameter(int parm)
+ {
+   m_qual=parm;
+ }
 
 
 private:
@@ -150,7 +150,7 @@ void WDL_SimplePitchShifter::BufferDone(int input_filled)
       }
 
       int outlen = (int) (input_filled*itempo-fp) + 128; // upper bound on possible sample count
-      if (outlen<0)
+      if (outlen<0) 
       {
         outlen=0;
       }
@@ -162,7 +162,7 @@ void WDL_SimplePitchShifter::BufferDone(int input_filled)
       {
         double rdpos=floor(fp);
         int idx=((int)rdpos);
-        if (idx>=input_filled)
+        if (idx>=input_filled) 
         {
           // un-add any missing samples
           m_queue.Add(NULL,(i-outlen)*m_last_nch*sizeof(WDL_SIMPLEPITCHSHIFT_SAMPLETYPE));
@@ -177,12 +177,12 @@ void WDL_SimplePitchShifter::BufferDone(int input_filled)
         }
         fp += tempo;
       }
-
+      
       memcpy(bufi,bufi+m_last_nch*input_filled,m_last_nch*sizeof(WDL_SIMPLEPITCHSHIFT_SAMPLETYPE)); // save last sample for interpolation later
       //
       m_tempo_fracpos=fp-floor(fp);
     }
-  }
+  }    
 }
 
 const char *WDL_SimplePitchShifter::enumQual(int q)
@@ -196,8 +196,8 @@ const char *WDL_SimplePitchShifter::enumQual(int q)
 
 bool WDL_SimplePitchShifter::GetSizes(int qv, int *ws, int *os)
 {
-  int windows[]= {50,75,100,150,225,300,40,30,20,10,5,3};
-  int divs[]= {2,3,5,7};
+  int windows[]={50,75,100,150,225,300,40,30,20,10,5,3};
+  int divs[]={2,3,5,7};
 
   int wd=qv/(sizeof(divs)/sizeof(divs[0]));
   if (wd >= sizeof(windows)/sizeof(windows[0])) wd=-1;
@@ -246,11 +246,11 @@ void WDL_SimplePitchShifter::PitchShiftBlock(WDL_SIMPLEPITCHSHIFT_SAMPLETYPE *in
     ipos1*=nch;
 
     int ipos2=ipos1+nch;
-
+    
     if (ipos2 >= bsizench) ipos2=0;
 
     int a;
-    for(a=0; a<nch; a++) outputs[a]=(psbuf[ipos1+a]*(1-frac0)+psbuf[ipos2+a]*frac0);
+    for(a=0;a<nch;a++) outputs[a]=(psbuf[ipos1+a]*(1-frac0)+psbuf[ipos2+a]*frac0);      
 
     double tv=pspos;
     if (dpi >= 1.0)
@@ -265,7 +265,7 @@ void WDL_SimplePitchShifter::PitchShiftBlock(WDL_SIMPLEPITCHSHIFT_SAMPLETYPE *in
         int tmp2=tmp+nch;
         if (tmp2 >= bsizench) tmp2=0;
 
-        for(a=0; a<nch; a++) outputs[a]= outputs[a]*tfrac + (1-tfrac)*(psbuf[tmp+a]*(1-frac0)+psbuf[tmp2+a]*frac0);
+        for(a=0;a<nch;a++) outputs[a]= outputs[a]*tfrac + (1-tfrac)*(psbuf[tmp+a]*(1-frac0)+psbuf[tmp2+a]*frac0);
 
         if (tv+pitch >= writepos) pspos+=olsize;
       }
@@ -282,8 +282,8 @@ void WDL_SimplePitchShifter::PitchShiftBlock(WDL_SIMPLEPITCHSHIFT_SAMPLETYPE *in
         if (tmp>=bsizench) tmp -= bsizench;
         int tmp2= tmp+nch;
         if (tmp2 >= bsizench) tmp2=0;
-        for(a=0; a<nch; a++) outputs[a] = outputs[a]*tfrac + (1-tfrac)*(psbuf[tmp+a]*(1-frac0)+psbuf[tmp2+a]*frac0);
-
+        for(a=0;a<nch;a++) outputs[a] = outputs[a]*tfrac + (1-tfrac)*(psbuf[tmp+a]*(1-frac0)+psbuf[tmp2+a]*frac0);
+        
         // this is wrong, but blehhh?
         if (tv+pitch < writepos+1) pspos += olsize;
 //        if (tv+pitch >= writepos+olsize) pspos += olsize;

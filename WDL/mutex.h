@@ -1,7 +1,7 @@
 /*
     WDL - mutex.h
     Copyright (C) 2005 and later, Cockos Incorporated
-
+   
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
     arising from the use of this software.
@@ -17,7 +17,7 @@
     2. Altered source versions must be plainly marked as such, and must not be
        misrepresented as being the original software.
     3. This notice may not be removed or altered from any source distribution.
-
+      
 */
 
 /*
@@ -25,9 +25,9 @@
 
   This file provides a simple class that abstracts a mutex or critical section object.
   On Windows it uses CRITICAL_SECTION, on everything else it uses pthread's mutex library.
-  It simulates the Critical Section behavior on non-Windows, as well (meaning a thread can
+  It simulates the Critical Section behavior on non-Windows, as well (meaning a thread can 
   safely Enter the mutex multiple times, provided it Leaves the same number of times)
-
+  
 */
 
 #ifndef _WDL_MUTEX_H_
@@ -55,89 +55,88 @@
 
 #include "wdltypes.h"
 
-class WDL_Mutex
-{
-public:
-  WDL_Mutex()
-  {
-#ifdef _DEBUG
-    _debug_cnt=0;
-#endif
-
-#ifdef _WIN32
-    InitializeCriticalSection(&m_cs);
-#else
-#ifdef WDL_MAC_USE_CARBON_CRITSEC
-    MPCreateCriticalRegion(&m_cr);
-#else
-    m_ownerthread=0;
-    m_lockcnt=0;
-    pthread_mutex_init(&m_mutex,NULL);
-#endif
-#endif
-  }
-  ~WDL_Mutex()
-  {
-#ifdef _WIN32
-    DeleteCriticalSection(&m_cs);
-#else
-#ifdef WDL_MAC_USE_CARBON_CRITSEC
-    MPDeleteCriticalRegion(m_cr);
-#else
-    pthread_mutex_destroy(&m_mutex);
-#endif
-#endif
-  }
-
-  void Enter()
-  {
-#ifdef _DEBUG
-    _debug_cnt++;
-#endif
-
-#ifdef _WIN32
-    EnterCriticalSection(&m_cs);
-#else
-#ifdef WDL_MAC_USE_CARBON_CRITSEC
-    MPEnterCriticalRegion(m_cr,kDurationForever);
-#else
-    pthread_t tt=pthread_self();
-    if (m_ownerthread==tt) m_lockcnt++;
-    else
+class WDL_Mutex {
+  public:
+    WDL_Mutex() 
     {
-      pthread_mutex_lock(&m_mutex);
-      m_ownerthread=tt;
-      m_lockcnt=0;
-    }
-#endif
-#endif
-  }
-
-  void Leave()
-  {
 #ifdef _DEBUG
-    _debug_cnt--;
+      _debug_cnt=0;
 #endif
+
 #ifdef _WIN32
-    LeaveCriticalSection(&m_cs);
+      InitializeCriticalSection(&m_cs);
 #else
 #ifdef WDL_MAC_USE_CARBON_CRITSEC
-    MPExitCriticalRegion(m_cr);
+      MPCreateCriticalRegion(&m_cr);
 #else
-    if (--m_lockcnt < 0)
-    {
       m_ownerthread=0;
-      pthread_mutex_unlock(&m_mutex);
+      m_lockcnt=0;
+      pthread_mutex_init(&m_mutex,NULL);
+#endif
+#endif
     }
+    ~WDL_Mutex()
+    {
+#ifdef _WIN32
+      DeleteCriticalSection(&m_cs);
+#else
+#ifdef WDL_MAC_USE_CARBON_CRITSEC
+      MPDeleteCriticalRegion(m_cr);
+#else
+      pthread_mutex_destroy(&m_mutex);
 #endif
 #endif
-  }
+    }
+
+    void Enter()
+    {
+#ifdef _DEBUG
+      _debug_cnt++;
+#endif
+
+#ifdef _WIN32
+      EnterCriticalSection(&m_cs);
+#else
+#ifdef WDL_MAC_USE_CARBON_CRITSEC
+      MPEnterCriticalRegion(m_cr,kDurationForever);
+#else
+      pthread_t tt=pthread_self();
+      if (m_ownerthread==tt) m_lockcnt++;
+      else
+      {
+        pthread_mutex_lock(&m_mutex);
+        m_ownerthread=tt;
+        m_lockcnt=0;
+      }
+#endif
+#endif
+    }
+
+    void Leave()
+    {
+#ifdef _DEBUG
+      _debug_cnt--;
+#endif
+#ifdef _WIN32
+      LeaveCriticalSection(&m_cs);
+#else
+#ifdef WDL_MAC_USE_CARBON_CRITSEC
+      MPExitCriticalRegion(m_cr);
+#else
+      if (--m_lockcnt < 0)
+      {
+        m_ownerthread=0;
+        pthread_mutex_unlock(&m_mutex);
+      }
+#endif
+#endif
+    }
 
 #ifdef _DEBUG
   int _debug_cnt;
 #endif
 
-private:
+  private:
 #ifdef _WIN32
   CRITICAL_SECTION m_cs;
 #else
@@ -152,8 +151,7 @@ private:
 
 } WDL_FIXALIGN;
 
-class WDL_MutexLock
-{
+class WDL_MutexLock {
 public:
   WDL_MutexLock(WDL_Mutex *m) : m_m(m) { if (m) m->Enter(); }
   ~WDL_MutexLock() { if (m_m) m_m->Leave(); }
@@ -161,90 +159,88 @@ private:
   WDL_Mutex *m_m;
 } WDL_FIXALIGN;
 
-class WDL_SharedMutex
+class WDL_SharedMutex 
 {
-public:
-  WDL_SharedMutex() { m_sharedcnt=0; }
-  ~WDL_SharedMutex() { }
+  public:
+    WDL_SharedMutex() { m_sharedcnt=0; }
+    ~WDL_SharedMutex() { }
 
-  void LockExclusive()  // note: the calling thread must NOT have any shared locks, or deadlock WILL occur
-  {
-    m_mutex.Enter();
+    void LockExclusive()  // note: the calling thread must NOT have any shared locks, or deadlock WILL occur
+    { 
+      m_mutex.Enter(); 
 #ifdef _WIN32
-    // OL - This is nessecary to avoid a collision in the PTSDK
-#ifdef Sleep
-#define tempSleep Sleep
-#undef Sleep
-#endif
-    while (m_sharedcnt>0) Sleep(1);
-#ifdef tempSleep
-#define Sleep tempSleep
-#undef tempSleep
-#endif
+  // OL - This is nessecary to avoid a collision in the PTSDK
+  #ifdef Sleep
+    #define tempSleep Sleep
+    #undef Sleep
+  #endif
+      while (m_sharedcnt>0) Sleep(1);
+  #ifdef tempSleep
+    #define Sleep tempSleep
+    #undef tempSleep
+  #endif
 #else
-    while (m_sharedcnt>0) usleep(100);
+      while (m_sharedcnt>0) usleep(100);		
 #endif
-  }
-  void UnlockExclusive() { m_mutex.Leave(); }
+    }
+    void UnlockExclusive() { m_mutex.Leave(); }
 
-  void LockShared()
-  {
-    m_mutex.Enter();
+    void LockShared() 
+    { 
+      m_mutex.Enter();
 #ifdef _WIN32
-    InterlockedIncrement(&m_sharedcnt);
+      InterlockedIncrement(&m_sharedcnt);
 #elif defined (__APPLE__)
-    OSAtomicIncrement32(&m_sharedcnt);
+      OSAtomicIncrement32(&m_sharedcnt);
 #else
-    m_cntmutex.Enter();
-    m_sharedcnt++;
-    m_cntmutex.Leave();
+      m_cntmutex.Enter();
+      m_sharedcnt++;
+      m_cntmutex.Leave();
 #endif
 
-    m_mutex.Leave();
-  }
-  void UnlockShared()
-  {
+      m_mutex.Leave();
+    }
+    void UnlockShared()
+    {
 #ifdef _WIN32
-    InterlockedDecrement(&m_sharedcnt);
+      InterlockedDecrement(&m_sharedcnt);
 #elif defined(__APPLE__)
-    OSAtomicDecrement32(&m_sharedcnt);
+      OSAtomicDecrement32(&m_sharedcnt);
 #else
-    m_cntmutex.Enter();
-    m_sharedcnt--;
-    m_cntmutex.Leave();
+      m_cntmutex.Enter();
+      m_sharedcnt--;
+      m_cntmutex.Leave();
 #endif
-  }
+    }
 
-private:
-  WDL_Mutex m_mutex;
+  private:
+    WDL_Mutex m_mutex;
 #ifdef _WIN32
-  LONG m_sharedcnt;
+    LONG m_sharedcnt;
 #elif defined(__APPLE__)
-  int32_t m_sharedcnt;
+    int32_t m_sharedcnt;
 #else
-  WDL_Mutex m_cntmutex;
-  int m_sharedcnt;
+    WDL_Mutex m_cntmutex;
+    int m_sharedcnt;
 #endif
 } WDL_FIXALIGN;
 
 
 
-class WDL_MutexLockShared
-{
-public:
-  WDL_MutexLockShared(WDL_SharedMutex *m) : m_m(m) { if (m) m->LockShared(); }
-  ~WDL_MutexLockShared() { if (m_m) m_m->UnlockShared(); }
-private:
-  WDL_SharedMutex *m_m;
+class WDL_MutexLockShared {
+  public:
+    WDL_MutexLockShared(WDL_SharedMutex *m) : m_m(m) { if (m) m->LockShared(); }
+    ~WDL_MutexLockShared() { if (m_m) m_m->UnlockShared(); }
+  private:
+    WDL_SharedMutex *m_m;
 } WDL_FIXALIGN;
 
-class WDL_MutexLockExclusive
-{
-public:
-  WDL_MutexLockExclusive(WDL_SharedMutex *m) : m_m(m) { if (m) m->LockExclusive(); }
-  ~WDL_MutexLockExclusive() { if (m_m) m_m->UnlockExclusive(); }
-private:
-  WDL_SharedMutex *m_m;
+class WDL_MutexLockExclusive {
+  public:
+    WDL_MutexLockExclusive(WDL_SharedMutex *m) : m_m(m) { if (m) m->LockExclusive(); }
+    ~WDL_MutexLockExclusive() { if (m_m) m_m->UnlockExclusive(); }
+  private:
+    WDL_SharedMutex *m_m;
 } WDL_FIXALIGN;
 
 

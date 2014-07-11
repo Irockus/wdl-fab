@@ -23,8 +23,7 @@
 
 #define HUFF_LOOKAHEAD	8	/* # of bits of lookahead */
 
-typedef struct
-{
+typedef struct {
   /* Basic tables: (element [0] of each array is unused) */
   INT32 maxcode[18];		/* largest code of length k (-1 if none) */
   /* (maxcode[17] is a sentinel to ensure jpeg_huff_decode terminates) */
@@ -48,8 +47,8 @@ typedef struct
 
 /* Expand a Huffman table definition into the derived format */
 EXTERN(void) jpeg_make_d_derived_tbl
-JPP((j_decompress_ptr cinfo, boolean isDC, int tblno,
-     d_derived_tbl ** pdtbl));
+	JPP((j_decompress_ptr cinfo, boolean isDC, int tblno,
+	     d_derived_tbl ** pdtbl));
 
 
 /*
@@ -80,14 +79,12 @@ typedef INT32 bit_buf_type;	/* type of bit-extraction buffer */
  * because not all machines measure sizeof in 8-bit bytes.
  */
 
-typedef struct  		/* Bitreading state saved across MCUs */
-{
+typedef struct {		/* Bitreading state saved across MCUs */
   bit_buf_type get_buffer;	/* current bit-extraction buffer */
   int bits_left;		/* # of unused bits in it */
 } bitread_perm_state;
 
-typedef struct  		/* Bitreading working state within an MCU */
-{
+typedef struct {		/* Bitreading working state within an MCU */
   /* Current data source location */
   /* We need a copy, rather than munging the original, in case of suspension */
   const JOCTET * next_input_byte; /* => next byte to read from source */
@@ -155,8 +152,8 @@ typedef struct  		/* Bitreading working state within an MCU */
 
 /* Load up the bit buffer to a depth of at least nbits */
 EXTERN(boolean) jpeg_fill_bit_buffer
-JPP((bitread_working_state * state, register bit_buf_type get_buffer,
-     register int bits_left, int nbits));
+	JPP((bitread_working_state * state, register bit_buf_type get_buffer,
+	     register int bits_left, int nbits));
 
 
 /*
@@ -200,5 +197,5 @@ slowlabel: \
 
 /* Out-of-line case for Huffman code fetching */
 EXTERN(int) jpeg_huff_decode
-JPP((bitread_working_state * state, register bit_buf_type get_buffer,
-     register int bits_left, d_derived_tbl * htbl, int min_bits));
+	JPP((bitread_working_state * state, register bit_buf_type get_buffer,
+	     register int bits_left, d_derived_tbl * htbl, int min_bits));

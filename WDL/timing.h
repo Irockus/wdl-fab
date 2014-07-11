@@ -4,7 +4,7 @@
   this is based on some public domain Pentium RDTSC timing code from usenet in 1996.
 
   To enable this, your app must #define TIMING, include timing.h, call timingInit(), then timingEnter(x)/timingLeave(x) a bunch
-  of times (where x is 0-64), then timingPrint at the end.
+  of times (where x is 0-64), then timingPrint at the end. 
 
   on timingPrint(), C:\\timings.txt will be overwritten.
 

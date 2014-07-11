@@ -17,7 +17,7 @@
     2. Altered source versions must be plainly marked as such, and must not be
        misrepresented as being the original software.
     3. This notice may not be removed or altered from any source distribution.
-
+      
 
     This file provides interfaces for the WDL Virtual Windows layer, a system that allows
     creating many controls within one system device context.
@@ -61,8 +61,8 @@ class WDL_VWnd_IAccessibleBridge
 {
 public:
   virtual void Release()=0;
-  virtual void ClearCaches() {}
-  virtual void OnFocused() {}
+  virtual void ClearCaches(){}
+  virtual void OnFocused() {} 
   virtual void OnStateChange() {}
 };
 
@@ -91,7 +91,7 @@ public:
   virtual WDL_VWnd *GetParent() { return m_parent; }
   virtual void SetParent(WDL_VWnd *par) { m_parent=par; }
 
-  virtual void RequestRedraw(RECT *r);
+  virtual void RequestRedraw(RECT *r); 
   virtual void OnPaint(LICE_IBitmap *drawbm, int origin_x, int origin_y, RECT *cliprect);
   virtual void OnPaintOver(LICE_IBitmap *drawbm, int origin_x, int origin_y, RECT *cliprect);
 
@@ -132,7 +132,7 @@ public:
   virtual void SetAccessibilityBridge(WDL_VWnd_IAccessibleBridge *br) { m__iaccess=br; }
 
   virtual void SetChildPosition(WDL_VWnd *ch, int pos);
-
+  
   virtual void SetCurPainter(WDL_VWnd_Painter *p) { m_curPainter=p; }
   virtual bool IsDescendent(WDL_VWnd *w);
 
@@ -176,7 +176,7 @@ public:
 
 
   void SetGSC(int (*GSC)(int));
-  void PaintBegin(HWND hwnd, int bgcolor=-1, const RECT *limitBGrect=NULL, const RECT *windowRect=NULL);
+  void PaintBegin(HWND hwnd, int bgcolor=-1, const RECT *limitBGrect=NULL, const RECT *windowRect=NULL);  
   void SetBGImage(WDL_VirtualWnd_BGCfg *bitmap, int tint=-1, WDL_VirtualWnd_BGCfgCache *cacheObj=NULL) { m_bgbm=bitmap; m_bgbmtintcolor=tint; m_bgcache=cacheObj; } // call before every paintbegin (resets if you dont)
   void SetBGGradient(int wantGradient, double start, double slope); // wantg < 0 to use system defaults
 
@@ -187,11 +187,11 @@ public:
 
   void GetPaintInfo(RECT *rclip, int *xoffsdraw, int *yoffsdraw);
 
-  LICE_IBitmap *GetBuffer(int *xo, int *yo)
-  {
+  LICE_IBitmap *GetBuffer(int *xo, int *yo) 
+  { 
     *xo = -m_paint_xorig;
     *yo = -m_paint_yorig;
-    return m_bm;
+    return m_bm; 
   }
 
   void PaintEnd();

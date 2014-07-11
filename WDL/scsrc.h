@@ -17,13 +17,13 @@
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
-
+  
 
   This file provides for an object to source a SHOUTcast (www.shoutcast.com) stream.
   It uses the lameencdec.h interface (and lame_enc.dll) to encode, and JNetLib to send the data.
 
 
-  This object will not auto-reconnect on disconnect. If GetStatus() returns error, the callee needs to
+  This object will not auto-reconnect on disconnect. If GetStatus() returns error, the callee needs to 
   delete the object and create a new one.
 
 
@@ -45,12 +45,12 @@
 class WDL_ShoutcastSource
 {
 public:
-  WDL_ShoutcastSource(const char *host, const char *pass, const char *name, bool pub=false,
+  WDL_ShoutcastSource(const char *host, const char *pass, const char *name, bool pub=false, 
                       const char *genre=NULL, const char *url=NULL,
-
+                      
                       int nch=2, int srate=44100, int kbps=128,
                       const char *ircchan=NULL
-                     );
+                      );
   ~WDL_ShoutcastSource();
 
   int GetStatus(); // returns 0 if connected/connecting, >0 if disconnected, -1 if failed connect (or other error) from the start
@@ -59,14 +59,14 @@ public:
   void SetCurTitle(const char *title);
 
   int GetSampleRate() { return m_srate; }
-  void OnSamples(float **samples, int nch, int chspread, int frames, double srate);
+  void OnSamples(float **samples, int nch, int chspread, int frames, double srate); 
   int RunStuff(); // returns nonzero if work done
-
+  
 
   void *userData;
   int totalBitrate; // 0 for normal, otherwise if using NSV (below) set to kbps of total stream
   // allows hooking to say, I dunno, package in some other format such as NSV?
-  void (*sendProcessor)(void *userData, WDL_Queue *dataout, WDL_Queue *data);
+  void (*sendProcessor)(void *userData, WDL_Queue *dataout, WDL_Queue *data); 
 
   int GetAudioBitrate() { return m_br*1000; }
 

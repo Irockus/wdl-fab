@@ -32,9 +32,9 @@ IPlugOpenGL::IPlugOpenGL(IPlugInstanceInfo instanceInfo)
 
   IGraphics* pGraphics = MakeGraphics(this, kWidth, kHeight, 30);
   pGraphics->AttachPanelBackground(&COLOR_BLACK);
-#ifdef OS_OSX
+  #ifdef OS_OSX
   pGraphics->AttachControl(new IOpenGLTestControl(this, IRECT(10, 10, GUI_WIDTH-10, GUI_HEIGHT-10)));
-#endif
+  #endif
   AttachGraphics(pGraphics);
   //MakePreset("preset 1", ... );
   MakeDefaultPreset((char *) "-", kNumPrograms);

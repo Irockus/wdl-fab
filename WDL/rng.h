@@ -1,7 +1,7 @@
 /*
     WDL - rng.h
     Copyright (C) 2005 and later, Cockos Incorporated
-
+   
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
     arising from the use of this software.
@@ -17,12 +17,12 @@
     2. Altered source versions must be plainly marked as such, and must not be
        misrepresented as being the original software.
     3. This notice may not be removed or altered from any source distribution.
-
+    
 */
 
 /*
 
-  This header provides the interface to a decent random number generator,
+  This header provides the interface to a decent random number generator, 
   that internally uses a 256-bit state, and SHA-1 to iterate. We wouldn't consider
   this RNG to be cryptographically secure, but it may be decent.
 

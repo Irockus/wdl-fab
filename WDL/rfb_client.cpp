@@ -2,6 +2,7 @@
 #include "lice/lice.h"
 
 #include "des.h"
+#include <string.h>
 
 #define CONNECTION_TIMEOUT 30
 #define NORMAL_TIMEOUT 30
@@ -41,7 +42,7 @@ WDL_RFB_Client::~WDL_RFB_Client()
 unsigned int WDL_RFB_Client::GetBE(int nb, int queueoffs, bool advance)
 {
   unsigned char *buf=m_msg_buf.Get()+queueoffs;
-
+  
   unsigned int a=0;
   if (nb==4) a= (buf[0]<<24) | (buf[1]<<16) | (buf[2]<<8) | buf[3];
   else if (nb==3) a=(buf[0]<<16) | (buf[1]<<8) | buf[2];
@@ -92,10 +93,10 @@ int WDL_RFB_Client::Run()
               m_state = AuthWaitState;
             }
           }
-          m_msg_buf.Advance(12);
+          m_msg_buf.Advance(12); 
         }
         else bytes_needed=12;
-        break;
+      break;
       case AuthWaitState:
         if (m_msg_buf.Available()>=4)
         {
@@ -105,13 +106,13 @@ int WDL_RFB_Client::Run()
             m_state=ErrorState;
             m_errstr = "Server permission denied";
           }
-          else if (type==1)
+          else if (type==1) 
           {
             m_state=ServerInitState;
             m_msg_buf.Advance(4);
 
             char c=1; // allow sharing
-            m_con->send_bytes(&c,1);
+            m_con->send_bytes(&c,1); 
           }
           else if (type == 2)
           {
@@ -133,7 +134,7 @@ int WDL_RFB_Client::Run()
               m_state=AuthWaitState2;
             }
             else bytes_needed=4+16;
-          }
+          } 
           else
           {
             m_state=ErrorState;
@@ -141,7 +142,7 @@ int WDL_RFB_Client::Run()
           }
         }
         else bytes_needed=4;
-        break;
+      break;
       case AuthWaitState2:
         if (m_msg_buf.Available()>=4)
         {
@@ -151,94 +152,92 @@ int WDL_RFB_Client::Run()
             m_state=ServerInitState;
 
             char c=1; // allow sharing
-            m_con->send_bytes(&c,1);
+            m_con->send_bytes(&c,1); 
           }
-          else
+          else 
           {
             m_state=ErrorState;
             m_errstr = type==1 ? "Auth failed" : type==2 ? "Too many connections" : "Auth failed (unknown reason)";
           }
         }
         else bytes_needed=4;
-        break;
+      break;
       case ServerInitState:
-      {
-        if (m_msg_buf.Available()>=2+2+16+4)
         {
-          unsigned int nl = GetBE(4,2+2+16,false);
-          if (m_msg_buf.Available()>=2+2+16+4 + nl)
+          if (m_msg_buf.Available()>=2+2+16+4)
           {
-            m_screen_w = GetBE(2);
-            m_screen_h = GetBE(2);
-
-            m_msg_buf.Advance(16+4); // skip color map and length
-
-            memcpy(m_namebuf.Resize(nl+1),m_msg_buf.Get(),nl);
-            m_msg_buf.Advance(nl);
-            m_namebuf.Get()[nl]=0;
-
-            // request our pixel format
-
+            unsigned int nl = GetBE(4,2+2+16,false);
+            if (m_msg_buf.Available()>=2+2+16+4 + nl)
             {
-              unsigned char buf[20]= {0,};
-              buf[0] = 0; // request pixel format
-              // 3 bytes padding
-              buf[4] = 32;
-              buf[5] = 24;
-              buf[6] = 0; // always LE
-              buf[7] = 1; // true-color
+              m_screen_w = GetBE(2);
+              m_screen_h = GetBE(2);
 
-              buf[8] = 0; buf[9]=255; // masks
-              buf[10] = 0; buf[11]=255;
-              buf[12] = 0; buf[13]=255;
+              m_msg_buf.Advance(16+4); // skip color map and length
 
-              buf[14] = LICE_PIXEL_R*8; // shifts
-              buf[15] = LICE_PIXEL_G*8;
-              buf[16] = LICE_PIXEL_B*8;
+              memcpy(m_namebuf.Resize(nl+1),m_msg_buf.Get(),nl);
+              m_msg_buf.Advance(nl);
+              m_namebuf.Get()[nl]=0;
 
-              // 3 bytes padding
+              // request our pixel format
 
-              m_con->send_bytes(buf,sizeof(buf));
-            }
-            // request encodings
-            {
-              const int encs[]=
               {
-#ifdef WANT_RRE
-                ENCODE_TYPE_RRE,
-#endif
-                ENCODE_TYPE_RAW,ENCODE_TYPE_SCREENSIZE,
-              };
-              const int nencs = sizeof(encs)/sizeof(encs[0]);
+                unsigned char buf[20]={0,};
+                buf[0] = 0; // request pixel format
+                // 3 bytes padding
+                buf[4] = 32;
+                buf[5] = 24;
+                buf[6] = 0; // always LE
+                buf[7] = 1; // true-color
 
-              unsigned char buf[4+nencs*4]= {0,};
-              buf[0]=2; //encodings
-              buf[2] = (nencs>>8)&0xff;
-              buf[3] = nencs&0xff;
-              int x;
-              for(x=0; x<nencs; x++)
-              {
-                buf[4+x*4] = (encs[x]>>24)&0xff;
-                buf[4+x*4+1] = (encs[x]>>16)&0xff;
-                buf[4+x*4+2] = (encs[x]>>8)&0xff;
-                buf[4+x*4+3] = (encs[x])&0xff;
+                buf[8] = 0; buf[9]=255; // masks
+                buf[10] = 0; buf[11]=255;
+                buf[12] = 0; buf[13]=255;
+
+                buf[14] = LICE_PIXEL_R*8; // shifts
+                buf[15] = LICE_PIXEL_G*8;
+                buf[16] = LICE_PIXEL_B*8;
+
+                // 3 bytes padding
+
+                m_con->send_bytes(buf,sizeof(buf));
               }
-              m_con->send_bytes(buf,sizeof(buf));
-            }
+              // request encodings
+              {
+                const int encs[]={
+#ifdef WANT_RRE
+                  ENCODE_TYPE_RRE,
+#endif
+                    ENCODE_TYPE_RAW,ENCODE_TYPE_SCREENSIZE,};
+                const int nencs = sizeof(encs)/sizeof(encs[0]);
 
-            m_state=RunState;
-            m_needref=2;
+                unsigned char buf[4+nencs*4]={0,};
+                buf[0]=2; //encodings
+                buf[2] = (nencs>>8)&0xff;
+                buf[3] = nencs&0xff;
+                int x;
+                for(x=0;x<nencs;x++)
+                {
+                  buf[4+x*4] = (encs[x]>>24)&0xff;
+                  buf[4+x*4+1] = (encs[x]>>16)&0xff;
+                  buf[4+x*4+2] = (encs[x]>>8)&0xff;
+                  buf[4+x*4+3] = (encs[x])&0xff;
+                }
+                m_con->send_bytes(buf,sizeof(buf));
+              }
+
+              m_state=RunState;
+              m_needref=2;
+            }
+            else bytes_needed=2+2+16+4+nl;
           }
-          else bytes_needed=2+2+16+4+nl;
+          else bytes_needed=2+2+16+4;
         }
-        else bytes_needed=2+2+16+4;
-      }
       break;
       case RunState:
 
         if (m_needref)
         {
-          unsigned char buf[10]= {0,};
+          unsigned char buf[10]={0,};
           buf[0]=3;
           buf[1]=(m_needref & 2)?false:true;
           if (!m_req_w || !m_req_h)
@@ -289,30 +288,30 @@ int WDL_RFB_Client::Run()
                 }
               }
               else bytes_needed=4;
-              break;
+            break;
             case 1: // color map crap
               if (m_msg_buf.Available()>=6)
               {
                 m_skipdata = GetBE(2,4)*6; // skip 4 bytes, read 2, then skip that
               }
-              break;
+            break;
             case 2: // bell, skip
               m_msg_buf.Advance(1);
-              break;
+            break;
             case 3: // copy text, skip
               if (m_msg_buf.Available()>=8)
               {
                 m_skipdata=GetBE(4,4); // skip 4 bytes, read 4
               }
-              break;
+            break;
             default:
               m_state=ErrorState;
               sprintf(tmperrbuf,"Got unknown message: %d",msg);
               m_errstr=tmperrbuf;
-              break;
+            break;
           }
         }
-        break;
+      break;
       case RunState_GettingRects:
         if (m_msg_state>0)
         {
@@ -327,21 +326,21 @@ int WDL_RFB_Client::Run()
             switch (enc)
             {
               case ENCODE_TYPE_SCREENSIZE:
-              {
-                if (w>m_screen_w || h>m_screen_h) m_needref=2;
-                m_screen_w = w;
-                m_screen_h = h;
-                m_msg_buf.Advance(12);
-              }
+                {
+                  if (w>m_screen_w || h>m_screen_h) m_needref=2;
+                  m_screen_w = w;
+                  m_screen_h = h;
+                  m_msg_buf.Advance(12);
+                }
               break;
               case ENCODE_TYPE_RRE:
-                if (m_msg_buf.GetSize()>=12+8)
+                if (m_msg_buf.GetSize()>=12+8) 
                 {
                   unsigned int nr = GetBE(4,12,false);
-                  if (m_msg_buf.GetSize()>=12+8 + nr*12)
+                  if (m_msg_buf.GetSize()>=12+8 + nr*12) 
                   {
                     LICE_pixel bgc = GetBE(4,12+4);
-                    if (DrawRectangleCallback)
+                    if (DrawRectangleCallback) 
                     {
                       m_bm.resize(w,h);
                       LICE_FillRect(&m_bm,0,0,w,h,bgc,1.0f,LICE_BLIT_MODE_COPY);
@@ -354,29 +353,29 @@ int WDL_RFB_Client::Run()
                         int lw=GetBE(2);
                         int lh=GetBE(2);
                         LICE_FillRect(&m_bm,lx,ly,lw,lh,bgc,1.0f,LICE_BLIT_MODE_COPY);
-                      }
+                      }                      
 
                       DrawRectangleCallback(this,&m_bm,xpos,ypos,w,h);
                     }
-                    else m_msg_buf.Advance(nr*12);
+                    else m_msg_buf.Advance(nr*12);                   
 
                     --m_msg_state;
                   }
                   else bytes_needed = 12+8 + nr*12;
                 }
                 else bytes_needed=12+8;
-                break;
-              case ENCODE_TYPE_RAW: // raw
+              break;
+              case ENCODE_TYPE_RAW: // raw  
                 if (m_msg_buf.GetSize()>=12+w*h*4) // we only support 32bpp for now
                 {
-                  if (DrawRectangleCallback)
+                  if (DrawRectangleCallback) 
                   {
                     LICE_pixel *src = (LICE_pixel *)(m_msg_buf.Get()+12);
                     m_bm.resize(w,h);
                     LICE_pixel *out = m_bm.getBits();
                     int rs = m_bm.getRowSpan();
                     int a;
-                    for (a=0; a<h; a++)
+                    for (a=0;a<h;a++)
                     {
                       memcpy(out,src,w*sizeof(LICE_pixel));
                       src+=w;
@@ -386,17 +385,17 @@ int WDL_RFB_Client::Run()
 
                     DrawRectangleCallback(this,&m_bm,xpos,ypos,w,h);
                   }
-
+            
                   m_msg_buf.Advance(12 + w*h*4);
                   --m_msg_state;
                 }
                 else bytes_needed=12+w*h*4;
-                break;
+              break;
               default:
                 m_state=ErrorState;
                 sprintf(tmperrbuf,"Got unknown encoding: %d",enc);
                 m_errstr=tmperrbuf;
-                break;
+              break;
             }
           }
           else bytes_needed=12;
@@ -407,7 +406,7 @@ int WDL_RFB_Client::Run()
           m_state = RunState;
           if (DrawRectangleCallback) DrawRectangleCallback(this,NULL,0,0,0,0);
         }
-        break;
+      break;
     }
 
     if (old_avail != m_msg_buf.Available()) cnt=1;

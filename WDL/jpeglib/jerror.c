@@ -47,8 +47,7 @@
 
 #define JMESSAGE(code,string)	string ,
 
-const char * const jpeg_std_message_table[] =
-{
+const char * const jpeg_std_message_table[] = {
 #include "jerror.h"
   NULL
 };
@@ -106,7 +105,7 @@ output_message (j_common_ptr cinfo)
 #ifdef USE_WINDOWS_MESSAGEBOX
   /* Display it in a message dialog box */
   MessageBox(GetActiveWindow(), buffer, "JPEG Library Error",
-             MB_OK | MB_ICONERROR);
+	     MB_OK | MB_ICONERROR);
 #else
   /* Send it to stderr, adding a newline */
   fprintf(stderr, "%s\n", buffer);
@@ -130,8 +129,7 @@ emit_message (j_common_ptr cinfo, int msg_level)
 {
   struct jpeg_error_mgr * err = cinfo->err;
 
-  if (msg_level < 0)
-  {
+  if (msg_level < 0) {
     /* It's a warning message.  Since corrupt files may generate many warnings,
      * the policy implemented here is to show only the first warning,
      * unless trace_level >= 3.
@@ -140,9 +138,7 @@ emit_message (j_common_ptr cinfo, int msg_level)
       (*err->output_message) (cinfo);
     /* Always count warnings in num_warnings. */
     err->num_warnings++;
-  }
-  else
-  {
+  } else {
     /* It's a trace message.  Show it if trace_level >= msg_level. */
     if (err->trace_level >= msg_level)
       (*err->output_message) (cinfo);
@@ -168,20 +164,16 @@ format_message (j_common_ptr cinfo, char * buffer)
   boolean isstring;
 
   /* Look up message string in proper table */
-  if (msg_code > 0 && msg_code <= err->last_jpeg_message)
-  {
+  if (msg_code > 0 && msg_code <= err->last_jpeg_message) {
     msgtext = err->jpeg_message_table[msg_code];
-  }
-  else if (err->addon_message_table != NULL &&
-           msg_code >= err->first_addon_message &&
-           msg_code <= err->last_addon_message)
-  {
+  } else if (err->addon_message_table != NULL &&
+	     msg_code >= err->first_addon_message &&
+	     msg_code <= err->last_addon_message) {
     msgtext = err->addon_message_table[msg_code - err->first_addon_message];
   }
 
   /* Defend against bogus message number */
-  if (msgtext == NULL)
-  {
+  if (msgtext == NULL) {
     err->msg_parm.i[0] = msg_code;
     msgtext = err->jpeg_message_table[0];
   }
@@ -189,10 +181,8 @@ format_message (j_common_ptr cinfo, char * buffer)
   /* Check for string parameter, as indicated by %s in the message text */
   isstring = FALSE;
   msgptr = msgtext;
-  while ((ch = *msgptr++) != '\0')
-  {
-    if (ch == '%')
-    {
+  while ((ch = *msgptr++) != '\0') {
+    if (ch == '%') {
       if (*msgptr == 's') isstring = TRUE;
       break;
     }
@@ -203,10 +193,10 @@ format_message (j_common_ptr cinfo, char * buffer)
     sprintf(buffer, msgtext, err->msg_parm.s);
   else
     sprintf(buffer, msgtext,
-            err->msg_parm.i[0], err->msg_parm.i[1],
-            err->msg_parm.i[2], err->msg_parm.i[3],
-            err->msg_parm.i[4], err->msg_parm.i[5],
-            err->msg_parm.i[6], err->msg_parm.i[7]);
+	    err->msg_parm.i[0], err->msg_parm.i[1],
+	    err->msg_parm.i[2], err->msg_parm.i[3],
+	    err->msg_parm.i[4], err->msg_parm.i[5],
+	    err->msg_parm.i[6], err->msg_parm.i[7]);
 }
 
 

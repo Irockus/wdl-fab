@@ -27,7 +27,7 @@
     2. Altered source versions must be plainly marked as such, and must not be
        misrepresented as being the original software.
     3. This notice may not be removed or altered from any source distribution.
-
+      
 */
 
 
@@ -53,31 +53,31 @@ public:
     }
   }
 
-  double process(double inp)
+	double process(double inp)
   {
     double *bptr=buffer.Get()+bufidx;
 
-    double bufout = *bptr;
+	  double bufout = *bptr;
+	  
+	  double output = bufout - inp;
+	  *bptr = denormal_filter_double(inp + (bufout*feedback));
 
-    double output = bufout - inp;
-    *bptr = denormal_filter_double(inp + (bufout*feedback));
+	  if(++bufidx>=buffer.GetSize()) bufidx = 0;
 
-    if(++bufidx>=buffer.GetSize()) bufidx = 0;
-
-    return output;
+	  return output;
   }
   void Reset() { memset(buffer.Get(),0,buffer.GetSize()*sizeof(double)); }
   void setfeedback(double val) { feedback=val; }
 
 private:
-  double	feedback;
-  WDL_TypedBuf<double> buffer;
-  int		bufidx;
+	double	feedback;
+	WDL_TypedBuf<double> buffer;
+	int		bufidx;
   int __pad;
 
 } WDL_FIXALIGN;
 
-
+  
 class WDL_ReverbComb
 {
 public:
@@ -95,17 +95,17 @@ public:
     }
   }
 
-  double process(double inp)
+	double process(double inp)
   {
     double *bptr=buffer.Get()+bufidx;
-    double output = *bptr;
-    filterstore = denormal_filter_double((output*(1-damp)) + (filterstore*damp));
+	  double output = *bptr;
+	  filterstore = denormal_filter_double((output*(1-damp)) + (filterstore*damp));
 
-    *bptr = inp + (filterstore*feedback);
+	  *bptr = inp + (filterstore*feedback);
 
-    if(++bufidx>=buffer.GetSize()) bufidx = 0;
+	  if(++bufidx>=buffer.GetSize()) bufidx = 0;
 
-    return output;
+	  return output;
   }
   void Reset() { memset(buffer.Get(),0,buffer.GetSize()*sizeof(double)); }
   void setdamp(double val) { damp=val;  }
@@ -113,18 +113,18 @@ public:
 
 private:
 
-  double	feedback;
-  double	filterstore;
-  double	damp;
-  WDL_TypedBuf<double> buffer;
-  int		bufidx;
+	double	feedback;
+	double	filterstore;
+	double	damp;
+	WDL_TypedBuf<double> buffer;
+	int		bufidx;
   int __pad;
 } WDL_FIXALIGN;
 
-// these represent lengths in samples at 44.1khz but are scaled accordingly
+  // these represent lengths in samples at 44.1khz but are scaled accordingly
 const int wdl_verb__stereospread=23;
-const short wdl_verb__combtunings[]= {1116,1188,1277,1356,1422,1491,1557,1617,1685,1748};
-const short wdl_verb__allpasstunings[]= {556,441,341,225,180,153};
+const short wdl_verb__combtunings[]={1116,1188,1277,1356,1422,1491,1557,1617,1685,1748};
+const short wdl_verb__allpasstunings[]={556,441,341,225,180,153};
 
 
 class WDL_ReverbEngine
@@ -161,11 +161,11 @@ public:
       int i=ns;
       double *p0=outp0,*p1=outp1,*i0=spl0,*i1=spl1;
       while (i--)
-      {
+      {        
         double a=*i0++,b=*i1++;
-        *p0+=m_combs[x][0].process(a);
+        *p0+=m_combs[x][0].process(a); 
         *p1+=m_combs[x][1].process(b);
-        *p0+++=m_combs[x+1][0].process(a);
+        *p0+++=m_combs[x+1][0].process(a); 
         *p1+++=m_combs[x+1][1].process(b);
       }
     }
@@ -174,7 +174,7 @@ public:
       int i=ns;
       double *p0=outp0,*p1=outp1;
       while (i--)
-      {
+      {        
         double tmp=m_allpasses[x][0].process(*p0);
         double tmp2=m_allpasses[x][1].process(*p1);
         *p0++=m_allpasses[x+1][0].process(tmp);
@@ -184,7 +184,7 @@ public:
     int i=ns;
     double *p0=outp0,*p1=outp1;
     while (i--)
-    {
+    {        
       double a=m_allpasses[x+1][0].process(m_allpasses[x][0].process(*p0))*0.015;
       double b=m_allpasses[x+1][1].process(m_allpasses[x][1].process(*p1))*0.015;
 
@@ -203,7 +203,7 @@ public:
       p0++;
       p1++;
     }
-
+    
   }
 
   void ProcessSample(double *spl0, double *spl1)
@@ -274,10 +274,10 @@ public:
 
   void SetRoomSize(double sz) { m_roomsize=sz;; } // 0.3..0.99 or so
   void SetDampening(double dmp) { m_damp=dmp; } // 0..1
-  void SetWidth(double wid)
-  {
-    if (wid<-1) wid=-1;
-    else if (wid>1) wid=1;
+  void SetWidth(double wid) 
+  {  
+    if (wid<-1) wid=-1; 
+    else if (wid>1) wid=1; 
     wid*=0.5;
     if (wid>=0.0) wid+=0.5;
     else wid-=0.5;

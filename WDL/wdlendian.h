@@ -37,11 +37,11 @@ typedef union { float  f; unsigned int int32; } WDL_EndianFloat;
 typedef union { double f; WDL_UINT64   int64; } WDL_EndianDouble;
 
 #ifdef __cplusplus
-#define WDL_ENDIAN_INLINE inline
+	#define WDL_ENDIAN_INLINE inline
 #elif defined(_MSC_VER)
-#define WDL_ENDIAN_INLINE __inline
+	#define WDL_ENDIAN_INLINE __inline
 #else
-#define WDL_ENDIAN_INLINE
+	#define WDL_ENDIAN_INLINE
 #endif
 
 
@@ -52,24 +52,24 @@ typedef union { double f; WDL_UINT64   int64; } WDL_EndianDouble;
 // Mac OS X
 #elif defined(__APPLE__)
 #if __LITTLE_ENDIAN__ // Intel
-#define WDL_LITTLE_ENDIAN
+	#define WDL_LITTLE_ENDIAN
 #elif __BIG_ENDIAN__ // PowerPC
-#define WDL_BIG_ENDIAN
+	#define WDL_BIG_ENDIAN
 #else
-#error Unknown endian
+	#error Unknown endian
 #endif
 
 // GNU C (v4.6 or later?)
 #elif __GNUC__ && defined(__BYTE_ORDER__)
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-#define WDL_LITTLE_ENDIAN
+	#define WDL_LITTLE_ENDIAN
 #elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-#define WDL_BIG_ENDIAN
+	#define WDL_BIG_ENDIAN
 #else
-#error Unsupported endian
+	#error Unsupported endian
 #endif
 #if __FLOAT_WORD_ORDER__ != __BYTE_ORDER__
-#error Unsupported float endian
+	#error Unsupported float endian
 #endif
 
 // GNU C, Intel C++
@@ -93,22 +93,22 @@ typedef union { double f; WDL_UINT64   int64; } WDL_EndianDouble;
 #define WDL_bswap64(x) _byteswap_uint64(x)
 
 #elif defined(__APPLE__)
-#include "TargetConditionals.h"
-#if defined(TARGET_OS_IPHONE) | defined(TARGET_IPHONE_SIMULATOR)
-#include <libkern/OSByteOrder.h>
+  #include "TargetConditionals.h"
+  #if defined(TARGET_OS_IPHONE) | defined(TARGET_IPHONE_SIMULATOR)
+    #include <libkern/OSByteOrder.h>
+    
+    // iOS
+    #define WDL_bswap16(x) OSSwapInt16(x)
+    #define WDL_bswap32(x) OSSwapInt32(x)
+    #define WDL_bswap64(x) OSSwapInt64(x)
 
-// iOS
-#define WDL_bswap16(x) OSSwapInt16(x)
-#define WDL_bswap32(x) OSSwapInt32(x)
-#define WDL_bswap64(x) OSSwapInt64(x)
+  // Mac OS X (v10.0 and later)
+  #elif defined(TARGET_OS_MAC)
+    #include <CoreServices/CoreServices.h>
 
-// Mac OS X (v10.0 and later)
-#elif defined(TARGET_OS_MAC)
-#include <CoreServices/CoreServices.h>
-
-#define WDL_bswap16(x) Endian16_Swap(x)
-#define WDL_bswap32(x) Endian32_Swap(x)
-#define WDL_bswap64(x) Endian64_Swap(x) // (Thread-safe on) v10.3 and later (?)
+    #define WDL_bswap16(x) Endian16_Swap(x)
+    #define WDL_bswap32(x) Endian32_Swap(x)
+    #define WDL_bswap64(x) Endian64_Swap(x) // (Thread-safe on) v10.3 and later (?)
 #endif
 
 
@@ -131,32 +131,32 @@ typedef union { double f; WDL_UINT64   int64; } WDL_EndianDouble;
 #ifndef WDL_bswap16
 static WDL_ENDIAN_INLINE unsigned short WDL_bswap16(const unsigned short int16)
 {
-  return int16 >> 8 |
-         int16 << 8;
+	return int16 >> 8 |
+	       int16 << 8;
 }
 #endif
 
 #ifndef WDL_bswap32
 static WDL_ENDIAN_INLINE unsigned int WDL_bswap32(const unsigned int int32)
 {
-  return int32 >> 24 |
-         int32 >> 8  & 0x0000FF00 |
-         int32 << 8  & 0x00FF0000 |
-         int32 << 24;
+	return int32 >> 24 |
+	       int32 >> 8  & 0x0000FF00 |
+	       int32 << 8  & 0x00FF0000 |
+	       int32 << 24;
 }
 #endif
 
 #ifndef WDL_bswap64
 static WDL_ENDIAN_INLINE WDL_UINT64 WDL_bswap64(const WDL_UINT64 int64)
 {
-  return int64 >> 56 |
-         int64 >> 40 & 0x000000000000FF00ULL |
-         int64 >> 24 & 0x0000000000FF0000ULL |
-         int64 >> 8  & 0x00000000FF000000ULL |
-         int64 << 8  & 0x000000FF00000000ULL |
-         int64 << 24 & 0x0000FF0000000000ULL |
-         int64 << 40 & 0x00FF000000000000ULL |
-         int64 << 56;
+	return int64 >> 56 |
+	       int64 >> 40 & 0x000000000000FF00ULL |
+	       int64 >> 24 & 0x0000000000FF0000ULL |
+	       int64 >> 8  & 0x00000000FF000000ULL |
+	       int64 << 8  & 0x000000FF00000000ULL |
+	       int64 << 24 & 0x0000FF0000000000ULL |
+	       int64 << 40 & 0x00FF000000000000ULL |
+	       int64 << 56;
 }
 #endif
 
@@ -165,41 +165,41 @@ static WDL_ENDIAN_INLINE WDL_UINT64 WDL_bswap64(const WDL_UINT64 int64)
 
 #if defined(WDL_LITTLE_ENDIAN)
 
-#define WDL_bswap16_if_le(x) WDL_bswap16(x)
-#define WDL_bswap32_if_le(x) WDL_bswap32(x)
-#define WDL_bswap64_if_le(x) WDL_bswap64(x)
-#define WDL_bswap16_if_be(x) ((unsigned short)(x))
-#define WDL_bswap32_if_be(x) ((unsigned int)(x))
-#define WDL_bswap64_if_be(x) ((WDL_UINT64)(x))
+	#define WDL_bswap16_if_le(x) WDL_bswap16(x)
+	#define WDL_bswap32_if_le(x) WDL_bswap32(x)
+	#define WDL_bswap64_if_le(x) WDL_bswap64(x)
+	#define WDL_bswap16_if_be(x) ((unsigned short)(x))
+	#define WDL_bswap32_if_be(x) ((unsigned int)(x))
+	#define WDL_bswap64_if_be(x) ((WDL_UINT64)(x))
 
-// Wrappers that convert a variable in-place, or generate no code if
-// conversion is not necessary. Beware to only feed variables to these
-// macros, so no fancy things like WDL_BSWAP32_IF_LE(x + y) or
-// WDL_BSWAP32_IF_LE(x++). Note that these macros only change the type
-// to unsigned if conversion is actually necessary.
-#define WDL_BSWAP16_IF_LE(x) (x = WDL_bswap16(x))
-#define WDL_BSWAP32_IF_LE(x) (x = WDL_bswap32(x))
-#define WDL_BSWAP64_IF_LE(x) (x = WDL_bswap64(x))
-#define WDL_BSWAP16_IF_BE(x) ((void)0)
-#define WDL_BSWAP32_IF_BE(x) ((void)0)
-#define WDL_BSWAP64_IF_BE(x) ((void)0)
+	// Wrappers that convert a variable in-place, or generate no code if
+	// conversion is not necessary. Beware to only feed variables to these
+	// macros, so no fancy things like WDL_BSWAP32_IF_LE(x + y) or
+	// WDL_BSWAP32_IF_LE(x++). Note that these macros only change the type
+	// to unsigned if conversion is actually necessary.
+	#define WDL_BSWAP16_IF_LE(x) (x = WDL_bswap16(x))
+	#define WDL_BSWAP32_IF_LE(x) (x = WDL_bswap32(x))
+	#define WDL_BSWAP64_IF_LE(x) (x = WDL_bswap64(x))
+	#define WDL_BSWAP16_IF_BE(x) ((void)0)
+	#define WDL_BSWAP32_IF_BE(x) ((void)0)
+	#define WDL_BSWAP64_IF_BE(x) ((void)0)
 
 #else // #elif defined(WDL_BIG_ENDIAN)
 
-#define WDL_bswap16_if_be(x) WDL_bswap16(x)
-#define WDL_bswap32_if_be(x) WDL_bswap32(x)
-#define WDL_bswap64_if_be(x) WDL_bswap64(x)
-#define WDL_bswap16_if_le(x) ((unsigned short)(x))
-#define WDL_bswap32_if_le(x) ((unsigned int)(x))
-#define WDL_bswap64_if_le(x) ((WDL_UINT64)(x))
+	#define WDL_bswap16_if_be(x) WDL_bswap16(x)
+	#define WDL_bswap32_if_be(x) WDL_bswap32(x)
+	#define WDL_bswap64_if_be(x) WDL_bswap64(x)
+	#define WDL_bswap16_if_le(x) ((unsigned short)(x))
+	#define WDL_bswap32_if_le(x) ((unsigned int)(x))
+	#define WDL_bswap64_if_le(x) ((WDL_UINT64)(x))
 
-// In-place wrappers (see notes above)
-#define WDL_BSWAP16_IF_BE(x) (x = WDL_bswap16(x))
-#define WDL_BSWAP32_IF_BE(x) (x = WDL_bswap32(x))
-#define WDL_BSWAP64_IF_BE(x) (x = WDL_bswap64(x))
-#define WDL_BSWAP16_IF_LE(x) ((void)0)
-#define WDL_BSWAP32_IF_LE(x) ((void)0)
-#define WDL_BSWAP64_IF_LE(x) ((void)0)
+	// In-place wrappers (see notes above)
+	#define WDL_BSWAP16_IF_BE(x) (x = WDL_bswap16(x))
+	#define WDL_BSWAP32_IF_BE(x) (x = WDL_bswap32(x))
+	#define WDL_BSWAP64_IF_BE(x) (x = WDL_bswap64(x))
+	#define WDL_BSWAP16_IF_LE(x) ((void)0)
+	#define WDL_BSWAP32_IF_LE(x) ((void)0)
+	#define WDL_BSWAP64_IF_LE(x) ((void)0)
 
 #endif // WDL_bswapXX_if_YY
 
@@ -224,22 +224,22 @@ static WDL_ENDIAN_INLINE WDL_INT64      WDL_bswap_if_be(WDL_INT64      int64) { 
 
 // Auto-typed in-place wrappers (see notes above)
 #ifdef WDL_LITTLE_ENDIAN
-#define WDL_BSWAP_IF_LE(x) (x = WDL_bswap_if_le(x))
-#define WDL_BSWAP_IF_BE(x) ((void)0)
+	#define WDL_BSWAP_IF_LE(x) (x = WDL_bswap_if_le(x))
+	#define WDL_BSWAP_IF_BE(x) ((void)0)
 #else // #elif defined(WDL_BIG_ENDIAN)
-#define WDL_BSWAP_IF_BE(x) (x = WDL_bswap_if_be(x))
-#define WDL_BSWAP_IF_LE(x) ((void)0)
+	#define WDL_BSWAP_IF_BE(x) (x = WDL_bswap_if_be(x))
+	#define WDL_BSWAP_IF_LE(x) ((void)0)
 #endif
 
 
 // Map floating point types to int types.
 
 #if defined(WDL_LITTLE_ENDIAN)
-#define __WDL_bswapf_if_a WDL_bswapf_if_le
-#define __WDL_bswapf_if_b WDL_bswapf_if_be
+	#define __WDL_bswapf_if_a WDL_bswapf_if_le
+	#define __WDL_bswapf_if_b WDL_bswapf_if_be
 #else // #elif defined(WDL_BIG_ENDIAN)
-#define __WDL_bswapf_if_a WDL_bswapf_if_be
-#define __WDL_bswapf_if_b WDL_bswapf_if_le
+	#define __WDL_bswapf_if_a WDL_bswapf_if_be
+	#define __WDL_bswapf_if_b WDL_bswapf_if_le
 #endif
 
 static WDL_ENDIAN_INLINE unsigned int __WDL_bswapf_if_a(const float        f)     { return WDL_bswap32(*(const unsigned int*)&f); }
@@ -247,14 +247,14 @@ static WDL_ENDIAN_INLINE WDL_UINT64   __WDL_bswapf_if_a(const double       f)   
 
 static WDL_ENDIAN_INLINE float        __WDL_bswapf_if_a(const unsigned int int32)
 {
-  const unsigned int i = WDL_bswap32(int32);
-  return *(const float*)&i;
+	const unsigned int i = WDL_bswap32(int32);
+	return *(const float*)&i;
 }
 
 static WDL_ENDIAN_INLINE double       __WDL_bswapf_if_a(const WDL_UINT64   int64)
 {
-  const WDL_UINT64 i = WDL_bswap64(int64);
-  return *(const double*)&i;
+	const WDL_UINT64 i = WDL_bswap64(int64);
+	return *(const double*)&i;
 }
 
 static WDL_ENDIAN_INLINE unsigned int __WDL_bswapf_if_b(const float        f)     { return *(const unsigned int*)&f; }

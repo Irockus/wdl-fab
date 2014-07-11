@@ -17,22 +17,14 @@
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
-
+  
 
 
 
 */
 
-#if (_MSC_VER >=1500)
-#pragma once
-#define stricmp _stricmp
-#define strnicmp _strnicmp
-#endif
-
 #ifdef _WIN32
 #include <windows.h>
-
-
 #else
 #include <stdlib.h>
 #include <string.h>
@@ -41,7 +33,7 @@
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/stat.h>
-typedef unsigned DWORD;
+typedef int DWORD;
 
 static void Sleep(int ms)
 {
@@ -50,7 +42,7 @@ static void Sleep(int ms)
 
 static unsigned int GetTickCount()
 {
-  struct timeval tm= {0,};
+  struct timeval tm={0,};
   gettimeofday(&tm,NULL);
   return tm.tv_sec*1000 + tm.tv_usec/1000;
 }
@@ -66,7 +58,7 @@ static unsigned int GetTickCount()
 // maybe we need to do this better someday
 #define POST_DIV_STRING "zzzASFIJAHFASJFHASLKFHZI8"
 #define END_POST_BYTES "\r\n--" POST_DIV_STRING "--\r\n"
-
+    
 
 #define ERR_NOLAME -600
 #define ERR_CREATINGENCODER -599
@@ -78,9 +70,9 @@ static unsigned int GetTickCount()
 #define ST_OK 0
 #define ST_CONNECTING 1
 #define ERR_DISCONNECTED_AFTER_SUCCESS 32
-WDL_ShoutcastSource::WDL_ShoutcastSource(const char *host, const char *pass, const char *name, bool pub,
-    const char *genre, const char *url,
-    int nch, int srate, int kbps, const char *ircchan)
+WDL_ShoutcastSource::WDL_ShoutcastSource(const char *host, const char *pass, const char *name, bool pub, 
+                                         const char *genre, const char *url,
+                                         int nch, int srate, int kbps, const char *ircchan)
 {
   m_post_postsleft=0;
   m_postmode_session=GetTickCount();
@@ -100,7 +92,7 @@ WDL_ShoutcastSource::WDL_ShoutcastSource(const char *host, const char *pass, con
   m_pub=pub;
   m_br=kbps;
 
-  m_state=ST_CONNECTING; // go to 0 when we
+  m_state=ST_CONNECTING; // go to 0 when we 
   m_nch=nch==2?2:1;
   m_bytesout=0;
   m_srate=srate;
@@ -125,7 +117,7 @@ WDL_ShoutcastSource::WDL_ShoutcastSource(const char *host, const char *pass, con
   {
     if (m_is_postmode)
     {
-      PostModeConnect();
+      PostModeConnect();      
     }
     else
     {
@@ -170,12 +162,12 @@ void WDL_ShoutcastSource::GetStatusText(char *buf, int bufsz) // gets status tex
   else if (m_state == ERR_CONNECT) lstrcpyn_safe(buf,"Error connecting to server",bufsz);
   else if (m_state == ERR_TIMEOUT) lstrcpyn_safe(buf,"Timed out connecting to server",bufsz);
   else if (m_state == ERR_CREATINGENCODER) lstrcpyn_safe(buf,"Error creating encoder",bufsz);
-  else if (m_state == ERR_NOLAME)
-#ifdef _WIN32
+  else if (m_state == ERR_NOLAME) 
+  #ifdef _WIN32
     lstrcpyn_safe(buf,"Error loading lame_enc.dll",bufsz);
-#else
+  #else
     lstrcpyn_safe(buf,"Error loading libmp3lame.dylib",bufsz);
-#endif
+  #endif
   else lstrcpyn_safe(buf,"Error creating encoder",bufsz);
 
 }
@@ -186,7 +178,7 @@ void WDL_ShoutcastSource::SetCurTitle(const char *title)
   lstrcpyn_safe(m_title,title,sizeof(m_title));
   m_needtitle=true;
   m_titlemutex.Leave();
-
+  
 }
 
 void WDL_ShoutcastSource::OnSamples(float **samples, int nch, int chspread, int frames, double srate)
@@ -224,7 +216,7 @@ void WDL_ShoutcastSource::OnSamples(float **samples, int nch, int chspread, int 
         a+=chspread;
       }
     }
-    else
+    else 
     {
       while (x--)
       {
@@ -245,8 +237,8 @@ void WDL_ShoutcastSource::OnSamples(float **samples, int nch, int chspread, int 
     float *outptr=m_rsbuf.Resize(outlen*m_nch,false);
 
     int x;
-    //int loffs=-1000;
-    double ls[2]= {m_last_samples[0],m_last_samples[1]};
+    int loffs=-1000;
+    double ls[2]={m_last_samples[0],m_last_samples[1]};
     for (x = 0; x < outlen; x ++)
     {
       int ioffs=(int)fracpos;
@@ -303,15 +295,15 @@ static void url_encode(char *in, char *out, int max_out)
   while (*in && max_out > 4)
   {
     if ((*in >= 'A' && *in <= 'Z')||
-        (*in >= 'a' && *in <= 'z')||
-        (*in >= '0' && *in <= '9')|| *in == '.' || *in == '_' || *in == '-')
+	      (*in >= 'a' && *in <= 'z')||
+	      (*in >= '0' && *in <= '9')|| *in == '.' || *in == '_' || *in == '-') 
     {
       *out++=*in++;
       max_out--;
     }
     else
-    {
-      int i=*in++;
+	  {
+  	  int i=*in++;
       *out++ = '%';
       int b=(i>>4)&15;
       if (b < 10) *out++='0'+b;
@@ -320,7 +312,7 @@ static void url_encode(char *in, char *out, int max_out)
       if (b < 10) *out++='0'+b;
       else *out++='A'+b-10;
       max_out-=3;
-    }
+	  }
   }
   *out=0;
 }
@@ -348,7 +340,7 @@ int WDL_ShoutcastSource::RunStuff()
         // copy out queue from m_encoder to newnc
         if (tmp.GetSize()) m_encoder->outqueue.Add(tmp.Get(),tmp.GetSize());
       }
-      else
+      else 
       {
         if (s == 1) m_state=ERR_NOLAME;
         else if (s) m_state=ERR_CREATINGENCODER;
@@ -398,7 +390,7 @@ int WDL_ShoutcastSource::RunStuff()
           srcq = &m_procdata;
         }
 
-
+        
         int mb=srcq->Available();
         int mb2=m_sendcon->send_bytes_available();
 
@@ -407,7 +399,7 @@ int WDL_ShoutcastSource::RunStuff()
         if (m_is_postmode)
         {
           if (m_post_bytesleft<=0) PostModeConnect();
-
+          
           if (mb>m_post_bytesleft) mb = m_post_bytesleft;
         }
 
@@ -436,13 +428,13 @@ int WDL_ShoutcastSource::RunStuff()
       {
         char buf[4096];
         m_sendcon->recv_line(buf, 4095);
-        if (strcmp(buf, "OK2"))
+        if (strcmp(buf, "OK2")) 
         {
           m_state=ERR_AUTH;
           delete m_sendcon;
           m_sendcon=0;
         }
-        else
+        else 
         {
           m_state=ST_OK;
           m_sendcon->send_string("icy-name:");
@@ -475,26 +467,26 @@ int WDL_ShoutcastSource::RunStuff()
         }
       }
     }
-    if (!m_is_postmode) switch (s)
-      {
-        case JNL_Connection::STATE_ERROR:
-        case JNL_Connection::STATE_CLOSED:
-          if (m_state==ST_OK) m_state=ERR_DISCONNECTED_AFTER_SUCCESS;
-          else if (m_state>ST_OK && m_state < ERR_DISCONNECTED_AFTER_SUCCESS) m_state = ERR_CONNECT;
+    if (!m_is_postmode) switch (s) 
+    {
+      case JNL_Connection::STATE_ERROR:
+      case JNL_Connection::STATE_CLOSED:
+        if (m_state==ST_OK) m_state=ERR_DISCONNECTED_AFTER_SUCCESS; 
+        else if (m_state>ST_OK && m_state < ERR_DISCONNECTED_AFTER_SUCCESS) m_state = ERR_CONNECT;
 
+        delete m_sendcon;
+        m_sendcon=0;
+      break;
+      default:
+        if (m_state > ST_OK && m_state < ERR_DISCONNECTED_AFTER_SUCCESS && time(NULL) > m_sendcon_start+30)
+        {
+          m_state=ERR_TIMEOUT;
           delete m_sendcon;
           m_sendcon=0;
-          break;
-        default:
-          if (m_state > ST_OK && m_state < ERR_DISCONNECTED_AFTER_SUCCESS && time(NULL) > m_sendcon_start+30)
-          {
-            m_state=ERR_TIMEOUT;
-            delete m_sendcon;
-            m_sendcon=0;
-          }
+        }
 
-          break;
-      }
+      break;
+    }
   }
 
   if (m_titlecon)
@@ -521,7 +513,7 @@ int WDL_ShoutcastSource::RunStuff()
     url.Append("/admin.cgi?pass=");
     url.Append(m_pass.Get());
     url.Append("&mode=updinfo&song=");
-
+    
     url.Append(title);
 
     delete m_titlecon;
@@ -537,12 +529,12 @@ int WDL_ShoutcastSource::RunStuff()
 
 static void AddTextField(WDL_FastString *s, const char *name, const char *value)
 {
-  s->AppendFormatted(4096,"--" POST_DIV_STRING "\r\n"
-                     "Content-Disposition: form-data; name=\"%s\"\r\n"
-                     "\r\n"
-                     "%s\r\n",
-                     name,
-                     value);
+    s->AppendFormatted(4096,"--" POST_DIV_STRING "\r\n"
+                          "Content-Disposition: form-data; name=\"%s\"\r\n"
+                          "\r\n"
+                          "%s\r\n",
+                              name,
+                              value);
 }
 
 void WDL_ShoutcastSource::PostModeConnect()
@@ -551,7 +543,7 @@ void WDL_ShoutcastSource::PostModeConnect()
   if (!strnicmp(hsrc,"http://",7)) hsrc+=7;
   WDL_String hb(hsrc);
   int port=80;
-  char zb[32]= {0,};
+  char zb[32]={0,};
   char *req = zb, *parms=zb;
   char *p=hb.Get();
   while (*p && *p != ':' && *p != '/' && *p != '?') p++;
@@ -582,7 +574,7 @@ void WDL_ShoutcastSource::PostModeConnect()
     m_sendcon->run();
     DWORD start=GetTickCount();
     bool done=false,hadResp=false;
-    while (GetTickCount() < (start+1000) && !done)
+    while (GetTickCount() < start+1000 && !done)
     {
       Sleep(50);
       m_sendcon->run();
@@ -597,7 +589,7 @@ void WDL_ShoutcastSource::PostModeConnect()
 
         if (!strnicmp(buf,"HTTP/",5)) hadResp=true;
         if (!strnicmp(buf,"HTTP/1.1",8)) allowReuse=true;
-
+  
         const char *con="Connection:";
         if (!strnicmp(buf,con,strlen(con)))
         {
@@ -608,7 +600,7 @@ void WDL_ShoutcastSource::PostModeConnect()
 
           done=true;
         }
-        if (hadResp && (!buf[0] || buf[0] == '\r' || buf[0] == '\n'))
+        if (hadResp && (!buf[0] || buf[0] == '\r' || buf[0] == '\n')) 
           done=true;
 
       }
@@ -617,11 +609,11 @@ void WDL_ShoutcastSource::PostModeConnect()
 
   if (m_sendcon) m_sendcon->run();
 
-  if (m_sendcon &&
+  if (m_sendcon && 
       (!allowReuse || m_post_postsleft<=0 ||
-       m_sendcon->get_state() == JNL_Connection::STATE_ERROR ||
-       m_sendcon->get_state() > JNL_Connection::STATE_CONNECTED))
-
+        m_sendcon->get_state() == JNL_Connection::STATE_ERROR ||
+        m_sendcon->get_state() > JNL_Connection::STATE_CONNECTED))
+        
   {
     delete m_sendcon;
     m_sendcon=0;
@@ -641,17 +633,17 @@ void WDL_ShoutcastSource::PostModeConnect()
 
   WDL_FastString tmp;
   tmp.SetFormatted(4096,"POST /%s HTTP/1.1\r\n"
-                   "Connection: %s\r\n"
-                   "Host: %s\r\n"
-                   "User-Agent: WDLScSrc(Mozilla)\r\n"
-                   "MIME-Version: 1.0\r\n"
-                   "Content-type: multipart/form-data; boundary=" POST_DIV_STRING "\r\n"
-                   "Content-length: %d\r\n"
-                   "\r\n",
-                   req,
-                   --m_post_postsleft > 0 ? "Keep-Alive" : "close",
-                   hb.Get(),
-                   csize);
+                        "Connection: %s\r\n"
+                        "Host: %s\r\n"
+                        "User-Agent: WDLScSrc(Mozilla)\r\n"
+                        "MIME-Version: 1.0\r\n"
+                        "Content-type: multipart/form-data; boundary=" POST_DIV_STRING "\r\n"
+                        "Content-length: %d\r\n"
+                        "\r\n",
+                        req,
+                        --m_post_postsleft > 0 ? "Keep-Alive" : "close",
+                        hb.Get(),
+                        csize);
   m_sendcon->send_string(tmp.Get());
 
   m_post_bytesleft = csize - (int)strlen(END_POST_BYTES);
@@ -694,10 +686,10 @@ void WDL_ShoutcastSource::PostModeConnect()
   }
 
   tmp.AppendFormatted(4096,"--" POST_DIV_STRING "\r\n"
-                      "Content-Disposition: form-data; name=\"file\"; filename=\"bla.dat\"\r\n"
-                      "Content-Type: application/octet-stream\r\n"
-                      "Content-transfer-encoding: binary\r\n"
-                     );
+                        "Content-Disposition: form-data; name=\"file\"; filename=\"bla.dat\"\r\n"
+                        "Content-Type: application/octet-stream\r\n"
+                        "Content-transfer-encoding: binary\r\n"
+                       );
 
 
   tmp.Append("\r\n");

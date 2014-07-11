@@ -45,7 +45,7 @@
 
 class RtMidi
 {
-public:
+ public:
 
   //! Pure virtual openPort() function.
   virtual void openPort( unsigned int portNumber = 0, const std::string portName = std::string( "RtMidi" ) ) = 0;
@@ -62,7 +62,7 @@ public:
   //! Pure virtual closePort() function.
   virtual void closePort( void ) = 0;
 
-protected:
+ protected:
 
   RtMidi();
   virtual ~RtMidi() {};
@@ -100,7 +100,7 @@ protected:
 
 class RtMidiIn : public RtMidi
 {
-public:
+ public:
 
   //! User callback function type definition.
   typedef void (*RtMidiCallback)( double timeStamp, std::vector<unsigned char> *message, void *userData);
@@ -187,9 +187,8 @@ public:
 
   // A MIDI structure used internally by the class to store incoming
   // messages.  Each message represents one and only one MIDI message.
-  struct MidiMessage
-  {
-    std::vector<unsigned char> bytes;
+  struct MidiMessage { 
+    std::vector<unsigned char> bytes; 
     double timeStamp;
 
     // Default constructor.
@@ -199,8 +198,7 @@ public:
 
   // The RtMidiInData structure is used to pass private class data to
   // the MIDI input handling function or thread.
-  struct RtMidiInData
-  {
+  struct RtMidiInData {
     std::queue<MidiMessage> queue;
     MidiMessage message;
     unsigned int queueLimit;
@@ -220,7 +218,7 @@ public:
         continueSysex(false) {}
   };
 
-private:
+ private:
 
   void initialize( const std::string& clientName );
   RtMidiInData inputData_;
@@ -243,7 +241,7 @@ private:
 
 class RtMidiOut : public RtMidi
 {
-public:
+ public:
 
   //! Default constructor that allows an optional client name.
   /*!
@@ -293,7 +291,7 @@ public:
   */
   void sendMessage( std::vector<unsigned char> *message );
 
-private:
+ private:
 
   void initialize( const std::string& clientName );
 };

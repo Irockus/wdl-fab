@@ -31,15 +31,15 @@
 #include "factorial.h"
 
 #ifdef _BESSEL_USE_INLINE_
-#define _BESSEL_INLINE _CMATH_INLINE
+  #define _BESSEL_INLINE _CMATH_INLINE
 #else
-#define _BESSEL_INLINE
+  #define _BESSEL_INLINE
 #endif
 
 #ifndef _CMATH_ANSI
-#define _BESSEL_MAX_ORDER 10
+  #define _BESSEL_MAX_ORDER 10
 #else
-#define _BESSEL_MAX_ORDER 3
+  #define _BESSEL_MAX_ORDER 3
 #endif
 
 /* return a coefficient */

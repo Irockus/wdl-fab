@@ -35,14 +35,14 @@ IPlugEEL::IPlugEEL(IPlugInstanceInfo instanceInfo)
   :	IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo), mGain(1.)
 {
   TRACE;
-
+  
   vm = NSEEL_VM_alloc(); // create virtual machine
-
+  
   mVmOutput = NSEEL_VM_regvar(vm, "x"); // register a variable into vm to get a value out
 
   memset(codetext, 0, 65536);
   strcpy(codetext, "x=rand(2)-1.;");
-
+  
   codehandle = NSEEL_code_compile(vm, codetext, 0); // compile code
 
   //arguments are: name, defaultVal, minVal, maxVal, step, label
@@ -55,10 +55,10 @@ IPlugEEL::IPlugEEL(IPlugInstanceInfo instanceInfo)
   IBitmap knob = pGraphics->LoadIBitmap(KNOB_ID, KNOB_FN, kKnobFrames);
 
   pGraphics->AttachControl(new IKnobMultiControl(this, kGainX, kGainY, kGain, &knob));
-
+  
   IRECT textRect(5, 70, kWidth-5, kHeight-5);
   IText textProps(15, &COLOR_BLACK, "Arial", IText::kStyleNormal, IText::kAlignNear, 0, IText::kQualityDefault);
-
+  
   mTextControl = new AlgDisplay(this, textRect, &textProps, codetext);
   pGraphics->AttachControl(mTextControl);
 
@@ -68,7 +68,7 @@ IPlugEEL::IPlugEEL(IPlugInstanceInfo instanceInfo)
   MakeDefaultPreset((char *) "-", kNumPrograms);
 }
 
-IPlugEEL::~IPlugEEL()
+IPlugEEL::~IPlugEEL() 
 {
   NSEEL_code_free(codehandle);
   NSEEL_VM_free(vm);

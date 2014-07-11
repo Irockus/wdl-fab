@@ -17,7 +17,7 @@
     2. Altered source versions must be plainly marked as such, and must not be
        misrepresented as being the original software.
     3. This notice may not be removed or altered from any source distribution.
-
+      
     You may also distribute this software under the LGPL v2 or later.
 
 */
@@ -32,7 +32,7 @@
 
 // default to floats for sinc filter ceofficients
 #ifdef WDL_RESAMPLE_FULL_SINC_PRECISION
-typedef double WDL_SincFilterSample;
+typedef double WDL_SincFilterSample; 
 #else
 typedef float WDL_SincFilterSample;
 #endif
@@ -73,8 +73,8 @@ public:
   // req_samples is output samples desired if !wantInputDriven, or if wantInputDriven is input samples that we have
   // returns number of samples desired (put these into *inbuffer)
   // note that it is safe to call ResamplePrepare without calling ResampleOut (the next call of ResamplePrepare will function as normal)
-  int ResamplePrepare(int req_samples, int nch, WDL_ResampleSample **inbuffer);
-
+  int ResamplePrepare(int req_samples, int nch, WDL_ResampleSample **inbuffer); 
+  
 
   // if numsamples_in < the value return by ResamplePrepare(), then it will be flushed to produce all remaining valid samples
   // do NOT call with nsamples_in greater than the value returned from resamplerprpare()! the extra samples will be ignored.

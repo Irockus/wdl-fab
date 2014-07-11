@@ -27,14 +27,14 @@
 
 // ProTools stuff
 #if (defined(AAX_API) || defined(RTAS_API)) && !defined(_PIDS_)
-#define _PIDS_
-const int PLUG_TYPE_IDS[2] = {'MSN1', 'MSN2'};
+  #define _PIDS_
+  const int PLUG_TYPE_IDS[2] = {'MSN1', 'MSN2'};
 #endif
 #define PLUG_MFR_PT "AcmeInc\nAcmeInc\nAcme\n"
 #define PLUG_NAME_PT "IPlugMonoSynth\nIPMS"
 #define PLUG_TYPE_PT "Effect"
 
-#if (defined(AAX_API) || defined(RTAS_API))
+#if (defined(AAX_API) || defined(RTAS_API)) 
 #define PLUG_CHANNEL_IO "1-1 2-2"
 #else
 #define PLUG_CHANNEL_IO "0-1 0-2"
