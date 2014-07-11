@@ -1101,6 +1101,7 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
 //  NSLog(@"r:%@ vr:%d v=%p tv=%p self=%p %p\n",NSStringFromRect(rect),vr,v,v2,self, [[self window] contentView]);
   if (!useNoMiddleManCocoa() || ![self isOpaque] || [[self window] contentView] != self || [self isHiddenOrHasHiddenAncestor])
   {
+    // nsview does not implement this method, was the intent to recurse on [self window] contentView instead (when not equal to self)  ?
     [super _recursiveDisplayRectIfNeededIgnoringOpacity:rect isVisibleRect:vr rectIsVisibleRectForView:v topView:v2];
     return;
   }
@@ -1837,7 +1838,7 @@ static HWND last_key_window;
 - (id)swellGetOwner { return m_owner; }  \
 - (NSSize)minSize \
 { \
-  MINMAXINFO mmi={0}; \
+  MINMAXINFO mmi={{0,0}}; \
   NSSize minsz=(NSSize)[super minSize]; \
   mmi.ptMinTrackSize.x=(int)minsz.width; mmi.ptMinTrackSize.y=(int)minsz.height; \
   sendSwellMessage([self contentView],WM_GETMINMAXINFO,0,(LPARAM)&mmi); \
@@ -1846,7 +1847,7 @@ static HWND last_key_window;
 } \
 - (NSSize)maxSize \
 { \
-  MINMAXINFO mmi={0}; \
+  MINMAXINFO mmi={{0,0}}; \
   NSSize maxsz=(NSSize)[super maxSize]; NSSize tmp=maxsz;\
   if (tmp.width<1)tmp.width=1; else if (tmp.width > 1000000.0) tmp.width=1000000.0; \
   if (tmp.height<1)tmp.height=1; else if (tmp.height > 1000000.0) tmp.height=1000000.0; \
@@ -1868,7 +1869,7 @@ static HWND last_key_window;
 #if 0
 #define DOWINDOWMINMAXSIZES(ch) \
 { \
-  MINMAXINFO mmi={0}; \
+  MINMAXINFO mmi={{0,0}}; \
     NSSize minsz=(NSSize)[super contentMinSize]; \
       mmi.ptMinTrackSize.x=(int)minsz.width; mmi.ptMinTrackSize.y=(int)minsz.height; \
         sendSwellMessage(ch,WM_GETMINMAXINFO,0,(LPARAM)&mmi); \

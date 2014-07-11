@@ -133,9 +133,8 @@ static int arr_bsearch_mod(void *key, NSArray *arr, int (*compar)(const void *, 
 template<class T> static int ptrlist_bsearch_mod(void *key, WDL_PtrList<T> *arr, int (*compar)(const void *, const void *, const void *ctx), void *ctx)
 {
   size_t nmemb = arr->GetSize();
-  int base=0;
-	int lim, cmp;
-	int p;
+  size_t base=0, lim, p;
+  int cmp;
   
 	for (lim = nmemb; lim != 0; lim >>= 1) {
 		p = base + (lim >> 1);
@@ -3065,7 +3064,7 @@ HWND SWELL_MakeEditField(int idx, int x, int y, int w, int h, int flags)
       if (flags&SWELL_NOT_WS_VISIBLE) [obj2 setHidden:YES];
       [obj2 release];
       
-      NSRect tr={0,};
+	  NSRect tr={{0,0},{0,0}};
       tr.size = [obj2 contentSize];
       [obj setFrame:tr];
       [obj release];

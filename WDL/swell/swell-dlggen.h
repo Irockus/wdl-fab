@@ -232,7 +232,7 @@ static inline HWND __SWELL_MakeGroupBox(const char *name, int idx, int x, int y,
   return SWELL_MakeGroupBox(name,idx,x,y,w,h,style);
 }
 
-static void SWELL_Register_Cursor_Resource(const char *idx, const char *name, int hotspot_x, int hotspot_y)
+static inline void SWELL_Register_Cursor_Resource(const char *idx, const char *name, int hotspot_x, int hotspot_y)
 {
   extern SWELL_CursorResourceIndex *SWELL_curmodule_cursorresource_head;
   
