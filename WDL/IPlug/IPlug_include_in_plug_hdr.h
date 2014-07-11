@@ -9,6 +9,7 @@
 // after #defining either VST_API or AU_API.
 #include <stdio.h>
 #include "IPlugOSDetect.h"
+#include "IPlugPortab.h"
 //#include "resource.h" // This is your plugin's resource.h
 
 #ifdef VST_API
