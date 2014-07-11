@@ -1,6 +1,6 @@
 WDL / IPlug - Fabulous Fab Edition
 
-Forks from great Oli Larkin version
+Forks from the Oli Larkin / Tale versions
 
 This branch mainly focuses for now on code refactoring/cleanup and re-usability aspects.
 Provides a Cmake build alternative, which makes a new project creation (i.e. in the examples folder) a 2-liner.
@@ -50,3 +50,6 @@ WDL includes the following 3rd party libraries (which are all similarly licensed
 * JPEGLib http://www.ijg.org
 * zlib http://www.zlib.net
 
+IPlug includes the following 3rd party libraries:
+* ICST DSP - http://www.icst.net/research/projects/dsp-library/
+* Vorbis and Ogg - http://xiph.org/downloads/
