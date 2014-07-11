@@ -89,3 +89,4 @@ IPlugExamples/IPlugPolySynth/IPlugPolySynth.sln
 IPlugExamples/IPlugResampler/IPlugResampler.sln
 IPlugExamples/IPlugSideChain/IPlugSideChain.sln
 IPlugExamples/IPlugText/IPlugText.sln
+contribs/*/*.dir
