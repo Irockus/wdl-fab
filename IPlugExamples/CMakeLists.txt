@@ -42,7 +42,6 @@ MACRO(set_bundle a_project a_pname an_ext)
     	XCODE_ATTRIBUTE_MACH_O_TYPE mh_bundle
     	XCODE_ATTRIBUTE_INFOPLIST_FILE ${ARGV1}
     	MACOSX_BUNDLE_INFO_PLIST ${ARGV1}
-    	MACOSX_BUNDLE_SHORT_VERSION_STRING "Acme"
     )
     SET_SOURCE_FILES_PROPERTIES( ${ARGV1} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 
@@ -52,7 +51,7 @@ MACRO(set_bundle a_project a_pname an_ext)
     	COMMAND cp
     	ARGS "${PROJECT_BINARY_DIR}/../../WDL/IPlug/PkgInfo" "$<TARGET_FILE_DIR:${ARGV0}>/.."
   	)
-	message(STATUS "Post Cmd: cp ${PROJECT_BINARY_DIR}/../../WDL/IPlug/PkgInfo $<TARGET_FILE_DIR:${ARGV0}>/..")
+#	message(STATUS "Post Cmd: cp ${PROJECT_BINARY_DIR}/../../WDL/IPlug/PkgInfo $<TARGET_FILE_DIR:${ARGV0}>/..")
 
 	message(STATUS "bundle plist is ${ARGV1}")
 endMACRO()
@@ -175,7 +174,6 @@ MACRO(create_example name)
 			${${PN_SRC}} 
 			${${PN_HDR}} 
 			${IPC_VST} 			
-			${PLIST_PATHVST}  
 		)
 		if(APPLE)
 		  set_bundle(${PLUGNAMEVST} ${PLIST_PATHVST} "vst" )
@@ -218,13 +216,15 @@ MACRO(create_example name)
 	#-------------------------------------------------------------------------------------
 endMACRO()
 
-add_subdirectory(IPlugConvoEngine)
-if(WIN32)
 add_subdirectory(IPlugControls)
+add_subdirectory(IPlugConvoEngine)
+add_subdirectory(IPlugEffect)
+add_subdirectory(IPlugPolySynth)
+add_subdirectory(IPlugResampler)
+if(WIN32)
 add_subdirectory(IPlugChunks)
 add_subdirectory(IPlugDistortion)
 add_subdirectory(IPlugEEL)
-add_subdirectory(IPlugEffect)
 add_subdirectory(IPlugGUIResize)
 add_subdirectory(IPlugHostDetect)
 add_subdirectory(IPlugMonoSynth)
@@ -233,8 +233,6 @@ add_subdirectory(IPlugMultiChannel)
 add_subdirectory(IPlugMultiTargets)
 add_subdirectory(IPlugOpenGL)
 add_subdirectory(IPlugPlush)
-add_subdirectory(IPlugPolySynth)
-add_subdirectory(IPlugResampler)
 add_subdirectory(IPlugSideChain)
 add_subdirectory(IPlugText)
 endif()
