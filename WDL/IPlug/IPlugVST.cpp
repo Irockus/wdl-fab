@@ -197,7 +197,7 @@ EHost IPlugVST::GetHost()
     int version = 0;
     mHostCallback(&mAEffect, audioMasterGetProductString, 0, 0, productStr, 0.0f);
 
-    if (CSTR_NOT_EMPTY(productStr))
+    if (*productStr)
     {
       int decVer = mHostCallback(&mAEffect, audioMasterGetVendorVersion, 0, 0, 0, 0.0f);
       int ver = decVer / 10000;
