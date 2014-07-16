@@ -67,7 +67,7 @@ public:
   void SetBundleID(const char* bundleID) { mBundleID.Set(bundleID); }
 
   bool DrawScreen(IRECT* pR);
-  bool MeasureIText(IText* pTxt, char* str, IRECT* pR);
+  bool MeasureIText(IText* pTxt, const char* str, IRECT* pR);
 
   void* OpenWindow(void* pWindow);
 #ifndef IPLUG_NO_CARBON_SUPPORT

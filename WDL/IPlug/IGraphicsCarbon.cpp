@@ -1072,7 +1072,7 @@ void IGraphicsCarbon::CreateTextEntry(IControl* pControl, IText* pText, IRECT* p
       break;
   }
 
-  ControlFontStyleRec font = { kControlUseJustMask | kControlUseSizeMask | kControlUseFontMask, 0, static_cast<SInt16>(pText->mSize), 0, 0, static_cast<SInt16>(just), 0, 0 };
+  ControlFontStyleRec font = { kControlUseJustMask | kControlUseSizeMask | kControlUseFontMask, 0, static_cast<SInt16>(pText->mSize), 0, 0, static_cast<SInt16>(just), {0, 0} };
   CFStringRef str = CFStringCreateWithCString(NULL, pText->mFont, kCFStringEncodingUTF8);
   font.font = ATSFontFamilyFindFromName(str, kATSOptionFlagsDefault);
 

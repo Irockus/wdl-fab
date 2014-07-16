@@ -125,7 +125,7 @@ bool IGraphicsMac::DrawScreen(IRECT* pR)
   return true;
 }
 
-bool IGraphicsMac::MeasureIText(IText* pTxt, char* str, IRECT* pR)
+bool IGraphicsMac::MeasureIText(IText* pTxt, const char* str, IRECT* pR)
 {
   CocoaAutoReleasePool pool;
 
