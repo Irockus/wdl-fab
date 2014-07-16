@@ -40,22 +40,19 @@ bool LICE_WritePNG(const char *filename, LICE_IBitmap *bmp, bool wantalpha /*=tr
 
   png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING,NULL, NULL, NULL);
 
-  if (png_ptr == NULL)
-  {
+  if (png_ptr == NULL) {
     fclose(fp);
     return false;
   }
 
   info_ptr = png_create_info_struct(png_ptr);
-  if (info_ptr == NULL)
-  {
+  if (info_ptr == NULL) {
     fclose(fp);
     png_destroy_write_struct(&png_ptr,  (png_infopp)NULL);
     return false;
   }
 
-  if (setjmp(png_jmpbuf(png_ptr)))
-  {
+  if (setjmp(png_jmpbuf(png_ptr))) {
     /* If we get here, we had a problem reading the file */
     if (fp) fclose(fp);
     fp=0;
@@ -72,7 +69,7 @@ bool LICE_WritePNG(const char *filename, LICE_IBitmap *bmp, bool wantalpha /*=tr
 
 #define BITDEPTH 8
   png_set_IHDR(png_ptr, info_ptr, width, height, BITDEPTH, wantalpha ? PNG_COLOR_TYPE_RGB_ALPHA : PNG_COLOR_TYPE_RGB,
-               PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+    PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 
   png_write_info(png_ptr, info_ptr);
 
@@ -83,9 +80,9 @@ bool LICE_WritePNG(const char *filename, LICE_IBitmap *bmp, bool wantalpha /*=tr
 
   LICE_pixel *ptr=(LICE_pixel *)bmp->getBits();
   int rowspan=bmp->getRowSpan();
-  if (bmp->isFlipped())
+  if (bmp->isFlipped()) 
   {
-    ptr+=rowspan*(bmp->getHeight()-1);
+    ptr+=rowspan*(bmp->getHeight()-1); 
     rowspan=-rowspan;
   }
 
@@ -99,12 +96,12 @@ bool LICE_WritePNG(const char *filename, LICE_IBitmap *bmp, bool wantalpha /*=tr
       int x;
       unsigned char *bout = rowbuf;
       LICE_pixel_chan *bin = (LICE_pixel_chan *) ptr;
-      for(x=0; x<width; x++)
+      for(x=0;x<width;x++)
       {
         bout[0] = bin[LICE_PIXEL_B];
         bout[1] = bin[LICE_PIXEL_G];
         bout[2] = bin[LICE_PIXEL_R];
-        bout[3] = bin[LICE_PIXEL_A];
+        bout[3] = bin[LICE_PIXEL_A];        
         bout+=4;
         bin+=4;
       }

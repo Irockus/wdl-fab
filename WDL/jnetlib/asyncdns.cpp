@@ -65,7 +65,7 @@ unsigned int JNL_AsyncDNS::_threadfunc(void *_d)
   {
     if (_this->m_cache[x].last_used && !_this->m_cache[x].resolved)
     {
-      if (!nowinsock)
+      if (!nowinsock) 
       {
         if (_this->m_cache[x].mode==0)
         {
@@ -121,7 +121,7 @@ int JNL_AsyncDNS::resolve(const char *hostname, unsigned int *addr)
   // return 0 on success, 1 on wait, -1 on unresolvable
   int x;
   unsigned int ip=inet_addr(hostname);
-  if (ip != INADDR_NONE)
+  if (ip != INADDR_NONE) 
   {
     *addr=ip;
     return 0;
@@ -183,7 +183,7 @@ int JNL_AsyncDNS::reverse(unsigned int addr, char *hostname)
 {
   // return 0 on success, 1 on wait, -1 on unresolvable
   int x;
-  if (addr == INADDR_NONE)
+  if (addr == INADDR_NONE) 
   {
     return -1;
   }
@@ -244,7 +244,7 @@ void JNL_AsyncDNS::makesurethreadisrunning(void)
 #ifndef NO_DNS_SUPPORT
   if (m_thread_kill)
   {
-#ifdef _WIN32
+  #ifdef _WIN32
     if (m_thread)
     {
       WaitForSingleObject(m_thread,INFINITE);
@@ -255,7 +255,7 @@ void JNL_AsyncDNS::makesurethreadisrunning(void)
     m_thread=(HANDLE)_beginthreadex(NULL,0,_threadfunc,(void *)this,0,&id);
     if (!m_thread)
     {
-#else
+  #else
     if (m_thread)
     {
       void *p;
@@ -264,7 +264,7 @@ void JNL_AsyncDNS::makesurethreadisrunning(void)
     m_thread_kill=0;
     if (pthread_create(&m_thread,NULL,(void *(*) (void *))_threadfunc,(void*)this) != 0)
     {
-#endif
+  #endif
       m_thread_kill=1;
     }
   }

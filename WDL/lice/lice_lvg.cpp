@@ -55,7 +55,7 @@ static LICE_pixel __colorval(const char *p, LICE_pixel def)
 class lvgRenderState
 {
 public:
-  lvgRenderState()
+  lvgRenderState() 
   {
     m_color=LICE_RGBA(255,255,255,255);
     m_alpha=1.0f;
@@ -118,10 +118,10 @@ public:
   {
     int i,numtok=lp->getnumtokens();
     switch (lp->gettoken_enum(0,"color\0"
-                              "alpha\0"
-                              "aa\0"
-                              "blend\0"
-                              "\0"))
+                                "alpha\0"
+                                "aa\0"
+                                "blend\0"
+                                "\0"))
     {
 #define PROCTYPE(v,name) \
       case v: for (i=1;i<numtok;i++) { \
@@ -132,10 +132,10 @@ public:
         } \
       return true;
 
-        PROCTYPE(0,color)
-        PROCTYPE(1,alpha)
-        PROCTYPE(2,aa)
-        PROCTYPE(3,blend)
+      PROCTYPE(0,color)
+      PROCTYPE(1,alpha)
+      PROCTYPE(2,aa)
+      PROCTYPE(3,blend)
 #undef PROCTYPE
 
     }
@@ -145,7 +145,7 @@ public:
 
 };
 
-class lvgImageCtx
+class lvgImageCtx 
 {
 public:
   lvgImageCtx(lvgImageCtx *par) : m_images(true,deleteThis)
@@ -162,7 +162,7 @@ public:
     m_lines.Empty(true,free);
   }
 
-  WDL_PtrList<char> m_lines;
+  WDL_PtrList<char> m_lines; 
   LICE_IBitmap *m_cachedImage;
 
   lvgImageCtx *m_par;
@@ -294,28 +294,28 @@ void lvgImageCtx::processLvgLine(LineParser *lp, lvgRenderState *state, LICE_IBi
       int y = (int)parsecoord(lp->gettoken_str(2),yscale,true);
       int w = (int)parsecoord(lp->gettoken_str(3),xscale,true);
       int h = (int)parsecoord(lp->gettoken_str(4),yscale,true);
-      if (w>0 && h>0)
+      if (w>0 && h>0) 
       {
-        if (dcdx!=(LICE_pixel) LICE_RGBA(0x80,0x80,0x80,0x80) ||
-            dcdy!=(LICE_pixel) LICE_RGBA(0x80,0x80,0x80,0x80))
+        if (dcdx!=LICE_RGBA(0x80,0x80,0x80,0x80) || 
+            dcdy!=LICE_RGBA(0x80,0x80,0x80,0x80))
         {
           LICE_pixel sc = state->m_color;
           dcdxsc /= w*128.0;
           dcdysc /= h*128.0;
           LICE_GradRect(bm,x,y,w,h,
-                        (float)(LICE_GETR(sc)/255.0),
-                        (float)(LICE_GETG(sc)/255.0),
-                        (float)(LICE_GETB(sc)/255.0),
-                        (float)(LICE_GETA(sc)/255.0*state->m_alpha),
-                        (float)(((int)LICE_GETR(dcdx)-0x80)*dcdxsc),
-                        (float)(((int)LICE_GETG(dcdx)-0x80)*dcdxsc),
-                        (float)(((int)LICE_GETB(dcdx)-0x80)*dcdxsc),
-                        (float)(((int)LICE_GETA(dcdx)-0x80)*dcdxsc),
-                        (float)(((int)LICE_GETR(dcdy)-0x80)*dcdysc),
-                        (float)(((int)LICE_GETG(dcdy)-0x80)*dcdysc),
-                        (float)(((int)LICE_GETB(dcdy)-0x80)*dcdysc),
-                        (float)(((int)LICE_GETA(dcdy)-0x80)*dcdysc),
-                        state->m_blend);
+                          (float)(LICE_GETR(sc)/255.0), 
+                          (float)(LICE_GETG(sc)/255.0), 
+                          (float)(LICE_GETB(sc)/255.0), 
+                          (float)(LICE_GETA(sc)/255.0*state->m_alpha),
+                          (float)(((int)LICE_GETR(dcdx)-0x80)*dcdxsc),
+                          (float)(((int)LICE_GETG(dcdx)-0x80)*dcdxsc),
+                          (float)(((int)LICE_GETB(dcdx)-0x80)*dcdxsc),
+                          (float)(((int)LICE_GETA(dcdx)-0x80)*dcdxsc),
+                          (float)(((int)LICE_GETR(dcdy)-0x80)*dcdysc),
+                          (float)(((int)LICE_GETG(dcdy)-0x80)*dcdysc),
+                          (float)(((int)LICE_GETB(dcdy)-0x80)*dcdysc),
+                          (float)(((int)LICE_GETA(dcdy)-0x80)*dcdysc),
+                          state->m_blend);
         }
         else
           LICE_FillRect(bm,x,y,w,h,state->m_color,state->m_alpha,state->m_blend);
@@ -354,34 +354,34 @@ void lvgImageCtx::processLvgLine(LineParser *lp, lvgRenderState *state, LICE_IBi
       LICE_IBitmap *src=NULL;
       lvgImageCtx *scan = this;
       const char *rd = lp->gettoken_str(1);
-
+      
       while (!strnicmp(rd,"parent:",7)) { scan = scan ? scan->m_par : NULL; rd += 7; }
-
-      if (!stricmp(rd,"parent"))
-      {
+      
+      if (!stricmp(rd,"parent")) 
+      { 
         if (scan) scan=scan->m_par;
         if (scan) src=scan->m_cachedImage;
       }
-      else if (!stricmp(rd,"self"))
+      else if (!stricmp(rd,"self")) 
       {
         if (scan) src=scan->m_cachedImage;
       }
       else while (scan&&!src)
+      {
+        lvgImageCtx *p = scan->m_images.Get(rd);
+        if (p)
         {
-          lvgImageCtx *p = scan->m_images.Get(rd);
-          if (p)
+          if (!p->m_cachedImage && !p->m_in_render) 
           {
-            if (!p->m_cachedImage && !p->m_in_render)
-            {
-              p->m_in_render=true;
-              p->render(NULL,0,0);
-              p->m_in_render=false;
-            }
-            src = p->m_cachedImage;
-            break;
+            p->m_in_render=true;
+            p->render(NULL,0,0);
+            p->m_in_render=false;
           }
-          scan=scan->m_par;
+          src = p->m_cachedImage;
+          break;
         }
+        scan=scan->m_par;
+      }
       if (src)
       {
         int x = (int)parsecoord(lp->gettoken_str(2),xscale,true);
@@ -393,7 +393,7 @@ void lvgImageCtx::processLvgLine(LineParser *lp, lvgRenderState *state, LICE_IBi
         int w = getoption_int(lp,1,"w",src->getWidth());
         int h = getoption_int(lp,1,"h",src->getHeight());
         double sc = getoption_double(lp,1,"scale",1.0f);
-        if (fabs(sc-1.0)>0.0000000001)
+        if (fabs(sc-1.0)>0.0000000001) 
         {
           w = (int)(w*sc+0.5);
           h = (int)(h*sc+0.5);
@@ -404,9 +404,9 @@ void lvgImageCtx::processLvgLine(LineParser *lp, lvgRenderState *state, LICE_IBi
         float sw=(float)getoption_double(lp,1,"srcw",src->getWidth());
         float sh=(float)getoption_double(lp,1,"srch",src->getHeight());
 //        if (fabs(ang)>0.0001) LICE_RotatedBlit(bm,src,x,y,w,h,sx,sy,sw,sh,ang,true,state->m_alpha,state->m_blend,0,0);
-        //else
+        //else 
         LICE_ScaledBlit(bm,src,x,y,w,h,sx,sy,sw,sh,
-                        state->m_alpha,state->m_blend|(filter ? LICE_BLIT_FILTER_BILINEAR : 0)|(usesrcalpha ? LICE_BLIT_USE_ALPHA : 0));
+                      state->m_alpha,state->m_blend|(filter ? LICE_BLIT_FILTER_BILINEAR : 0)|(usesrcalpha ? LICE_BLIT_USE_ALPHA : 0));
       }
     }
   }
@@ -417,7 +417,7 @@ void lvgImageCtx::render(lvgRenderState *rstate, int wantw, int wanth)
   if (wantw<1) wantw = m_base_w;
   if (wanth<1) wanth = m_base_h;
 
-  if (wantw<1||wanth<1)
+  if (wantw<1||wanth<1) 
   {
     if (m_cachedImage) m_cachedImage->resize(0,0);
     return;
@@ -430,13 +430,13 @@ void lvgImageCtx::render(lvgRenderState *rstate, int wantw, int wanth)
 
   lvgRenderState rs;
   if (rstate) rs = *rstate;
-
+ 
   double xscale = wantw / max(m_base_w,1);
   double yscale = wanth / max(m_base_h,1);
   int x;
   bool comment_state=false;
   LineParser lp(comment_state);
-  for (x=0; x<m_lines.GetSize(); x++)
+  for (x=0;x<m_lines.GetSize();x++)
   {
     if (!lp.parse(m_lines.Get(x)) && lp.getnumtokens()>0)
       processLvgLine(&lp,&rs,m_cachedImage,xscale,yscale);
@@ -459,7 +459,7 @@ LICE_IBitmap *LICE_RenderLVG(void *lvg, int reqw, int reqh, LICE_IBitmap *bmOut)
   {
     delete t->m_cachedImage;
     t->m_cachedImage = bmOut;
-  }
+  }  
   else if (!t->m_cachedImage) t->m_cachedImage = new LICE_MemBitmap;
 
   t->m_in_render=true;
@@ -467,7 +467,7 @@ LICE_IBitmap *LICE_RenderLVG(void *lvg, int reqw, int reqh, LICE_IBitmap *bmOut)
   t->m_in_render=false;
 
   LICE_IBitmap *ret = t->m_cachedImage;
-
+  
   t->m_cachedImage=NULL;
 
   return ret;
@@ -544,13 +544,13 @@ void *LICE_LoadLVGFromContext(ProjectStateContext *ctx, const char *nameInfo, in
     }
     else
     {
-      if (*p == '<')
+      if (*p == '<') 
       {
         bool comment_state=false;
         LineParser lp(comment_state);
-        if (!lp.parse(p)&&lp.getnumtokens()>=2 && !strcmp(lp.gettoken_str(0),"<LVG"))
+        if (!lp.parse(p)&&lp.getnumtokens()>=2 && !strcmp(lp.gettoken_str(0),"<LVG")) 
         {
-          if (!curimg)
+          if (!curimg) 
           {
             // lp.gettoken_str(1) = version info string?
             curimg = retimg;
@@ -568,7 +568,7 @@ void *LICE_LoadLVGFromContext(ProjectStateContext *ctx, const char *nameInfo, in
       }
       else if (curimg)
       {
-        if (*p == '>')
+        if (*p == '>') 
         {
           curimg = curimg->m_par;
           if (!curimg) break; // success!
@@ -610,7 +610,7 @@ void *LICE_LoadLVG(const char *filename)
     lvgRdContext ctx(fp);
 
     void *p = LICE_LoadLVGFromContext(&ctx,NULL,0,0);
-
+    
     fclose(fp);
 
     return p;

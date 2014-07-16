@@ -25,24 +25,23 @@ typedef int (CALLBACK* BFFCALLBACK)(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM 
 typedef struct __ITEMIDLIST ITEMIDLIST;
 typedef const ITEMIDLIST *LPCITEMIDLIST;
 
-typedef struct _browseinfoA
-{
-  HWND        hwndOwner;
-  LPCITEMIDLIST pidlRoot;
-  LPSTR        pszDisplayName;
-  LPCSTR       lpszTitle;
-  UINT         ulFlags;
-  BFFCALLBACK  lpfn;
-  LPARAM      lParam;
-  int          iImage;
+typedef struct _browseinfoA {
+    HWND        hwndOwner;
+    LPCITEMIDLIST pidlRoot;
+    LPSTR        pszDisplayName;
+    LPCSTR       lpszTitle;
+    UINT         ulFlags;
+    BFFCALLBACK  lpfn;
+    LPARAM      lParam;
+    int          iImage;
 } BROWSEINFO, *PBROWSEINFO, *LPBROWSEINFO;
 
 #ifdef __cplusplus
 class IMalloc
 {
-public:
-  void Release() { delete this; }
-  void Free(void *p) { free(p); }
+  public:
+    void Release() { delete this; }
+    void Free(void *p) { free(p); }    
 };
 #define SHGetMalloc(x) { *(x) = new IMalloc; }
 #define SHGetPathFromIDList(src,dest) { if (src) {lstrcpyn(dest,(char *)src,MAX_PATH); } else *dest=0; }
@@ -63,28 +62,27 @@ SWELL_API_DEFINE(ITEMIDLIST *, SHBrowseForFolder, (LPBROWSEINFO))
 
 typedef UINT (CALLBACK *LPOFNHOOKPROC) (HWND, UINT, WPARAM, LPARAM);
 
-typedef struct tagOFNA
-{
-  DWORD        lStructSize;
-  HWND         hwndOwner;
-  HINSTANCE    hInstance;
-  LPCSTR       lpstrFilter;
-  LPSTR        lpstrCustomFilter;
-  DWORD        nMaxCustFilter;
-  DWORD        nFilterIndex;
-  LPSTR        lpstrFile;
-  DWORD        nMaxFile;
-  LPSTR        lpstrFileTitle;
-  DWORD        nMaxFileTitle;
-  LPCSTR       lpstrInitialDir;
-  LPCSTR       lpstrTitle;
-  DWORD        Flags;
-  WORD         nFileOffset;
-  WORD         nFileExtension;
-  LPCSTR       lpstrDefExt;
-  LPARAM       lCustData;
-  LPOFNHOOKPROC lpfnHook;
-  LPCSTR       lpTemplateName;
+typedef struct tagOFNA {
+   DWORD        lStructSize;
+   HWND         hwndOwner;
+   HINSTANCE    hInstance;
+   LPCSTR       lpstrFilter;
+   LPSTR        lpstrCustomFilter;
+   DWORD        nMaxCustFilter;
+   DWORD        nFilterIndex;
+   LPSTR        lpstrFile;
+   DWORD        nMaxFile;
+   LPSTR        lpstrFileTitle;
+   DWORD        nMaxFileTitle;
+   LPCSTR       lpstrInitialDir;
+   LPCSTR       lpstrTitle;
+   DWORD        Flags;
+   WORD         nFileOffset;
+   WORD         nFileExtension;
+   LPCSTR       lpstrDefExt;
+   LPARAM       lCustData;
+   LPOFNHOOKPROC lpfnHook;
+   LPCSTR       lpTemplateName;
 } OPENFILENAME, *LPOPENFILENAME;
 
 
@@ -124,15 +122,15 @@ SWELL_API_DEFINE(BOOL,GetSaveFileName,(LPOPENFILENAME));
 
 typedef struct _SHELLEXECUTEINFOA
 {
-  DWORD cbSize;
-  ULONG fMask;
-  HWND hwnd;
-  LPCSTR   lpVerb;
-  LPCSTR   lpFile;
-  LPCSTR   lpParameters;
-  LPCSTR   lpDirectory;
-  int nShow;
-  HINSTANCE hInstApp;
+        DWORD cbSize;
+        ULONG fMask;
+        HWND hwnd;
+        LPCSTR   lpVerb;
+        LPCSTR   lpFile;
+        LPCSTR   lpParameters;
+        LPCSTR   lpDirectory;
+        int nShow;
+        HINSTANCE hInstApp;
 } SHELLEXECUTEINFO,  *LPSHELLEXECUTEINFO;
 
 
@@ -158,7 +156,7 @@ SWELL_API_DEFINE(DWORD,GetFileSize,(HANDLE, DWORD *high))
 #define RemoveDirectory(x) (!rmdir(x))
 
 #define CharNext(x) ((x)+1)
-#define CharPrev(base,x) ( (x)>(base)?(x)-1:(base))
+#define CharPrev(base,x) ( (x)>(base)?(x)-1:(base)) 
 #define isspace(x) ((x) == ' ' || (x) == '\t' || (x) == '\r' || (x) == '\n')
 
 #define lstrcpyA strcpy

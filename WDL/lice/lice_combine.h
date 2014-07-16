@@ -43,13 +43,13 @@ static inline void __LICE_BilinearFilterI(int *r, int *g, int *b, int *a, LICE_p
   int f3=yfrac-f4; // (1.0-xfrac)*yfrac;
   int f2=xfrac-f4; // xfrac*(1.0-yfrac);
   int f1=65536-yfrac-f2; // (1.0-xfrac)*(1.0-yfrac);
-#define DOCHAN(output, inchan) \
+  #define DOCHAN(output, inchan) \
     (output)=(pin[(inchan)]*f1 + pin[4+(inchan)]*f2 + pinnext[(inchan)]*f3 + pinnext[4+(inchan)]*f4)/65536;
   DOCHAN(*r,LICE_PIXEL_R)
   DOCHAN(*g,LICE_PIXEL_G)
   DOCHAN(*b,LICE_PIXEL_B)
   DOCHAN(*a,LICE_PIXEL_A)
-#undef DOCHAN
+  #undef DOCHAN
 }
 
 static inline void __LICE_BilinearFilterIPixOut(LICE_pixel_chan *out, LICE_pixel_chan *pin, LICE_pixel_chan *pinnext, int xfrac, int yfrac)
@@ -58,13 +58,13 @@ static inline void __LICE_BilinearFilterIPixOut(LICE_pixel_chan *out, LICE_pixel
   int f3=yfrac-f4; // (1.0-xfrac)*yfrac;
   int f2=xfrac-f4; // xfrac*(1.0-yfrac);
   int f1=65536-yfrac-f2; // (1.0-xfrac)*(1.0-yfrac);
-#define DOCHAN(inchan) \
+  #define DOCHAN(inchan) \
     (out[inchan])=(pin[(inchan)]*f1 + pin[4+(inchan)]*f2 + pinnext[(inchan)]*f3 + pinnext[4+(inchan)]*f4)/65536;
   DOCHAN(LICE_PIXEL_R)
   DOCHAN(LICE_PIXEL_G)
   DOCHAN(LICE_PIXEL_B)
   DOCHAN(LICE_PIXEL_A)
-#undef DOCHAN
+  #undef DOCHAN
 }
 
 
@@ -101,7 +101,7 @@ static inline void __LICE_LinearFilterIPixOut(LICE_pixel_chan *out, LICE_pixel_c
 
 static void inline _LICE_MakePixelClamp(LICE_pixel_chan *out, int r, int g, int b, int a)
 {
-#define LICE_PIX_MAKECHAN(a,b) out[a] = (b&~0xff) ? (b<0?0:255) : b;
+#define LICE_PIX_MAKECHAN(a,b) out[a] = (b&~0xff) ? (b<0?0:255) : b; 
   LICE_PIX_MAKECHAN(LICE_PIXEL_B,b)
   LICE_PIX_MAKECHAN(LICE_PIXEL_G,g)
   LICE_PIX_MAKECHAN(LICE_PIXEL_R,r)
@@ -128,21 +128,21 @@ static void inline _LICE_MakePixelNoClamp(LICE_pixel_chan *out, LICE_pixel_chan 
 extern unsigned short _LICE_RGB2HSV_invtab[256]; // 65536/idx - 1
 
 #ifdef LICE_COMBINE_IMPLEMENT_HSV
-LICE_pixel LICE_HSV2Pix(int h, int s, int v, int alpha)
-#define __LICE_HSV2Pix LICE_HSV2Pix
+  LICE_pixel LICE_HSV2Pix(int h, int s, int v, int alpha)
+  #define __LICE_HSV2Pix LICE_HSV2Pix
 #else
-static inline LICE_pixel __LICE_HSV2Pix(int h, int s, int v, int alpha)
+  static inline LICE_pixel __LICE_HSV2Pix(int h, int s, int v, int alpha)
 #endif
 {
   if (h<192)
   {
-    if (h<64) return LICE_RGBA(HSV_X,HSV_T(h),HSV_P,alpha);
-    if (h<128) return LICE_RGBA(HSV_Q(h-64),HSV_X,HSV_P,alpha);
-    return LICE_RGBA(HSV_P,HSV_X,HSV_T(h-128),alpha);
+    if (h<64) return LICE_RGBA(HSV_X,HSV_T(h),HSV_P,alpha); 
+    if (h<128) return LICE_RGBA(HSV_Q(h-64),HSV_X,HSV_P,alpha); 
+    return LICE_RGBA(HSV_P,HSV_X,HSV_T(h-128),alpha); 
   }
-  if (h < 256) return LICE_RGBA(HSV_P,HSV_Q(h-192),HSV_X,alpha);
-  if (h < 320) return LICE_RGBA(HSV_T(h-256),HSV_P,HSV_X,alpha);
-  return LICE_RGBA(HSV_X,HSV_P,HSV_Q(h-320),alpha);
+  if (h < 256) return LICE_RGBA(HSV_P,HSV_Q(h-192),HSV_X,alpha); 
+  if (h < 320) return LICE_RGBA(HSV_T(h-256),HSV_P,HSV_X,alpha); 
+  return LICE_RGBA(HSV_X,HSV_P,HSV_Q(h-320),alpha); 
 }
 
 #ifdef LICE_COMBINE_IMPLEMENT_HSV
@@ -156,30 +156,30 @@ static inline void __LICE_HSV2RGB(int h, int s, int v, int* r, int* g, int* b)
   {
     if (h<64)
     {
-      *r = HSV_X; *g = HSV_T(h); *b = HSV_P;
+      *r = HSV_X; *g = HSV_T(h); *b = HSV_P; 
     }
     else if (h<128)
     {
-      *r = HSV_Q(h-64); *g = HSV_X; *b = HSV_P;
+      *r = HSV_Q(h-64); *g = HSV_X; *b = HSV_P; 
     }
     else
     {
-      *r = HSV_P; *g = HSV_X; *b = HSV_T(h-128);
+      *r = HSV_P; *g = HSV_X; *b = HSV_T(h-128); 
     }
   }
   else
   {
     if (h < 256)
     {
-      *r = HSV_P; *g = HSV_Q(h-192); *b = HSV_X;
+      *r = HSV_P; *g = HSV_Q(h-192); *b = HSV_X; 
     }
     else if (h < 320)
     {
-      *r = HSV_T(h-256); *g = HSV_P; *b = HSV_X;
+      *r = HSV_T(h-256); *g = HSV_P; *b = HSV_X; 
     }
     else
     {
-      *r = HSV_X; *g = HSV_P; *b = HSV_Q(h-320);
+      *r = HSV_X; *g = HSV_P; *b = HSV_Q(h-320); 
     }
   }
 }
@@ -189,10 +189,10 @@ static inline void __LICE_HSV2RGB(int h, int s, int v, int* r, int* g, int* b)
 // h = [0,384), s and v = [0,256)
 
 #ifdef LICE_COMBINE_IMPLEMENT_HSV
-void LICE_RGB2HSV(int r, int g, int b, int* h, int* s, int* v)
-#define __LICE_RGB2HSV LICE_RGB2HSV
+  void LICE_RGB2HSV(int r, int g, int b, int* h, int* s, int* v)
+  #define __LICE_RGB2HSV LICE_RGB2HSV
 #else
-static inline void __LICE_RGB2HSV(int r, int g, int b, int* h, int* s, int* v)
+  static inline void __LICE_RGB2HSV(int r, int g, int b, int* h, int* s, int* v)
 #endif
 {
 
@@ -225,7 +225,7 @@ static inline void __LICE_RGB2HSV(int r, int g, int b, int* h, int* s, int* v)
       if (g<b)
       {
         degoffs=383; // not technically correct, but close enough (and simplifies the rounding case -- if you want more accuracy, set to 384,
-        // then add a if (*h == 384) *h=0; after the *h assignment below
+                     // then add a if (*h == 384) *h=0; after the *h assignment below
         df = maxrgb - g;
       }
       else
@@ -244,14 +244,13 @@ static inline void __LICE_RGB2HSV(int r, int g, int b, int* h, int* s, int* v)
     }
   }
 
-
+  
   *v = maxrgb;
 #ifndef LICE_RGB2HSV_USE_TABLE // table mode doesnt need this check
-  if (!df)
-  {
+  if (!df) {
     *h = *s = 0;
   }
-  else
+  else 
 #endif
   {
 
@@ -274,7 +273,7 @@ static inline void __LICE_RGB2HSV(int r, int g, int b, int* h, int* s, int* v)
 // This could be called _LICE_PutPixel but that would probably be confusing.
 class _LICE_CombinePixelsClobberNoClamp
 {
-  public:
+public:
   static inline void doPix(LICE_pixel_chan *dest, int r, int g, int b, int a, int alpha)    // alpha is ignored.
   {
     _LICE_MakePixelNoClamp(dest, r, g, b, a);
@@ -283,7 +282,7 @@ class _LICE_CombinePixelsClobberNoClamp
 
 class _LICE_CombinePixelsClobberClamp
 {
-  public:
+public:
   static inline void doPix(LICE_pixel_chan *dest, int r, int g, int b, int a, int alpha)    // alpha is ignored.
   {
     _LICE_MakePixelClamp(dest, r, g, b, a);
@@ -292,7 +291,7 @@ class _LICE_CombinePixelsClobberClamp
 
 class _LICE_CombinePixelsClobberFAST
 {
-  public:
+public:
   static inline void doPixFAST(LICE_pixel *dest, LICE_pixel src)    // alpha is ignored.
   {
     *dest = src;
@@ -301,20 +300,20 @@ class _LICE_CombinePixelsClobberFAST
 
 class _LICE_CombinePixelsHalfMixNoClamp
 {
-  public:
+public:
   static inline void doPix(LICE_pixel_chan *dest, int r, int g, int b, int a, int alpha)
   {
     _LICE_MakePixelNoClamp(dest,
-                           (dest[LICE_PIXEL_R]+r)/2,
-                           (dest[LICE_PIXEL_G]+g)/2,
-                           (dest[LICE_PIXEL_B]+b)/2,
-                           (dest[LICE_PIXEL_A]+a)/2);
+      (dest[LICE_PIXEL_R]+r)/2,
+      (dest[LICE_PIXEL_G]+g)/2,
+      (dest[LICE_PIXEL_B]+b)/2,
+      (dest[LICE_PIXEL_A]+a)/2);
   }
 };
 
 class _LICE_CombinePixelsHalfMixFAST
 {
-  public:
+public:
   static inline void doPixFAST(LICE_pixel *dest, LICE_pixel src)    // src is full range
   {
     *dest = ((*dest>>1) &0x7f7f7f7f) + ((src>>1)&0x7f7f7f7f);
@@ -323,14 +322,14 @@ class _LICE_CombinePixelsHalfMixFAST
 
 class _LICE_CombinePixelsHalfMixClamp
 {
-  public:
+public:
   static inline void doPix(LICE_pixel_chan *dest, int r, int g, int b, int a, int alpha)
   {
     _LICE_MakePixelClamp(dest,
-                         (dest[LICE_PIXEL_R]+r)/2,
-                         (dest[LICE_PIXEL_G]+g)/2,
-                         (dest[LICE_PIXEL_B]+b)/2,
-                         (dest[LICE_PIXEL_A]+a)/2);
+      (dest[LICE_PIXEL_R]+r)/2,
+      (dest[LICE_PIXEL_G]+g)/2,
+      (dest[LICE_PIXEL_B]+b)/2,
+      (dest[LICE_PIXEL_A]+a)/2);
   }
 
 };
@@ -338,7 +337,7 @@ class _LICE_CombinePixelsHalfMixClamp
 
 class _LICE_CombinePixelsHalfMix2FAST
 {
-  public:
+public:
   static inline void doPixFAST(LICE_pixel *dest, LICE_pixel src)    // src is pre-halfed and masked
   {
     *dest = ((*dest>>1) &0x7f7f7f7f) + src;
@@ -347,7 +346,7 @@ class _LICE_CombinePixelsHalfMix2FAST
 
 class _LICE_CombinePixelsQuarterMix2FAST
 {
-  public:
+public:
   static inline void doPixFAST(LICE_pixel *dest, LICE_pixel src)    // src is pre-quartered and masked
   {
     LICE_pixel tmp = *dest;
@@ -358,7 +357,7 @@ class _LICE_CombinePixelsQuarterMix2FAST
 
 class _LICE_CombinePixelsThreeQuarterMix2FAST
 {
-  public:
+public:
   static inline void doPixFAST(LICE_pixel *dest, LICE_pixel src)    // src is pre-quartered and masked
   {
     *dest = ((*dest>>2) &0x3f3f3f3f) + src;
@@ -367,39 +366,39 @@ class _LICE_CombinePixelsThreeQuarterMix2FAST
 
 class _LICE_CombinePixelsCopyNoClamp
 {
-  public:
+public:
   static inline void doPix(LICE_pixel_chan *dest, int r, int g, int b, int a, int alpha)
   {
     int sc=(256-alpha);
 
     // don't check alpha=0 here, since the caller should (since alpha is usually used for static alphas)
     _LICE_MakePixelNoClamp(dest,
-                           r + ((dest[LICE_PIXEL_R]-r)*sc)/256,
-                           g + ((dest[LICE_PIXEL_G]-g)*sc)/256,
-                           b + ((dest[LICE_PIXEL_B]-b)*sc)/256,
-                           a + ((dest[LICE_PIXEL_A]-a)*sc)/256);
+        r + ((dest[LICE_PIXEL_R]-r)*sc)/256,
+        g + ((dest[LICE_PIXEL_G]-g)*sc)/256,
+        b + ((dest[LICE_PIXEL_B]-b)*sc)/256,
+        a + ((dest[LICE_PIXEL_A]-a)*sc)/256);
   }
 };
 
-class _LICE_CombinePixelsCopyClamp
+class _LICE_CombinePixelsCopyClamp 
 {
-  public:
+public:
   static inline void doPix(LICE_pixel_chan *dest, int r, int g, int b, int a, int alpha)
   {
     int sc=(256-alpha);
 
     // don't check alpha=0 here, since the caller should (since alpha is usually used for static alphas)
     _LICE_MakePixelClamp(dest,
-                         r + ((dest[LICE_PIXEL_R]-r)*sc)/256,
-                         g + ((dest[LICE_PIXEL_G]-g)*sc)/256,
-                         b + ((dest[LICE_PIXEL_B]-b)*sc)/256,
-                         a + ((dest[LICE_PIXEL_A]-a)*sc)/256);
+        r + ((dest[LICE_PIXEL_R]-r)*sc)/256,
+        g + ((dest[LICE_PIXEL_G]-g)*sc)/256,
+        b + ((dest[LICE_PIXEL_B]-b)*sc)/256,
+        a + ((dest[LICE_PIXEL_A]-a)*sc)/256);
   }
 };
 
 class _LICE_CombinePixelsCopySourceAlphaNoClamp
 {
-  public:
+public:
   static inline void doPix(LICE_pixel_chan *dest, int r, int g, int b, int a, int alpha)
   {
     if (a)
@@ -408,17 +407,17 @@ class _LICE_CombinePixelsCopySourceAlphaNoClamp
       int sc = 256 - sc2;
 
       _LICE_MakePixelNoClamp(dest,
-                             r + ((dest[LICE_PIXEL_R]-r)*sc)/256,
-                             g + ((dest[LICE_PIXEL_G]-g)*sc)/256,
-                             b + ((dest[LICE_PIXEL_B]-b)*sc)/256,
-                             min(255,sc2 + dest[LICE_PIXEL_A]));
+        r + ((dest[LICE_PIXEL_R]-r)*sc)/256,
+        g + ((dest[LICE_PIXEL_G]-g)*sc)/256,
+        b + ((dest[LICE_PIXEL_B]-b)*sc)/256,
+        min(255,sc2 + dest[LICE_PIXEL_A]));
     }
   }
 };
 
 class _LICE_CombinePixelsCopySourceAlphaClamp
 {
-  public:
+public:
   static inline void doPix(LICE_pixel_chan *dest, int r, int g, int b, int a, int alpha)
   {
     if (a)
@@ -427,16 +426,16 @@ class _LICE_CombinePixelsCopySourceAlphaClamp
       int sc = 256 - sc2;
 
       _LICE_MakePixelClamp(dest,
-                           r + ((dest[LICE_PIXEL_R]-r)*sc)/256,
-                           g + ((dest[LICE_PIXEL_G]-g)*sc)/256,
-                           b + ((dest[LICE_PIXEL_B]-b)*sc)/256,
-                           sc2 + dest[LICE_PIXEL_A]);
+        r + ((dest[LICE_PIXEL_R]-r)*sc)/256,
+        g + ((dest[LICE_PIXEL_G]-g)*sc)/256,
+        b + ((dest[LICE_PIXEL_B]-b)*sc)/256,
+        sc2 + dest[LICE_PIXEL_A]);  
     }
   }
 };
 class _LICE_CombinePixelsCopySourceAlphaIgnoreAlphaParmNoClamp
 {
-  public:
+public:
   static inline void doPix(LICE_pixel_chan *dest, int r, int g, int b, int a, int alpha)
   {
     if (a)
@@ -450,17 +449,17 @@ class _LICE_CombinePixelsCopySourceAlphaIgnoreAlphaParmNoClamp
         int sc=(255-a);
 
         _LICE_MakePixelNoClamp(dest,
-                               r + ((dest[LICE_PIXEL_R]-r)*sc)/256,
-                               g + ((dest[LICE_PIXEL_G]-g)*sc)/256,
-                               b + ((dest[LICE_PIXEL_B]-b)*sc)/256,
-                               min(255,a + dest[LICE_PIXEL_A]));
+            r + ((dest[LICE_PIXEL_R]-r)*sc)/256,
+            g + ((dest[LICE_PIXEL_G]-g)*sc)/256,
+            b + ((dest[LICE_PIXEL_B]-b)*sc)/256,
+            min(255,a + dest[LICE_PIXEL_A]));  
       }
     }
   }
 };
 class _LICE_CombinePixelsCopySourceAlphaIgnoreAlphaParmClamp
 {
-  public:
+public:
   static inline void doPix(LICE_pixel_chan *dest, int r, int g, int b, int a, int alpha)
   {
     if (a)
@@ -474,10 +473,10 @@ class _LICE_CombinePixelsCopySourceAlphaIgnoreAlphaParmClamp
         int sc=(255-a);
 
         _LICE_MakePixelClamp(dest,
-                             r + ((dest[LICE_PIXEL_R]-r)*sc)/256,
-                             g + ((dest[LICE_PIXEL_G]-g)*sc)/256,
-                             b + ((dest[LICE_PIXEL_B]-b)*sc)/256,
-                             a + dest[LICE_PIXEL_A]);
+           r + ((dest[LICE_PIXEL_R]-r)*sc)/256,
+           g + ((dest[LICE_PIXEL_G]-g)*sc)/256,
+           b + ((dest[LICE_PIXEL_B]-b)*sc)/256,
+           a + dest[LICE_PIXEL_A]);  
       }
     }
   }
@@ -487,32 +486,32 @@ class _LICE_CombinePixelsCopySourceAlphaIgnoreAlphaParmClamp
 
 class _LICE_CombinePixelsAdd
 {
-  public:
+public:
   static inline void doPix(LICE_pixel_chan *dest, int r, int g, int b, int a, int alpha)
-  {
+  { 
     // don't check alpha=0 here, since the caller should (since alpha is usually used for static alphas)
 
     _LICE_MakePixelClamp(dest,
-                         dest[LICE_PIXEL_R]+(r*alpha)/256,
-                         dest[LICE_PIXEL_G]+(g*alpha)/256,
-                         dest[LICE_PIXEL_B]+(b*alpha)/256,
-                         dest[LICE_PIXEL_A]+(a*alpha)/256);
+      dest[LICE_PIXEL_R]+(r*alpha)/256,
+      dest[LICE_PIXEL_G]+(g*alpha)/256,
+      dest[LICE_PIXEL_B]+(b*alpha)/256,
+      dest[LICE_PIXEL_A]+(a*alpha)/256);
 
   }
 };
 class _LICE_CombinePixelsAddSourceAlpha
 {
-  public:
+public:
   static inline void doPix(LICE_pixel_chan *dest, int r, int g, int b, int a, int alpha)
-  {
+  { 
     if (a)
     {
       alpha=(alpha*(a+1))/256;
       _LICE_MakePixelClamp(dest,
-                           dest[LICE_PIXEL_R]+(r*alpha)/256,
-                           dest[LICE_PIXEL_G]+(g*alpha)/256,
-                           dest[LICE_PIXEL_B]+(b*alpha)/256,
-                           dest[LICE_PIXEL_A]+(a*alpha)/256);
+        dest[LICE_PIXEL_R]+(r*alpha)/256,
+        dest[LICE_PIXEL_G]+(g*alpha)/256,
+        dest[LICE_PIXEL_B]+(b*alpha)/256,
+        dest[LICE_PIXEL_A]+(a*alpha)/256);
     }
   }
 };
@@ -526,38 +525,38 @@ class _LICE_CombinePixelsAddSourceAlpha
 
 class _LICE_CombinePixelsColorDodge
 {
-  public:
+public:
   static inline void doPix(LICE_pixel_chan *dest, int r, int g, int b, int a, int alpha)
-  {
-    int src_r = 256-r*alpha/256;
-    int src_g = 256-g*alpha/256;
-    int src_b = 256-b*alpha/256;
-    int src_a = 256-a*alpha/256;
+  { 
+      int src_r = 256-r*alpha/256;
+      int src_g = 256-g*alpha/256;
+      int src_b = 256-b*alpha/256;
+      int src_a = 256-a*alpha/256;
 
-    _LICE_MakePixelClamp(dest,
-                         src_r > 1 ? 256*dest[LICE_PIXEL_R] / src_r : 256*dest[LICE_PIXEL_R],
-                         src_g > 1 ? 256*dest[LICE_PIXEL_G] / src_g : 256*dest[LICE_PIXEL_G],
-                         src_b > 1 ? 256*dest[LICE_PIXEL_B] / src_b : 256*dest[LICE_PIXEL_B],
-                         src_a > 1 ? 256*dest[LICE_PIXEL_A] / src_a : 256*dest[LICE_PIXEL_A]);
+      _LICE_MakePixelClamp(dest,
+        src_r > 1 ? 256*dest[LICE_PIXEL_R] / src_r : 256*dest[LICE_PIXEL_R],
+        src_g > 1 ? 256*dest[LICE_PIXEL_G] / src_g : 256*dest[LICE_PIXEL_G],
+        src_b > 1 ? 256*dest[LICE_PIXEL_B] / src_b : 256*dest[LICE_PIXEL_B],
+        src_a > 1 ? 256*dest[LICE_PIXEL_A] / src_a : 256*dest[LICE_PIXEL_A]);
   }
 };
 
 class _LICE_CombinePixelsColorDodgeSourceAlpha
 {
-  public:
+public:
   static inline void doPix(LICE_pixel_chan *dest, int r, int g, int b, int a, int alpha)
-  {
-    alpha=(alpha*(a+1))/256;
-    int src_r = 256-r*alpha/256;
-    int src_g = 256-g*alpha/256;
-    int src_b = 256-b*alpha/256;
-    int src_a = 256-a*alpha/256;
+  { 
+      alpha=(alpha*(a+1))/256;
+      int src_r = 256-r*alpha/256;
+      int src_g = 256-g*alpha/256;
+      int src_b = 256-b*alpha/256;
+      int src_a = 256-a*alpha/256;
 
-    _LICE_MakePixelClamp(dest,
-                         src_r > 1 ? 256*dest[LICE_PIXEL_R] / src_r : 256*dest[LICE_PIXEL_R],
-                         src_g > 1 ? 256*dest[LICE_PIXEL_G] / src_g : 256*dest[LICE_PIXEL_G],
-                         src_b > 1 ? 256*dest[LICE_PIXEL_B] / src_b : 256*dest[LICE_PIXEL_B],
-                         src_a > 1 ? 256*dest[LICE_PIXEL_A] / src_a : 256*dest[LICE_PIXEL_A]);
+      _LICE_MakePixelClamp(dest,
+        src_r > 1 ? 256*dest[LICE_PIXEL_R] / src_r : 256*dest[LICE_PIXEL_R],
+        src_g > 1 ? 256*dest[LICE_PIXEL_G] / src_g : 256*dest[LICE_PIXEL_G],
+        src_b > 1 ? 256*dest[LICE_PIXEL_B] / src_b : 256*dest[LICE_PIXEL_B],
+        src_a > 1 ? 256*dest[LICE_PIXEL_A] / src_a : 256*dest[LICE_PIXEL_A]);
   }
 };
 
@@ -571,68 +570,68 @@ class _LICE_CombinePixelsColorDodgeSourceAlpha
 
 class _LICE_CombinePixelsMulNoClamp
 {
-  public:
+public:
   static inline void doPix(LICE_pixel_chan *dest, int r, int g, int b, int a, int alpha)
-  {
+  { 
     // we could check alpha=0 here, but the caller should (since alpha is usually used for static alphas)
 
     int da=(256-alpha)*256;
     _LICE_MakePixelNoClamp(dest,
-                           (dest[LICE_PIXEL_R]*(da + (r*alpha)))/65536,
-                           (dest[LICE_PIXEL_G]*(da + (g*alpha)))/65536,
-                           (dest[LICE_PIXEL_B]*(da + (b*alpha)))/65536,
-                           (dest[LICE_PIXEL_A]*(da + (a*alpha)))/65536);
+      (dest[LICE_PIXEL_R]*(da + (r*alpha)))/65536,
+      (dest[LICE_PIXEL_G]*(da + (g*alpha)))/65536,
+      (dest[LICE_PIXEL_B]*(da + (b*alpha)))/65536,
+      (dest[LICE_PIXEL_A]*(da + (a*alpha)))/65536);
 
   }
 };
 class _LICE_CombinePixelsMulClamp
 {
-  public:
+public:
   static inline void doPix(LICE_pixel_chan *dest, int r, int g, int b, int a, int alpha)
-  {
+  { 
     // we could check alpha=0 here, but the caller should (since alpha is usually used for static alphas)
 
     int da=(256-alpha)*256;
     _LICE_MakePixelClamp(dest,
-                         (dest[LICE_PIXEL_R]*(da + (r*alpha)))/65536,
-                         (dest[LICE_PIXEL_G]*(da + (g*alpha)))/65536,
-                         (dest[LICE_PIXEL_B]*(da + (b*alpha)))/65536,
-                         (dest[LICE_PIXEL_A]*(da + (a*alpha)))/65536);
+      (dest[LICE_PIXEL_R]*(da + (r*alpha)))/65536,
+      (dest[LICE_PIXEL_G]*(da + (g*alpha)))/65536,
+      (dest[LICE_PIXEL_B]*(da + (b*alpha)))/65536,
+      (dest[LICE_PIXEL_A]*(da + (a*alpha)))/65536);
 
   }
 };
 class _LICE_CombinePixelsMulSourceAlphaNoClamp
 {
-  public:
+public:
   static inline void doPix(LICE_pixel_chan *dest, int r, int g, int b, int a, int alpha)
-  {
+  { 
     if (a)
     {
       alpha=(alpha*(a+1))/256;
       int da=(256-alpha)*256;
       _LICE_MakePixelNoClamp(dest,
-                             (dest[LICE_PIXEL_R]*(da + (r*alpha)))/65536,
-                             (dest[LICE_PIXEL_G]*(da + (g*alpha)))/65536,
-                             (dest[LICE_PIXEL_B]*(da + (b*alpha)))/65536,
-                             (dest[LICE_PIXEL_A]*(da + (a*alpha)))/65536);
+        (dest[LICE_PIXEL_R]*(da + (r*alpha)))/65536,
+        (dest[LICE_PIXEL_G]*(da + (g*alpha)))/65536,
+        (dest[LICE_PIXEL_B]*(da + (b*alpha)))/65536,
+        (dest[LICE_PIXEL_A]*(da + (a*alpha)))/65536);
 
     }
   }
 };
 class _LICE_CombinePixelsMulSourceAlphaClamp
 {
-  public:
+public:
   static inline void doPix(LICE_pixel_chan *dest, int r, int g, int b, int a, int alpha)
-  {
+  { 
     if (a)
     {
       alpha=(alpha*(a+1))/256;
       int da=(256-alpha)*256;
       _LICE_MakePixelClamp(dest,
-                           (dest[LICE_PIXEL_R]*(da + (r*alpha)))/65536,
-                           (dest[LICE_PIXEL_G]*(da + (g*alpha)))/65536,
-                           (dest[LICE_PIXEL_B]*(da + (b*alpha)))/65536,
-                           (dest[LICE_PIXEL_A]*(da + (a*alpha)))/65536);
+        (dest[LICE_PIXEL_R]*(da + (r*alpha)))/65536,
+        (dest[LICE_PIXEL_G]*(da + (g*alpha)))/65536,
+        (dest[LICE_PIXEL_B]*(da + (b*alpha)))/65536,
+        (dest[LICE_PIXEL_A]*(da + (a*alpha)))/65536);
 
     }
   }
@@ -650,9 +649,9 @@ class _LICE_CombinePixelsMulSourceAlphaClamp
 
 class _LICE_CombinePixelsOverlay
 {
-  public:
+public:
   static inline void doPix(LICE_pixel_chan *dest, int r, int g, int b, int a, int alpha)
-  {
+  { 
     // we could check alpha=0 here, but the caller should (since alpha is usually used for static alphas)
 
     int destr = dest[LICE_PIXEL_R], destg = dest[LICE_PIXEL_G], destb = dest[LICE_PIXEL_B], desta = dest[LICE_PIXEL_A];
@@ -673,9 +672,9 @@ class _LICE_CombinePixelsOverlay
     destg = (destg*sg+(256-destg)*mg)/256;
     destb = (destb*sb+(256-destb)*mb)/256;
     desta = (desta*sa+(256-desta)*ma)/256;
-#else
+#else 
     // can produce slightly diff (+-1) results from above due to rounding
-    int da=(256-alpha)*128;
+    int da=(256-alpha)*128; 
     int srcr = r*alpha+da, srcg = g*alpha+da, srcb = b*alpha+da, srca = a*alpha + da;
     destr = ( destr*( (destr*(32768-srcr))/256 + srcr ) )/32768;
     destg = ( destg*( (destg*(32768-srcg))/256 + srcg ) )/32768;
@@ -690,9 +689,9 @@ class _LICE_CombinePixelsOverlay
 
 class _LICE_CombinePixelsOverlaySourceAlpha
 {
-  public:
+public:
   static inline void doPix(LICE_pixel_chan *dest, int r, int g, int b, int a, int alpha)
-  {
+  { 
     _LICE_CombinePixelsOverlay::doPix(dest, r, g, b, a, (alpha*(a+1))/256);
   }
 };
@@ -708,9 +707,9 @@ class _LICE_CombinePixelsOverlaySourceAlpha
 
 class _LICE_CombinePixelsHSVAdjust
 {
-  public:
+public:
   static inline void doPix(LICE_pixel_chan *dest, int r, int g, int b, int a, int alpha)
-  {
+  { 
     int h,s,v;
     __LICE_RGB2HSV(dest[LICE_PIXEL_R],dest[LICE_PIXEL_G],dest[LICE_PIXEL_B],&h,&s,&v);
     h+=(((r+r/2) - 192) * alpha)/256;
@@ -735,9 +734,9 @@ class _LICE_CombinePixelsHSVAdjust
 
 class _LICE_CombinePixelsHSVAdjustSourceAlpha
 {
-  public:
+public:
   static inline void doPix(LICE_pixel_chan *dest, int r, int g, int b, int a, int alpha)
-  {
+  { 
     _LICE_CombinePixelsHSVAdjust::doPix(dest, r, g, b, a, (alpha*(a+1))/256);
   }
 };
@@ -749,8 +748,8 @@ class _LICE_CombinePixelsHSVAdjustSourceAlpha
 
 // note: the "clamp" parameter would generally be false, unless you're working with
 // input colors that need to be clamped (i.e. if you have a r value of >255 or <0, etc.
-// if your input is LICE_pixel only then use false, and it will clamp as needed depending
-// on the blend mode..
+// if your input is LICE_pixel only then use false, and it will clamp as needed depending 
+// on the blend mode.. 
 
 //#define __LICE__ACTION(comb) templateclass<comb>::function(parameters)
 //__LICE_ACTION_SRCALPHA(mode,alpha,clamp);
@@ -832,7 +831,7 @@ class _LICE_CombinePixelsHSVAdjustSourceAlpha
       case LICE_BLIT_MODE_OVERLAY: __LICE__ACTION(_LICE_CombinePixelsOverlay); break;  \
       case LICE_BLIT_MODE_HSVADJ: __LICE__ACTION(_LICE_CombinePixelsHSVAdjust); break;  \
     }
-
+     
 typedef void (*LICE_COMBINEFUNC)(LICE_pixel_chan *dest, int r, int g, int b, int a, int alpha);
-
+   
 #endif // _LICE_COMBINE_H_

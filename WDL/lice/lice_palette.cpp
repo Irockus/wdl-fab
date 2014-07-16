@@ -18,7 +18,7 @@ struct ONode
 struct OTree
 {
   int maxcolors;
-  int leafcount;
+  int leafcount;  
   ONode* trunk;
   ONode* branches[OCTREE_DEPTH];  // linked lists of branches for each level of the tree
   LICE_pixel* palette;  // populated at the end
@@ -69,7 +69,7 @@ int LICE_BuildOctree(void* octree, LICE_IBitmap* bmp)
   OTree* tree = (OTree*)octree;
   if (!tree) return 0;
 
-  if (tree->palette)
+  if (tree->palette) 
   {
     free(tree->palette);
     tree->palette=0;
@@ -80,9 +80,12 @@ int LICE_BuildOctree(void* octree, LICE_IBitmap* bmp)
   {
     LICE_pixel* px = bmp->getBits()+y*bmp->getRowSpan();
     for (x = 0; x < bmp->getWidth(); ++x)
-    {
-      unsigned char rgb[3] = { LICE_GETR(px[x]), LICE_GETG(px[x]), LICE_GETB(px[x]) };
-      AddColorToTree(tree, rgb);
+    {    
+      unsigned char rgb[3];
+      rgb[0]=LICE_GETR(px[x]);
+      rgb[1]=LICE_GETG(px[x]);
+      rgb[2]=LICE_GETB(px[x]);
+      AddColorToTree(tree, rgb);      
       if (tree->leafcount > tree->maxcolors) PruneTree(tree);
     }
   }
@@ -97,8 +100,11 @@ int LICE_FindInOctree(void* octree, LICE_pixel color)
   if (!tree) return 0;
 
   if (!tree->palette) CollectLeaves(tree);
-
-  unsigned char rgb[3] = { LICE_GETR(color), LICE_GETG(color), LICE_GETB(color) };
+  
+  unsigned char rgb[3];
+  rgb[0] = LICE_GETR(color);
+  rgb[1] = LICE_GETG(color);
+  rgb[2] = LICE_GETB(color);
   return FindColorInTree(tree, rgb);
 }
 
@@ -120,20 +126,21 @@ void LICE_TestPalette(LICE_IBitmap* bmp, LICE_pixel* palette, int numcolors)
 {
   int x, y;
   for (y = 0; y < bmp->getHeight(); ++y)
-  {
+  { 
     LICE_pixel* px = bmp->getBits()+y*bmp->getRowSpan();
     for (x = 0; x < bmp->getWidth(); ++x)
     {
-      unsigned char rgb[3] = { LICE_GETR(px[x]), LICE_GETG(px[x]), LICE_GETB(px[x]) };
+      const LICE_pixel col = px[x];
+      const int rgb[3] = { (int)LICE_GETR(col), (int)LICE_GETG(col), (int)LICE_GETB(col) };
 
       int minerr;
       int bestcol=-1;
       int i;
       for (i = 0; i < numcolors; ++i)
       {
-        LICE_pixel palcol = palette[i];
-        int rerr[3] = { rgb[0]-LICE_GETR(palcol), rgb[1]-LICE_GETG(palcol), rgb[2]-LICE_GETB(palcol) };
-        int err = rerr[0]*rerr[0]+rerr[1]*rerr[1]+rerr[2]*rerr[2];
+        const LICE_pixel palcol = palette[i];
+        const int rerr[3] = { rgb[0]-(int)LICE_GETR(palcol), rgb[1]-(int)LICE_GETG(palcol), rgb[2]-(int)LICE_GETB(palcol) };
+        const int err = rerr[0]*rerr[0]+rerr[1]*rerr[1]+rerr[2]*rerr[2];
         if (bestcol < 0 || err < minerr)
         {
           bestcol=i;
@@ -171,7 +178,7 @@ void AddColorToTree(OTree* tree, unsigned char rgb[3])
         p->childflag=idx+1;
       }
       else if (p->childflag > 0)  // creating a new branch
-      {
+      {    
         p->childflag = -1;
         p->next = tree->branches[i];
         tree->branches[i] = p;
@@ -179,7 +186,7 @@ void AddColorToTree(OTree* tree, unsigned char rgb[3])
       // else multiple branch, which we don't care about
 
       np = p->children[idx] = new ONode;
-      memset(np, 0, sizeof(ONode));
+      memset(np, 0, sizeof(ONode));    
     }
 
     np->sumrgb[0] += rgb[0];
@@ -202,14 +209,14 @@ int FindColorInTree(OTree* tree, unsigned char rgb[3])
 
   int i;
   for (i = OCTREE_DEPTH-1; i >= 0; --i)
-  {
+  { 
     if (!p->childflag) break;
 
     int j = i+8-OCTREE_DEPTH;
     unsigned char idx = (((rgb[0]>>(j-2))&4))|(((rgb[1]>>(j-1))&2))|((rgb[2]>>j)&1);
 
     ONode* np = p->children[idx];
-    if (!np) break;
+    if (!np) break; 
 
     p = np;
   }
@@ -233,7 +240,7 @@ int PruneTree(OTree* tree)
     }
   }
 
-  if (branch)
+  if (branch) 
   {
     int i;
     for (i = 0; i < 8; ++i)
@@ -247,7 +254,7 @@ int PruneTree(OTree* tree)
     branch->childflag=0; // now it's a leaf
     tree->leafcount++;
   }
-
+  
   return tree->leafcount;
 }
 
@@ -263,7 +270,7 @@ int CollectLeaves(OTree* tree)
 }
 
 int CollectNodeLeaves(ONode* p, LICE_pixel* palette, int colorcount)
-{
+{  
   if (!p->childflag)
   {
     p->leafidx = colorcount;
@@ -272,7 +279,7 @@ int CollectNodeLeaves(ONode* p, LICE_pixel* palette, int colorcount)
     int b = (int)((double)p->sumrgb[2]/(double)p->colorcount);
     palette[colorcount++] = LICE_RGBA(r, g, b, 255);
   }
-  else
+  else 
   {
     if (p->childflag > 0)
     {
@@ -291,7 +298,7 @@ int CollectNodeLeaves(ONode* p, LICE_pixel* palette, int colorcount)
     }
     // this is a branch or passthrough node,  record the index
     // of any downtree leaf here so that we can return it for
-    // color lookups that want to diverge off this node
+    // color lookups that want to diverge off this node 
     p->leafidx = colorcount-1;
   }
 
@@ -316,10 +323,10 @@ void DeleteNode(OTree* tree, ONode* p)
     for (i = 0; i < 8; ++i)
     {
       if (p->children[i])
-      {
-        DeleteNode(tree, p->children[i]);
+      {       
+        DeleteNode(tree, p->children[i]);     
       }
-    }
+    } 
   }
 
   delete p;

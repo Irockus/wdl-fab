@@ -28,13 +28,13 @@ void JNL::close_socketlib()
   WSACleanup();
 #endif
 }
-unsigned int JNL::ipstr_to_addr(const char *cp)
-{
-  return ::inet_addr(cp);
+unsigned int JNL::ipstr_to_addr(const char *cp) 
+{ 
+  return ::inet_addr(cp); 
 }
 
-void JNL::addr_to_ipstr(unsigned int addr, char *host, int maxhostlen)
-{
+void JNL::addr_to_ipstr(unsigned int addr, char *host, int maxhostlen) 
+{ 
   struct in_addr a; a.s_addr=addr;
   char *p=::inet_ntoa(a); strncpy(host,p?p:"",maxhostlen);
 }

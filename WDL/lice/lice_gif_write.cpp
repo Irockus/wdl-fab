@@ -24,7 +24,7 @@ struct liceGifWriteRec
   int w,h;
   bool dither;
   bool has_had_frame;
-  bool has_global_cmap;
+  bool has_global_cmap; 
   LICE_IBitmap *prevframe; // used when multiframe, transalpha<0
 };
 
@@ -40,7 +40,7 @@ int LICE_SetGIFColorMapFromOctree(void *ww, void *octree, int numcolors)
   if (!octree||!ww) return 0;
 
   ColorMapObject *cmap = wr->cmap;
-
+  
   int palette_sz=0;
 
   // store palette
@@ -49,7 +49,7 @@ int LICE_SetGIFColorMapFromOctree(void *ww, void *octree, int numcolors)
     LICE_pixel tpalette[256];
     if (numcolors <= 256) palette = tpalette;
     else palette = (LICE_pixel*)malloc(numcolors*sizeof(LICE_pixel));
-
+    
     palette_sz = LICE_ExtractOctreePalette(octree, palette);
 
     int i;
@@ -61,22 +61,22 @@ int LICE_SetGIFColorMapFromOctree(void *ww, void *octree, int numcolors)
     }
     for (i = palette_sz; i < numcolors; ++i)
     {
-      cmap->Colors[i].Red = cmap->Colors[i].Green = cmap->Colors[i].Blue = 0;
+      cmap->Colors[i].Red = cmap->Colors[i].Green = cmap->Colors[i].Blue = 0;   
     }
-
+  
     if (palette != tpalette) free(palette);
   }
 
   // map palette to 16 bit
-  //GifColorType *ct = cmap->Colors;
+  GifColorType *ct = cmap->Colors;
   unsigned char r,g,b;
-  for(r=0; r<32; r++)
+  for(r=0;r<32;r++)  
   {
     unsigned char cr = r<<3;
-    for (g=0; g<32; g++)
+    for (g=0;g<32;g++)
     {
       unsigned char cg = g<<3;
-      for (b=0; b<32; b++)
+      for (b=0;b<32;b++)
       {
         unsigned char cb = b<<3;
         LICE_pixel col = LICE_RGBA(cr,cg,cb,0);
@@ -107,7 +107,7 @@ bool LICE_WriteGIFFrame(void *handle, LICE_IBitmap *frame, int xpos, int ypos, b
       int ccnt = wr->cmap->ColorCount;
       if (wr->transalpha && ccnt>255) ccnt=255;
       void* octree = LICE_CreateOctree(ccnt);
-      if (octree)
+      if (octree) 
       {
         LICE_BuildOctree(octree, frame);
         // sets has_global_cmap
@@ -154,17 +154,17 @@ bool LICE_WriteGIFFrame(void *handle, LICE_IBitmap *frame, int xpos, int ypos, b
     int ccnt = wr->cmap->ColorCount;
     if (wr->transalpha && ccnt>255) ccnt=255;
     void* octree = LICE_CreateOctree(ccnt);
-    if (octree)
+    if (octree) 
     {
       LICE_BuildOctree(octree, frame);
-      // sets has_global_cmap (clear below)
+        // sets has_global_cmap (clear below)
       LICE_SetGIFColorMapFromOctree(wr, octree, ccnt);
       LICE_DestroyOctree(octree);
       wr->has_global_cmap=false;
     }
   }
 
-  EGifPutImageDesc(wr->f, xpos, ypos, usew,useh, 0, wr->has_global_cmap ? NULL : wr->cmap);
+  EGifPutImageDesc(wr->f, xpos, ypos, usew,useh, 0, wr->has_global_cmap ? NULL : wr->cmap); 
 
   GifPixelType *linebuf = wr->linebuf;
   int y;
@@ -182,7 +182,7 @@ bool LICE_WriteGIFFrame(void *handle, LICE_IBitmap *frame, int xpos, int ypos, b
 
     LICE_SubBitmap tmp(wr->prevframe,xpos,ypos,usew,useh);
 
-    for(y=0; y<useh; y++)
+    for(y=0;y<useh;y++)
     {
       int rdy=y,rdy2=y;
       if (frame->isFlipped()) rdy = frame->getHeight()-1-y;
@@ -190,14 +190,14 @@ bool LICE_WriteGIFFrame(void *handle, LICE_IBitmap *frame, int xpos, int ypos, b
       LICE_pixel *in = frame->getBits() + rdy*frame->getRowSpan();
       LICE_pixel *in2 = tmp.getBits() + rdy2*tmp.getRowSpan();
       int x;
-      for(x=0; x<usew; x++)
+      for(x=0;x<usew;x++)
       {
         LICE_pixel p = *in++;
         if (ignFr || p != *in2)
         {
           linebuf[x] = QuantPixel(p,wr);
         }
-        else
+        else 
         {
           linebuf[x]=255;
         }
@@ -208,25 +208,25 @@ bool LICE_WriteGIFFrame(void *handle, LICE_IBitmap *frame, int xpos, int ypos, b
 
 
     LICE_Blit(&tmp,frame,0,0,0,0,usew,useh,1.0f,LICE_BLIT_MODE_COPY);
-
+    
   }
-  else for(y=0; y<useh; y++)
+  else for(y=0;y<useh;y++)
+  {
+    int rdy=y;
+    if (frame->isFlipped()) rdy = frame->getHeight()-1-y;
+    LICE_pixel *in = frame->getBits() + rdy*frame->getRowSpan();
+    int x;
+    for(x=0;x<usew;x++)
     {
-      int rdy=y;
-      if (frame->isFlipped()) rdy = frame->getHeight()-1-y;
-      LICE_pixel *in = frame->getBits() + rdy*frame->getRowSpan();
-      int x;
-      for(x=0; x<usew; x++)
-      {
-        LICE_pixel p = *in++;
-        GifPixelType val = QuantPixel(p,wr);
-        if (ta && LICE_GETA(p) < ta)
-          linebuf[x]=255;
-        else
-          linebuf[x] = val;
-      }
-      EGifPutLine(wr->f, linebuf, usew);
+      LICE_pixel p = *in++;
+      GifPixelType val = QuantPixel(p,wr);
+      if (ta && LICE_GETA(p) < ta)
+        linebuf[x]=255;
+      else
+        linebuf[x] = val;
     }
+    EGifPutLine(wr->f, linebuf, usew);
+  }
 
   return true;
 }
@@ -302,7 +302,7 @@ bool LICE_WriteGIF(const char *filename, LICE_IBitmap *bmp, int transparent_alph
       int x=w;
       while(x--)
       {
-        if (LICE_GETA(*p) < transparent_alpha)
+        if (LICE_GETA(*p) < transparent_alpha) 
         {
           has_transparent=1;
           break;
@@ -316,7 +316,7 @@ bool LICE_WriteGIF(const char *filename, LICE_IBitmap *bmp, int transparent_alph
 
   void *wr=LICE_WriteGIFBeginNoFrame(filename,bmp->getWidth(),bmp->getHeight(),has_transparent?transparent_alpha:0,dither);
   if (!wr)  return false;
-
+  
   LICE_WriteGIFFrame(wr,bmp,0,0,false,0);
 
   return LICE_WriteGIFEnd(wr);

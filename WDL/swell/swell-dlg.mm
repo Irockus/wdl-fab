@@ -627,7 +627,7 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
   }
   else
   {   
-    NMCLICK nm={{(HWND)sender,[(NSControl*)sender tag],NM_DBLCLK}, }; 
+    NMCLICK nm={{(HWND)sender,(UINT_PTR)[(NSControl*)sender tag],NM_DBLCLK}, };
     m_wndproc((HWND)self,WM_NOTIFY,[(NSControl*)sender tag],(LPARAM)&nm);
   }
 }
@@ -647,7 +647,7 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
       }
       else
       {
-        NMLISTVIEW nmhdr={{(HWND)sender,(int)[sender tag],LVN_ITEMCHANGED},(int)[sender selectedRow],0}; 
+        NMLISTVIEW nmhdr={{(HWND)sender,(int)[sender tag],LVN_ITEMCHANGED},(int)[sender selectedRow],0};
         if (m_wndproc&&!m_hashaddestroy) m_wndproc((HWND)self,WM_NOTIFY,(int)[sender tag],(LPARAM)&nmhdr);
         
       }
@@ -2743,7 +2743,7 @@ HWND SWELL_CreateCarbonWindowView(HWND viewpar, void **wref, RECT* r, bool wantc
   ClientToScreen(viewpar, (POINT*)&wndr);
   ClientToScreen(viewpar, (POINT*)&wndr+1);
   //Rect r2 = { wndr.top, wndr.left, wndr.bottom, wndr.right };
-  Rect r2 = { wndr.bottom, wndr.left, wndr.top, wndr.right };
+  Rect r2 = { (short)wndr.bottom, (short)wndr.left, (short)wndr.top, (short)wndr.right };
   SWELL_hwndCarbonHost *w = [[SWELL_hwndCarbonHost alloc] initCarbonChild:(NSView*)viewpar rect:&r2 composit:wantcomp];
   if (w) *wref = [w->m_cwnd windowRef];
   return (HWND)w;

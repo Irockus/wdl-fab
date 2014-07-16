@@ -20,7 +20,7 @@ LICECaptureCompressor::LICECaptureCompressor(const char *outfn, int w, int h, in
   {
     if (deflateInit(&m_compstream,9)!=Z_OK)
     {
-      delete m_file;
+      delete m_file; 
       m_file=0;
     }
   }
@@ -44,7 +44,7 @@ LICECaptureCompressor::LICECaptureCompressor(const char *outfn, int w, int h, in
 
 void LICECaptureCompressor::OnFrame(LICE_IBitmap *fr, int delta_t_ms)
 {
-  if (fr)
+  if (fr) 
   {
     if (fr->getWidth()!=m_w || fr->getHeight()!=m_h) return;
 
@@ -90,7 +90,7 @@ void LICECaptureCompressor::OnFrame(LICE_IBitmap *fr, int delta_t_ms)
 
       int repeat_cnt=0;
 
-      for(i=0; i<list_size; i++)
+      for(i=0;i<list_size; i++)
       {
         unsigned short *rd = list[i]->data + rdoffs;
         if (i&&repeat_cnt<256)
@@ -108,7 +108,7 @@ void LICECaptureCompressor::OnFrame(LICE_IBitmap *fr, int delta_t_ms)
           {
             repeat_cnt++;
             continue;
-          }
+          }          
         }
 
         if (i || repeat_cnt)
@@ -162,7 +162,7 @@ void LICECaptureCompressor::OnFrame(LICE_IBitmap *fr, int delta_t_ms)
 
       {
         int x;
-        for(x=0; x<nf; x++)
+        for(x=0;x<nf;x++)
         {
           AddHdrInt(m_framelists[!m_which].Get(x)->delta_t_ms);
         }
@@ -233,7 +233,7 @@ void LICECaptureCompressor::DeflateBlock(void *data, int data_size, bool flush)
 
   m_compstream.next_in = (unsigned char *)data;
   m_compstream.avail_in = data_size;
-
+  
   for (;;)
   {
     int add_sz = data_size+32768;
@@ -241,7 +241,7 @@ void LICECaptureCompressor::DeflateBlock(void *data, int data_size, bool flush)
     m_compstream.avail_out = add_sz;
 
     int e = deflate(&m_compstream,flush?Z_FULL_FLUSH:Z_NO_FLUSH);
-
+  
     m_current_block.Add(NULL,-(int)m_compstream.avail_out);
 
     bytesout+=add_sz-m_compstream.avail_out;
@@ -255,7 +255,7 @@ void LICECaptureCompressor::DeflateBlock(void *data, int data_size, bool flush)
     if (!m_compstream.avail_in && (!flush || add_sz==(int)m_compstream.avail_out)) break;
   }
   m_outsize += bytesout;
-
+    
 }
 
 
@@ -319,10 +319,10 @@ LICECaptureDecompressor::LICECaptureDecompressor(const char *fn, bool want_seeka
           m_file_frame_info.Add(&lastpos,1);
           unsigned int mst = m_file_length_ms;
           if (m_frame_deltas[0].GetSize()) mst += m_frame_deltas[0].Get()[0]; // TOC is by time of first frames, ignore first delay when seeking
-          m_file_frame_info.Add(&mst,1);
+          m_file_frame_info.Add(&mst,1);         
 
           int x;
-          for(x=0; x<m_frame_deltas[0].GetSize(); x++)
+          for(x=0;x<m_frame_deltas[0].GetSize();x++)
           {
             m_file_length_ms+=m_frame_deltas[0].Get()[x];
           }
@@ -335,7 +335,7 @@ LICECaptureDecompressor::LICECaptureDecompressor(const char *fn, bool want_seeka
     }
   }
 
-  if (m_curhdr[m_rd_which].bpp!=16)
+  if (m_curhdr[m_rd_which].bpp!=16) 
   {
     delete m_file;
     m_file=0;
@@ -380,7 +380,7 @@ int LICECaptureDecompressor::Seek(unsigned int offset_ms)
   if (offset_ms>0&&m_file_frame_info.GetSize())
   {
     int x;
-    for(x=0; x<m_file_frame_info.GetSize()-2; x+=2)
+    for(x=0;x<m_file_frame_info.GetSize()-2;x+=2)
     {
       if (offset_ms < m_file_frame_info.Get()[x+2+1]) break;
     }
@@ -388,7 +388,7 @@ int LICECaptureDecompressor::Seek(unsigned int offset_ms)
     offset_ms -= m_file_frame_info.Get()[x+1];
     // figure out the best place to seek
   }
-  else
+  else 
   {
     if (offset_ms>0) rval=-1;
     offset_ms=0;
@@ -396,7 +396,7 @@ int LICECaptureDecompressor::Seek(unsigned int offset_ms)
 
   m_rd_which=0;
   m_file->SetPosition(seekpos);
-  if (!ReadHdr(m_rd_which)||!DecompressBlock(m_rd_which,1.0))
+  if (!ReadHdr(m_rd_which)||!DecompressBlock(m_rd_which,1.0)) 
   {
     rval=-1;
     memset(&m_curhdr,0,sizeof(m_curhdr));
@@ -418,7 +418,7 @@ int LICECaptureDecompressor::Seek(unsigned int offset_ms)
       m_frameidx=x-1;
     }
     if (!ReadHdr(!m_rd_which))
-      memset(&m_curhdr[!m_rd_which],0,sizeof(m_curhdr[!m_rd_which]));
+        memset(&m_curhdr[!m_rd_which],0,sizeof(m_curhdr[!m_rd_which]));
 
     DecodeSlices();
   }
@@ -447,7 +447,7 @@ bool LICECaptureDecompressor::ReadHdr(int whdr) // todo: eventually make this re
 
   int dsize;
   m_tmp.GetTFromLE(&dsize);
-
+  
   if (nf<1 || nf > 1024) return false;
 
   m_frame_deltas[whdr].Resize(nf);
@@ -456,7 +456,7 @@ bool LICECaptureDecompressor::ReadHdr(int whdr) // todo: eventually make this re
 
   if (m_file->Read(m_frame_deltas[whdr].Get(),nf*4)!=nf*4) return false;
   int x;
-  for(x=0; x<nf; x++)
+  for(x=0;x<nf;x++)
   {
     WDL_Queue::WDL_Queue__bswap_buffer(m_frame_deltas[whdr].Get()+x,4);
   }
@@ -470,10 +470,10 @@ bool LICECaptureDecompressor::ReadHdr(int whdr) // todo: eventually make this re
 
   return true;
 }
-
+  
 bool LICECaptureDecompressor::DecompressBlock(int whdr, double percent)
 {
-  if (m_compstream.avail_out)
+  if (m_compstream.avail_out) 
   {
     unsigned char buf[16384];
     for (;;)
@@ -491,11 +491,11 @@ bool LICECaptureDecompressor::DecompressBlock(int whdr, double percent)
       m_curhdr[whdr].cdata_left -= m_compstream.avail_in;
 
       int e = inflate(&m_compstream,0);
-      if (e != Z_OK&&e!=Z_STREAM_END)
+      if (e != Z_OK&&e!=Z_STREAM_END) 
       {
 //        printf("inflate error: %d (%d/%d)\n",e,m_compstream.avail_in, m_curhdr[whdr].cdata_left);
         return !m_compstream.avail_out;
-      }
+      }   
       if (!m_compstream.avail_out && !m_compstream.avail_in) break;
     }
     m_compstream.next_in = NULL;
@@ -513,7 +513,7 @@ int LICECaptureDecompressor::GetTimeToNextFrame()
 
   if (fidx+1 < nf) return m_frame_deltas[m_rd_which].Get()[fidx+1];
 
-  if (m_curhdr[!m_rd_which].bpp && m_frame_deltas[!m_rd_which].GetSize())
+  if (m_curhdr[!m_rd_which].bpp && m_frame_deltas[!m_rd_which].GetSize()) 
     return m_frame_deltas[!m_rd_which].Get()[0];
 
   return 100;
@@ -582,7 +582,7 @@ void LICECaptureDecompressor::DecodeSlices()
           i++;
         }
       }
-      if( sp_left < 0)
+      if( sp_left < 0) 
       {
         m_slices.Resize(0);
         return;
@@ -642,7 +642,7 @@ LICE_IBitmap *LICECaptureDecompressor::GetCurrentFrame()
 
           LICE_pixel *dest = pout + xpos + ypos*span;
           int y;
-          for (y=0; y<hei; y++)
+          for (y=0;y<hei;y++)
           {
             int x=wid;
             LICE_pixel *wr = dest;
@@ -652,7 +652,7 @@ LICE_IBitmap *LICECaptureDecompressor::GetCurrentFrame()
               *wr++ = LICE_RGBA((px<<3)&0xF8,(px>>3)&0xFC,(px>>8)&0xF8,255);
             }
             dest+=span;
-          }
+          }         
         }
       }
 
