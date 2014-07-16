@@ -18,7 +18,7 @@ public:
 
   virtual void SetControlHighlight(long controlIndex, short isHighlighted, short color) = 0;
   virtual void GetControlIndexFromPoint(long x, long y, long *aControlIndex) = 0;
-
+  
 protected:
   void* mProcess;
 };

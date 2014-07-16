@@ -1,7 +1,7 @@
 #include "IGraphicsCocoa.h"
 
 //forward declare this if compiling with 10.6 sdk
-#if !defined(MAC_OS_X_VERSION_10_7) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_7
+#if !defined(MAC_OS_X_VERSION_10_7) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_7)
 @interface NSScreen (LionSDK)
 - (CGFloat)backingScaleFactor;
 @end
@@ -83,7 +83,7 @@
       {
         [nsMenuItem setState:NSOffState];
       }
-
+      
       if (menuItem->GetEnabled())
       {
         [nsMenuItem setEnabled:YES];
@@ -139,7 +139,7 @@ inline IMouseMod GetRightMouseMod(NSEvent* pEvent)
   {
     int i = 0;
     int len = [partialString length];
-
+    
     for (i = 0; i < len; i++)
     {
       if (![filterCharacterSet characterIsMember:[partialString characterAtIndex:i]])
@@ -205,7 +205,7 @@ inline IMouseMod GetRightMouseMod(NSEvent* pEvent)
 
 inline int GetMouseOver(IGraphicsMac* pGraphics)
 {
-  return pGraphics->GetMouseOver();
+	return pGraphics->GetMouseOver();
 }
 
 @implementation IGRAPHICS_COCOA

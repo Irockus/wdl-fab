@@ -233,35 +233,35 @@ void IGraphicsMac::RemoveSubWindow()
 
 void IGraphicsMac::CloseWindow()
 {
-#ifndef IPLUG_NO_CARBON_SUPPORT
+  #ifndef IPLUG_NO_CARBON_SUPPORT
   if (mGraphicsCarbon)
   {
     DELETE_NULL(mGraphicsCarbon);
   }
   else
-#endif
-    if (mGraphicsCocoa)
-    {
-      IGRAPHICS_COCOA* graphicscocoa = (IGRAPHICS_COCOA*)mGraphicsCocoa;
-      [graphicscocoa removeAllToolTips];
-      [graphicscocoa killTimer];
-      mGraphicsCocoa = 0;
+  #endif
+  if (mGraphicsCocoa)
+  {
+    IGRAPHICS_COCOA* graphicscocoa = (IGRAPHICS_COCOA*)mGraphicsCocoa;
+    [graphicscocoa removeAllToolTips];
+    [graphicscocoa killTimer];
+    mGraphicsCocoa = 0;
 
-      if (graphicscocoa->mGraphics)
-      {
-        graphicscocoa->mGraphics = 0;
-        [graphicscocoa removeFromSuperview];   // Releases.
-      }
+    if (graphicscocoa->mGraphics)
+    {
+      graphicscocoa->mGraphics = 0;
+      [graphicscocoa removeFromSuperview];   // Releases.
     }
+  }
 }
 
 bool IGraphicsMac::WindowIsOpen()
 {
-#ifndef IPLUG_NO_CARBON_SUPPORT
+  #ifndef IPLUG_NO_CARBON_SUPPORT
   return (mGraphicsCarbon || mGraphicsCocoa);
-#else
+  #else
   return mGraphicsCocoa;
-#endif
+  #endif
 }
 
 void IGraphicsMac::Resize(int w, int h)
@@ -270,18 +270,18 @@ void IGraphicsMac::Resize(int w, int h)
 
   IGraphics::Resize(w, h);
 
-#ifndef IPLUG_NO_CARBON_SUPPORT
+  #ifndef IPLUG_NO_CARBON_SUPPORT
   if (mGraphicsCarbon)
   {
     mGraphicsCarbon->Resize(w, h);
   }
   else
-#endif
-    if (mGraphicsCocoa)
-    {
-      NSSize size = { w, h };
-      [(IGRAPHICS_COCOA*) mGraphicsCocoa setFrameSize: size ];
-    }
+  #endif
+  if (mGraphicsCocoa)
+  {
+    NSSize size = { static_cast<CGFloat>(w), static_cast<CGFloat>(h) };
+    [(IGRAPHICS_COCOA*) mGraphicsCocoa setFrameSize: size ];
+  }
 }
 
 void IGraphicsMac::HideMouseCursor()
@@ -398,12 +398,12 @@ int IGraphicsMac::ShowMessageBox(const char* pText, const char* pCaption, int ty
 
 void IGraphicsMac::ForceEndUserEdit()
 {
-#ifndef IPLUG_NO_CARBON_SUPPORT
+  #ifndef IPLUG_NO_CARBON_SUPPORT
   if (mGraphicsCarbon)
   {
     mGraphicsCarbon->EndUserInput(false);
   }
-#endif
+  #endif
   if (mGraphicsCocoa)
   {
     [(IGRAPHICS_COCOA*) mGraphicsCocoa endUserInput];
@@ -415,19 +415,19 @@ void IGraphicsMac::UpdateTooltips()
   if (!(mGraphicsCocoa && TooltipsEnabled())) return;
 
   CocoaAutoReleasePool pool;
-
+  
   [(IGRAPHICS_COCOA*) mGraphicsCocoa removeAllToolTips];
-
+  
   IControl** ppControl = mControls.GetList();
-
-  for (int i = 0, n = mControls.GetSize(); i < n; ++i, ++ppControl)
+  
+  for (int i = 0, n = mControls.GetSize(); i < n; ++i, ++ppControl) 
   {
     IControl* pControl = *ppControl;
     const char* tooltip = pControl->GetTooltip();
-    if (tooltip && !pControl->IsHidden())
+    if (tooltip && !pControl->IsHidden()) 
     {
       IRECT* pR = pControl->GetTargetRECT();
-      if (!pControl->GetTargetRECT()->Empty())
+      if (!pControl->GetTargetRECT()->Empty()) 
       {
         [(IGRAPHICS_COCOA*) mGraphicsCocoa registerToolTip: pR];
       }
@@ -437,7 +437,7 @@ void IGraphicsMac::UpdateTooltips()
 
 const char* IGraphicsMac::GetGUIAPI()
 {
-#ifndef IPLUG_NO_CARBON_SUPPORT
+  #ifndef IPLUG_NO_CARBON_SUPPORT
   if (mGraphicsCarbon)
   {
     if (mGraphicsCarbon->GetIsComposited())
@@ -446,7 +446,7 @@ const char* IGraphicsMac::GetGUIAPI()
       return "Carbon Non-Composited GUI";
   }
   else
-#endif
+  #endif
     return "Cocoa GUI";
 }
 
@@ -454,7 +454,7 @@ void IGraphicsMac::HostPath(WDL_String* pPath)
 {
   CocoaAutoReleasePool pool;
   NSBundle* pBundle = [NSBundle bundleWithIdentifier: ToNSString(GetBundleID())];
-
+  
   if (pBundle)
   {
     NSString* path = [pBundle executablePath];
@@ -469,11 +469,11 @@ void IGraphicsMac::PluginPath(WDL_String* pPath)
 {
   CocoaAutoReleasePool pool;
   NSBundle* pBundle = [NSBundle bundleWithIdentifier: ToNSString(GetBundleID())];
-
+  
   if (pBundle)
   {
     NSString* path = [[pBundle bundlePath] stringByDeletingLastPathComponent];
-
+    
     if (path)
     {
       pPath->Set([path UTF8String]);
@@ -593,9 +593,9 @@ void IGraphicsMac::PromptForFile(WDL_String* pFilename, EFileAction action, WDL_
 bool IGraphicsMac::PromptForColor(IColor* pColor, const char* prompt)
 {
 //  NSColorPanel *colorPanel = [NSColorPanel sharedColorPanel];
-//    [colorPanel setTarget:self]; // target??
-//    [colorPanel setAction:@selector(colorPanelAction:)];
-//    [NSApp orderFrontColorPanel:self];
+//	[colorPanel setTarget:self]; // target??
+//	[colorPanel setAction:@selector(colorPanelAction:)];
+//	[NSApp orderFrontColorPanel:self];
 
   return false;
 }
@@ -609,12 +609,12 @@ IPopupMenu* IGraphicsMac::CreateIPopupMenu(IPopupMenu* pMenu, IRECT* pTextRect)
     NSRect areaRect = ToNSRect(this, pTextRect);
     return [(IGRAPHICS_COCOA*) mGraphicsCocoa createIPopupMenu: pMenu atLocation: areaRect];
   }
-#ifndef IPLUG_NO_CARBON_SUPPORT
+  #ifndef IPLUG_NO_CARBON_SUPPORT
   else if (mGraphicsCarbon)
   {
     return mGraphicsCarbon->CreateIPopupMenu(pMenu, pTextRect);
   }
-#endif
+  #endif
   else return 0;
 }
 
@@ -625,17 +625,17 @@ void IGraphicsMac::CreateTextEntry(IControl* pControl, IText* pText, IRECT* pTex
     NSRect areaRect = ToNSRect(this, pTextRect);
     [(IGRAPHICS_COCOA*) mGraphicsCocoa createTextEntry: pControl withIParam:pParam withIText:pText withCStr:pString withFrame:areaRect];
   }
-#ifndef IPLUG_NO_CARBON_SUPPORT
+  #ifndef IPLUG_NO_CARBON_SUPPORT
   else if (mGraphicsCarbon)
   {
     mGraphicsCarbon->CreateTextEntry(pControl, pText, pTextRect, pString, pParam);
   }
-#endif
+  #endif
 }
 
 bool IGraphicsMac::OpenURL(const char* url, const char* msgWindowTitle, const char* confirmMsg, const char* errMsgOnFailure)
 {
-#pragma REMINDER("Warning and error messages for OpenURL not implemented")
+  #pragma REMINDER("Warning and error messages for OpenURL not implemented")
   NSURL* pURL = 0;
   if (strstr(url, "http"))
   {

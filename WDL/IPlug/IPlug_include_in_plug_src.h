@@ -29,7 +29,7 @@
     return pGraphics;
   }
 #elif defined OS_OSX
-  IGraphics* MakeGraphics(IPlug* pPlug, int w, int h, int FPS = 0)
+  IGraphics* MakeGraphics(IPlug* pPlug, int w, int h, int FPS)
   {
     IGraphicsMac* pGraphics = new IGraphicsMac(pPlug, w, h, FPS);
     pGraphics->SetBundleID(BUNDLE_ID);

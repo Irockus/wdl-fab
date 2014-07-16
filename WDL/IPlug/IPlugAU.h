@@ -84,7 +84,7 @@ protected:
   void SetLatency(int samples);
   bool SendMidiMsg(IMidiMsg* pMsg);
   void HostSpecificInit();
-
+  
 private:
   WDL_String mOSXBundleID;
   WDL_String mCocoaViewFactoryClassName;
@@ -112,7 +112,7 @@ private:
     bool mConnected;
     int mNHostChannels, mNPlugChannels, mPlugChannelStartIdx;
   };
-
+  
   WDL_PtrList<BusChannels> mInBuses, mOutBuses;
   BusChannels* GetBus(AudioUnitScope scope, AudioUnitElement busIdx);
   int NHostChannelsConnected(WDL_PtrList<BusChannels>* pBuses, int excludeIdx = -1);
@@ -127,7 +127,7 @@ private:
     AURenderCallbackStruct mUpstreamRenderCallback;
     EAUInputType mInputType;
   };
-
+  
   WDL_PtrList<InputBusConnection> mInBusConnections;
 
   bool CheckLegalIO(AudioUnitScope scope, int busIdx, int nChannels);
@@ -140,34 +140,34 @@ private:
     AudioUnitPropertyListenerProc mListenerProc;
     void* mProcArgs;
   };
-
+  
   WDL_PtrList<PropertyListener> mPropertyListeners;
 
   UInt32 GetTagForNumChannels(int numChannels);
-
-  UInt32 GetChannelLayoutTags(AudioUnitScope scope,
-                              AudioUnitElement element,
+  
+  UInt32 GetChannelLayoutTags(AudioUnitScope scope, 
+                              AudioUnitElement element, 
                               AudioChannelLayoutTag* tags);
 
-  ComponentResult GetPropertyInfo(AudioUnitPropertyID propID,
-                                  AudioUnitScope scope,
+  ComponentResult GetPropertyInfo(AudioUnitPropertyID propID, 
+                                  AudioUnitScope scope, 
                                   AudioUnitElement element,
-                                  UInt32* pDataSize,
+                                  UInt32* pDataSize, 
                                   Boolean* pWriteable);
-
-  ComponentResult GetProperty(AudioUnitPropertyID propID,
-                              AudioUnitScope scope,
+  
+  ComponentResult GetProperty(AudioUnitPropertyID propID, 
+                              AudioUnitScope scope, 
                               AudioUnitElement element,
-                              UInt32* pDataSize,
-                              Boolean* pWriteable,
+                              UInt32* pDataSize, 
+                              Boolean* pWriteable, 
                               void* pData);
-
-  ComponentResult SetProperty(AudioUnitPropertyID propID,
+  
+  ComponentResult SetProperty(AudioUnitPropertyID propID, 
                               AudioUnitScope scope,
                               AudioUnitElement element,
-                              UInt32* pDataSize,
+                              UInt32* pDataSize, 
                               const void* pData);
-
+  
   ComponentResult GetProc(AudioUnitElement element, UInt32* pDataSize, void* pData);
   ComponentResult GetState(CFPropertyListRef* ppPropList);
   ComponentResult SetState(CFPropertyListRef pPropList);
@@ -176,25 +176,25 @@ private:
 public:
   static ComponentResult IPlugAUEntry(ComponentParameters *params, void* pVPlug);
   static ComponentResult IPlugAUCarbonViewEntry(ComponentParameters *params, void* pView);
-
-  static ComponentResult GetParamProc(void* pPlug,
-                                      AudioUnitParameterID paramID,
-                                      AudioUnitScope scope,
+  
+  static ComponentResult GetParamProc(void* pPlug, 
+                                      AudioUnitParameterID paramID, 
+                                      AudioUnitScope scope, 
                                       AudioUnitElement element,
                                       AudioUnitParameterValue* pValue);
-
-  static ComponentResult SetParamProc(void* pPlug,
-                                      AudioUnitParameterID paramID,
-                                      AudioUnitScope scope,
+  
+  static ComponentResult SetParamProc(void* pPlug, 
+                                      AudioUnitParameterID paramID, 
+                                      AudioUnitScope scope, 
                                       AudioUnitElement element,
-                                      AudioUnitParameterValue value,
+                                      AudioUnitParameterValue value, 
                                       UInt32 offsetFrames);
-
-  static ComponentResult RenderProc(void* pPlug,
-                                    AudioUnitRenderActionFlags* pFlags,
+  
+  static ComponentResult RenderProc(void* pPlug, 
+                                    AudioUnitRenderActionFlags* pFlags, 
                                     const AudioTimeStamp* pTimestamp,
-                                    UInt32 outputBusIdx,
-                                    UInt32 nFrames,
+                                    UInt32 outputBusIdx, 
+                                    UInt32 nFrames, 
                                     AudioBufferList* pBufferList);
 };
 

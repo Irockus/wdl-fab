@@ -48,7 +48,7 @@ public:
 
   virtual IPlugRTAS* GetPlug()  { return mPlug; }
   virtual IGraphics* GetGraphics() { if (mPlug) return mPlug->GetGUI(); return 0; }
-
+  
   virtual void DirtyState() { fNumPlugInChanges++; }
 
   virtual int GetBlockSize() = 0;
