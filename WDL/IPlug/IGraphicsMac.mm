@@ -4,7 +4,7 @@
 #include "Log.h"
 #import "IGraphicsCocoa.h"
 #ifndef IPLUG_NO_CARBON_SUPPORT
-#include "IGraphicsCarbon.h"
+  #include "IGraphicsCarbon.h"
 #endif
 #include "../swell/swell-internal.h"
 
@@ -33,11 +33,11 @@ struct CocoaAutoReleasePool
 @end
 
 IGraphicsMac::IGraphicsMac(IPlugBase* pPlug, int w, int h, int refreshFPS)
-  :    IGraphics(pPlug, w, h, refreshFPS),
-#ifndef IPLUG_NO_CARBON_SUPPORT
-       mGraphicsCarbon(0),
-#endif
-       mGraphicsCocoa(0)
+  :	IGraphics(pPlug, w, h, refreshFPS),
+    #ifndef IPLUG_NO_CARBON_SUPPORT
+    mGraphicsCarbon(0),
+    #endif
+    mGraphicsCocoa(0)
 {
   NSApplicationLoad();
 }
@@ -57,23 +57,23 @@ LICE_IBitmap* LoadImgFromResourceOSX(const char* bundleID, const char* filename)
   ++ext;
 
   bool ispng = !stricmp(ext, "png");
-#ifndef IPLUG_JPEG_SUPPORT
+  #ifndef IPLUG_JPEG_SUPPORT
   if (!ispng) return 0;
-#else
+  #else
   bool isjpg = !stricmp(ext, "jpg");
   if (!isjpg && !ispng) return 0;
-#endif
+  #endif
 
   NSBundle* pBundle = [NSBundle bundleWithIdentifier:ToNSString(bundleID)];
   NSString* pFile = [[[NSString stringWithCString:filename] lastPathComponent] stringByDeletingPathExtension];
-
+  
   if (pBundle && pFile)
   {
     NSString* pPath = 0;
     if (ispng) pPath = [pBundle pathForResource:pFile ofType:@"png"];
-#ifdef IPLUG_JPEG_SUPPORT
+    #ifdef IPLUG_JPEG_SUPPORT
     if (isjpg) pPath = [pBundle pathForResource:pFile ofType:@"jpg"];
-#endif
+    #endif
 
     if (pPath)
     {
@@ -81,9 +81,9 @@ LICE_IBitmap* LoadImgFromResourceOSX(const char* bundleID, const char* filename)
       if (CSTR_NOT_EMPTY(resourceFileName))
       {
         if (ispng) return LICE_LoadPNG(resourceFileName);
-#ifdef IPLUG_JPEG_SUPPORT
+        #ifdef IPLUG_JPEG_SUPPORT
         if (isjpg) return LICE_LoadJPG(resourceFileName);
-#endif
+        #endif
       }
     }
   }
@@ -106,19 +106,19 @@ bool IGraphicsMac::DrawScreen(IRECT* pR)
     NSGraphicsContext* gc = [NSGraphicsContext graphicsContextWithGraphicsPort: pCGC flipped: YES];
     pCGC = (CGContextRef) [gc graphicsPort];
   }
-#ifndef IPLUG_NO_CARBON_SUPPORT
+  #ifndef IPLUG_NO_CARBON_SUPPORT
   else if (mGraphicsCarbon)
   {
     pCGC = mGraphicsCarbon->GetCGContext();
   }
-#endif
+  #endif
   if (!pCGC)
   {
     return false;
   }
 
   HDC__ * srcCtx = (HDC__*) mDrawBitmap->getDC();
-  CGImageRef img = CGBitmapContextCreateImage(srcCtx->ctx);
+  CGImageRef img = CGBitmapContextCreateImage(srcCtx->ctx); 
   r.size.width = mDrawBitmap->getRowSpan();
   CGContextDrawImage(pCGC, r, img);
   CGImageRelease(img);
@@ -149,14 +149,14 @@ void* IGraphicsMac::OpenCocoaWindow(void* pParentView)
   TRACE;
   CloseWindow();
   mGraphicsCocoa = (IGRAPHICS_COCOA*) [[IGRAPHICS_COCOA alloc] initWithIGraphics: this];
-
+  
   if (pParentView) // Cocoa VST host.
   {
     [(NSView*) pParentView addSubview: (IGRAPHICS_COCOA*) mGraphicsCocoa];
   }
-
+    
   UpdateTooltips();
-
+  
   // Else we are being called by IGraphicsCocoaFactory, which is being called by a Cocoa AU host,
   // and the host will take care of attaching the view to the window.
   return mGraphicsCocoa;
@@ -194,8 +194,8 @@ void IGraphicsMac::AttachSubWindow(void* hostWindowRef)
 
   NSRect windowRect = NSMakeRect(w.origin.x + xOffset, w.origin.y, Width(), Height());
   CUSTOM_COCOA_WINDOW *childWindow = [[CUSTOM_COCOA_WINDOW alloc] initWithContentRect:windowRect
-                                      styleMask:( NSBorderlessWindowMask )
-                                      backing:NSBackingStoreBuffered defer:NO];
+                                                                            styleMask:( NSBorderlessWindowMask )
+                                                                              backing:NSBackingStoreBuffered defer:NO];
   [childWindow retain];
   [childWindow setOpaque:YES];
   [childWindow setCanHide: YES];

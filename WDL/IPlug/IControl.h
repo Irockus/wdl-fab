@@ -4,24 +4,25 @@
 #include "IPlugBase.h"
 #include "IGraphics.h"
 
-#define DEFAULT_TEXT_ENTRY_LEN 80
+#define DEFAULT_TEXT_ENTRY_LEN 7
 
-/**
- A control is anything on the GUI, it could be a static bitmap, or
- something that moves or changes.
- The control could manipulate bitmaps or do run-time vector drawing, or whatever.<BR>
- Some controls respond to mouse actions, either by moving a bitmap,
- transforming a bitmap, or cycling through a set of bitmaps.<BR>
+ /** 
+ A control is anything that can draw or accept user input on the GUI, 
+ it could be a static bitmap, or something that moves or changes.  
+ A control can manipulate bitmaps or do run-time vector drawing if needed.
+
+ Some controls can respond to mouse actions (including text entries), 
+ either by moving a bitmap, transforming a bitmap, or cycling through a set of bitmaps.
  Other controls are readouts only.
 */
 class IControl
 {
 public:
-  /// If paramIdx is > -1, this control will be associated with a plugin parameter.
+  // If paramIdx is > -1, this control will be associated with a plugin parameter.
   IControl(IPlugBase* pPlug, IRECT pR, int paramIdx = -1, IChannelBlend blendMethod = IChannelBlend::kBlendNone)
     : mPlug(pPlug), mRECT(pR), mTargetRECT(pR), mParamIdx(paramIdx), mValue(0.0), mDefaultValue(-1.0),
       mBlend(blendMethod), mDirty(true), mHide(false), mGrayed(false), mDisablePrompt(true), mDblAsSingleClick(false),
-      mClampLo(0.0), mClampHi(1.0), mMOWhenGreyed(false), mTextEntryLength(DEFAULT_TEXT_ENTRY_LEN),
+      mClampLo(0.0), mClampHi(1.0), mMOWhenGreyed(false), mTextEntryLength(DEFAULT_TEXT_ENTRY_LEN), 
       mValDisplayControl(0), mNameDisplayControl(0), mTooltip(NULL) {}
 
   virtual ~IControl() {}
@@ -79,7 +80,7 @@ public:
   virtual bool IsHit(int x, int y) { return mTargetRECT.Contains(x, y); }
 
   void SetBlendMethod(IChannelBlend::EBlendMethod blendMethod) { mBlend = IChannelBlend(blendMethod); }
-
+  
   void SetValDisplayControl(IControl* pValDisplayControl) { mValDisplayControl = pValDisplayControl; }
   void SetNameDisplayControl(IControl* pNameDisplayControl) { mNameDisplayControl = pNameDisplayControl; }
 
@@ -106,13 +107,13 @@ public:
   {
     double mValue;
     int mParamIdx;
-
+    
     AuxParam(int idx) : mParamIdx(idx)
     {
       assert(idx > -1); // no negative params please
     }
   };
-
+  
   /// Return a pointer to the AuxParam instance at index idx in the mAuxParams array
   AuxParam* GetAuxParam(int idx);
   /// Return the index of the auxiliary parameter that holds the paramIdx
@@ -122,14 +123,14 @@ public:
   virtual void SetAuxParamValueFromPlug(int auxParamIdx, double value);///< Can override if necessary
   void SetAllAuxParamsFromGUI();
   int NAuxParams() { return mAuxParams.GetSize(); }
-
+  
 protected:
   int mTextEntryLength;
   IText mText;
   IPlugBase* mPlug;
   IRECT mRECT, mTargetRECT;
   int mParamIdx;
-
+  
   WDL_TypedBuf<AuxParam> mAuxParams;
   double mValue, mDefaultValue, mClampLo, mClampHi;
   bool mDirty, mHide, mGrayed, mRedraw, mDisablePrompt, mClamped, mDblAsSingleClick, mMOWhenGreyed;
@@ -198,9 +199,9 @@ public:
   {
     mDisablePrompt = false;
   }
-
+  
   ~ISwitchPopUpControl() {}
-
+  
   void OnMouseDown(int x, int y, IMouseMod* pMod);
 };
 
@@ -210,11 +211,11 @@ class ISwitchFramesControl : public ISwitchControl
 public:
   ISwitchFramesControl(IPlugBase* pPlug, int x, int y, int paramIdx, IBitmap* pBitmap, bool imagesAreHorizontal = false,
                        IChannelBlend::EBlendMethod blendMethod = IChannelBlend::kBlendNone);
-
+  
   ~ISwitchFramesControl() {}
-
+  
   void OnMouseDown(int x, int y, IMouseMod* pMod);
-
+  
 protected:
   WDL_TypedBuf<IRECT> mRECTs;
 };
@@ -278,7 +279,7 @@ public:
   virtual void OnMouseDrag(int x, int y, int dX, int dY, IMouseMod* pMod);
 
   virtual bool Draw(IGraphics* pGraphics);
-
+  
   virtual bool IsHit(int x, int y);
 
 protected:
@@ -493,11 +494,15 @@ protected:
   EFileSelectorState mState;
 };
 
+/**
+	Knob with a text label that can be display on the top, middle or below the knob
+	\see IKnobMultiControl
+*/
 class IKnobMultiControlText : public IKnobMultiControl
 {
 
 public:
-
+  /// Determines how to layout the text label relative to the knob
   enum EKnobMultiControlTextPosition { kTxtPosBelow, kTxtPosAbove, kTxtPosMiddle };
 
   IKnobMultiControlText(IPlugBase* pPlug, int x, int y, int paramIdx, IBitmap* pBitmap, IText* pText, bool showParamLabel = true, IKnobMultiControlText::EKnobMultiControlTextPosition labelPosition = kTxtPosBelow)

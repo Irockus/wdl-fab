@@ -37,8 +37,8 @@ IPlugRTAS::IPlugRTAS(IPlugInstanceInfo instanceInfo,
   Trace(TRACELOC, "%s", effectName);
 
   int nInputs = NInChannels(), nOutputs = NOutChannels();
-
-  if (nInputs)
+  
+  if (nInputs) 
   {
     mDelay = new NChanDelayLine(nInputs, nOutputs);
     mDelay->SetDelayTime(latency);
@@ -98,7 +98,7 @@ void IPlugRTAS::BeginInformHostOfParamChange(int idx)
 void IPlugRTAS::InformHostOfParamChange(int idx, double normalizedValue) // actually we don't use normalized value
 {
   if (!mProcess) return;
-
+  
   IParam* pParam = GetParam(idx);
 
   idx += kPTParamIdxOffset;
@@ -206,7 +206,7 @@ bool IPlugRTAS::SendMidiMsg(IMidiMsg* pMsg)
 void IPlugRTAS::SetParameter(int idx)
 {
   TRACE;
-
+  
   if ( mProcess->IsValidControlIndex(idx) )
   {
     IParam* pParam = GetParam(idx - kPTParamIdxOffset);
@@ -251,7 +251,7 @@ void IPlugRTAS::SetSideChainConnected(bool connected)
   }
 }
 
-void IPlugRTAS::DirtyPTCompareState()
-{
-  mProcess->DirtyState();
+void IPlugRTAS::DirtyPTCompareState() 
+{ 
+  mProcess->DirtyState(); 
 }

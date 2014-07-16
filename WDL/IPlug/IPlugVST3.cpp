@@ -43,8 +43,8 @@ IPlugVST3::IPlugVST3(IPlugInstanceInfo instanceInfo,
 {
   SetInputChannelConnections(0, NInChannels(), true);
   SetOutputChannelConnections(0, NOutChannels(), true);
-
-  if (NInChannels())
+  
+  if (NInChannels()) 
   {
     mDelay = new NChanDelayLine(NInChannels(), NOutChannels());
     mDelay->SetDelayTime(latency);
@@ -150,9 +150,9 @@ tresult PLUGIN_API IPlugVST3::initialize (FUnknown* context)
     if(!mIsInst)
     {
       StringListParameter * bypass = new StringListParameter(STR16("Bypass"),
-          kBypassParam,
-          0,
-          ParameterInfo::kCanAutomate | ParameterInfo::kIsBypass | ParameterInfo::kIsList);
+                                                            kBypassParam,
+                                                            0,
+                                                            ParameterInfo::kCanAutomate | ParameterInfo::kIsBypass | ParameterInfo::kIsList);
       bypass->appendString(STR16("off"));
       bypass->appendString(STR16("on"));
       parameters.addParameter(bypass);
@@ -164,11 +164,11 @@ tresult PLUGIN_API IPlugVST3::initialize (FUnknown* context)
 
       int32 flags = 0;
       UnitID unitID = kRootUnitId;
-
+      
       const char* paramGroupName = p->GetParamGroupForHost();
 
       if (CSTR_NOT_EMPTY(paramGroupName))
-      {
+      {        
         for(int j = 0; j < mParamGroups.GetSize(); j++)
         {
           if(strcmp(paramGroupName, mParamGroups.Get(j)) == 0)
@@ -176,7 +176,7 @@ tresult PLUGIN_API IPlugVST3::initialize (FUnknown* context)
             unitID = j+1;
           }
         }
-
+        
         if (unitID == kRootUnitId) // new unit, nothing found, so add it
         {
           mParamGroups.Add(paramGroupName);
@@ -213,10 +213,10 @@ tresult PLUGIN_API IPlugVST3::initialize (FUnknown* context)
         case IParam::kTypeBool:
         {
           StringListParameter* param = new StringListParameter (STR16(p->GetNameForHost()),
-              i,
-              STR16(p->GetLabelForHost()),
-              flags | ParameterInfo::kIsList,
-              unitID);
+                                                                i,
+                                                                STR16(p->GetLabelForHost()),
+                                                                flags | ParameterInfo::kIsList,
+                                                                unitID);
 
           int nDisplayTexts = p->GetNDisplayTexts();
 
@@ -238,7 +238,7 @@ tresult PLUGIN_API IPlugVST3::initialize (FUnknown* context)
 
   OnHostIdentified();
   RestorePreset(0);
-
+  
   return result;
 }
 
@@ -370,7 +370,7 @@ tresult PLUGIN_API IPlugVST3::process(ProcessData& data)
             case kBypassParam:
             {
               bool bypassed = (value > 0.5);
-
+              
               if (bypassed != mIsBypassed)
               {
                 mIsBypassed = bypassed;
@@ -381,7 +381,7 @@ tresult PLUGIN_API IPlugVST3::process(ProcessData& data)
             case kPresetParam:
               RestorePreset(FromNormalizedParam(value, 0, NPresets(), 1.));
               break;
-            //TODO pitch bend, modwheel etc
+              //TODO pitch bend, modwheel etc
             default:
               if (idx >= 0 && idx < NParams())
               {
@@ -623,10 +623,10 @@ tresult PLUGIN_API IPlugVST3::canProcessSampleSize(int32 symbolicSampleSize)
   return retval;
 }
 
-Steinberg::uint32 PLUGIN_API IPlugVST3::getLatencySamples ()
-{
+Steinberg::uint32 PLUGIN_API IPlugVST3::getLatencySamples () 
+{ 
   return mLatency;
-}
+} 
 
 #pragma mark -
 #pragma mark IEditController overrides
@@ -655,16 +655,16 @@ tresult PLUGIN_API IPlugVST3::setEditorState(IBStream* state)
   {
     state->read(chunk.GetBytes(), chunk.Size());
     UnserializeState(&chunk, 0);
-
+    
     int32 savedBypass = 0;
-
+    
     if (state->read (&savedBypass, sizeof (int32)) != kResultOk)
     {
       return kResultFalse;
     }
-
+    
     mIsBypassed = (bool) savedBypass;
-
+    
     RedrawParamControls();
     return kResultOk;
   }
@@ -686,10 +686,10 @@ tresult PLUGIN_API IPlugVST3::getEditorState(IBStream* state)
   else
   {
     return kResultFalse;
-  }
-
+  }  
+  
   int32 toSaveBypass = mIsBypassed ? 1 : 0;
-  state->write(&toSaveBypass, sizeof (int32));
+  state->write(&toSaveBypass, sizeof (int32));  
 
   return kResultOk;
 }
@@ -708,11 +708,11 @@ ParamValue PLUGIN_API IPlugVST3::plainParamToNormalized(ParamID tag, ParamValue 
 
 ParamValue PLUGIN_API IPlugVST3::getParamNormalized(ParamID tag)
 {
-  if (tag == kBypassParam)
+  if (tag == kBypassParam) 
   {
     return (ParamValue) mIsBypassed;
   }
-//   else if (tag == kPresetParam)
+//   else if (tag == kPresetParam) 
 //   {
 //     return (ParamValue) ToNormalizedParam(mCurrentPresetIdx, 0, NPresets(), 1.);
 //   }
@@ -839,15 +839,15 @@ SpeakerArrangement IPlugVST3::getSpeakerArrForChans(int32 chans)
 int32 PLUGIN_API IPlugVST3::getUnitCount()
 {
   TRACE;
-
+  
   return mParamGroups.GetSize() + 1;
 }
 
 tresult PLUGIN_API IPlugVST3::getUnitInfo(int32 unitIndex, UnitInfo& info)
 {
   TRACE;
-
-  if (unitIndex == 0)
+  
+  if (unitIndex == 0) 
   {
     info.id = kRootUnitId;
     info.parentUnitId = kNoParentUnitId;
@@ -860,15 +860,15 @@ tresult PLUGIN_API IPlugVST3::getUnitInfo(int32 unitIndex, UnitInfo& info)
 #endif
     return kResultTrue;
   }
-  else if (unitIndex > 0 && mParamGroups.GetSize())
+  else if (unitIndex > 0 && mParamGroups.GetSize()) 
   {
     info.id = unitIndex;
     info.parentUnitId = kRootUnitId;
     info.programListId = kNoProgramListId;
-
+    
     UString name(info.name, 128);
     name.fromAscii(mParamGroups.Get(unitIndex-1));
-
+    
     return kResultTrue;
   }
 
@@ -972,7 +972,7 @@ void IPlugVST3::SetLatency(int latency)
   IPlugBase::SetLatency(latency);
 
   FUnknownPtr<IComponentHandler>handler(componentHandler);
-  handler->restartComponent(kLatencyChanged);
+  handler->restartComponent(kLatencyChanged);  
 }
 
 void IPlugVST3::PopupHostContextMenuForParam(int param, int x, int y)
@@ -1101,15 +1101,15 @@ tresult PLUGIN_API IPlugVST3View::attached (void* parent, FIDString type)
 {
   if (mPlug->GetGUI())
   {
-#ifdef OS_WIN
+    #ifdef OS_WIN
     if (strcmp (type, kPlatformTypeHWND) == 0)
       mPlug->GetGUI()->OpenWindow(parent);
-#elif defined OS_OSX
+    #elif defined OS_OSX
     if (strcmp (type, kPlatformTypeNSView) == 0)
       mPlug->GetGUI()->OpenWindow(parent);
     else // Carbon
       mPlug->GetGUI()->OpenWindow(parent, 0);
-#endif
+    #endif
     mPlug->OnGUIOpen();
 
     return kResultTrue;

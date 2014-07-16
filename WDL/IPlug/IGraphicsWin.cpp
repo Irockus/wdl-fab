@@ -9,7 +9,7 @@
 #pragma comment(lib, "comctl32.lib")
 #endif
 #ifdef RTAS_API
-#include "PlugInUtils.h"
+  #include "PlugInUtils.h"
 #endif
 
 #pragma warning(disable:4244) // Pointer size cast mismatch.
@@ -164,17 +164,8 @@ LRESULT CALLBACK IGraphicsWin::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARA
       pGraphics->HideTooltip();
       if (pGraphics->mParamEditWnd)
       {
-        SetWindowLongPtr(pGraphics->mParamEditWnd, GWLP_WNDPROC, (LPARAM) pGraphics->mDefEditProc);
-        DestroyWindow(pGraphics->mParamEditWnd);
-        pGraphics->mParamEditWnd = 0;
-        pGraphics->mEdParam = 0;
-        pGraphics->mEdControl = 0;
-        pGraphics->mDefEditProc = 0;
-        pGraphics->mParamEditMsg = kNone;
-        //force full redraw when closing text entry
-        RECT r = { 0, 0, pGraphics->Width(), pGraphics->Height() };
-        InvalidateRect(hWnd, &r, FALSE);
-        UpdateWindow(hWnd);
+        pGraphics->mParamEditMsg = kCommit;
+        return 0;
       }
       SetFocus(hWnd); // Added to get keyboard focus again when user clicks in window
       SetCapture(hWnd);
@@ -229,10 +220,10 @@ LRESULT CALLBACK IGraphicsWin::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARA
         if (pGraphics->OnMouseOver(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), &GetMouseMod(wParam)))
         {
           TRACKMOUSEEVENT eventTrack = { sizeof(TRACKMOUSEEVENT), TME_LEAVE, hWnd, HOVER_DEFAULT };
-          if (pGraphics->TooltipsEnabled())
+          if (pGraphics->TooltipsEnabled()) 
           {
             int c = pGraphics->GetMouseOver();
-            if (c != pGraphics->mTooltipIdx)
+            if (c != pGraphics->mTooltipIdx) 
             {
               if (c >= 0) eventTrack.dwFlags |= TME_HOVER;
               pGraphics->mTooltipIdx = c;
@@ -250,10 +241,10 @@ LRESULT CALLBACK IGraphicsWin::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARA
 
       return 0;
     }
-    case WM_MOUSEHOVER:
+    case WM_MOUSEHOVER: 
     {
       pGraphics->ShowTooltip();
-      return 0;
+		  return 0;
     }
     case WM_MOUSELEAVE:
     {
@@ -326,6 +317,12 @@ LRESULT CALLBACK IGraphicsWin::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARA
       }
       else
         return 0;
+    }
+    case WM_KEYUP:
+    {
+      HWND rootHWnd = GetAncestor(hWnd, GA_ROOT);
+      SendMessage(rootHWnd, msg, wParam, lParam);
+      return DefWindowProc(hWnd, msg, wParam, lParam);
     }
     case WM_PAINT:
     {
@@ -501,9 +498,9 @@ LICE_IBitmap* IGraphicsWin::OSLoadBitmap(int ID, const char* name)
   ++ext;
 
   if (!stricmp(ext, "png")) return _LICE::LICE_LoadPNGFromResource(mHInstance, ID, 0);
-#ifdef IPLUG_JPEG_SUPPORT
+  #ifdef IPLUG_JPEG_SUPPORT
   if (!stricmp(ext, "jpg") || !stricmp(ext, "jpeg")) return _LICE::LICE_LoadJPGFromResource(mHInstance, ID, 0);
-#endif
+  #endif
 
   return 0;
 }
@@ -1020,11 +1017,11 @@ void IGraphicsWin::PluginPath(WDL_String* pPath)
 
 void IGraphicsWin::DesktopPath(WDL_String* pPath)
 {
-#ifndef __MINGW_H // TODO: alternative for gcc?
+  #ifndef __MINGW_H // TODO: alternative for gcc?
   TCHAR strPath[MAX_PATH_LEN];
   SHGetSpecialFolderPath( 0, strPath, CSIDL_DESKTOP, FALSE );
   pPath->Set(strPath, MAX_PATH_LEN);
-#endif
+  #endif
 }
 
 void IGraphicsWin::AppSupportPath(WDL_String* pPath)
@@ -1133,12 +1130,12 @@ void IGraphicsWin::PromptForFile(WDL_String* pFilename, EFileAction action, WDL_
   if (rc)
   {
     char drive[_MAX_DRIVE];
-#ifndef __MINGW_H // TODO: alternative for gcc
+    #ifndef __MINGW_H // TODO: alternative for gcc
     if(_splitpath_s(ofn.lpstrFile, drive, sizeof(drive), dirCStr, sizeof(dirCStr), NULL, 0, NULL, 0) == 0)
     {
       pDir->SetFormatted(MAX_PATH_LEN, "%s%s", drive, dirCStr);
     }
-#endif
+    #endif
     pFilename->Set(ofn.lpstrFile);
   }
   else

@@ -7,14 +7,14 @@
 #define IDLE_TICKS 20
 
 #ifndef CONTROL_BOUNDS_COLOR
-#define CONTROL_BOUNDS_COLOR COLOR_GREEN
+  #define CONTROL_BOUNDS_COLOR COLOR_GREEN
 #endif
 
 /// Cached bitmaps container class. Associates bitmaps with id and can store and retrieve them in an efficient way.
 class BitmapStorage
 {
 public:
-  /// (id, lice_bitmap) pair
+
   struct BitmapKey
   {
     int id;
@@ -163,7 +163,7 @@ inline int LiceBlendMode(const IChannelBlend* pBlend)
 }
 
 IGraphics::IGraphics(IPlugBase* pPlug, int w, int h, int refreshFPS)
-  :    mPlug(pPlug)
+  : mPlug(pPlug)
   , mWidth(w)
   , mHeight(h)
   , mIdleTicks(0)
@@ -326,10 +326,10 @@ void IGraphics::SetParameterFromPlug(int paramIdx, double value, bool normalized
       pControl->SetValueFromPlug(value);
       // Could be more than one, don't break until we check them all.
     }
-
+    
     // now look for any auxilliary parameters
     int auxParamIdx = pControl->AuxParamIdx(paramIdx);
-
+    
     if (auxParamIdx > -1) // there are aux params
     {
       pControl->SetAuxParamValueFromPlug(auxParamIdx, value);
@@ -361,11 +361,9 @@ void IGraphics::SetParameterFromGUI(int paramIdx, double normalizedValue)
 {
   int i, n = mControls.GetSize();
   IControl** ppControl = mControls.GetList();
-  for (i = 0; i < n; ++i, ++ppControl)
-  {
+  for (i = 0; i < n; ++i, ++ppControl) {
     IControl* pControl = *ppControl;
-    if (pControl->ParamIdx() == paramIdx)
-    {
+    if (pControl->ParamIdx() == paramIdx) {
       pControl->SetValueFromUserInput(normalizedValue);
       // Could be more than one, don't break until we check them all.
     }
@@ -416,9 +414,9 @@ IBitmap IGraphics::LoadIBitmap(int ID, const char* name, int nStates, bool frame
   if (!lb)
   {
     lb = OSLoadBitmap(ID, name);
-#ifndef NDEBUG
+    #ifndef NDEBUG
     bool imgResourceFound = lb;
-#endif
+    #endif
     assert(imgResourceFound); // Protect against typos in resource.h and .rc files.
     s_bitmapCache.Add(lb, ID);
   }
@@ -486,7 +484,7 @@ bool IGraphics::DrawRotatedMask(IBitmap* pIBase, IBitmap* pIMask, IBitmap* pITop
   double dA = angle * PI / 180.0;
   int W = pIBase->W;
   int H = pIBase->H;
-  //    RECT srcR = { 0, 0, W, H };
+  //	RECT srcR = { 0, 0, W, H };
   float xOffs = (W % 2 ? -0.5f : 0.0f);
 
   if (!mTmpBitmap)
@@ -504,7 +502,7 @@ bool IGraphics::DrawRotatedMask(IBitmap* pIBase, IBitmap* pIMask, IBitmap* pITop
   IRECT r = IRECT(x, y, x + W, y + H).Intersect(&mDrawRECT);
   _LICE::LICE_Blit(mDrawBitmap, mTmpBitmap, r.L, r.T, r.L - x, r.T - y, r.R - r.L, r.B - r.T,
                    LiceWeight(pBlend), LiceBlendMode(pBlend));
-  //    ReaperExt::LICE_Blit(mDrawBitmap, mTmpBitmap, x, y, &srcR, LiceWeight(pBlend), LiceBlendMode(pBlend));
+  //	ReaperExt::LICE_Blit(mDrawBitmap, mTmpBitmap, x, y, &srcR, LiceWeight(pBlend), LiceBlendMode(pBlend));
   return true;
 }
 
@@ -559,11 +557,11 @@ bool IGraphics::FillRoundRect(const IColor* pColor, IRECT* pR, const IChannelBle
   int y1 = pR->T;
   int h = pR->H();
   int w = pR->W();
-
+  
   int mode = LiceBlendMode(pBlend);
   float weight = LiceWeight(pBlend);
   LICE_pixel color = LiceColor(pColor);
-
+  
   _LICE::LICE_FillRect(mDrawBitmap, x1+cornerradius, y1, w-2*cornerradius, h, color, weight, mode);
   _LICE::LICE_FillRect(mDrawBitmap, x1, y1+cornerradius, cornerradius, h-2*cornerradius,color, weight, mode);
   _LICE::LICE_FillRect(mDrawBitmap, x1+w-cornerradius, y1+cornerradius, cornerradius, h-2*cornerradius, color, weight, mode);
@@ -573,7 +571,7 @@ bool IGraphics::FillRoundRect(const IColor* pColor, IRECT* pR, const IChannelBle
   _LICE::LICE_FillCircle(mDrawBitmap, (float) x1+w-cornerradius-1, (float) y1+h-cornerradius-1, (float) cornerradius, color, weight, mode, aa);
   _LICE::LICE_FillCircle(mDrawBitmap, (float) x1+w-cornerradius-1, (float) y1+cornerradius, (float) cornerradius, color, weight, mode, aa);
   _LICE::LICE_FillCircle(mDrawBitmap, (float) x1+cornerradius, (float) y1+h-cornerradius-1, (float) cornerradius, color, weight, mode, aa);
-
+  
   return true;
 }
 
@@ -807,7 +805,7 @@ bool IGraphics::Draw(IRECT* pR)
   }
 
 #ifndef NDEBUG
-  if (mShowControlBounds)
+  if (mShowControlBounds) 
   {
     for (int j = 1; j < mControls.GetSize(); j++)
     {
@@ -839,7 +837,7 @@ void IGraphics::OnMouseDown(int x, int y, IMouseMod* pMod)
     IControl* pControl = mControls.Get(c);
     int paramIdx = pControl->ParamIdx();
 
-#if defined OS_WIN || defined VST3_API  // on Mac, IGraphics.cpp is not compiled in a static library, so this can be #ifdef'd
+    #if defined OS_WIN || defined VST3_API  // on Mac, IGraphics.cpp is not compiled in a static library, so this can be #ifdef'd
     if (mPlug->GetAPI() == kAPIVST3)
     {
       if (pMod->R && paramIdx >= 0)
@@ -849,18 +847,18 @@ void IGraphics::OnMouseDown(int x, int y, IMouseMod* pMod)
         return;
       }
     }
-#endif
-
-#ifdef AAX_API
+    #endif
+    
+    #ifdef AAX_API
     if (mAAXViewContainer && paramIdx >= 0)
     {
       uint32_t mods = GetAAXModifiersFromIMouseMod(pMod);
-#ifdef OS_WIN
+      #ifdef OS_WIN
       // required to get start/windows and alt keys
       uint32_t aaxViewMods = 0;
       mAAXViewContainer->GetModifiers(&aaxViewMods);
       mods |= aaxViewMods;
-#endif
+      #endif
       WDL_String paramID;
       paramID.SetFormatted(32, "%i", paramIdx+1);
 
@@ -869,13 +867,13 @@ void IGraphics::OnMouseDown(int x, int y, IMouseMod* pMod)
         return; // event handled by PT
       }
     }
-#endif
-
+    #endif
+    
     if (paramIdx >= 0)
     {
       mPlug->BeginInformHostOfParamChange(paramIdx);
     }
-
+        
     pControl->OnMouseDown(x, y, pMod);
   }
 }
@@ -1072,7 +1070,7 @@ bool IGraphics::DrawIText(IText* pTxt, const char* str, IRECT* pR, bool measure)
   }
 
   LICE_IFont* font = pTxt->mCached;
-
+  
   if (!font)
   {
     font = CacheFont(pTxt);
@@ -1091,12 +1089,12 @@ bool IGraphics::DrawIText(IText* pTxt, const char* str, IRECT* pR, bool measure)
   else // if (pTxt->mAlign == IText::kAlignFar)
     fmt |= DT_RIGHT;
 
-  if (measure)
+  if (measure) 
   {
     fmt |= DT_CALCRECT;
     RECT R = {0,0,0,0};
     font->DrawText(mDrawBitmap, str, -1, &R, fmt);
-
+    
     if( pTxt->mAlign == IText::kAlignNear)
     {
       pR->R = R.right;
@@ -1111,10 +1109,10 @@ bool IGraphics::DrawIText(IText* pTxt, const char* str, IRECT* pR, bool measure)
       pR->L = pR->R - R.right;
       pR->R = pR->L + R.right;
     }
-
+    
     pR->B = pR->T + R.bottom;
   }
-  else
+  else 
   {
     RECT R = { pR->L, pR->T, pR->R, pR->B };
     font->DrawText(mDrawBitmap, str, -1, &R, fmt);
@@ -1137,22 +1135,22 @@ LICE_IFont* IGraphics::CacheFont(IText* pTxt)
     int q;
     if (pTxt->mQuality == IText::kQualityDefault)
       q = DEFAULT_QUALITY;
-#ifdef CLEARTYPE_QUALITY
+    #ifdef CLEARTYPE_QUALITY
     else if (pTxt->mQuality == IText::kQualityClearType)
       q = CLEARTYPE_QUALITY;
     else if (pTxt->mQuality == IText::kQualityAntiAliased)
-#else
+    #else
     else if (pTxt->mQuality != IText::kQualityNonAntiAliased)
-#endif
+    #endif
       q = ANTIALIASED_QUALITY;
     else // if (pTxt->mQuality == IText::kQualityNonAntiAliased)
       q = NONANTIALIASED_QUALITY;
 
-#ifdef __APPLE__
+    #ifdef __APPLE__
     bool resized = false;
-Resize:
+    Resize:
     if (h < 2) h = 2;
-#endif
+    #endif
     HFONT hFont = CreateFont(h, 0, esc, esc, wt, it, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, q, DEFAULT_PITCH, pTxt->mFont);
     if (!hFont)
     {
@@ -1160,14 +1158,14 @@ Resize:
       return 0;
     }
     font->SetFromHFont(hFont, LICE_FONT_FLAG_OWNS_HFONT | LICE_FONT_FLAG_FORCE_NATIVE);
-#ifdef __APPLE__
+    #ifdef __APPLE__
     if (!resized && font->GetLineHeight() != h)
     {
       h = int((double)(h * h) / (double)font->GetLineHeight() + 0.5);
       resized = true;
       goto Resize;
     }
-#endif
+    #endif
     s_fontCache.Add(font, pTxt);
   }
   pTxt->mCached = font;

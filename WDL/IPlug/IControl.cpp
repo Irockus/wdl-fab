@@ -37,8 +37,8 @@ void IControl::SetDirty(bool pushParamToPlug)
   {
     mPlug->SetParameterFromGUI(mParamIdx, mValue);
     IParam* pParam = mPlug->GetParam(mParamIdx);
-
-    if (mValDisplayControl)
+    
+    if (mValDisplayControl) 
     {
       WDL_String plusLabel;
       char str[32];
@@ -46,11 +46,11 @@ void IControl::SetDirty(bool pushParamToPlug)
       plusLabel.Set(str, 32);
       plusLabel.Append(" ", 32);
       plusLabel.Append(pParam->GetLabelForHost(), 32);
-
+      
       ((ITextControl*)mValDisplayControl)->SetTextFromPlug(plusLabel.Get());
     }
-
-    if (mNameDisplayControl)
+    
+    if (mNameDisplayControl) 
     {
       ((ITextControl*)mNameDisplayControl)->SetTextFromPlug((char*) pParam->GetNameForHost());
     }
@@ -79,51 +79,50 @@ void IControl::GrayOut(bool gray)
 
 void IControl::OnMouseDown(int x, int y, IMouseMod* pMod)
 {
-#ifdef PROTOOLS
+  #ifdef PROTOOLS
   if (pMod->A && mDefaultValue >= 0.0)
   {
     mValue = mDefaultValue;
     SetDirty();
   }
-#endif
-
-  if (pMod->R)
-  {
-    PromptUserInput();
-  }
+  #endif
+  
+  if (pMod->R) {
+		PromptUserInput();
+	}
 }
 
 void IControl::OnMouseDblClick(int x, int y, IMouseMod* pMod)
 {
-#ifdef PROTOOLS
+  #ifdef PROTOOLS
   PromptUserInput();
-#else
+  #else
   if (mDefaultValue >= 0.0)
   {
     mValue = mDefaultValue;
     SetDirty();
   }
-#endif
+  #endif
 }
 
 void IControl::OnMouseWheel(int x, int y, IMouseMod* pMod, int d)
 {
-#ifdef PROTOOLS
+  #ifdef PROTOOLS
   if (pMod->C)
   {
     mValue += 0.001 * d;
   }
-#else
+  #else
   if (pMod->C || pMod->S)
   {
     mValue += 0.001 * d;
   }
-#endif
+  #endif
   else
   {
     mValue += 0.01 * d;
   }
-
+  
   SetDirty();
 }
 
@@ -170,12 +169,12 @@ IControl::AuxParam* IControl::GetAuxParam(int idx)
 
 int IControl::AuxParamIdx(int paramIdx)
 {
-  for (int i=0; i<mAuxParams.GetSize(); i++)
+  for (int i=0;i<mAuxParams.GetSize();i++)
   {
     if(GetAuxParam(i)->mParamIdx == paramIdx)
       return i;
   }
-
+  
   return -1;
 }
 
@@ -187,7 +186,7 @@ void IControl::AddAuxParam(int paramIdx)
 void IControl::SetAuxParamValueFromPlug(int auxParamIdx, double value)
 {
   AuxParam* auxParam = GetAuxParam(auxParamIdx);
-
+  
   if (auxParam->mValue != value)
   {
     auxParam->mValue = value;
@@ -198,7 +197,7 @@ void IControl::SetAuxParamValueFromPlug(int auxParamIdx, double value)
 
 void IControl::SetAllAuxParamsFromGUI()
 {
-  for (int i=0; i<mAuxParams.GetSize(); i++)
+  for (int i=0;i<mAuxParams.GetSize();i++)
   {
     AuxParam* auxParam = GetAuxParam(i);
     mPlug->SetParameterFromGUI(auxParam->mParamIdx, auxParam->mValue);

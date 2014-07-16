@@ -285,7 +285,7 @@ protected:
       }
     }
 
-RegularKey:
+  RegularKey:
     {
       h = mRECT.H();
       int n = x / mRegularKeys.W;
@@ -293,7 +293,7 @@ RegularKey:
       if (n >= 3) note--;
     }
 
-CalcVelocity:
+  CalcVelocity:
     // Calculate the velocity depeding on the vertical coordinate
     // relative to the key height.
     mVelocity = (double)y / (double)h;

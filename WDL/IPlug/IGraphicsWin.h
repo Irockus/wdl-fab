@@ -29,7 +29,7 @@ public:
   void* OpenWindow(void* pParentWnd);
   void CloseWindow();
   bool WindowIsOpen() { return (mPlugWnd); }
-
+  
   void UpdateTooltips() {}
 
   void HostPath(WDL_String* pPath);

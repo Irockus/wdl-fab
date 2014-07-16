@@ -32,11 +32,11 @@ public:
 
     mStr.Set(str);
   }
-
+  
   ~IBitmapTextControl() {}
 
   void SetTextFromPlug(char* str);
-
+  
   void ClearTextFromPlug()
   {
     SetTextFromPlug( (char *) "");
