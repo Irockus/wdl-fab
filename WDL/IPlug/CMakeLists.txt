@@ -55,7 +55,7 @@ elseif(APPLE)
 SET (IPLUG_SRC
 	${IPLUG_SRC}
 	IGraphicsCarbon.cpp
-	IPlugCocoa.mm
+#	IPlugCocoa.mm
 )
 endif(WIN32)
 
