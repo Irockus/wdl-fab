@@ -1776,11 +1776,11 @@ ComponentResult IPlugAU::RenderProc(void* pPlug, AudioUnitRenderActionFlags* pFl
 
 IPlugAU::BusChannels* IPlugAU::GetBus(AudioUnitScope scope, AudioUnitElement busIdx)
 {
-  if (scope == kAudioUnitScope_Input && busIdx >= 0 && (int) busIdx < mInBuses.GetSize())
+  if (scope == kAudioUnitScope_Input && (int) busIdx < mInBuses.GetSize())
   {
     return mInBuses.Get(busIdx);
   }
-  if (scope == kAudioUnitScope_Output && busIdx >= 0 && (int) busIdx < mOutBuses.GetSize())
+  if (scope == kAudioUnitScope_Output && (int) busIdx < mOutBuses.GetSize())
   {
     return mOutBuses.Get(busIdx);
   }

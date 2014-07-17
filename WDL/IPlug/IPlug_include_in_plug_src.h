@@ -47,7 +47,7 @@
 #if defined VST_API
   extern "C"
   {
-    EXPORT void* VSTPluginMain(audioMasterCallback hostCallback)
+    EXPORT AEffect* VSTPluginMain(audioMasterCallback hostCallback)
     {
       static WDL_Mutex sMutex;
       WDL_MutexLock lock(&sMutex);
@@ -61,13 +61,9 @@
       }
       return 0;
     }
-    EXPORT int main(int hostCallback)
+    EXPORT AEffect* MAIN(audioMasterCallback hostCallback)
     {
-    #if defined OS_OSX
-      return (VstIntPtr) VSTPluginMain((audioMasterCallback)hostCallback);
-    #else
-      return (int) VSTPluginMain((audioMasterCallback)hostCallback);
-    #endif
+      return VSTPluginMain((audioMasterCallback)hostCallback);
     }
   };
 #elif defined VST3_API
