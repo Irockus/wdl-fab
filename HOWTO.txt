@@ -2,6 +2,7 @@ A. How to build the distribution ?
 -----------------------------------
 0. Install cmake (2.8+) if not installed yet, available from:
    http://www.cmake.org/cmake/resources/software.html
+   Also populate needed VST/VST3/AU/AAX/RTAS SDKs folders as instructed in their respectives README.txt files
 1. Go to the build directory and run the script of your choice for your target toolchain 
    (Advanced: or run cmake manually and customize the generation to any 
     cmake supported toolchain ...)
