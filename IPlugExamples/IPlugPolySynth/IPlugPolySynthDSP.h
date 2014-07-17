@@ -143,6 +143,7 @@ public:
     setStageTime(kStageDecay, 100.);
     setStageTime(kStageRelease, 20.);
   }
+  virtual ~CADSREnvL() {}
 
   void setStageTime(int stage, double timeMS)
   {
