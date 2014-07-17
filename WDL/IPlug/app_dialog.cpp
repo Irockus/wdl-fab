@@ -22,18 +22,18 @@ void AppWrapper::PopulateSampleRateList(HWND hwndDlg, RtAudio::DeviceInfo* input
 
   std::vector<int> matchedSRs;
 
-  for (int i=0; i<inputDevInfo->sampleRates.size(); i++)
+  for (size_t i=0; i<inputDevInfo->sampleRates.size(); i++)
   {
-    for (int j=0; j<outputDevInfo->sampleRates.size(); j++)
+    for (size_t j=0; j<outputDevInfo->sampleRates.size(); j++)
     {
       if(inputDevInfo->sampleRates[i] == outputDevInfo->sampleRates[j])
         matchedSRs.push_back(inputDevInfo->sampleRates[i]);
     }
   }
 
-  for (int k=0; k<matchedSRs.size(); k++)
+  for (size_t k=0; k<matchedSRs.size(); k++)
   {
-    wsprintf(buf,"%i",matchedSRs[k]);
+    wsprintf(buf,"%i",(int)matchedSRs[k]);
     SendDlgItemMessage(hwndDlg,IDC_COMBO_AUDIO_SR,CB_ADDSTRING,0,(LPARAM)buf);
   }
 
@@ -50,7 +50,7 @@ void AppWrapper::PopulateAudioInputList(HWND hwndDlg, RtAudio::DeviceInfo* info)
 
   int i;
 
-  for (i=0; i<info->inputChannels -1; i++)
+  for (i=0; i<int(info->inputChannels) -1; i++)
   {
 //  for (int i=0; i<info.inputChannels; i++) {
     wsprintf(buf,"%i",i+1);
@@ -76,7 +76,7 @@ void AppWrapper::PopulateAudioOutputList(HWND hwndDlg, RtAudio::DeviceInfo* info
   int i;
 
 //  for (int i=0; i<info.outputChannels; i++) {
-  for (i=0; i<info->outputChannels -1; i++)
+  for (i=0; i<int(info->outputChannels) -1; i++)
   {
 
     wsprintf(buf,"%i",i+1);
@@ -111,12 +111,12 @@ void AppWrapper::PopulateDriverSpecificControls(HWND hwndDlg)
   }
 #endif
 
-  int indevidx = 0;
-  int outdevidx = 0;
+  size_t indevidx = 0;
+  size_t outdevidx = 0;
 
   SendDlgItemMessage(hwndDlg, IDC_COMBO_AUDIO_IN_DEV, CB_RESETCONTENT, 0, 0);
   SendDlgItemMessage(hwndDlg, IDC_COMBO_AUDIO_OUT_DEV, CB_RESETCONTENT, 0, 0);
-  for (int i = 0; i < inDevSize; i++)
+  for (size_t i = 0; i < inDevSize; i++)
   {
     SendDlgItemMessage(hwndDlg, IDC_COMBO_AUDIO_IN_DEV, CB_ADDSTRING, 0, (LPARAM)GetAudioDeviceName(gAudioInputDevs[i]).c_str());
 
@@ -124,7 +124,7 @@ void AppWrapper::PopulateDriverSpecificControls(HWND hwndDlg)
       indevidx = i;
   }
 
-  for (int i = 0; i < outDevSize; i++)
+  for (size_t i = 0; i < outDevSize; i++)
   {
     SendDlgItemMessage(hwndDlg, IDC_COMBO_AUDIO_OUT_DEV, CB_ADDSTRING, 0, (LPARAM)GetAudioDeviceName(gAudioOutputDevs[i]).c_str());
 
@@ -195,7 +195,7 @@ bool AppWrapper::PopulateMidiDialogs(HWND hwndDlg)
     return false;
   else
   {
-    for (int i=0; i<gMIDIInputDevNames.size(); i++ )
+    for (int i=0; i<(int) gMIDIInputDevNames.size(); i++ )
     {
       SendDlgItemMessage(hwndDlg,IDC_COMBO_MIDI_IN_DEV,CB_ADDSTRING,0,(LPARAM)gMIDIInputDevNames[i].c_str());
     }
@@ -212,7 +212,7 @@ bool AppWrapper::PopulateMidiDialogs(HWND hwndDlg)
 
     SendDlgItemMessage(hwndDlg,IDC_COMBO_MIDI_IN_DEV,CB_SETCURSEL, indevidx, 0);
 
-    for (int i=0; i<gMIDIOutputDevNames.size(); i++ )
+    for (int i=0; i<(int)gMIDIOutputDevNames.size(); i++ )
     {
       SendDlgItemMessage(hwndDlg,IDC_COMBO_MIDI_OUT_DEV,CB_ADDSTRING,0,(LPARAM)gMIDIOutputDevNames[i].c_str());
     }

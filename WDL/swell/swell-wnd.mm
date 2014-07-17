@@ -811,7 +811,7 @@ STANDARD_CONTROL_NEEDSDISPLAY_IMPL
         }
         if (msg==LB_ADDSTRING) wParam=cnt;
         else if (wParam > cnt) wParam=cnt;
-        LVITEM lvi={LVIF_TEXT,wParam,0,0,0,(char *)lParam};
+        LVITEM lvi={LVIF_TEXT,(int)wParam,0,0,0,(char *)lParam};
         ListView_InsertItem(hwnd,&lvi);
       }
       return wParam;

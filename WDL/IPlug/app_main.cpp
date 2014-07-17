@@ -173,7 +173,7 @@ int AppWrapper::GetAudioDeviceID(char* deviceNameToTest)
 {
   TRACE;
 
-  for(int i = 0; i < gAudioIDDevNames.size(); i++)
+  for(int i = 0; i < (int)gAudioIDDevNames.size(); i++)
   {
     if(!strcmp(deviceNameToTest, gAudioIDDevNames.at(i).c_str() ))
       return i;
@@ -193,7 +193,7 @@ unsigned int AppWrapper::GetMIDIInPortNumber(const char* nameToTest)
   if(!strcmp(nameToTest, "virtual input")) return 1;
 #endif
 
-  for (int i = 0; i < gMidiIn->getPortCount(); i++)
+  for (int i = 0; i < (int)gMidiIn->getPortCount(); i++)
   {
     if(!strcmp(nameToTest, gMidiIn->getPortName(i).c_str()))
       return (i + start);
@@ -213,7 +213,7 @@ unsigned int AppWrapper::GetMIDIOutPortNumber(const char* nameToTest)
   if(!strcmp(nameToTest, "virtual output")) return 1;
 #endif
 
-  for (int i = 0; i < gMidiOut->getPortCount(); i++)
+  for (int i = 0; i < (int)gMidiOut->getPortCount(); i++)
   {
     if(!strcmp(nameToTest, gMidiOut->getPortName(i).c_str()))
       return (i + start);
@@ -235,7 +235,7 @@ void AppWrapper::ProbeAudioIO()
 
   unsigned int nDevices = gDAC->getDeviceCount();
 
-  for (int i=0; i<nDevices; i++)
+  for (unsigned int i=0; i<nDevices; i++)
   {
     info = gDAC->getDeviceInfo(i);
     std::string deviceName = info.name;
@@ -395,7 +395,7 @@ int AppWrapper::AudioCallback(void *outputBuffer,
 
   if (gVecElapsed > N_VECTOR_WAIT) // wait N_VECTOR_WAIT * iovs before processing audio, to avoid clicks
   {
-    for (int i=0; i<nFrames; i++)
+    for (unsigned int i=0; i<nFrames; i++)
     {
       bufIndex %= sigVS;
 
@@ -596,7 +596,7 @@ bool AppWrapper::InitialiseMidi()
 
 bool AppWrapper::ChooseMidiInput(const char* pPortName)
 {
-  unsigned int port = GetMIDIInPortNumber(pPortName);
+  int port = GetMIDIInPortNumber(pPortName);
 
   if(port == -1)
   {
@@ -650,7 +650,7 @@ bool AppWrapper::ChooseMidiInput(const char* pPortName)
 
 bool AppWrapper::ChooseMidiOutput(const char* pPortName)
 {
-  unsigned int port = GetMIDIOutPortNumber(pPortName);
+  int port = GetMIDIOutPortNumber(pPortName);
 
   if(port == -1)
   {

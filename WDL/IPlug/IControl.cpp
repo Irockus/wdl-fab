@@ -594,7 +594,7 @@ bool IKnobMultiControlText::Draw(IGraphics* pGraphics)
 {
   IKnobMultiControl::Draw(pGraphics);
 
-  char cStr[32];
+  char cStr[32]="";
   mPlug->GetParam(mParamIdx)->GetDisplayForHost(cStr, sizeof(cStr));
   mStr.Set(cStr);
   if (mShowParamLabel)
@@ -603,7 +603,7 @@ bool IKnobMultiControlText::Draw(IGraphics* pGraphics)
     mStr.Append(mPlug->GetParam(mParamIdx)->GetLabelForHost());
   }
 
-  if (CSTR_NOT_EMPTY(cStr))
+  if (*cStr)
   {
     // measure the text size
     pGraphics->DrawIText(&mText, mStr.Get(), &mTextRECT,true);

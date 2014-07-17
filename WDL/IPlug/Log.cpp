@@ -9,67 +9,46 @@
 #ifdef OS_WIN
 #define LOGFILE "C:\\IPlugLog.txt" // TODO: what if no write permissions?
 
-/// Debug output txt msg for windows OutputDebugString wrapper function
-void DBGMSG(const char* fmt, ...)
+void DBGMSG(const char *format, ...)
 {
+  char    buf[4096], *p = buf;
   va_list args;
-  va_start(args, fmt);
+  int     n;
 
-  char szBuffer[512] = ""; // get rid of this hard-coded buffer
-  #ifdef _MSC_VER
- _vsnprintf(szBuffer, 511, fmt, args);
-  #else
-  vsnprintf(szBuffer, 511, lpszFormat, args);
-  #endif
-  szBuffer[sizeof(szBuffer)-1] = 0;
-
-  #ifdef _MSC_VER
-  ::OutputDebugString(szBuffer);
-  #else
-  fprintf(stderr, "%s", szBuffer);
-  #endif
+  va_start(args, format);
+  n = _vsnprintf(p, sizeof buf - 3, format, args); // buf-3 is room for CR/LF/NUL
   va_end(args);
+
+  p += (n < 0) ? sizeof buf - 3 : n;
+
+  while ( p > buf  &&  isspace(p[-1]) )
+    *--p = '\0';
+
+  *p++ = '\r';
+  *p++ = '\n';
+  *p   = '\0';
+
+  OutputDebugString(buf);
 }
 
 #else // OSX
-#define LOGFILE "IPlugLog.txt" // will get put on Desktop
+  #define LOGFILE "IPlugLog.txt" // will get put on Desktop
 #endif
 
-const int TXTLEN = 1024;
-
-// _vsnsprintf
-
-#define VARARGS_TO_STR(str) { \
-  try { \
-    va_list argList;  \
-    va_start(argList, format);  \
-    int i = vsnprintf(str, TXTLEN-2, format, argList); \
-    if (i < 0 || i > TXTLEN-2) {  \
-      str[TXTLEN-1] = '\0';  \
-    } \
-    va_end(argList);  \
-  } \
-  catch(...) {  \
-    strcpy(str, "parse error"); \
-  } \
-  strcat(str, "\r\n"); \
-}
-
-/// File information Logging class helper
 struct LogFile
 {
   FILE* mFP;
 
   LogFile()
   {
-#ifdef _WIN32
+    #ifdef _WIN32
     mFP = fopen(LOGFILE, "w");
-#else
+    #else
     char logFilePath[100];
     char* home = getenv("HOME");
-    snprintf(logFilePath, sizeof(logFilePath), "%s/Desktop/%s", home, LOGFILE);
+    sprintf(logFilePath, "%s/Desktop/%s", home, LOGFILE);
     mFP = fopen(logFilePath, "w");
-#endif
+    #endif
     assert(mFP);
   }
 
@@ -150,7 +129,7 @@ const char* CurrentTime()
   tm* pT = localtime(&t);
 
 	char cStr[32];
-	strftime(cStr, sizeof(cStr), "%Y%m%d %H:%M ", pT);
+	strftime(cStr, 32, "%Y%m%d %H:%M ", pT);
 
 	int tz = 60 * pT->tm_hour + pT->tm_min;
 	int yday = pT->tm_yday;
@@ -169,7 +148,7 @@ const char* CurrentTime()
 	sprintf(&cStr[i], "%02d%02d", tz / 60, tz % 60);
   
   static char sTimeStr[32];
-  strncpy(sTimeStr, cStr, sizeof(sTimeStr)-1);
+  strcpy(sTimeStr, cStr);
   return sTimeStr;
 }
 
@@ -196,7 +175,27 @@ const char* AppendTimestamp(const char* Mmm_dd_yyyy, const char* hh_mm_ss, const
   return str.Get();
 }
 
-#if defined(_DEBUG)
+#if defined TRACER_BUILD
+
+const int TXTLEN = 1024;
+
+// _vsnsprintf
+
+#define VARARGS_TO_STR(str) { \
+  try { \
+    va_list argList;  \
+    va_start(argList, format);  \
+    int i = vsnprintf(str, TXTLEN-2, format, argList); \
+    if (i < 0 || i > TXTLEN-2) {  \
+      str[TXTLEN-1] = '\0';  \
+    } \
+    va_end(argList);  \
+  } \
+  catch(...) {  \
+    strcpy(str, "parse error"); \
+  } \
+  strcat(str, "\r\n"); \
+}
 
 intptr_t GetOrdinalThreadID(intptr_t sysThreadID)
 {

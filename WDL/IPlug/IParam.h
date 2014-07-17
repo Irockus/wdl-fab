@@ -68,7 +68,7 @@ public:
   const char* GetNameForHost();
   const char* GetLabelForHost();
   const char* GetParamGroupForHost();
-
+  
   int GetNDisplayTexts();
   const char* GetDisplayText(int value);
   const char* GetDisplayTextAtIdx(int idx, int* value = 0);
@@ -82,7 +82,6 @@ public:
   const double GetMax() {return mMax;}
   const double GetRange() {return mMax - mMin;}
   const int GetPrecision() {return mDisplayPrecision;}
-
   bool GetCanAutomate() { return mCanAutomate; }
   bool GetIsMeta() { return mIsMeta; }
 
@@ -106,7 +105,7 @@ private:
     int mValue;
     char mText[MAX_PARAM_DISPLAY_LEN];
   };
-
+  
   WDL_TypedBuf<DisplayText> mDisplayTexts;
 };
 
