@@ -1,8 +1,13 @@
 cmake_minimum_required (VERSION 2.8)
 
 if(APPLE)
-	set(CMAKE_OSX_SYSROOT "/Developer/SDKs/MacOSX10.6.sdk/")
-	set(CMAKE_OSX_DEPLOYMENT_TARGET "10.6")
+
+	# set the base sdk version:
+	set(BUILD_SDK_VER 10.6)
+	set(BUILD_SDK_MAXVER 1060)
+	
+	set(CMAKE_OSX_SYSROOT "macosx${BUILD_SDK_VER}")
+	set(CMAKE_OSX_DEPLOYMENT_TARGET "${BUILD_SDK_VER}" )
   
 #	find_library( COREFOUNDATION_FRAMEWORK NAMES CoreFoundation)
 endif(APPLE)
@@ -40,7 +45,11 @@ if (WIN32)
 	add_definitions(-D__WINDOWS_DS__)
 	
 else(WIN32)
-	add_definitions(-DOS_OSX)
+	add_definitions(
+		-DOS_OSX
+		-D__MAC_OS_X_VERSION_MAX_ALLOWED=${BUILD_SDK_MAXVER}
+		-DMAC_OS_X_VERSION_MAX_ALLOWED=${BUILD_SDK_MAXVER}
+		)
 #	find_package(Vorbis REQUIRED)
 endif(WIN32)
 
@@ -90,7 +99,7 @@ macro(configure_msvc_runtime)
     set(CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE} -DNDEBUG")
     
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse3 -mssse3")
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wreturn-type -Wunused-variable -Wno-deprecated-declarations  -Wno-write-strings -Wno-reorder -msse3 -mssse3")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -Wreturn-type -Wunused-variable -Wno-deprecated-declarations  -Wno-write-strings -Wno-reorder -msse3 -mssse3")
 
   endif()
 endmacro()
