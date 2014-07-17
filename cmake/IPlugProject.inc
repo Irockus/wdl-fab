@@ -48,7 +48,7 @@ MACRO(set_bundle a_project a_pname an_ext)
     	TARGET ${ARGV0}
     	POST_BUILD
     	COMMAND cp
-    	ARGS "${PROJECT_BINARY_DIR}/../../WDL/IPlug/PkgInfo" "$<TARGET_FILE_DIR:${ARGV0}>/.."
+    	ARGS "${PROJECT_SOURCE_DIR}/../../WDL/IPlug/PkgInfo" "$<TARGET_FILE_DIR:${ARGV0}>/.."
   	)
 #	message(STATUS "Post Cmd: cp ${PROJECT_BINARY_DIR}/../../WDL/IPlug/PkgInfo $<TARGET_FILE_DIR:${ARGV0}>/..")
 	message(STATUS "bundle plist is ${ARGV1}")

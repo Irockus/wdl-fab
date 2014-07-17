@@ -246,7 +246,7 @@ add_subdirectory(contribs)
 add_subdirectory(IPlugExamples)
 
 # Your Custom Project below :
-if(IS_DIRECTORY ./IPlugProjects)
+if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/IPlugProjects)
   add_subdirectory(IPlugProjects)
 endif()
 
