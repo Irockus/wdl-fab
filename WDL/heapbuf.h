@@ -304,9 +304,11 @@ class WDL_HeapBuf
 
   private:
     void *m_buf;
+protected: // prevent unused warning
   #if !defined(_WIN64) && !defined(__LP64__)
     int ___pad; // keep this 8 byte aligned on osx32
   #endif
+private:
     int m_granul;
     int m_alloc;
     int m_size;
