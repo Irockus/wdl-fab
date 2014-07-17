@@ -1,18 +1,16 @@
 CMake portable build environment:
 	OSX: 
-		- resources files bundle copy does not specify sub-folders yet seems to be a current limitation/bug of cmake
-		- bundle macro generation must be finalized to generate proper vst and au bundles, for now WIP. 
-		- aax,rtas builds not implemented at all, as I don't have these frameworks.
-	Windows
-		- improvements of the find library features to incorporate more easily extra deps (i.e. 3rd party audio libs ...)
-		
+		- bundle macro generation must be finalized to generate proper audiounit bundles, for now WIP (only resource .r file needs to be added to the automatic process). 
+		- aax,rtas builds not tested yet though populated, as I don't have these frameworks.
+	
 Doxygen Documentation:
 	- More documentation should be provided, lots of TBC/place holders for now.
 	- Tutorials following the examples material as a start would be nice.
 
 Code refactoring / Clean-up effort:
 	- a new portab.h include file should be create and encapsulate once for all any cross platform and/or compiler specificities
-	
+		WIP, portab.h has been created in the iPlug lib.
+			
 Performances:
 	- Interlock mechanism needs to be revisited
 	
