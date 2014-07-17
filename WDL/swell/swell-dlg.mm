@@ -1101,7 +1101,8 @@ static int DelegateMouseMove(NSView *view, NSEvent *theEvent)
 //  NSLog(@"r:%@ vr:%d v=%p tv=%p self=%p %p\n",NSStringFromRect(rect),vr,v,v2,self, [[self window] contentView]);
   if (!useNoMiddleManCocoa() || ![self isOpaque] || [[self window] contentView] != self || [self isHiddenOrHasHiddenAncestor])
   {
-    // nsview does not implement this method, was the intent to recurse on [self window] contentView instead (when not equal to self)  ?
+    // if this code is commented out no mouse input happens anymore, it seems super can respond to it despite the warning
+    // would be nice to find some doc about it ...
     [super _recursiveDisplayRectIfNeededIgnoringOpacity:rect isVisibleRect:vr rectIsVisibleRectForView:v topView:v2];
     return;
   }
