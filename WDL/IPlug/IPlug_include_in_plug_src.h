@@ -21,7 +21,7 @@
   }
   #endif
 
-  IGraphics* MakeGraphics(IPlug* pPlug, int w, int h, int FPS = 0)
+  IGraphics* MakeGraphics(IPlug* pPlug, int w, int h, int FPS)
   {
     IGraphicsWin* pGraphics = new IGraphicsWin(pPlug, w, h, FPS);
 

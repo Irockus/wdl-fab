@@ -158,7 +158,7 @@ SET(WDL_HEADERS
 if(WIN32)
 	SET(WDL_SRC
 		${WDL_SRC}
-		win7filedialog.cpp
+		#win7filedialog.cpp
 		win32_utf8.c
 	)
 	SET(WDL_HEADERS

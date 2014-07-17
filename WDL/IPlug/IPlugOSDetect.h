@@ -2,7 +2,9 @@
 #define _IPLUG_OSDETECT_H_
 
 #ifdef _WIN32
-  #define OS_WIN
+# ifndef OS_WIN
+#  define OS_WIN
+# endif
 #elif defined __APPLE__
   #include "TargetConditionals.h"
   #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
