@@ -1,0 +1,23 @@
+A. How to build the distribution ?
+-----------------------------------
+
+1. Go to the build directory and run the script of your choice for your target toolchain 
+   (Advanced: or run cmake manually and customize the generation to any 
+    cmake supported toolchain ...)
+2. Now a win or osx subdirectory appears, open it and select the Project solution 
+3. Enjoy a fully automatically generated build !
+
+B. How to quickly create my own iPlug Projects ?
+------------------------------------------------
+
+1. Go to the IPlugProjects directory
+2. Copy an example or existing iPlug Project folder of your choice here (i.e. MyNewProjA)
+3. Inside MyNewProjA, update or create if not exist the file named CMakeLists.txt 
+	and populate your sources files.
+	(resources can also be customized very easily see examples project)
+4. Run the cmake automatic project generation again incrementally until you're satisfied 
+	with your new added builds.
+	
+	Note that you dont even need to tell what new project you copied as the script 
+	dynamic subfolder iteration autodetects any subfolder under IPlugProjects 
+	and add it for you into the main build project !

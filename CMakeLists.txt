@@ -53,6 +53,7 @@ else(WIN32)
 #	find_package(Vorbis REQUIRED)
 endif(WIN32)
 
+#-------------------------------------------------------------------------------------
 macro(configure_msvc_runtime)
   if(MSVC)
     # Default to statically-linked runtime.
@@ -103,6 +104,18 @@ macro(configure_msvc_runtime)
 
   endif()
 endmacro()
+#-------------------------------------------------------------------------------------
+macro(get_subdir_list result curdir)
+  file(GLOB children RELATIVE ${curdir} ${curdir}/*)
+  set(dirlist "")
+  foreach(child ${children})
+    if(IS_DIRECTORY ${curdir}/${child})
+        SET(dirlist ${dirlist} ${child})
+    endif()
+  endforeach()
+  set(${result} ${dirlist})
+endmacro()
+#-------------------------------------------------------------------------------------
 
 IF(MSVC)
   ADD_DEFINITIONS(-DMSVC_RUNTIME=static)

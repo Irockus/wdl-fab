@@ -79,7 +79,6 @@ MACRO(set_plug_props a_project compile_defs)
 	target_link_libraries(${ARGV0} wdl lice iplug jnet eel plush rtam png zlib ogg vorbis icst_dsp ${IPLUG_LIBS}  ${OSX_FMWKS} )
 
 endMACRO()
-
 #-------------------------------------------------------------------------------------
 # Create a Multi Target Example Project ...
 #-------------------------------------------------------------------------------------
