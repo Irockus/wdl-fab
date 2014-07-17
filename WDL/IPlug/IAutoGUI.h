@@ -51,7 +51,7 @@ public:
     mTabs.Add(tab);
   }
   
-  void OnMouseWheel(int x, int y, IMouseMod* pMod) {}
+  void OnMouseWheel(int x, int y, IMouseMod* pMod, int d) {}
   
   void OnMouseDown(int x, int y, IMouseMod* pMod) 
   {
@@ -180,7 +180,7 @@ public:
   
 private:
   IColor mBGColor, mFGColor;
-  int mHandleWidth;
+  //int mHandleWidth;
   IRECT mSliderRECT;
   IRECT mParamValueRECT;  
   IRECT mParamNameRECT;
