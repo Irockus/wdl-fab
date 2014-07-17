@@ -245,5 +245,8 @@ add_subdirectory(WDL) # wdl lice iplug libs
 add_subdirectory(contribs)
 add_subdirectory(IPlugExamples)
 
-# TODO externalize the custom user projects and completely split the lib from its use in the path ...
-# add_subdirectory(IPlugProjects)
+# Your Custom Project below :
+if(IS_DIRECTORY ./IPlugProjects)
+  add_subdirectory(IPlugProjects)
+endif()
+
