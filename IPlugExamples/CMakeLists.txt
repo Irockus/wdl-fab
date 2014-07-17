@@ -76,6 +76,8 @@ MACRO(set_plug_props a_project compile_defs)
 			XCODE_ATTRIBUTE_CLANG_LINK_OBJC_RUNTIME "NO"
 			)
 	endif()
+	target_link_libraries(${ARGV0} wdl lice iplug jnet eel plush rtam png zlib ogg vorbis icst_dsp ${IPLUG_LIBS}  ${OSX_FMWKS} )
+
 endMACRO()
 
 #-------------------------------------------------------------------------------------
@@ -158,9 +160,6 @@ MACRO(create_example name)
 
 	
 		add_executable(${PLUGNAMESA} ${GUI_TYPE} ${${PN_SRC}} ${${PN_RSC}} ${APPICON_PATH} ${${PN_HDR}} ${IPC_SA}  ) 
-	
-		target_link_libraries(${PLUGNAMESA} wdl lice iplug jnet eel plush rtam png zlib ${IPLUG_LIBS}  ${OSX_FMWKS} )
-
 		set_plug_props(${PLUGNAMESA} "SA_API=1")
 	
 		if(WIN32)
@@ -183,7 +182,6 @@ MACRO(create_example name)
 				)
 	     	set_bundle_exp(${PLUGNAMEAU} "${PLIST_PATHAU}" "component" )
 			set_plug_props(${PLUGNAMEAU} "AU_API=1")
-			target_link_libraries(${PLUGNAMEAU} wdl lice iplug jnet eel plush rtam png zlib ${IPLUG_LIBS} ${OSX_FMWKS} )
 		endif()
 	endif()
 
@@ -194,7 +192,6 @@ MACRO(create_example name)
 		add_library(${PLUGNAMEVST}  MODULE ${${PN_SRC}} ${${PN_HDR}} ${IPC_VST} )
         set_bundle(${PLUGNAMEVST} "${PLIST_PATHVST}" "vst" )
 		set_plug_props(${PLUGNAMEVST} "VST_API=1 VST_FORCE_DEPRECATED")
-		target_link_libraries(${PLUGNAMEVST} wdl lice iplug jnet eel plush rtam png zlib ${IPLUG_LIBS}  ${OSX_FMWKS} )
 	endif()
 
 	#-------------------------------------------------------------------------------------
@@ -204,7 +201,7 @@ MACRO(create_example name)
 		add_library(${PLUGNAMEVST3} MODULE ${${PN_SRC}} ${${PN_HDR}} ${IPC_VST3} )
   		set_bundle(${PLUGNAMEVST3} "${PLIST_PATHVST3}" "vst3" )
 		set_plug_props(${PLUGNAMEVST3} "VST3_API=1")
-		target_link_libraries(${PLUGNAMEVST3} wdl lice iplug vst3 jnet eel plush rtam png zlib ${IPLUG_LIBS}  ${OSX_FMWKS} )
+		target_link_libraries(${PLUGNAMEVST3} vst3)
 	endif()
 	
 	#-------------------------------------------------------------------------------------
@@ -214,7 +211,6 @@ MACRO(create_example name)
 		add_library(${PLUGNAMERTAS} MODULE ${${PN_SRC}} ${${PN_HDR}} ${IPC_RTAS} )
 		set_bundle(${PLUGNAMERTAS} "${PLIST_PATHRTAS}" "dpm" )
 		set_plug_props(${PLUGNAMERTAS} "RTAS_API=1")
-		target_link_libraries(${PLUGNAMERTAS} wdl lice iplug jnet eel plush rtam png zlib ${IPLUG_LIBS}  ${OSX_FMWKS} )
 	endif()
 	
 	#-------------------------------------------------------------------------------------
@@ -224,7 +220,6 @@ MACRO(create_example name)
 		add_library(${PLUGNAMEAAX} MODULE ${${PN_SRC}} ${${PN_HDR}} ${IPC_AAX} )
 		set_bundle(${PLUGNAMEAAX} "${PLIST_PATHAAX}" "aax" )
 		set_plug_props(${PLUGNAMEAAX} "AAX_API=1")
-		target_link_libraries(${PLUGNAMEAAX} wdl lice iplug jnet eel plush rtam png zlib ${IPLUG_LIBS}  ${OSX_FMWKS} )
 	endif()
 	
 	#-------------------------------------------------------------------------------------
