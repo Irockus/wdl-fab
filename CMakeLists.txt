@@ -172,6 +172,7 @@ set (HAVE_VST			OFF)
 set (HAVE_VST3			OFF)
 set (HAVE_ASIO			OFF)
 set (HAVE_AU			OFF)
+set (HAVE_CA			OFF) # external AU sdk in the CA_SDK folder for xcode4+ builds
 
 # Auto-detection
 if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/AAX_SDK/Interfaces)
@@ -208,47 +209,52 @@ endif()
 
 if(APPLE)
 	set (HAVE_AU			ON)
+	if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/CA_SDK/AudioUnits)
+		if(EXISTS "${PROJECT_SOURCE_DIR}/CA_SDK/CMakeLists.txt")
+			set (HAVE_CA		ON)
+		endif()
+	endif()
 endif(APPLE)
 
-set(variables HAVE_AXX HAVE_PT9 HAVE_VST HAVE_VST3 HAVE_ASIO HAVE_AU )
+set(variables HAVE_AXX HAVE_PT9 HAVE_VST HAVE_VST3 HAVE_ASIO HAVE_AU HAVE_CA )
 dump_vars( "SDKs used:" "${variables}" )
 
 #-------------------------------------------------------------------------------------
-# Subdirectories
+# Adding Subdirectories to build on ...
 #-------------------------------------------------------------------------------------
 
 #	ASIO SDK
 if(HAVE_ASIO)
 	add_subdirectory(ASIO_SDK)
-endif(HAVE_ASIO)
+endif()
 
 # Avid Protools related plugin development: 
 if(HAVE_AXX)
 	add_subdirectory(AAX_SDK)
-endif(HAVE_AXX)
+endif()
 if(HAVE_PT9)
 	add_subdirectory(PT9_SDK) # rtas sdk
-endif(HAVE_PT9)
+endif()
 
 #	VST Development
 if(HAVE_VST3)
 	add_subdirectory(VST3_SDK)
-endif(HAVE_VST3)
+endif()
 if(HAVE_VST)
 	add_subdirectory(VST_SDK)
-endif(HAVE_VST)
+endif()
 
 # Apple Development
-if(HAVE_AU)
-	#add_subdirectory(CA_SDK) 
-endif(HAVE_AU)
+if(HAVE_CA)
+	add_subdirectory(CA_SDK) 
+endif()
 
-#	Common
+# Common
 add_subdirectory(WDL) # wdl lice iplug libs
 add_subdirectory(contribs)
 add_subdirectory(IPlugExamples)
 
-# Your Custom Project below :
+# Your Custom Projects below that root folder:
 if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/IPlugProjects)
   add_subdirectory(IPlugProjects)
 endif()

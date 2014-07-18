@@ -1,4 +1,5 @@
 # Core Audio SDK
+# Not Implemented yet, try to incorporate AU sdk in Xcode directly instead (see README)
 
 if(WIN32)
    if(MSVC)

@@ -23,3 +23,19 @@ B. How to quickly create my own iPlug Projects ?
 	Note that you dont even need to tell what new project you copied as the script 
 	dynamic subfolder iteration autodetects any subfolder under IPlugProjects 
 	and adds it for you into the main build project !
+
+Notes:
+
+===============
+XCode4/5 users:
+===============
+1. You need to right click on the XCode app and select "Show package contents"...
+Then in Contents/Developer add an Extras folder with the CoreAudio SDK
+that can be downloaded from:
+	https://developer.apple.com/library/mac/samplecode/CoreAudioUtilityClasses/Introduction/Intro.html
+	(then click download sample code)
+
+2. OSX SDKs > 10.6 builds
+	For building with SDKS > 10.6, edit the CMakeLists.txt at the root of the distrib 
+	search for BUILD_SDK prefixes and change 10.6 occurences by your SDK version
+	(not tested yet please report in case of problems)
