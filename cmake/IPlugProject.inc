@@ -52,10 +52,23 @@ MACRO(set_bundle a_project a_pname an_ext)
   	)
 #	message(STATUS "Post Cmd: cp ${PROJECT_BINARY_DIR}/../../WDL/IPlug/PkgInfo $<TARGET_FILE_DIR:${ARGV0}>/..")
 	message(STATUS "bundle plist is ${ARGV1}")
-  else()
+  else(APPLE)
 	message(STATUS "set_bundle(${ARGV0} ${ARGV1} ${ARGV2})")
-
+	if (WIN32)
+		# handle extension dll settings
+		if( ${ARGV2} STREQUAL "vst3" )
+			set(addext 1)
+		elseif( ${ARGV2} STREQUAL "dpm" )
+			set(addext 1)
+		else()
+		# vst aax dont need a change here
+			set(addext 0)
+		endif()
+		if( ${addext} STREQUAL "1" )
+			set_target_properties(${ARGV0} PROPERTIES SUFFIX .${ARGV2}) 
+		endif()
 	endif()
+  endif(APPLE)
 endMACRO()
 
 #-------------------------------------------------------------------------------------
@@ -69,10 +82,11 @@ endMACRO()
 MACRO(set_plug_props a_project compile_defs)
 	set_target_properties( ${ARGV0} PROPERTIES
         COMPILE_DEFINITIONS "${ARGV1}"
-		OUTPUT_NAME ${PLUGNAME}
 		)
+		
 	if(APPLE)
 		set_target_properties( ${ARGV0} PROPERTIES
+			OUTPUT_NAME ${PLUGNAME}
 			XCODE_ATTRIBUTE_CLANG_LINK_OBJC_RUNTIME "NO"
 			)
 	endif()
@@ -91,7 +105,7 @@ MACRO(create_example name)
 
 	set (PLUGNAMESA   ${PLUGNAME})
 	set (PLUGNAMEVST  ${PLUGNAME}VST)
-#	set (PLUGNAMEVST3 ${PLUGNAME}VST3)
+	set (PLUGNAMEVST3 ${PLUGNAME}VST3)
 	set (PLUGNAMEAU   ${PLUGNAME}AU)
 #	set (PLUGNAMEAAX  ${PLUGNAME}AAX)
 #	set (PLUGNAMERTAS  ${PLUGNAME}RTAS)
