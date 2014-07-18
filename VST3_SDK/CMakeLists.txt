@@ -8,7 +8,7 @@ SET(VST3_SRC
     "base/source/fbitset.cpp"
     "base/source/fbuffer.cpp"
     "base/source/fcpu.cpp"
-    "base/source/fdebug.cpp">
+    "base/source/fdebug.cpp"
     "base/source/fdynlib.cpp"
     "base/source/finitializer.cpp"
     "base/source/fmemory.cpp"

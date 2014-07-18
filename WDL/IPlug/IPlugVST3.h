@@ -2,13 +2,13 @@
 #define _IPLUGAPI_
 // Only load one API class!
 
-#include "IPlugBase.h"
 #include "public.sdk/source/vst/vstsinglecomponenteffect.h"
 //#include "public.sdk/source/vst/vstpresetfile.h"
 #include "pluginterfaces/vst/ivstprocesscontext.h"
 #include "pluginterfaces/vst/vsttypes.h"
 #include "pluginterfaces/vst/ivstcontextmenu.h"
 //#include "IMidiQueue.h"
+#include "IPlugBase.h"
 
 struct IPlugInstanceInfo
 {
