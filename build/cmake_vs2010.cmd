@@ -1,8 +1,8 @@
-set ROOTDIR=%~dp0/win
-if not exist %ROOTDIR% mkdir %ROOTDIR%
+set ROOTDIR=%~dp0
+if not exist %ROOTDIR%win md %ROOTDIR%win
 pushd .
 
-cd %ROOTDIR%
+cd %ROOTDIR%win
 
 if exist CmakeCache.txt del CMakeCache.txt
 
