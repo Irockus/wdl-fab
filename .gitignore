@@ -92,3 +92,4 @@ IPlugExamples/IPlugText/IPlugText.sln
 contribs/*/*.dir
 WDL/wdl.dir/
 Win32/
+build/win/
