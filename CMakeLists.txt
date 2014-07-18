@@ -1,4 +1,12 @@
+#-------------------------------------------------------------------------------------
+# IPlug (wdl-fab) CMake Generation
+#   Created by fabien on 2014/07/18
+#   For bug reports please contact: fabien@onepost.net
+#-------------------------------------------------------------------------------------
+
 cmake_minimum_required (VERSION 2.8)
+
+include (cmake/IPlugMacros.inc)
 
 if(APPLE)
 
@@ -12,7 +20,6 @@ if(APPLE)
 #	find_library( COREFOUNDATION_FRAMEWORK NAMES CoreFoundation)
 endif(APPLE)
 
-
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 #set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} $ENV{VORBISDIR}/include )
 
@@ -21,8 +28,9 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-# find something portable
-
+#-------------------------------------------------------------------------------------
+# Find Packages
+#-------------------------------------------------------------------------------------
 # find_package(bzip2 required)
 # find_package(png required)
 # find_package(jpeg required)
@@ -30,7 +38,16 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 # find_package(OpenGL REQUIRED)
 # find_package(GLU REQUIRED)
 # find_package(SDL REQUIRED)
+# Compile the resource file
 
+find_program(RC_COMPILER Rez PATHS /Developer/Tools)
+if(NOT RC_COMPILER)
+  message(FATAL_ERROR "could not find Rez to build resources from .r file...")
+endif()
+
+#-------------------------------------------------------------------------------------
+# Set Libraries Include & Lib Paths
+#-------------------------------------------------------------------------------------
 # vorbis / ogg audio encoding decoding libs
 set(VORBIS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/contribs/vorbis" )
 set(OGG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/contribs/ogg" )
@@ -39,6 +56,9 @@ set(OGG_INCLUDE_DIR "${OGG_DIR}/include" )
 set(OGG_LIBRARY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libogg.lib" )
 set(VORBIS_LIBRARY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libvorbis.lib" )
 	
+#-------------------------------------------------------------------------------------
+# Set Common Definitions
+#-------------------------------------------------------------------------------------
 if (WIN32)
 	add_definitions(-DOS_WIN)
 	add_definitions(-D__WINDOWS_ASIO__)
@@ -53,79 +73,16 @@ else(WIN32)
 #	find_package(Vorbis REQUIRED)
 endif(WIN32)
 
-#-------------------------------------------------------------------------------------
-macro(configure_msvc_runtime)
-  if(MSVC)
-    # Default to statically-linked runtime.
-    if("${MSVC_RUNTIME}" STREQUAL "")
-      set(MSVC_RUNTIME "static")
-    endif()
-    
-    # Set compiler options.
-    set(variables
-      CMAKE_C_FLAGS_DEBUG
-      CMAKE_C_FLAGS_MINSIZEREL
-      CMAKE_C_FLAGS_RELEASE
-      CMAKE_C_FLAGS_RELWITHDEBINFO
-      CMAKE_CXX_FLAGS_DEBUG
-      CMAKE_CXX_FLAGS_MINSIZEREL
-      CMAKE_CXX_FLAGS_RELEASE
-      CMAKE_CXX_FLAGS_RELWITHDEBINFO
-    )
-    
-    if(${MSVC_RUNTIME} STREQUAL "static")
-      message(STATUS
-        "MSVC -> forcing use of statically-linked runtime."
-      )
-      foreach(variable ${variables})
-        if(${variable} MATCHES "/MD")
-          string(REGEX REPLACE "/MD" "/MT" ${variable} "${${variable}}")
-        endif()
-      endforeach()
-    else()
-      message(STATUS
-        "MSVC -> forcing use of dynamically-linked runtime."
-      )
-      foreach(variable ${variables})
-        if(${variable} MATCHES "/MT")
-          string(REGEX REPLACE "/MT" "/MD" ${variable} "${${variable}}")
-        endif()
-      endforeach()
-    endif()
-    
-  else(MSVC)
-    set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG")
-    set(CMAKE_C_FLAGS_DEBUG     "${CMAKE_C_FLAGS_DEBUG} -D_DEBUG")
-    set(CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE} -DNDEBUG")
-    
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse3 -mssse3")
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -Wreturn-type -Wunused-variable -Wno-deprecated-declarations  -Wno-write-strings -Wno-reorder -msse3 -mssse3")
-
-  endif()
-endmacro()
-#-------------------------------------------------------------------------------------
-macro(get_subdir_list result curdir)
-  file(GLOB children RELATIVE ${curdir} ${curdir}/*)
-  set(dirlist "")
-  foreach(child ${children})
-    if(IS_DIRECTORY ${curdir}/${child})
-        SET(dirlist ${dirlist} ${child})
-    endif()
-  endforeach()
-  set(${result} ${dirlist})
-endmacro()
-#-------------------------------------------------------------------------------------
-
 IF(MSVC)
-  ADD_DEFINITIONS(-DMSVC_RUNTIME=static)
-  ADD_DEFINITIONS(/arch:SSE2)
-  ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS)
-  ADD_DEFINITIONS(/wd4244 /wd4996 /wd4018 /wd4305)
+  add_definitions(-DMSVC_RUNTIME=static)
+  add_definitions(/arch:SSE2)
+  add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS)
+  add_definitions(/wd4244 /wd4996 /wd4018 /wd4305)
   
 ELSEIF(APPLE)
-  SET(CMAKE_OSX_ARCHITECTURES "x86_64;i386")
-  ADD_DEFINITIONS(-D__MACOSX_CORE__ -DWDL_FFT_REALSIZE=8 -DSWELL_FORCE_COCOA_TEXT -DSWELL_CLEANUP_ON_UNLOAD)
+  set(CMAKE_OSX_ARCHITECTURES "x86_64;i386")
+  add_definitions(-D__MACOSX_CORE__ -DWDL_FFT_REALSIZE=8 
+  	-DSWELL_FORCE_COCOA_TEXT -DSWELL_CLEANUP_ON_UNLOAD )
 ENDIF(MSVC)
 
 configure_msvc_runtime()
@@ -139,13 +96,24 @@ set(variables
   CMAKE_CXX_FLAGS_RELEASE
   CMAKE_CXX_FLAGS_RELWITHDEBINFO
 )
-#display build flags
-message(STATUS "Initial build flags:")
-foreach(variable ${variables})
-  message(STATUS "  '${variable}': ${${variable}}")
-endforeach()
-message(STATUS "")
 
+dump_vars( "Initial build flags:" "${variables}" )
+
+#Prefer static linking for plugins
+set(BUILD_SHARED_LIBS OFF)  
+
+if(WIN32)
+   if(MSVC)
+#      add_definitions(-DWIN32_LEAN_AND_MEAN)
+      add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+	  SET(IPLUG_LIBS ${IPLUG_LIBS} Winmm wsock32 Wininet)
+   endif(MSVC)
+endif(WIN32)
+
+
+#-------------------------------------------------------------------------------------
+# Set Include Directories
+#-------------------------------------------------------------------------------------
 include_directories(
 	# ${OPENAL_INCLUDES}
 	# ${BZIP2_INCLUDE_DIR}
@@ -184,60 +152,83 @@ set(IPLUG_LIBS
 #	${VORBISFILE_LIBRARY} 
 )
 
-
-# Version number
+#-------------------------------------------------------------------------------------
+# Set Version number
+#-------------------------------------------------------------------------------------
 set (IPLUG_VERSION_MAJOR 0)
 set (IPLUG_VERSION_MINOR 9)
 set (IPLUG_VERSION_PATCH "0")
 set(IPLUG_VERSION "${IPLUG_VERSION_MAJOR}.${IPLUG_VERSION_MINOR}")
 set(IPLUG_VERSION_FULL "${IPLUG_VERSION}.${IPLUG_VERSION_PATCH}")
 
-# SET
-	# IPlugAAX.cpp
-	# IPlugAU.cpp
-	# IPlugRTAS.cpp
-	# IPlugStandalone.cpp
-	# IPlugStructs.cpp
-	# IPlugVST.cpp
-	# IPlugVST3.cpp
+#-------------------------------------------------------------------------------------
+# IPlug Third-Party SDKs Handling
+#-------------------------------------------------------------------------------------
 
-#Prefer static linking for plugins
-set(BUILD_SHARED_LIBS OFF)  
+# Init 
+set (HAVE_AXX 			OFF)
+set (HAVE_PT9 			OFF)
+set (HAVE_VST			OFF)
+set (HAVE_VST3			OFF)
+set (HAVE_ASIO			OFF)
+set (HAVE_AU			OFF)
+
+# Auto-detection
+if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/AAX_SDK/Interfaces)
+	if(EXISTS "${PROJECT_SOURCE_DIR}/AAX_SDK/CMakeLists.txt")
+		set (HAVE_AAX		ON)
+	endif()
+endif()
+
+if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/PT9_SDK/AlturaPorts)
+	if(EXISTS "${PROJECT_SOURCE_DIR}/PT9_SDK/CMakeLists.txt")
+		set (HAVE_PT9		ON)
+	endif()
+endif()
 
 if(WIN32)
-   if(MSVC)
-#      add_definitions(-DWIN32_LEAN_AND_MEAN)
-      add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-	  SET(IPLUG_LIBS ${IPLUG_LIBS} Winmm wsock32 Wininet)
-   endif(MSVC)
+  if(EXISTS ${PROJECT_SOURCE_DIR}/ASIO_SDK/asio.h)
+	if(EXISTS "${PROJECT_SOURCE_DIR}/ASIO_SDK/CMakeLists.txt")
+		set (HAVE_ASIO		ON)
+	endif()
+  endif()
 endif(WIN32)
 
-# IPlug build flags:
-set (HAVE_DIGIDESIGN_AXX 	OFF)
-set (HAVE_DIGIDESIGN_PT9 	OFF)
-set (HAVE_VST				ON)
-set (HAVE_VST3				ON)
+if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/VST3_SDK/public.sdk)
+	if(EXISTS "${PROJECT_SOURCE_DIR}/VST3_SDK/CMakeLists.txt")
+		set (HAVE_VST3		ON)
+	endif()
+endif()
+
+if(EXISTS ${PROJECT_SOURCE_DIR}/VST_SDK/aeffect.h)
+	if(EXISTS "${PROJECT_SOURCE_DIR}/VST_SDK/CMakeLists.txt")
+		set (HAVE_VST		ON)
+	endif()
+endif()
 
 if(APPLE)
-	set (HAVE_AUDIOUNITS	ON)
-else(APPLE)
-	set (HAVE_AUDIOUNITS	OFF)
+	set (HAVE_AU			ON)
 endif(APPLE)
 
+set(variables HAVE_AXX HAVE_PT9 HAVE_VST HAVE_VST3 HAVE_ASIO HAVE_AU )
+dump_vars( "SDKs used:" "${variables}" )
+
+#-------------------------------------------------------------------------------------
 # Subdirectories
+#-------------------------------------------------------------------------------------
 
 #	ASIO SDK
-if(WIN32)
+if(HAVE_ASIO)
 	add_subdirectory(ASIO_SDK)
-endif(WIN32)
+endif(HAVE_ASIO)
 
-#	Digidesign Protools related plugin development: 
-if(HAVE_DIGIDESIGN_AXX)
+# Avid Protools related plugin development: 
+if(HAVE_AXX)
 	add_subdirectory(AAX_SDK)
-endif(HAVE_DIGIDESIGN_AXX)
-if(HAVE_DIGIDESIGN_PT9)
+endif(HAVE_AXX)
+if(HAVE_PT9)
 	add_subdirectory(PT9_SDK) # rtas sdk
-endif(HAVE_DIGIDESIGN_PT9)
+endif(HAVE_PT9)
 
 #	VST Development
 if(HAVE_VST3)
@@ -247,11 +238,10 @@ if(HAVE_VST)
 	add_subdirectory(VST_SDK)
 endif(HAVE_VST)
 
-# for future Xcode 4+ builds if needed
-if(HAVE_AUDIOUNITS)
+# Apple Development
+if(HAVE_AU)
 	#add_subdirectory(CA_SDK) 
-endif(HAVE_AUDIOUNITS)
-
+endif(HAVE_AU)
 
 #	Common
 add_subdirectory(WDL) # wdl lice iplug libs

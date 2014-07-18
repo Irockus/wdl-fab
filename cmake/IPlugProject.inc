@@ -187,12 +187,47 @@ MACRO(create_example name)
 	#-------------------------------------------------------------------------------------
 	if(APPLE)
 		if( DEFINED PLUGNAMEAU )
+ 			set (RCFILES "${CMAKE_CURRENT_SOURCE_DIR}/../../WDL/IPlug/IPlugAU.r" )
+
 			add_library(${PLUGNAMEAU} MODULE 
 				${${PN_SRC}} ${${PN_HDR}} ${PLIST_PATHAU}  ${IPC_AU} 
 				"${CMAKE_CURRENT_SOURCE_DIR}/${PLUGNAME}.exp"
+				 ${RCFILES} 
 				)
+				
 	     	set_bundle_exp(${PLUGNAMEAU} "${PLIST_PATHAU}" "component" )
 			set_plug_props(${PLUGNAMEAU} "AU_API=1")
+			
+    		foreach(ARCH ${CMAKE_OSX_ARCHITECTURES})
+    	    	list(APPEND ARCHS -arch ${ARCH})
+	    	endforeach()
+ 	    
+	    	set (ORC_PATH "${CMAKE_CURRENT_BINARY_DIR}/${PLUGNAMEAU}.rsrc" )
+	   		get_directory_property(INC_DIRS INCLUDE_DIRECTORIES ) 
+    		message("Generating ${ORC_PATH} for ${INC_DIRS}" )
+
+# 	   		execute_process(COMMAND echo ${RC_COMPILER} 
+# 	   		  -d SystemSevenOrLater=1 -useDF -script Roman 
+#     	      -useDF ${ARCHS} -arch ppc
+#     	      -o ${ORC_PATH}
+# 	   		  -I ${CMAKE_CURRENT_SOURCE_DIR}/../..
+# 	   		  -isysroot "${XCODE_ATTRIBUTE_SDKROOT}" 
+# 	   		 ${RCFILES} 
+#         	)
+# 	    	set_source_files_properties( ${ORC_PATH} PROPERTIES GENERATED 1 )
+
+#  			add_custom_command( TARGET ${PLUGNAMEAU} POST_BUILD
+#  			COMMAND /Developer/Tools/Rez  ARGS 
+# 	   		  -d SystemSevenOrLater=1 -useDF -script Roman 
+#     	      -useDF ${ARCHS}
+#     	      -o ${ORC_PATH}
+# 	   		  -i ${CMAKE_CURRENT_SOURCE_DIR}
+# 	   		  -I ${CORE_AUDIO}/Versions/A/Headers/**
+# 	   		  -I ${CORE_SVCS}/Versions/A/Headers/**
+# 	   		  -i /Developer/SDKs/MacOSX${BUILD_SDK_VER}.sdk/usr/include
+# 	   		  -isysroot /Developer/SDKs/MacOSX${BUILD_SDK_VER}.sdk
+# 	   		  ${RCFILES} 
+# 			)
 		endif()
 	endif()
 
