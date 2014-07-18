@@ -1,4 +1,4 @@
-SET( IPlugPolySynth_IMG
+set(IPlugPolySynth_IMG
 	resources/img/about.png
 	resources/img/bg.png
 	resources/img/bk.png
