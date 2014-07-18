@@ -108,8 +108,6 @@ MACRO(create_example name)
 	  set(${PN_SRC} 
 	  ${${PN_SRC}}  
 	  ../../WDL/IPlug/IPlugCocoa.mm 
-	  ../../common.xcconfig 
-	  ${PLUGNAME}.xcconfig
 	  )
 	  ADD_DEFINITIONS(
     	-D__MACOSX_CORE__ 
