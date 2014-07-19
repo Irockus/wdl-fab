@@ -81,17 +81,18 @@ endmacro()
 #-------------------------------------------------------------------------------------
 MACRO(set_bundle a_project a_pname an_ext)
   if(APPLE)
-    if (${ARGV2} MATCHES "aax")
+    if (${ARGV2} MATCHES "(aax|dpm)")
     	set(PKGINF "${PROJECT_SOURCE_DIR}/../../WDL/IPlug/AAX/PkgInfo" )
-		set_target_properties( ${ARGV0} PROPERTIES BUNDLE_EXTENSION "${ARGV2}plugin" )
+    	set(PLUGEXT "${ARGV2}plugin" )
     else()
     	set(PKGINF "${PROJECT_SOURCE_DIR}/../../WDL/IPlug/PkgInfo" )
-		set_target_properties( ${ARGV0} PROPERTIES BUNDLE_EXTENSION ${ARGV2} )
+    	set(PLUGEXT "${ARGV2}" )
     endif()
 
 	set_target_properties( ${ARGV0} PROPERTIES
     	BUNDLE 1
-    	XCODE_ATTRIBUTE_WRAPPER_EXTENSION ${ARGV2}  #sets the extension to .${an_ext}
+		BUNDLE_EXTENSION  ${PLUGEXT}
+    	XCODE_ATTRIBUTE_WRAPPER_EXTENSION ${PLUGEXT}  #sets the extension to .${PLUGEXT}
     	XCODE_ATTRIBUTE_MACH_O_TYPE mh_bundle
 #    	XCODE_ATTRIBUTE_INFOPLIST_FILE ${ARGV1}
     	MACOSX_BUNDLE_INFO_PLIST ${ARGV1}
@@ -120,7 +121,7 @@ MACRO(set_bundle a_project a_pname an_ext)
 			set(addext 0)
 		endif()
 		if( ${addext} STREQUAL "1" )
-			set_target_properties(${ARGV0} PROPERTIES SUFFIX .${ARGV2}) 
+			set_target_properties(${ARGV0} PROPERTIES SUFFIX .${PLUGEXT}) 
 		endif()
 	endif()
   endif(APPLE)
