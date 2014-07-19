@@ -56,5 +56,4 @@ elseif(APPLE)
 	set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
 endif(WIN32)
 
-add_library(AAX ${AAX_SRC} ${AAX_HEADERS} )
-
+add_library(aax ${AAX_SRC} ${AAX_HEADERS} )

@@ -79,3 +79,72 @@ macro(dump_vars title list_vars)
 endmacro()
 
 #-------------------------------------------------------------------------------------
+MACRO(set_bundle a_project a_pname an_ext)
+  if(APPLE)
+    if (${ARGV2} MATCHES "aax")
+    	set(PKGINF "${PROJECT_SOURCE_DIR}/../../WDL/IPlug/AAX/PkgInfo" )
+		set_target_properties( ${ARGV0} PROPERTIES BUNDLE_EXTENSION "${ARGV2}plugin" )
+    else()
+    	set(PKGINF "${PROJECT_SOURCE_DIR}/../../WDL/IPlug/PkgInfo" )
+		set_target_properties( ${ARGV0} PROPERTIES BUNDLE_EXTENSION ${ARGV2} )
+    endif()
+
+	set_target_properties( ${ARGV0} PROPERTIES
+    	BUNDLE 1
+    	XCODE_ATTRIBUTE_WRAPPER_EXTENSION ${ARGV2}  #sets the extension to .${an_ext}
+    	XCODE_ATTRIBUTE_MACH_O_TYPE mh_bundle
+#    	XCODE_ATTRIBUTE_INFOPLIST_FILE ${ARGV1}
+    	MACOSX_BUNDLE_INFO_PLIST ${ARGV1}
+    )
+    set_source_files_properties( ${ARGV1} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+    
+    
+    add_custom_command(
+    	TARGET ${ARGV0}
+    	POST_BUILD
+    	COMMAND cp
+    	ARGS "${PKGINF}" "$<TARGET_FILE_DIR:${ARGV0}>/.."
+  	)
+#	message(STATUS "Post Cmd: cp ${PKGINF} $<TARGET_FILE_DIR:${ARGV0}>/..")
+	message(STATUS "bundle plist is ${ARGV1}")
+  else(APPLE)
+	message(STATUS "set_bundle(${ARGV0} ${ARGV1} ${ARGV2})")
+	if (WIN32)
+		# handle extension dll settings
+		if( ${ARGV2} STREQUAL "vst3" )
+			set(addext 1)
+		elseif( ${ARGV2} STREQUAL "dpm" )
+			set(addext 1)
+		else()
+		# vst aax dont need a change here
+			set(addext 0)
+		endif()
+		if( ${addext} STREQUAL "1" )
+			set_target_properties(${ARGV0} PROPERTIES SUFFIX .${ARGV2}) 
+		endif()
+	endif()
+  endif(APPLE)
+endMACRO()
+
+#-------------------------------------------------------------------------------------
+MACRO(set_bundle_exp a_project a_pname an_ext)
+	set_bundle(${ARGV0} ${ARGV1} ${ARGV2} )
+	set_target_properties( ${ARGV0} PROPERTIES
+	    LINK_FLAGS "-Wl,-exported_symbols_list,\"${CMAKE_CURRENT_SOURCE_DIR}/${PLUGNAME}.exp\"")
+endMACRO()
+
+#-------------------------------------------------------------------------------------
+MACRO(set_plug_props a_project compile_defs)
+	set_target_properties( ${ARGV0} PROPERTIES
+        COMPILE_DEFINITIONS "${ARGV1}"
+		)
+		
+	if(APPLE)
+		set_target_properties( ${ARGV0} PROPERTIES
+			OUTPUT_NAME ${PLUGNAME}
+			XCODE_ATTRIBUTE_CLANG_LINK_OBJC_RUNTIME "NO"
+			)
+	endif()
+	target_link_libraries(${ARGV0} wdl lice iplug jnet eel plush rtam png zlib ogg vorbis icst_dsp ${IPLUG_LIBS} ${OSX_FMWKS} )
+
+endMACRO()

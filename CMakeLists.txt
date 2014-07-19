@@ -255,7 +255,7 @@ if(HAVE_AAX)
 		)
 	
 	add_subdirectory(AAX_SDK)
-endif(HAVE_AXX)
+endif(HAVE_AAX)
 
 if(HAVE_PT9)
 	include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/PT9_SDK" ) 
@@ -267,8 +267,10 @@ if(HAVE_CA)  # not tested yet ...
 	include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/CA_SDK" )
 	add_subdirectory(CA_SDK)
 endif()
-get_directory_property(INC_DIRS INCLUDE_DIRECTORIES ) 
-message("INCLUDE DIRS: ${INC_DIRS}" )
+
+# get_directory_property(INC_DIRS INCLUDE_DIRECTORIES ) 
+# message("INCLUDE DIRS: ${INC_DIRS}" )
+
 # Common
 add_subdirectory(WDL) # wdl lice iplug libs
 add_subdirectory(contribs)

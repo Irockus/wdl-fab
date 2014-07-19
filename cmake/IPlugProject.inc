@@ -3,12 +3,9 @@ set(IPC_AU   ../../WDL/IPlug/IPlugAU.cpp   ../../WDL/IPlug/dfx/dfx-au-utilities.
 set(IPC_VST	 ../../WDL/IPlug/IPlugVST.cpp)
 set(IPC_VST3 ../../WDL/IPlug/IPlugVST3.cpp)
 set(IPC_RTAS ../../WDL/IPlug/IPlugRTAS.cpp)
-set(IPC_AAX  ../../WDL/IPlug/IPlugAAX.cpp)
+set(IPC_AAX  ../../WDL/IPlug/IPlugAAX.cpp ../../WDL/IPlug/AAX/AAX_CIPlugParameters.cpp )
 
-if(WIN32)
- set (IPLUG_LIBS ${IPLUG_LIBS} asio)
-elseif(APPLE)
-
+if(APPLE)
  find_library(AUDIO_UNIT AudioUnit)
  find_library(AUDIO_TOOLBOX AudioToolbox)
  if (NOT AUDIO_UNIT)
@@ -30,69 +27,8 @@ elseif(APPLE)
  	${COCOA} ${CARBON} ${CORE_FND} ${CORE_SVCS} ${APPKIT} )
 
 
-endif(WIN32)
+endif(APPLE)
 
-#-------------------------------------------------------------------------------------
-MACRO(set_bundle a_project a_pname an_ext)
-  if(APPLE)
-	set_target_properties( ${ARGV0} PROPERTIES
-    	BUNDLE 1
-    	BUNDLE_EXTENSION ${ARGV2} 
-    	XCODE_ATTRIBUTE_WRAPPER_EXTENSION ${ARGV2}  #sets the extension to .${an_ext}
-    	XCODE_ATTRIBUTE_MACH_O_TYPE mh_bundle
-#    	XCODE_ATTRIBUTE_INFOPLIST_FILE ${ARGV1}
-    	MACOSX_BUNDLE_INFO_PLIST ${ARGV1}
-    )
-    set_source_files_properties( ${ARGV1} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-    add_custom_command(
-    	TARGET ${ARGV0}
-    	POST_BUILD
-    	COMMAND cp
-    	ARGS "${PROJECT_SOURCE_DIR}/../../WDL/IPlug/PkgInfo" "$<TARGET_FILE_DIR:${ARGV0}>/.."
-  	)
-#	message(STATUS "Post Cmd: cp ${PROJECT_BINARY_DIR}/../../WDL/IPlug/PkgInfo $<TARGET_FILE_DIR:${ARGV0}>/..")
-	message(STATUS "bundle plist is ${ARGV1}")
-  else(APPLE)
-	message(STATUS "set_bundle(${ARGV0} ${ARGV1} ${ARGV2})")
-	if (WIN32)
-		# handle extension dll settings
-		if( ${ARGV2} STREQUAL "vst3" )
-			set(addext 1)
-		elseif( ${ARGV2} STREQUAL "dpm" )
-			set(addext 1)
-		else()
-		# vst aax dont need a change here
-			set(addext 0)
-		endif()
-		if( ${addext} STREQUAL "1" )
-			set_target_properties(${ARGV0} PROPERTIES SUFFIX .${ARGV2}) 
-		endif()
-	endif()
-  endif(APPLE)
-endMACRO()
-
-#-------------------------------------------------------------------------------------
-MACRO(set_bundle_exp a_project a_pname an_ext)
-	set_bundle(${ARGV0} ${ARGV1} ${ARGV2} )
-	set_target_properties( ${ARGV0} PROPERTIES
-	    LINK_FLAGS "-Wl,-exported_symbols_list,\"${CMAKE_CURRENT_SOURCE_DIR}/${PLUGNAME}.exp\"")
-endMACRO()
-
-#-------------------------------------------------------------------------------------
-MACRO(set_plug_props a_project compile_defs)
-	set_target_properties( ${ARGV0} PROPERTIES
-        COMPILE_DEFINITIONS "${ARGV1}"
-		)
-		
-	if(APPLE)
-		set_target_properties( ${ARGV0} PROPERTIES
-			OUTPUT_NAME ${PLUGNAME}
-			XCODE_ATTRIBUTE_CLANG_LINK_OBJC_RUNTIME "NO"
-			)
-	endif()
-	target_link_libraries(${ARGV0} wdl lice iplug jnet eel plush rtam png zlib ogg vorbis icst_dsp ${IPLUG_LIBS}  ${OSX_FMWKS} )
-
-endMACRO()
 #-------------------------------------------------------------------------------------
 # Create a Multi Target Example Project ...
 #-------------------------------------------------------------------------------------
@@ -107,25 +43,27 @@ MACRO(create_example name)
 		set (PLUGNAMESA   ${PLUGNAME})
 	elseif(HAVE_ASIO)
 		set (PLUGNAMESA   ${PLUGNAME})
-	endif()
+	endif(APPLE)
 
 	if(HAVE_AAX)
 		set (PLUGNAMEAAX  ${PLUGNAME}AAX)
-	endif()
+	endif(HAVE_AAX)
+	
 	if(HAVE_PT9)
-		set (PLUGNAMERTAS  ${PLUGNAME}RTAS)
-	endif()
+		set (PLUGNAMEDPM  ${PLUGNAME}RTAS)
+	endif(HAVE_PT9)
 	
 	if(HAVE_VST)
 		set (PLUGNAMEVST  ${PLUGNAME}VST)
-	endif()
+	endif(HAVE_VST)
+	
 	if(HAVE_VST3)
 		set (PLUGNAMEVST3 ${PLUGNAME}VST3)
-	endif()
+	endif(HAVE_VST3)
 	
 	if(HAVE_AU)
 		set (PLUGNAMEAU   ${PLUGNAME}AU)
-	endif()
+	endif(HAVE_AU)
 
 	PROJECT ( ${PLUGNAME} )
 
@@ -161,19 +99,20 @@ MACRO(create_example name)
       SET(GUI_TYPE WIN32)
 	endif()
 	
+	# Info.plist paths
+	set(PLIST_PATHSA   ${CMAKE_CURRENT_SOURCE_DIR}/resources/${PLUGNAME}-OSXAPP-Info.plist )
+	set(PLIST_PATHVST  ${CMAKE_CURRENT_SOURCE_DIR}/resources/${PLUGNAME}-VST2-Info.plist )
+	set(PLIST_PATHVST3 ${CMAKE_CURRENT_SOURCE_DIR}/resources/${PLUGNAME}-VST3-Info.plist )
+	set(PLIST_PATHAU   ${CMAKE_CURRENT_SOURCE_DIR}/resources/${PLUGNAME}-AU-Info.plist )
+	set(PLIST_PATHRTAS ${CMAKE_CURRENT_SOURCE_DIR}/resources/${PLUGNAME}-RTAS-Info.plist )
+	set(PLIST_PATHAAX  ${CMAKE_CURRENT_SOURCE_DIR}/resources/${PLUGNAME}-AAX-Info.plist )
+
 	#-------------------------------------------------------------------------------------
 	# Add  Executable 
 	#-------------------------------------------------------------------------------------
 	if ( DEFINED PLUGNAMESA )
 		if(APPLE)
 		  set(APPICON_PATH resources/${PLUGNAME}.icns  )
-	  
-		  set(PLIST_PATHSA   ${CMAKE_CURRENT_SOURCE_DIR}/resources/${PLUGNAME}-OSXAPP-Info.plist )
-		  set(PLIST_PATHVST  ${CMAKE_CURRENT_SOURCE_DIR}/resources/${PLUGNAME}-VST2-Info.plist )
-		  set(PLIST_PATHVST3 ${CMAKE_CURRENT_SOURCE_DIR}/resources/${PLUGNAME}-VST3-Info.plist )
-		  set(PLIST_PATHAU   ${CMAKE_CURRENT_SOURCE_DIR}/resources/${PLUGNAME}-AU-Info.plist )
-		  set(PLIST_PATHRTAS ${CMAKE_CURRENT_SOURCE_DIR}/resources/${PLUGNAME}-RTAS-Info.plist )
-		  set(PLIST_PATHAAX  ${CMAKE_CURRENT_SOURCE_DIR}/resources/${PLUGNAME}-AAX-Info.plist )
 
 		# Resources
 		  set( ${PN_RSC}
@@ -191,9 +130,12 @@ MACRO(create_example name)
 		set_plug_props(${PLUGNAMESA} "SA_API=1")
 	
 		if(WIN32)
-			 set_target_properties(${PLUGNAMESA} PROPERTIES 
+			set_target_properties(${PLUGNAMESA} PROPERTIES 
 			 	LINK_FLAGS_DEBUG 	"/SUBSYSTEM:WINDOWS"
 				LINK_FLAGS_RELEASE 	"/SUBSYSTEM:WINDOWS")
+				
+			target_link_libraries(asio)
+
 		elseif(APPLE)
 		  SET_TARGET_PROPERTIES(${PLUGNAMESA} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${PLIST_PATHSA} )
 		endif()
@@ -260,10 +202,11 @@ MACRO(create_example name)
 	#-------------------------------------------------------------------------------------
 	# Add  RTAS Plugin 
 	#-------------------------------------------------------------------------------------
-	if( DEFINED PLUGNAMERTAS )
-		add_library(${PLUGNAMERTAS} MODULE ${${PN_SRC}} ${${PN_HDR}} ${IPC_RTAS} )
-		set_bundle(${PLUGNAMERTAS} "${PLIST_PATHRTAS}" "dpm" )
-		set_plug_props(${PLUGNAMERTAS} "RTAS_API=1")
+	if( DEFINED PLUGNAMEDPM )
+		add_library(${PLUGNAMEDPM} MODULE ${${PN_SRC}} ${${PN_HDR}} ${IPC_RTAS} )
+		set_bundle(${PLUGNAMEDPM} "${PLIST_PATHRTAS}" "dpm" )
+		set_plug_props(${PLUGNAMEDPM} "RTAS_API=1")
+		target_link_libraries(${PLUGNAMEDPM} dpm)
 	endif()
 	
 	#-------------------------------------------------------------------------------------
@@ -273,6 +216,7 @@ MACRO(create_example name)
 		add_library(${PLUGNAMEAAX} MODULE ${${PN_SRC}} ${${PN_HDR}} ${IPC_AAX} )
 		set_bundle(${PLUGNAMEAAX} "${PLIST_PATHAAX}" "aax" )
 		set_plug_props(${PLUGNAMEAAX} "AAX_API=1")
+		target_link_libraries(${PLUGNAMEAAX} aax)
 	endif()
 	
 	#-------------------------------------------------------------------------------------
