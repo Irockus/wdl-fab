@@ -39,10 +39,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 # find_package(SDL REQUIRED)
 # Compile the resource file
 
-find_program(RC_COMPILER Rez PATHS /Developer/Tools)
-if(NOT RC_COMPILER)
-  message(FATAL_ERROR "could not find Rez to build resources from .r file...")
-endif()
+if (APPLE)
+  # find Rez tool for .r files (needed for rtas and audiounit builds)
+  find_program(RC_COMPILER Rez PATHS /Developer/Tools)
+  if(NOT RC_COMPILER)
+    message(FATAL_ERROR "could not find Rez to build resources from .r file...")
+  endif()
+endif(APPLE)
 
 #-------------------------------------------------------------------------------------
 # Set Libraries Include & Lib Paths
