@@ -80,13 +80,18 @@ endmacro()
 
 #-------------------------------------------------------------------------------------
 MACRO(set_bundle a_project a_pname an_ext)
+  
+  set(PLUGEXT "${ARGV2}" )
+
   if(APPLE)
+    if (${ARGV2} MATCHES "(aax)")
+    	set(PLUGEXT "${ARGV2}plugin" )
+    endif()
+
     if (${ARGV2} MATCHES "(aax|dpm)")
     	set(PKGINF "${PROJECT_SOURCE_DIR}/../../WDL/IPlug/AAX/PkgInfo" )
-    	set(PLUGEXT "${ARGV2}plugin" )
     else()
     	set(PKGINF "${PROJECT_SOURCE_DIR}/../../WDL/IPlug/PkgInfo" )
-    	set(PLUGEXT "${ARGV2}" )
     endif()
 
 	set_target_properties( ${ARGV0} PROPERTIES
@@ -121,7 +126,7 @@ MACRO(set_bundle a_project a_pname an_ext)
 			set(addext 0)
 		endif()
 		if( ${addext} STREQUAL "1" )
-			set_target_properties(${ARGV0} PROPERTIES SUFFIX .${PLUGEXT}) 
+			set_target_properties(${ARGV0} PROPERTIES SUFFIX ".${PLUGEXT}") 
 		endif()
 	endif()
   endif(APPLE)
@@ -145,7 +150,11 @@ MACRO(set_plug_props a_project compile_defs)
 			OUTPUT_NAME ${PLUGNAME}
 			XCODE_ATTRIBUTE_CLANG_LINK_OBJC_RUNTIME "NO"
 			)
-	endif()
+	elseif(WIN32)
+		if(${ARGV0} MATCHES "VST3" ) # ext is already not dll so keep the plug name short
+			set_target_properties( ${ARGV0} PROPERTIES	OUTPUT_NAME ${PLUGNAME} )
+		endif()
+	endif(APPLE)
 	target_link_libraries(${ARGV0} wdl lice iplug jnet eel plush rtam png zlib ogg vorbis icst_dsp ${IPLUG_LIBS} ${OSX_FMWKS} )
 
 endMACRO()

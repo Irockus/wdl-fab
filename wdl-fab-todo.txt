@@ -2,7 +2,9 @@ CMake portable build environment:
 	OSX: 
 		- bundle macro generation must be finalized to generate proper audiounit bundles, for now WIP (only resource .r file needs to be added to the automatic process). 
 		- aax,rtas builds not tested yet though populated, as I don't have these frameworks.
-	
+	Windows:
+		- Fix AAX lib would not build in vs2013, need a vs2010 toolchain to build (std::min compile error not found otherwise)
+		
 Doxygen Documentation:
 	- More documentation should be provided, lots of TBC/place holders for now.
 	- Tutorials following the examples material as a start would be nice.

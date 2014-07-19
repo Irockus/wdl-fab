@@ -2,8 +2,6 @@
 
 SET(AAX_SRC
 	Libs/AAXLibrary/source/AAX_CACFUnknown.cpp
-	Libs/AAXLibrary/source/AAX_CAutoreleasePool.OSX.mm
-	Libs/AAXLibrary/source/AAX_CAutoreleasePool.Win.cpp
 	Libs/AAXLibrary/source/AAX_CChunkDataParser.cpp
 	Libs/AAXLibrary/source/AAX_CEffectDirectData.cpp
 	Libs/AAXLibrary/source/AAX_CEffectGUI_Icon.cpp
@@ -48,12 +46,11 @@ SET(AAX_HEADERS
 )
 
 if(WIN32)
-	SET(AAX_SRC ${AAX_SRC} 
-	)
+	SET(AAX_SRC ${AAX_SRC} Libs/AAXLibrary/source/AAX_CAutoreleasePool.Win.cpp )
+    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE )
 elseif(APPLE)
-	SET(AAX_SRC ${AAX_SRC} 
-	)
+	SET(AAX_SRC ${AAX_SRC} Libs/AAXLibrary/source/AAX_CAutoreleasePool.OSX.mm )
 	set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
 endif(WIN32)
-
+add_definitions(-DI18N_LIB -DPLUGIN_SDK_BUILD)
 add_library(aax ${AAX_SRC} ${AAX_HEADERS} )

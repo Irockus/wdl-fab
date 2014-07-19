@@ -7,6 +7,7 @@
 
 #if (_MSC_VER >=1500)
 #pragma comment(lib, "comctl32.lib")
+#pragma comment(lib, "wininet.lib")
 #endif
 #ifdef RTAS_API
   #include "PlugInUtils.h"

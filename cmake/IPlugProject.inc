@@ -134,7 +134,7 @@ MACRO(create_example name)
 			 	LINK_FLAGS_DEBUG 	"/SUBSYSTEM:WINDOWS"
 				LINK_FLAGS_RELEASE 	"/SUBSYSTEM:WINDOWS")
 				
-			target_link_libraries(asio)
+			target_link_libraries(${PLUGNAMESA} asio)
 
 		elseif(APPLE)
 		  SET_TARGET_PROPERTIES(${PLUGNAMESA} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${PLIST_PATHSA} )
