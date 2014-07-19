@@ -51,9 +51,8 @@ macro(configure_msvc_runtime)
     set(CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE} -DNDEBUG")
     
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse3 -mssse3")
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  
-    	-Wreturn-type -Wunused-variable -Wno-deprecated-declarations  
-    	-Wno-write-strings -Wno-reorder -msse3 -mssse3")
+    set (CMAKE_CXX_FLAGS 
+    	"${CMAKE_CXX_FLAGS}  -Wreturn-type -Wunused-variable -Wno-deprecated-declarations -Wno-write-strings -Wno-reorder -msse3 -mssse3" )
 
   endif()
 endmacro()
