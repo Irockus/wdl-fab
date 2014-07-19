@@ -430,7 +430,8 @@ typedef unsigned int NSUInteger;
 @interface SWELL_WindowExtensions : NSWindow
 -(void)setCollectionBehavior:(NSUInteger)a;
 @end
-@interface SWELL_ViewExtensions : NSView
+
+@interface NSView(SWELL_ViewExtensions)
 -(void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)vr rectIsVisibleRectForView:(NSView*)v topView:(NSView *)v2;
 @end
 

@@ -5,8 +5,6 @@
   #define IPLUG_NO_CARBON_SUPPORT
 #endif
 
-#define STR_HELPER(x) #x
-#define STR(x) STR_HELPER(x)
 // carbon support uses quickdraw methods that have been removed in SDKs > 10.6
 #if __MAC_OS_X_VERSION_MAX_ALLOWED > 1060
   #warning Carbon GUIs work best with the 10.6 sdk

@@ -304,7 +304,7 @@ void IPlugAAX::RenderAudio(AAX_SIPlugRenderInfo* ioRenderInfo)
 //		AAX_CMidiStream* midiBufferOut = midiNodeOut->GetNodeBuffer();
 //		AAX_CMidiPacket* midiBufferOutPtr = midiBufferOut->mBuffer;
         
-    for (int i = 0; i<packets_count; i++, midiBufferPtr++) 
+    for (unsigned i = 0; i<packets_count; i++, midiBufferPtr++) 
     {
       IMidiMsg msg(midiBufferPtr->mTimestamp, midiBufferPtr->mData[0], midiBufferPtr->mData[1], midiBufferPtr->mData[2]);
       ProcessMidiMsg(&msg);
@@ -358,7 +358,7 @@ AAX_Result IPlugAAX::GetChunkSize(AAX_CTypeID chunkID, uint32_t * oSize ) const
   
   IPlugAAX* _this = const_cast<IPlugAAX*>(this);
   
-  if (chunkID == _this->GetUniqueID()) 
+  if ((int) chunkID == _this->GetUniqueID()) 
   {
     ByteChunk IPlugChunk;
     
@@ -383,7 +383,7 @@ AAX_Result IPlugAAX::GetChunk(AAX_CTypeID chunkID, AAX_SPlugInChunk * oChunk ) c
   TRACE;
   IPlugAAX* _this = const_cast<IPlugAAX*>(this);
 
-  if (chunkID == _this->GetUniqueID()) 
+  if ((int)chunkID == _this->GetUniqueID()) 
   {
     ByteChunk IPlugChunk;
     
@@ -404,7 +404,7 @@ AAX_Result IPlugAAX::SetChunk(AAX_CTypeID chunkID, const AAX_SPlugInChunk * iChu
 {
   TRACE;
   
-  if (chunkID == GetUniqueID())
+  if ((int)chunkID == GetUniqueID())
   {    
     ByteChunk IPlugChunk;
     IPlugChunk.PutBytes(iChunk->fData, iChunk->fSize);
@@ -432,7 +432,7 @@ AAX_Result IPlugAAX::CompareActiveChunk(const AAX_SPlugInChunk * aChunkP, AAX_CB
 
   IPlugAAX* _this = const_cast<IPlugAAX*>(this);
 
-	if (aChunkP->fChunkID != _this->GetUniqueID()) 
+	if ((int)aChunkP->fChunkID != _this->GetUniqueID()) 
 	{
 		*aIsEqualP = true;
 		return AAX_SUCCESS; 

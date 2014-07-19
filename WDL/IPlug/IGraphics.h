@@ -20,7 +20,7 @@
 #ifdef AAX_API
 #include "AAX_IViewContainer.h"
 
-static uint32_t GetAAXModifiersFromIMouseMod(const IMouseMod* pMod)
+static inline uint32_t GetAAXModifiersFromIMouseMod(const IMouseMod* pMod)
 {
   uint32_t aax_mods = 0;
 

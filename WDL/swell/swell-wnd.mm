@@ -4116,7 +4116,7 @@ bool ListView_SetItemState(HWND h, int ipos, UINT state, UINT statemask)
     if (!row) return false;  
     if (statemask & (0xff<<16))
     {
-      if (row->m_imageidx!=((state>>16)&0xff))
+      if (row->m_imageidx!=(int) ((state>>16)&0xff))
       {
         row->m_imageidx=(state>>16)&0xff;
         doref=1;

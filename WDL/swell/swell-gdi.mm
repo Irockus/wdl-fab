@@ -894,7 +894,7 @@ int DrawText(HDC ctx, const char *buf, int buflen, RECT *r, int align)
   char tmp[4096];
   const char *p=buf;
   char *op=tmp;
-  while (*p && (op-tmp)<sizeof(tmp)-1 && (buflen<0 || (p-buf)<buflen))
+  while (*p && (op-tmp)<(int)sizeof(tmp)-1 && (buflen<0 || (p-buf)<buflen))
   {
     if (*p == '&' && !(align&DT_NOPREFIX)) p++; 
 
@@ -1469,7 +1469,7 @@ void StretchBlt(HDC hdcOut, int x, int y, int destw, int desth, HDC hdcIn, int x
   if (desth == preclip_h) desth=h;
   else if (h != preclip_h) desth = (h*desth)/preclip_h;
   
-  const bool use_alphachannel = mode == SRCCOPY_USEALPHACHAN;
+  const bool use_alphachannel = (mode == (int) SRCCOPY_USEALPHACHAN);
   
   CGContextRef output = (CGContextRef)dest->ctx;
   CGRect outputr = CGRectMake(x,-desth-y,destw,desth);
