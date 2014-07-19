@@ -230,38 +230,45 @@ dump_vars( "SDKs used:" "${variables}" )
 
 #	ASIO SDK
 if(HAVE_ASIO)
-	include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/ASIO_SDK )
+	include_directories( "${PROJECT_SOURCE_DIR}/ASIO_SDK" )
 	add_subdirectory(ASIO_SDK)
-endif()
+endif(HAVE_ASIO)
 
 #	VST Development
 if(HAVE_VST3)
-	include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/VST3_SDK )
+	include_directories( "${PROJECT_SOURCE_DIR}/VST3_SDK" )
 	add_subdirectory(VST3_SDK)
-endif()
+endif(HAVE_VST3)
 
 if(HAVE_VST)
-	include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/VST_SDK )
+	include_directories( "${PROJECT_SOURCE_DIR}/VST_SDK" )
 	add_subdirectory(VST_SDK)
-endif()
+endif(HAVE_VST)
 
-# Avid Protools related plugin development: 
-if(HAVE_AXX)
-	include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/AAX_SDK/Libs/AAXLibrary/include )
+if(HAVE_AAX)
+	include_directories( 
+		"${PROJECT_SOURCE_DIR}/AAX_SDK/Libs/AAXLibrary/include"
+		"${PROJECT_SOURCE_DIR}/WDL/iPlug/AAX"
+		"${PROJECT_SOURCE_DIR}/AAX_SDK/Interfaces"
+		"${PROJECT_SOURCE_DIR}/AAX_SDK/Interfaces/ACF"
+		"${PROJECT_SOURCE_DIR}/AAX_SDK/Extensions/GUI"
+		)
+	
 	add_subdirectory(AAX_SDK)
-endif()
+endif(HAVE_AXX)
 
 if(HAVE_PT9)
-	include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/PT9_SDK ) 
+	include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/PT9_SDK" ) 
 	add_subdirectory(PT9_SDK) # rtas sdk
 endif()
 
 # Apple Development
 if(HAVE_CA)  # not tested yet ...
-	include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/CA_SDK )
+	include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/CA_SDK" )
 	add_subdirectory(CA_SDK)
 endif()
-
+get_directory_property(INC_DIRS INCLUDE_DIRECTORIES ) 
+message("INCLUDE DIRS: ${INC_DIRS}" )
 # Common
 add_subdirectory(WDL) # wdl lice iplug libs
 add_subdirectory(contribs)

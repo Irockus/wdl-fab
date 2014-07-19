@@ -220,8 +220,8 @@ MACRO(create_example name)
 	    	endforeach()
  	    
 	    	set (ORC_PATH "${CMAKE_CURRENT_BINARY_DIR}/${PLUGNAMEAU}.rsrc" )
-	   		get_directory_property(INC_DIRS INCLUDE_DIRECTORIES ) 
-    		message("Generating ${ORC_PATH} for ${INC_DIRS}" )
+# 	   		get_directory_property(INC_DIRS INCLUDE_DIRECTORIES ) 
+#     		message("Generating ${ORC_PATH} for ${INC_DIRS}" )
 
 #  			add_custom_command( TARGET ${PLUGNAMEAU} POST_BUILD
 #  			COMMAND /Developer/Tools/Rez  ARGS 
