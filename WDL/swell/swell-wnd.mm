@@ -36,7 +36,7 @@
 #include "swell-dlggen.h"
 #include "swell-internal.h"
 
-
+extern int SWELL_GetOSXVersion();
 
 static LRESULT sendSwellMessage(id obj, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -2311,7 +2311,7 @@ BOOL SetDlgItemText(HWND hwnd, int idx, const char *text)
   [lbl release];
   return rv;
   SWELL_END_TRY(;)
-  return NULL;
+  return FALSE;
 }
 
 BOOL GetDlgItemText(HWND hwnd, int idx, char *text, int textlen)
@@ -6132,13 +6132,14 @@ bool SWELL_SetAppAutoHideMenuAndDock(int ah)
   static NSUInteger _defpres;
   if (!_init)
   {
-    _init=-1;
-    SInt32 v=0x1040;
-    Gestalt(gestaltSystemVersion,&v);
-    if (v>=0x1060)
+    if (SWELL_GetOSXVersion()>=0x1060)
     {
       _init=1;
       _defpres = [(SWELL_AppExtensions*)[NSApplication sharedApplication] presentationOptions];
+    }
+    else
+    {
+      _init=-1;
     }
   }
   if (_init > 0)
