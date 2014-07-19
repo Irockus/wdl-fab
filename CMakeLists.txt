@@ -16,12 +16,11 @@ if(APPLE)
 	
 	set(CMAKE_OSX_SYSROOT "macosx${BUILD_SDK_VER}")
 	set(CMAKE_OSX_DEPLOYMENT_TARGET "${BUILD_SDK_VER}" )
-  
-#	find_library( COREFOUNDATION_FRAMEWORK NAMES CoreFoundation)
+ #	find_library( COREFOUNDATION_FRAMEWORK NAMES CoreFoundation)
+
 endif(APPLE)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-#set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} $ENV{VORBISDIR}/include )
 
 # simple, unified lib & bin dir for all libs and exe
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -51,11 +50,43 @@ endif()
 # vorbis / ogg audio encoding decoding libs
 set(VORBIS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/contribs/vorbis" )
 set(OGG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/contribs/ogg" )
+set(DSP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/contribs/DSP" )
+
 set(VORBIS_INCLUDE_DIR "${VORBIS_DIR}/include" "${VORBIS_DIR}/lib" )
 set(OGG_INCLUDE_DIR "${OGG_DIR}/include" )
-set(OGG_LIBRARY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libogg.lib" )
-set(VORBIS_LIBRARY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libvorbis.lib" )
-	
+set(DSP_INCLUDE_DIR "${DSP_DIR}" )
+
+if(WIN32)
+	set(OGG_LIBRARY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/ogg.lib" )
+	set(VORBIS_LIBRARY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/vorbis.lib" )
+	set(DSP_LIBRARY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/icst_dsp.lib" )
+else(WIN32)
+	set(OGG_LIBRARY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libogg.a" )
+	set(VORBIS_LIBRARY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libvorbis.a" )
+	set(DSP_LIBRARY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libicst_dsp.a" )
+endif(WIN32)
+
+include_directories(
+	# ${OPENAL_INCLUDES}
+	# ${BZIP2_INCLUDE_DIR}
+	# ${JPEG_INCLUDE_DIR}
+	# ${PNG_INCLUDE_DIR}
+	# ${ZLIB_INCLUDE_DIR}
+	# ${OPENGL_INCLUDE_DIR}
+	# ${GLU_INCLUDE_DIR}
+	# ${SDL_INCLUDE_DIR}
+	${VORBIS_INCLUDE_DIR}
+	${OGG_INCLUDE_DIR}
+	${CMAKE_SOURCE_DIR}/Source
+	${CMAKE_CURRENT_SOURCE_DIR}/WDL/IPlug	
+	${CMAKE_CURRENT_SOURCE_DIR}/WDL	
+	${CMAKE_CURRENT_SOURCE_DIR}/WDL/rtaudiomidi	
+	)
+
+if(APPLE)
+    include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/WDL/swell	)
+endif(APPLE)
+
 #-------------------------------------------------------------------------------------
 # Set Common Definitions
 #-------------------------------------------------------------------------------------
@@ -73,19 +104,20 @@ else(WIN32)
 #	find_package(Vorbis REQUIRED)
 endif(WIN32)
 
-IF(MSVC)
+if(MSVC)
   add_definitions(-DMSVC_RUNTIME=static)
   add_definitions(/arch:SSE2)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS)
   add_definitions(/wd4244 /wd4996 /wd4018 /wd4305)
   
-ELSEIF(APPLE)
+elseif(APPLE)
   set(CMAKE_OSX_ARCHITECTURES "x86_64;i386")
   add_definitions(-D__MACOSX_CORE__ -DWDL_FFT_REALSIZE=8 
   	-DSWELL_FORCE_COCOA_TEXT -DSWELL_CLEANUP_ON_UNLOAD )
-ENDIF(MSVC)
+endif(MSVC)
 
 configure_msvc_runtime()
+
 set(variables
   CMAKE_C_FLAGS_DEBUG
   CMAKE_C_FLAGS_MINSIZEREL
@@ -110,34 +142,6 @@ if(WIN32)
    endif(MSVC)
 endif(WIN32)
 
-
-#-------------------------------------------------------------------------------------
-# Set Include Directories
-#-------------------------------------------------------------------------------------
-include_directories(
-	# ${OPENAL_INCLUDES}
-	# ${BZIP2_INCLUDE_DIR}
-	# ${JPEG_INCLUDE_DIR}
-	# ${PNG_INCLUDE_DIR}
-	# ${ZLIB_INCLUDE_DIR}
-	# ${OPENGL_INCLUDE_DIR}
-	# ${GLU_INCLUDE_DIR}
-	# ${SDL_INCLUDE_DIR}
-	${VORBIS_INCLUDE_DIR}
-	${OGG_INCLUDE_DIR}
-	${CMAKE_SOURCE_DIR}/Source
-	${CMAKE_CURRENT_SOURCE_DIR}/WDL/IPlug	
-	${CMAKE_CURRENT_SOURCE_DIR}/WDL	
-	${CMAKE_CURRENT_SOURCE_DIR}/WDL/rtaudiomidi	
-	${CMAKE_CURRENT_SOURCE_DIR}/ASIO_SDK
-	${CMAKE_CURRENT_SOURCE_DIR}/VST_SDK
-	${CMAKE_CURRENT_SOURCE_DIR}/VST3_SDK
-	)
-
-IF (APPLE)
-    include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/WDL/swell	)
-ENDIF(APPLE)
-
 set(IPLUG_LIBS 
 	# ${OPENAL_LIBRARY} 
 	# ${PNG_LIBRARY} 
@@ -149,8 +153,8 @@ set(IPLUG_LIBS
 	# ${OPENGL_LIBRARY} 
 #	${OGG_LIBRARY}
 #	${VORBIS_LIBRARY} 
-#	${VORBISFILE_LIBRARY} 
-)
+#	${DSP_LIBRARY} 
+	)
 
 #-------------------------------------------------------------------------------------
 # Set Version number
@@ -175,6 +179,7 @@ set (HAVE_AU			OFF)
 set (HAVE_CA			OFF) # external AU sdk in the CA_SDK folder for xcode4+ builds
 
 # Auto-detection
+message("Project sourcedir is ${PROJECT_SOURCE_DIR}")
 if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/AAX_SDK/Interfaces)
 	if(EXISTS "${PROJECT_SOURCE_DIR}/AAX_SDK/CMakeLists.txt")
 		set (HAVE_AAX		ON)
@@ -211,12 +216,12 @@ if(APPLE)
 	set (HAVE_AU			ON)
 	if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/CA_SDK/AudioUnits)
 		if(EXISTS "${PROJECT_SOURCE_DIR}/CA_SDK/CMakeLists.txt")
-			set (HAVE_CA		ON)
+			set (HAVE_CA	ON)
 		endif()
 	endif()
 endif(APPLE)
 
-set(variables HAVE_AXX HAVE_PT9 HAVE_VST HAVE_VST3 HAVE_ASIO HAVE_AU HAVE_CA )
+set(variables HAVE_AAX HAVE_PT9 HAVE_VST HAVE_VST3 HAVE_ASIO HAVE_AU HAVE_CA )
 dump_vars( "SDKs used:" "${variables}" )
 
 #-------------------------------------------------------------------------------------
@@ -225,28 +230,36 @@ dump_vars( "SDKs used:" "${variables}" )
 
 #	ASIO SDK
 if(HAVE_ASIO)
+	include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/ASIO_SDK )
 	add_subdirectory(ASIO_SDK)
-endif()
-
-# Avid Protools related plugin development: 
-if(HAVE_AXX)
-	add_subdirectory(AAX_SDK)
-endif()
-if(HAVE_PT9)
-	add_subdirectory(PT9_SDK) # rtas sdk
 endif()
 
 #	VST Development
 if(HAVE_VST3)
+	include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/VST3_SDK )
 	add_subdirectory(VST3_SDK)
 endif()
+
 if(HAVE_VST)
+	include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/VST_SDK )
 	add_subdirectory(VST_SDK)
 endif()
 
+# Avid Protools related plugin development: 
+if(HAVE_AXX)
+	include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/AAX_SDK/Libs/AAXLibrary/include )
+	add_subdirectory(AAX_SDK)
+endif()
+
+if(HAVE_PT9)
+	include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/PT9_SDK ) 
+	add_subdirectory(PT9_SDK) # rtas sdk
+endif()
+
 # Apple Development
-if(HAVE_CA)
-	add_subdirectory(CA_SDK) 
+if(HAVE_CA)  # not tested yet ...
+	include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/CA_SDK )
+	add_subdirectory(CA_SDK)
 endif()
 
 # Common

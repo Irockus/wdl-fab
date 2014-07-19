@@ -103,12 +103,29 @@ MACRO(create_example name)
 	set (PN_RSC ${PLUGNAME}_RSC )
 	set (PN_IMG ${PLUGNAME}_IMG )
 
-	set (PLUGNAMESA   ${PLUGNAME})
-	set (PLUGNAMEVST  ${PLUGNAME}VST)
-	set (PLUGNAMEVST3 ${PLUGNAME}VST3)
-	set (PLUGNAMEAU   ${PLUGNAME}AU)
-#	set (PLUGNAMEAAX  ${PLUGNAME}AAX)
-#	set (PLUGNAMERTAS  ${PLUGNAME}RTAS)
+	if(APPLE)
+		set (PLUGNAMESA   ${PLUGNAME})
+	elseif(HAVE_ASIO)
+		set (PLUGNAMESA   ${PLUGNAME})
+	endif()
+
+	if(HAVE_AAX)
+		set (PLUGNAMEAAX  ${PLUGNAME}AAX)
+	endif()
+	if(HAVE_PT9)
+		set (PLUGNAMERTAS  ${PLUGNAME}RTAS)
+	endif()
+	
+	if(HAVE_VST)
+		set (PLUGNAMEVST  ${PLUGNAME}VST)
+	endif()
+	if(HAVE_VST3)
+		set (PLUGNAMEVST3 ${PLUGNAME}VST3)
+	endif()
+	
+	if(HAVE_AU)
+		set (PLUGNAMEAU   ${PLUGNAME}AU)
+	endif()
 
 	PROJECT ( ${PLUGNAME} )
 
@@ -205,16 +222,6 @@ MACRO(create_example name)
 	    	set (ORC_PATH "${CMAKE_CURRENT_BINARY_DIR}/${PLUGNAMEAU}.rsrc" )
 	   		get_directory_property(INC_DIRS INCLUDE_DIRECTORIES ) 
     		message("Generating ${ORC_PATH} for ${INC_DIRS}" )
-
-# 	   		execute_process(COMMAND echo ${RC_COMPILER} 
-# 	   		  -d SystemSevenOrLater=1 -useDF -script Roman 
-#     	      -useDF ${ARCHS} -arch ppc
-#     	      -o ${ORC_PATH}
-# 	   		  -I ${CMAKE_CURRENT_SOURCE_DIR}/../..
-# 	   		  -isysroot "${XCODE_ATTRIBUTE_SDKROOT}" 
-# 	   		 ${RCFILES} 
-#         	)
-# 	    	set_source_files_properties( ${ORC_PATH} PROPERTIES GENERATED 1 )
 
 #  			add_custom_command( TARGET ${PLUGNAMEAU} POST_BUILD
 #  			COMMAND /Developer/Tools/Rez  ARGS 
