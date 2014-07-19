@@ -33,7 +33,7 @@ void *SWELLAPI_GetFunc(const char *name)
 	a=1;
     qsort(api_table,sizeof(api_table)/sizeof(api_table[0]),sizeof(api_table[0]),compfunc);
   }
-  struct api_ent find= {name,NULL};
+  struct api_ent find={name,NULL};
   struct api_ent *res=(struct api_ent *)bsearch(&find,api_table,sizeof(api_table)/sizeof(api_table[0]),sizeof(api_table[0]),compfunc);
   if (res) return res->func;
   return NULL;
