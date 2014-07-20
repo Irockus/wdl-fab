@@ -14,8 +14,8 @@ if (APPLE)
 	set(HAVE_SDK109  OFF)
 	set(HAVE_SDK1010 OFF)
 
-	# 1. Set to ON your preferred only the SDKs you have as listed below:
-	#   By default it assumes 106 is available and that you also have 10.8 and 10.9
+	# 1. Set to ON only the SDKs you have as listed below:
+	#   By default it assumes 106 is available
 	set(HAVE_SDK106  ON)
 	#set(HAVE_SDK107  ON)
 	#set(HAVE_SDK108  ON)
