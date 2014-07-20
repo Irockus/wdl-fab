@@ -35,7 +35,16 @@ that can be downloaded from:
 	https://developer.apple.com/library/mac/samplecode/CoreAudioUtilityClasses/Introduction/Intro.html
 	(then click download sample code)
 
-2. OSX SDKs > 10.6 builds
-	For building with SDKS > 10.6, edit the CMakeLists.txt at the root of the distrib 
-	search for BUILD_SDK prefixes and change 10.6 occurences by your SDK version
-	(not tested yet please report in case of problems)
+2. for OSX SDKs > 10.6 builds :
+	For building with SDKS > 10.6, edit the ./cmake/IPlugSdkVersion.inc file 
+	and uncomment only the SDK lines that correspond to what you have:
+	
+ i.e. for XCode5 (without SDK10.6) update this section in the file as see below :
+ 
+	# 1. Set to ON only the SDKs you have as listed below:
+	#   By default it assumes 106 is available
+	#set(HAVE_SDK106  ON)
+	#set(HAVE_SDK107  ON)
+	set(HAVE_SDK108  ON)
+	set(HAVE_SDK109  ON)
+	#set(HAVE_SDK1010 ON)

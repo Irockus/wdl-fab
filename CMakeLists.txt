@@ -8,12 +8,10 @@ cmake_minimum_required (VERSION 2.8)
 
 include (cmake/IPlugMacros.inc)
 
-if(APPLE)
+    #Modify this file to your HAVE_SDKxx ON flag for other SDK than default
+    include (cmake/IPlugSdkVersion.inc)
 
-	# set the base sdk version:
-	set(BUILD_SDK_VER 10.6)
-	set(BUILD_SDK_MAXVER 1060)
-	
+if(APPLE)
 	set(CMAKE_OSX_SYSROOT "macosx${BUILD_SDK_VER}")
 	set(CMAKE_OSX_DEPLOYMENT_TARGET "${BUILD_SDK_VER}" )
  #	find_library( COREFOUNDATION_FRAMEWORK NAMES CoreFoundation)
